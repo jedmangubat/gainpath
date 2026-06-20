@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2026-06-20]
 
+### Changed
+- **Replaced YouTube tutorial links with custom illustrated exercise instruction images.** Each exercise card in the workout screen now displays its 3-panel illustrated instruction image (`images/exercises/<exercise-slug>.png`) prominently above the exercise name and sets, full width of the card with aspect ratio preserved, instead of a "Tutorial" button linking out to a YouTube search.
+  - If an image fails to load for a given exercise (e.g. one not yet illustrated), the original YouTube tutorial button is shown in its place automatically — nothing breaks for exercises without artwork yet.
+
 ### Added
 - `image-checklist.md` — a checklist of all 37 unique exercises from the `EX` exercise database in `index.html`, used to track exercise reference images.
 - `scripts/match_exercise_images.py` — scans the project root for dropped image files (`.png`/`.jpg`/`.jpeg`/`.webp`), fuzzy-matches each filename against the exercise checklist, and on a confident match renames it to a standardized slug and moves it into `images/exercises/`, checking it off the checklist. Ambiguous filenames are left in place for manual clarification instead of being guessed.

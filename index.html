@@ -27,6 +27,7 @@ body{background:#f0f2f5;min-height:100vh;display:flex;justify-content:center;pad
 .app{background:var(--bg);width:100%;max-width:480px;min-height:100vh;padding:20px 16px;position:relative}
 .screen{display:none}.screen.active{display:block}
 .card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.ex-img{display:block;width:100%;height:auto;border-radius:8px;margin-bottom:12px;background:var(--bg2)}
 .day-btn{width:100%;text-align:left;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:13px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;transition:background .15s}
 .day-btn:hover{background:var(--bg2)}.day-btn.sug{border:2px solid var(--accent)}
 .bp{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:6px}.bp:hover{opacity:.88}
@@ -974,6 +975,13 @@ function saveMW(skip){
   }
   processMWQueue();
 }
+function exSlug(name){return name.toLowerCase().replace(/\s+/g,'-');}
+function exImgFallback(img,yt){
+  const a=document.createElement('a');
+  a.className='byt';a.href='https://www.youtube.com/results?search_query='+yt;a.target='_blank';
+  a.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="#fff" fill-opacity=".3"/><path d="M10 9l6 3-6 3V9z" fill="#fff"/></svg>Tutorial';
+  img.replaceWith(a);
+}
 function renderEx(){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
   gid('wo-pb').style.width=Math.round((ST.exi/ST.sd.length)*100)+'%';
@@ -986,7 +994,8 @@ function renderEx(){
   }).join('');
   const mwNote=ex.machine&&mwBase>0?'<span class="mw-inp"><i class="ti ti-settings-2" aria-hidden="true"></i> Machine base: '+mwBase+CFG.unit+' (plates only shown)</span>':'';
   const isLast=ST.exi>=ST.sd.length-1;
-  gid('ex-area').innerHTML='<div class="card"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">'+ex.name+'</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">bodyweight</span>':'')+'<a class="byt" href="https://www.youtube.com/results?search_query='+ex.yt+'" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="#fff" fill-opacity=".3"/><path d="M10 9l6 3-6 3V9z" fill="#fff"/></svg>Tutorial</a>'+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+' sets</span></div>'+sh+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?'Finish workout <i class="ti ti-trophy" aria-hidden="true"></i>':'Next exercise <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
+  const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\')">';
+  gid('ex-area').innerHTML='<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">'+ex.name+'</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">bodyweight</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+' sets</span></div>'+sh+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?'Finish workout <i class="ti ti-trophy" aria-hidden="true"></i>':'Next exercise <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
   if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet)showFSW(ex);
   saveInProgress();
 }
