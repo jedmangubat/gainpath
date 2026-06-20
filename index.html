@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -282,7 +285,7 @@ textarea{resize:vertical;min-height:100px}
         <span style="font-size:14px;font-weight:600;color:var(--txt)" id="h-str">0</span>
         <span style="font-size:12px;color:var(--txt2)">streak</span>
       </div>
-      <button class="bg" style="font-size:12px;padding:2px 6px" onclick="ss('settings')"><i class="ti ti-settings" aria-hidden="true"></i> Settings</button>
+      <button class="bg" style="font-size:12px;padding:2px 6px" onclick="openSettings()"><i class="ti ti-settings" aria-hidden="true"></i> Settings</button>
     </div>
   </div>
   <div style="display:flex;border-bottom:1px solid var(--bdr);margin-bottom:16px">
@@ -720,276 +723,6 @@ function gid(id){return document.getElementById(id);}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));gid('s-'+id).classList.add('active');}
 function accentColor(){document.documentElement.style.setProperty('--accent',CFG.sex==='female'?'#A5185F':'#185FA5');}
 
-// ═══ ONBOARDING ═══
-function obDots(){
-  const el=gid('ob-dots');el.innerHTML='';
-  for(let i=1;i<=OB_STEPS;i++){const d=document.createElement('div');d.className='ob-dot'+(i<=OB.step?' on':'');el.appendChild(d);}
-}
-function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
-function setUnit(v){
-  OB.unit=v;
-  gid('unit-kg').classList.toggle('on',v==='kg');gid('unit-lbs').classList.toggle('on',v==='lbs');
-  ['unit-lbl1','unit-lbl2','unit-lbl3','unit-lbl4','unit-lbl5'].forEach(id=>{const el=gid(id);if(el)el.textContent=v;});
-}
-function setExp(v){OB.exp=v;['beginner','intermediate','advanced'].forEach(x=>gid('exp-'+x).classList.toggle('on',x===v));}
-function setGoal(v){OB.goal=v;['definition','strength','general'].forEach(x=>gid('goal-'+x).classList.toggle('on',x===v));}
-function setFreq(v){
-  OB.freq=v;
-  [2,3,4,5,6,7].forEach(x=>gid('freq-'+x).classList.toggle('on',x===v));
-  const sugEl=gid('freq-suggest');
-  const suggestions={2:'Upper/Lower',3:'Full Body or Alternating Legs/Push/Pull',4:'Upper/Lower',5:'PPL/UL or 5-Day Bro Split',6:'5-Day Bro Split or Alternating',7:'Any split — consider rest days'};
-  sugEl.style.display='block';
-  sugEl.innerHTML=`<strong style="color:var(--txt)">Suggested:</strong> ${suggestions[v]||'Choose any split'}`;
-  OB.split=SPLIT_FREQ[v]||'pplul';
-}
-function setReps(v){OB.reps=v;[8,10,12].forEach(x=>gid('reps-'+x).classList.toggle('on',x===v));}
-function setRest(v){OB.rest=v;[60,90,120].forEach(x=>gid('rest-'+x).classList.toggle('on',x===v));}
-function setSets(v){OB.sets=v;[2,3,4].forEach(x=>gid('sets-'+x).classList.toggle('on',x===v));}
-function toggleWU(){OB.wu=!OB.wu;gid('tog-wu').classList.toggle('on',OB.wu);gid('wu-reps-row').style.display=OB.wu?'block':'none';}
-function setWUReps(v){OB.wuReps=v;[10,12,15].forEach(x=>gid('wureps-'+x).classList.toggle('on',x===v));}
-function setLast(v){OB.last=v;['today','1-2days','3-7days','1-2weeks','1month','never'].forEach(x=>gid('last-'+x).classList.toggle('on',x===v));}
-function setSW(v){OB.sw=v;['ai','manual'].forEach(x=>gid('sw-'+x).classList.toggle('on',x===v));}
-
-function renderSplitOpts(containerId,selectedId,onSelect){
-  const el=gid(containerId);el.innerHTML='';
-  SPLITS.forEach(sp=>{
-    const btn=document.createElement('button');
-    btn.className='opt-btn'+(selectedId===sp.id?' on':'');
-    btn.style.textAlign='left';btn.style.padding='12px 14px';
-    btn.innerHTML=`<div style="font-size:14px;font-weight:600">${sp.name}</div><div style="font-size:11px;font-weight:400;color:${selectedId===sp.id?'rgba(255,255,255,0.8)':'var(--txt2)'};margin-top:3px">${sp.desc}</div>`;
-    btn.onclick=()=>{OB.split=sp.id;renderSplitOpts(containerId,sp.id,onSelect);if(onSelect)onSelect(sp.id);};
-    el.appendChild(btn);
-  });
-}
-
-function obNext(step){
-  if(step===1){
-    const name=gid('ob-name').value.trim();
-    if(!name){alert('Please enter your name');return;}
-    if(!OB.sex){alert('Please select your sex');return;}
-    OB.name=name;
-  }
-  if(step===2){
-    const bw=parseFloat(gid('ob-bw').value);
-    const ht=parseFloat(gid('ob-ht').value);
-    if(!bw||bw<30){alert('Please enter a valid body weight');return;}
-    if(!ht||ht<100){alert('Please enter a valid height');return;}
-    OB.bw=bw;OB.ht=ht;OB.bf=parseFloat(gid('ob-bf').value)||null;
-  }
-  if(step===3){
-    OB.keyLifts={
-      squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},
-      chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},
-      lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},
-      ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}
-    };
-  }
-  if(step===4){if(!OB.exp){alert('Please select experience level');return;}if(!OB.goal){alert('Please select a fitness goal');return;}}
-  if(step===5){if(!OB.freq){alert('Please select training frequency');return;}}
-  if(step===6){
-    if(!OB.split){alert('Please select a split');return;}
-    const sugId=SPLIT_FREQ[OB.freq]||'pplul';
-    gid('ob-split-suggest').textContent=OB.freq?`Based on ${OB.freq} days/week — suggested split is highlighted`:'Choose your training split';
-    renderSplitOpts('split-opts',OB.split||sugId,null);
-    if(!OB.split)OB.split=sugId;
-  }
-  if(step===8){if(!OB.last){alert('Please select when you last worked out');return;}}
-  if(step===9){updateObSummary();}
-  gid('ob-'+step).classList.remove('active');
-  OB.step=step+1;
-  gid('ob-'+OB.step).classList.add('active');
-  obDots();
-}
-function obBack(step){
-  gid('ob-'+step).classList.remove('active');
-  OB.step=step-1;
-  gid('ob-'+OB.step).classList.add('active');
-  obDots();
-}
-function updateObSummary(){
-  const splitName=SPLITS.find(s=>s.id===OB.split)?.name||OB.split;
-  const goalMap={definition:'Muscle definition',strength:'Strength',general:'General fitness'};
-  const expMap={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
-  const lastMap={'today':'Today','1-2days':'1–2 days ago','3-7days':'3–7 days ago','1-2weeks':'1–2 weeks ago','1month':'1+ month ago','never':'Never / just starting'};
-  gid('ob-summary').innerHTML=`
-    👤 <strong>${OB.name}</strong> · ${OB.sex==='male'?'Male':'Female'} · ${OB.bw}${OB.unit} · ${OB.ht}cm${OB.bf?` · ${OB.bf}% BF`:''}<br>
-    🎯 ${goalMap[OB.goal]} · ${expMap[OB.exp]}<br>
-    🗓️ ${splitName} · ${OB.freq} days/week<br>
-    🔁 ${OB.sets} sets · ${OB.reps} reps · ${OB.rest}s rest<br>
-    🌡️ Warm-up: ${OB.wu?`Yes (${OB.wuReps} reps)`:'No'}<br>
-    ⏰ Last workout: ${lastMap[OB.last]||OB.last}<br>
-    ⚖️ Starting weights: ${OB.sw==='ai'?'AI estimate':'Manual entry'}
-  `;
-}
-function obFinish(){
-  if(!OB.sw){alert('Please select a starting weight method');return;}
-  CFG={...CFG,name:OB.name,sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true};
-  saveCFG();accentColor();refreshHome();ss('home');
-}
-
-// ═══ WARM-UP LOGIC ═══
-function addWarmupFlags(exercises){
-  const seenMG={};
-  return exercises.map(ex=>{
-    const shouldWU=ex.wu&&ex.baseW>0&&!seenMG[ex.mg];
-    if(ex.wu&&ex.baseW>0)seenMG[ex.mg]=true;
-    return {...ex,doWU:shouldWU};
-  });
-}
-
-function buildSets(ex,savedW){
-  const sets=[];
-  const baseW=savedW!==undefined?savedW:ex.baseW;
-  if(CFG.warmup&&ex.doWU&&baseW>0){
-    const wuW=Math.round(baseW*0.5*2)/2;
-    sets.push({t:'w',w:wuW,r:CFG.wuReps,done:false});
-  }
-  for(let i=0;i<CFG.prefSets;i++){
-    sets.push({t:'x',w:baseW,r:CFG.prefReps,done:false});
-  }
-  return sets;
-}
-
-function getSavedWeight(exName){
-  const hist=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
-  if(!hist.length)return undefined;
-  const last=hist[hist.length-1].exercises.find(e=>e.name===exName);
-  if(!last)return undefined;
-  const ws=last.sets.filter(s=>s.done&&s.t!=='w'&&s.w>0);
-  return ws.length?Math.max(...ws.map(s=>s.w)):undefined;
-}
-
-function getAIEstimatedWeight(ex){
-  const lifts=CFG.keyLifts||{};
-  const bw=CFG.bw||70;
-  const expMult={beginner:0.4,intermediate:0.6,advanced:0.8}[CFG.exp]||0.6;
-  const mg=ex.mg;
-  let est=ex.baseW;
-  if(mg==='chest'&&lifts.chest&&lifts.chest.w>0){est=Math.round(lifts.chest.w*0.7*2)/2;}
-  else if((mg==='back'||mg==='rear_delts')&&lifts.lat&&lifts.lat.w>0){est=Math.round(lifts.lat.w*0.8*2)/2;}
-  else if(mg==='shoulders'&&lifts.ohp&&lifts.ohp.w>0){est=Math.round(lifts.ohp.w*0.6*2)/2;}
-  else if((mg==='quads'||mg==='hamstrings')&&lifts.squat&&lifts.squat.w>0){est=Math.round(lifts.squat.w*0.7*2)/2;}
-  else{est=Math.round(ex.baseW*expMult*2)/2||ex.baseW;}
-  return Math.max(est,2.5);
-}
-
-// ═══ HOME ═══
-function streak(){
-  if(!ST.history.length)return 0;
-  const dates=[...new Set(ST.history.map(h=>h.dk))].sort().reverse();
-  const tod=dkey(new Date()),yes=dkey(new Date(Date.now()-86400000));
-  if(dates[0]!==tod&&dates[0]!==yes)return 0;
-  let n=1;
-  for(let i=1;i<dates.length;i++){const a=new Date(dates[i-1]+'T00:00:00'),b=new Date(dates[i]+'T00:00:00');if((a-b)/86400000===1)n++;else break;}
-  return n;
-}
-
-function getSplitDays(){
-  const sp=SPLITS.find(s=>s.id===CFG.split)||SPLITS[0];
-  return sp.days;
-}
-
-function suggested(){
-  const days=getSplitDays();
-  if(!ST.history.length)return days[0];
-  const last=ST.history[ST.history.length-1].day;
-  const idx=days.indexOf(last);
-  if(idx===-1)return days[0];
-  return days[(idx+1)%days.length];
-}
-
-function stab(t){
-  ['wk','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('t-'+x).classList.toggle('on',x===t);});
-  if(t==='ch')initChart();if(t==='pr')renderPRs();if(t==='ex')initExport();
-}
-
-function goHome(){clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;refreshHome();ss('home');}
-
-function refreshHome(){
-  accentColor();
-  gid('h-str').textContent=streak();
-  const sug=suggested();
-  const hr=new Date().getHours();
-  const tod=hr<12?'morning':hr<17?'afternoon':'evening';
-  if(ST.history.length){
-    const last=getDayName(ST.history[ST.history.length-1].day);
-    gid('h-gr').textContent=`Good ${tod}, ${CFG.name}! Last: ${last}`;
-    gid('h-sg').innerHTML=`Suggested next: <strong style="color:var(--accent)">${getDayName(sug)}</strong>`;
-  } else {
-    gid('h-gr').textContent=`Good ${tod}, ${CFG.name}! Ready to train?`;
-    gid('h-sg').textContent='Pick your first session below';
-  }
-  const con=gid('dbtn-list');con.innerHTML='';
-  getSplitDays().forEach(k=>{
-    const isSug=k===sug;
-    const last=ST.history.filter(h=>h.day===k).slice(-1)[0];
-    const btn=document.createElement('button');
-    btn.className='day-btn'+(isSug?' sug':'');
-    const exList=getDayExercises(k,CFG.sex);
-    btn.innerHTML=`<div><div style="font-size:15px;font-weight:700;color:var(--txt)"><i class="ti ${DI[k]||'ti-player-play'}" style="margin-right:8px;color:${DC[k]||'var(--accent)'};font-size:15px" aria-hidden="true"></i>${getDayName(k)}${isSug?`<span class="bdg bi" style="margin-left:8px;background:#E6F1FB;color:var(--accent)">Suggested</span>`:''}</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">${exList.length} exercises · ${last?'Last: '+last.date:'Not done yet'}</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>`;
-    btn.onclick=()=>startDay(k);con.appendChild(btn);
-  });
-  const hl=gid('h-hlist'),hs=gid('h-hist');
-  if(ST.history.length){
-    hs.style.display='block';
-    hl.innerHTML=ST.history.slice(-4).reverse().map(h=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin-bottom:6px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">${h.dayName}</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">${h.date} · ${h.dur}</div></div><div style="font-size:12px;color:var(--txt2)">${h.sets} sets</div></div>`).join('');
-  } else hs.style.display='none';
-}
-
-// ═══ SETTINGS ═══
-function openSettings(){
-  gid('set-name').value=CFG.name;gid('set-bw').value=CFG.bw;gid('set-ht').value=CFG.ht;gid('set-bf').value=CFG.bf||'';
-  gid('set-unit-lbl').textContent=CFG.unit;
-  ['kg','lbs'].forEach(v=>gid('sunit-'+v).classList.toggle('on',CFG.unit===v));
-  [8,10,12].forEach(v=>gid('sreps-'+v).classList.toggle('on',CFG.prefReps===v));
-  [60,90,120].forEach(v=>gid('srest-'+v).classList.toggle('on',CFG.prefRest===v));
-  [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
-  gid('stog-wu').classList.toggle('on',CFG.warmup);
-  renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
-  ss('settings');
-}
-function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;}
-function setSettingReps(v){CFG.prefReps=v;[8,10,12].forEach(x=>gid('sreps-'+x).classList.toggle('on',x===v));}
-function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));}
-function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));}
-function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);}
-function saveSettings(){
-  CFG.name=gid('set-name').value.trim()||CFG.name;
-  CFG.bw=parseFloat(gid('set-bw').value)||CFG.bw;
-  CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;
-  CFG.bf=parseFloat(gid('set-bf').value)||null;
-  saveCFG();accentColor();refreshHome();ss('home');
-}
-function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();location.reload();}
-
-// ═══ FEEDBACK ═══
-let fbType='';
-function setFBType(t){fbType=t;['Bug report','Feature request','General feedback'].forEach(x=>{const id='fb-'+x.split(' ')[0].toLowerCase();const el=gid(id);if(el)el.classList.toggle('on',x===t);});}
-
-  const subj=gid('fb-subject').value.trim();
-  const msg=gid('fb-message').value.trim();
-  if(!subj||!msg){alert('Please fill in subject and message');return;}
-  const btn=gid('fb-send-btn');
-  btn.disabled=true;btn.textContent='Sending...';
-  const splitName=SPLITS.find(s=>s.id===CFG.split)?.name||CFG.split;
-  try{
-    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-      feedback_type:fbType,subject:subj,message:msg,
-      from_name:CFG.name||'GainPath User',
-      reply_to:gid('fb-email').value.trim()||'no-reply@gainpath.app',
-      user_name:CFG.name,user_sex:CFG.sex,user_split:splitName,user_exp:CFG.exp
-    });
-    gid('fb-status').style.color='#0F6E56';
-    gid('fb-status').textContent='\u2713 Feedback sent! Thank you.';
-    gid('fb-subject').value='';gid('fb-message').value='';gid('fb-email').value='';fbType='';
-    ['bug','feat','gen'].forEach(x=>{const el=gid('fb-'+x);if(el)el.classList.remove('on');});
-  }catch(e){
-    gid('fb-status').style.color='#E24B4A';
-    gid('fb-status').textContent='Failed to send. Please try again.';
-  }
-  btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
-}
-
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
 function setUnit(v){
   OB.unit=v;
@@ -1027,37 +760,48 @@ function renderSplitOpts(containerId,selectedId,onSelect){
   });
 }
 
+function obDots(){
+  const el=gid('ob-dots');el.innerHTML='';
+  for(let i=1;i<=OB_STEPS;i++){
+    const d=document.createElement('div');
+    d.className='ob-dot'+(i<=OB.step?' on':'');
+    el.appendChild(d);
+  }
+}
+
 function obNext(step){
   if(step===1){const name=gid('ob-name').value.trim();if(!name){alert('Please enter your name');return;}if(!OB.sex){alert('Please select your sex');return;}OB.name=name;}
   if(step===2){const bw=parseFloat(gid('ob-bw').value);const ht=parseFloat(gid('ob-ht').value);if(!bw||bw<30){alert('Please enter a valid body weight');return;}if(!ht||ht<100){alert('Please enter a valid height');return;}OB.bw=bw;OB.ht=ht;OB.bf=parseFloat(gid('ob-bf').value)||null;}
   if(step===3){OB.keyLifts={squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}};}
-  if(step===4){if(!OB.exp){alert('Please select experience level');return;}if(!OB.goal){alert('Please select a fitness goal');return;}}
-  if(step===5){if(!OB.freq){alert('Please select training frequency');return;}}
-  if(step===6){
-    if(!OB.split){alert('Please select a split');return;}
-    const sugId=SPLIT_FREQ[OB.freq]||'pplul';
-    gid('ob-split-suggest').textContent=OB.freq?'Based on '+OB.freq+' days/week — suggested split is highlighted':'Choose your training split';
-    renderSplitOpts('split-opts',OB.split||sugId,null);
-    if(!OB.split)OB.split=sugId;
-  }
+  if(step===4){if(!OB.exp){alert('Please select your experience level');return;}if(!OB.goal){alert('Please select a fitness goal');return;}}
+  if(step===5){if(!OB.freq){alert('Please select how many days per week you plan to train');return;}}
+  if(step===6){if(!OB.split){alert('Please select a training split');return;}}
   if(step===8){if(!OB.last){alert('Please select when you last worked out');return;}}
-  if(step===9){updateObSummary();}
+  if(step===9){if(!OB.sw){alert('Please choose how starting weights should be set');return;}}
   gid('ob-'+step).classList.remove('active');
   OB.step=step+1;
   gid('ob-'+OB.step).classList.add('active');
   obDots();
+  if(OB.step===6){
+    const sugId=SPLIT_FREQ[OB.freq]||'pplul';
+    if(!OB.split)OB.split=sugId;
+    const sugName=(SPLITS.find(s=>s.id===sugId)||{name:sugId}).name;
+    gid('ob-split-suggest').textContent='Based on '+OB.freq+' days/week, we suggest: '+sugName;
+    renderSplitOpts('split-opts',OB.split,null);
+  }
+  if(OB.step===9){updateObSummary();}
 }
 function obBack(step){gid('ob-'+step).classList.remove('active');OB.step=step-1;gid('ob-'+OB.step).classList.add('active');obDots();}
 function updateObSummary(){
-  const splitName=SPLITS.find(s=>s.id===OB.split)?.name||OB.split;
+  const splitName=(SPLITS.find(s=>s.id===OB.split)||{name:OB.split}).name;
   const goalMap={definition:'Muscle definition',strength:'Strength',general:'General fitness'};
   const expMap={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
   const lastMap={'today':'Today','1-2days':'1-2 days ago','3-7days':'3-7 days ago','1-2weeks':'1-2 weeks ago','1month':'1+ month ago','never':'Never / just starting'};
-  gid('ob-summary').innerHTML='\u{1F464} <strong>'+OB.name+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>\u{1F3AF} '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>\u{1F5D3}\uFE0F '+splitName+' \u00b7 '+OB.freq+' days/week<br>\u{1F504} '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>\u{1F321}\uFE0F Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696\uFE0F Starting weights: '+(OB.sw==='ai'?'AI estimate':'Manual entry');
+  gid('ob-summary').innerHTML='👤 <strong>'+OB.name+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'AI estimate':'Manual entry');
 }
 function obFinish(){
   if(!OB.sw){alert('Please select a starting weight method');return;}
-  CFG={...CFG,name:OB.name,sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true};
+  CFG=Object.assign({},CFG,{name:OB.name,sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true});
   saveCFG();accentColor();refreshHome();ss('home');
 }
 
@@ -1228,9 +972,9 @@ function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-
 function adj(d){ST.rs=Math.max(0,ST.rs+d);updT();}
 function skip(){clearInterval(ST.rt);ss('wo');renderEx();}
 async function aiFB(ex,done,next,si){
-  const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?hist[0].exercises?.find(e=>e.name===ex.name):null;
+  const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
   const isBW=ex.note==='bodyweight';const wu=isBW?'bodyweight':done.w+CFG.unit;
-  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\nNext set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'+(le?'Last session: '+le.sets?.filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) Weight for next set. Plain text only.';
+  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\nNext set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) Weight for next set. Plain text only.';
   try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'Assessment unavailable.';const el=gid('r-fb');if(el)el.textContent=txt;}catch(e){const el=gid('r-fb');if(el)el.textContent='Assessment unavailable.';}
 }
 function prevEx(){if(ST.exi>0){ST.exi--;clearInterval(ST.rt);ss('wo');renderEx();}}
@@ -1245,10 +989,10 @@ async function submitExFeel(feel){
   ST.sd[ST.exi].exFeel=feel;
   if(feel){
     const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets.filter(s=>s.done&&s.t!=='w');
-    const isBW=ex.note==='bodyweight';const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?hist[0].exercises?.find(e=>e.name===ex.name):null;
+    const isBW=ex.note==='bodyweight';const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
     const setsStr=sets.map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', ');
     const feelMap={easy:'too easy',good:'just right',hard:'hard',max:'too much'};
-    const prompt='Exercise: '+ex.name+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+'.\nToday: '+setsStr+'. Feel: '+feelMap[feel]+'.\n'+(le?'Last: '+le.sets?.filter(s=>s.done&&s.t!=='w').map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nONE line: recommended weight next session and why (max 15 words). Plain text.';
+    const prompt='Exercise: '+ex.name+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+'.\nToday: '+setsStr+'. Feel: '+feelMap[feel]+'.\n'+(le?'Last: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nONE line: recommended weight next session and why (max 15 words). Plain text.';
     const aiEl=gid('ef-ai');aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Thinking...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
     try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'';aiEl.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';await new Promise(r=>setTimeout(r,2500));}catch(e){aiEl.style.display='none';}
   }
@@ -1270,14 +1014,14 @@ async function submitFeel(feel){
   ss('sum');
   const prev=ST.history.length>=2?ST.history[ST.history.length-2]:null;
   const exCtx=ST.sd.map(item=>{const sets=item.sets.filter(s=>s.done&&s.t!=='w');const isBW=item.ex.note==='bodyweight';const feelStr=item.exFeel?' [felt: '+item.exFeel+']':'';return item.ex.name+': '+sets.map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', ')+feelStr;}).join('\n');
-  const prompt='Next-session recs for '+rec.dayName+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'. Overall feel: '+feel+'. Today:\n'+exCtx+'\n'+(prev&&prev.day===ST.day?'Previous: '+prev.exercises?.map(e=>e.name+': '+e.sets?.filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', ')).join(' | '):'First session.')+'\nRules: easy=increase, good=keep or +2.5, hard=keep, max=decrease. One line per exercise: "Name: Xkg - note". Plain text.';
+  const prompt='Next-session recs for '+rec.dayName+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'. Overall feel: '+feel+'. Today:\n'+exCtx+'\n'+(prev&&prev.day===ST.day?'Previous: '+(prev.exercises||[]).map(e=>e.name+': '+(e.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', ')).join(' | '):'First session.')+'\nRules: easy=increase, good=keep or +2.5, hard=keep, max=decrease. One line per exercise: "Name: Xkg - note". Plain text.';
   try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'';rcEl.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');}catch(e){rcEl.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">Recommendations unavailable.</div>';}
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
 function initChart(){const sel=gid('ch-sel');if(!sel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});drawChart();}
 function drawChart(){
   const name=gid('ch-sel').value,empty=gid('ch-empty'),canvas=gid('ch-cv');
-  const pts=[];ST.history.forEach(h=>{const ex=h.exercises?.find(e=>e.name===name);if(ex){const ws=ex.sets?.filter(s=>s.done&&s.w>0);if(ws&&ws.length)pts.push({date:h.date,w:Math.max(...ws.map(s=>s.w))});}});
+  const pts=[];ST.history.forEach(h=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(ex){const ws=(ex.sets||[]).filter(s=>s.done&&s.w>0);if(ws&&ws.length)pts.push({date:h.date,w:Math.max(...ws.map(s=>s.w))});}});
   if(ST.chart){ST.chart.destroy();ST.chart=null;}
   if(!pts.length){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
@@ -1316,7 +1060,7 @@ async function genPDF(){
   }y+=(row+1)*cH+10;
   const dt={};sessions.forEach(h=>{dt[h.day]=(dt[h.day]||0)+1;});const dte=Object.entries(dt);
   if(dte.length){doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Sessions by type',pd,y);y+=6;const maxV=Math.max(...dte.map(([,v])=>v)),bmH=36,bW2=20,bG=8,totalW=dte.length*(bW2+bG)-bG;let bx=pd+(cW-totalW)/2;dte.forEach(([k,cnt])=>{const bh=Math.max(4,(cnt/maxV)*bmH),rgb=hRGB(DC[k]||'#185FA5');doc.setFillColor(rgb[0],rgb[1],rgb[2]);doc.roundedRect(bx,y+bmH-bh,bW2,bh,2,2,'F');doc.setTextColor(rgb[0],rgb[1],rgb[2]);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(String(cnt),bx+bW2/2,y+bmH-bh-2,{align:'center'});doc.setTextColor(80,90,110);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(getDayName(k).slice(0,5),bx+bW2/2,y+bmH+5,{align:'center'});bx+=bW2+bG;});y+=bmH+14;}
-  const gains=[];allExNames().forEach(name=>{const ms2=sessions.filter(h=>h.exercises?.find(e=>e.name===name&&e.sets?.some(s=>s.done&&s.w>0)));if(ms2.length>=2){const f=ms2[0].exercises?.find(e=>e.name===name),l=ms2[ms2.length-1].exercises?.find(e=>e.name===name);if(f&&l){const fw=Math.max(...f.sets.filter(s=>s.done&&s.w>0).map(s=>s.w)),lw=Math.max(...l.sets.filter(s=>s.done&&s.w>0).map(s=>s.w));if(lw>fw)gains.push({name,from:fw,to:lw,diff:+(lw-fw).toFixed(1)});}}});
+  const gains=[];allExNames().forEach(name=>{const ms2=sessions.filter(h=>(h.exercises||[]).find(e=>e.name===name&&(e.sets||[]).some(s=>s.done&&s.w>0)));if(ms2.length>=2){const f=(ms2[0].exercises||[]).find(e=>e.name===name),l=(ms2[ms2.length-1].exercises||[]).find(e=>e.name===name);if(f&&l){const fw=Math.max(...f.sets.filter(s=>s.done&&s.w>0).map(s=>s.w)),lw=Math.max(...l.sets.filter(s=>s.done&&s.w>0).map(s=>s.w));if(lw>fw)gains.push({name,from:fw,to:lw,diff:+(lw-fw).toFixed(1)});}}});
   if(gains.length){if(y>220){doc.addPage();y=pd;}doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Strength gains this month',pd,y);y+=6;gains.sort((a,b)=>b.diff-a.diff).slice(0,8).forEach(g=>{doc.setFillColor(234,243,222);doc.roundedRect(pd,y,cW,8,2,2,'F');doc.setTextColor(39,80,10);doc.setFontSize(8.5);doc.setFont('helvetica','bold');const lbl=g.name.length>32?g.name.slice(0,30)+'...':g.name;doc.text(lbl,pd+3,y+5.5);doc.setTextColor(15,110,86);doc.text('+'+g.diff+' '+CFG.unit+'  ('+g.from+'->'+g.to+' '+CFG.unit+')',W-pd-3,y+5.5,{align:'right'});y+=10;});y+=4;}
   if(prTM.length){if(y>235){doc.addPage();y=pd;}doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('New personal records',pd,y);y+=6;prTM.forEach(([name,pr])=>{doc.setFillColor(238,237,254);doc.roundedRect(pd,y,cW,8,2,2,'F');doc.setTextColor(60,52,137);doc.setFontSize(8.5);doc.setFont('helvetica','bold');const lbl=name.length>34?name.slice(0,32)+'...':name;doc.text('* '+lbl,pd+3,y+5.5);doc.setFont('helvetica','normal');doc.text((pr.w>0?pr.w+CFG.unit:'BW')+' x '+pr.r+' reps',W-pd-3,y+5.5,{align:'right'});y+=10;});}
   doc.setDrawColor(220,225,235);doc.setLineWidth(0.3);doc.line(pd,285,W-pd,285);doc.setFontSize(8);doc.setTextColor(160,165,180);doc.setFont('helvetica','normal');doc.text('GainPath Workout Tracker - '+mName+' '+year,W/2,289,{align:'center'});
@@ -1324,6 +1068,38 @@ async function genPDF(){
 }
 function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,exported:new Date().toISOString(),version:'2.0'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup-'+dkey(new Date())+'.json';a.click();URL.revokeObjectURL(url);gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}
 function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.cfg)CFG=Object.assign(CFG,data.cfg);if(data.history)ST.history=data.history;if(data.prs)ST.prs=data.prs;if(data.mw)ST.mw=data.mw;saveCFG();saveData();accentColor();refreshHome();gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
+
+let fbType='';
+function setFBType(t){
+  fbType=t;
+  const map={'Bug report':'bug','Feature request':'feat','General feedback':'gen'};
+  ['bug','feat','gen'].forEach(x=>{const el=gid('fb-'+x);if(el)el.classList.toggle('on',map[t]===x);});
+}
+async function sendFeedback(){
+  if(!fbType){alert('Please select a feedback type');return;}
+  const subj=gid('fb-subject').value.trim();
+  const msg=gid('fb-message').value.trim();
+  if(!subj||!msg){alert('Please fill in subject and message');return;}
+  const btn=gid('fb-send-btn');
+  btn.disabled=true;btn.textContent='Sending...';
+  const splitName=(SPLITS.find(s=>s.id===CFG.split)||{name:CFG.split}).name;
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+      feedback_type:fbType,subject:subj,message:msg,
+      from_name:CFG.name||'GainPath User',
+      reply_to:gid('fb-email').value.trim()||'no-reply@gainpath.app',
+      user_name:CFG.name,user_sex:CFG.sex,user_split:splitName,user_exp:CFG.exp
+    });
+    gid('fb-status').style.color='#0F6E56';
+    gid('fb-status').textContent='\u2713 Feedback sent! Thank you.';
+    gid('fb-subject').value='';gid('fb-message').value='';gid('fb-email').value='';
+    fbType='';['bug','feat','gen'].forEach(x=>{const el=gid('fb-'+x);if(el)el.classList.remove('on');});
+  }catch(e){
+    gid('fb-status').style.color='#E24B4A';
+    gid('fb-status').textContent='Failed to send. Please try again.';
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
+}
 
 load();OB.step=1;obDots();
 if(CFG.setup){accentColor();refreshHome();ss('home');}else{ss('ob');}
