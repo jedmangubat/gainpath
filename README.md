@@ -159,6 +159,14 @@ Found a bug or have a feature idea? Use the feedback form inside the app (Settin
 
 ---
 
+## Support
+
+GainPath is free, ad-free, and has no subscriptions. If it's been useful to you, consider supporting development:
+
+[☕ Donate via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com)
+
+---
+
 ## License
 
 MIT — free to use, modify, and share.

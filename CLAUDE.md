@@ -1,0 +1,50 @@
+# GainPath — Project Instructions
+
+GainPath is a fitness tracking web app. The app itself is a single `index.html`
+file with no build process and no runtime dependencies — no bundler, no
+framework. Everything (markup, CSS, JS) lives in that one file, and that's
+deliberate; don't introduce a build step for the app to consume `package.json`.
+
+There is a dev-only `package.json` (Playwright + ESLint, see below) used purely
+for local tooling — it never touches what ships in `index.html`.
+
+## Standing workflow rules
+
+- **Every code change must include a corresponding `CHANGELOG.md` entry** under
+  today's date, describing what changed and why.
+- **Write clear, descriptive git commit messages.** Never generic ones like
+  "update files" or "fix stuff" — explain what changed and why.
+- **After committing, tell the user explicitly:**
+  "Ready to push - please run 'git push origin main' from your terminal"
+  Never attempt to push automatically — this sandboxed session cannot
+  authenticate with GitHub.
+- **Exercise images** live in `images/exercises/`, named lowercase with hyphens
+  matching the exact exercise `name` field in the `EX` object in `index.html`
+  (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
+- **Keep this file current.** Whenever a standing convention changes, or a new
+  one is established (e.g. a new file location rule, a new workflow step), update
+  this CLAUDE.md to reflect it. Don't update it for one-off task details — only
+  for conventions meant to persist across future sessions.
+
+## Dev tooling (optional, dev-only — `npm install` once to use)
+
+- **`npm run visual-check`** — starts a static server, loads `index.html` in
+  headless Chromium (Playwright), screenshots the onboarding and home screens,
+  and fails if anything throws a console/page error. Screenshots land in
+  `scripts/.visual-check/` (gitignored). Use this after any UI change instead of
+  ad hoc one-off browser scripts.
+- **`npm run lint`** — extracts the inline `<script>` block from `index.html`
+  and runs ESLint (`eslint.config.js`) against it, mapping line numbers back to
+  `index.html`. Scoped to bug-catching rules only (`no-undef`, `no-unused-vars`,
+  etc.) — deliberately no stylistic/formatting rules, since the inline script's
+  dense, semicolon-chained style is intentional and Prettier would rewrite the
+  whole file. Top-level functions are only ever called from inline `onclick=""`
+  attributes, so don't be surprised they look "unused" in isolation — the config
+  already accounts for that.
+- **`scripts/process_brand_image.py`** — turns a square source logo/icon (e.g. a
+  fresh export from an image generator) into the sizes referenced from `<head>`
+  and the app chrome (`images/branding/logo.png`, `favicon-16.png`,
+  `favicon-32.png`, `apple-touch-icon.png`), stripping the generator's solid
+  canvas color to transparent and re-flattening onto an opaque brand background
+  for the alpha-intolerant `apple-touch-icon`. Requires Pillow
+  (`pip3 install -r scripts/requirements.txt`).

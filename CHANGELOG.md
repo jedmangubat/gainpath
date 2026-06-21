@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Dev-only tooling** (doesn't affect the shipped app, which stays a single `index.html` with no build step):
+  - `npm run visual-check` — headless-browser smoke check (Playwright) that loads the onboarding and home screens and fails on any console/page error, replacing one-off ad hoc browser scripts.
+  - `npm run lint` — ESLint over the inline `<script>` block, scoped to bug-catching rules (`no-undef`, `no-unused-vars`, etc.) only; deliberately excludes formatting rules since the dense inline-script style is intentional.
+  - `scripts/process_brand_image.py` — reusable Pillow script that turns a square source logo into the full `images/branding/` icon set (transparent-corner logo/favicons + an opaque `apple-touch-icon`), generalizing the one-off processing used for the new logo below.
+  - Added a dev-only `package.json`/`package-lock.json` (Playwright, ESLint) and `scripts/requirements.txt` (Pillow) for these tools; updated `.gitignore` for `node_modules/` and the visual-check screenshot output.
+- **README: Support section** linking a PayPal donate button, since GainPath has no subscriptions/ads to fund development.
+
 ### Changed
 - **Replaced the sex-based blue/pink `--accent` color system with the brand green/amber palette as the app's single primary theme.** Following up on the logo/branding work below, after seeing the chrome-only version live we decided to broaden brand green to every interactive element (buttons, tabs, toggles, focus states, progress bars) for all users, and to use brand amber specifically as a "highlight" color for PRs, streaks, and the suggested-next-day badge — replacing those elements' previous blue/purple/gray styling.
   - `--accent` is now a constant brand green (`#153F29`) regardless of `CFG.sex`; `accentColor()`, the monthly PDF report header, and the progress chart line color all updated to match.

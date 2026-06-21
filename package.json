@@ -1,0 +1,14 @@
+{
+  "name": "gainpath-dev-tools",
+  "private": true,
+  "description": "Dev-only tooling for GainPath (visual smoke checks, linting). The app itself stays a single index.html with no build step.",
+  "scripts": {
+    "visual-check": "node scripts/visual_check.mjs",
+    "lint": "node scripts/lint_html.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "playwright": "^1.61.0"
+  }
+}
