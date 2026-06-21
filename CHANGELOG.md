@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **GainPath branding/logo.** Added the app's new logo (dumbbell + upward arrow mark in brand green/amber) across the app.
+  - `images/branding/logo.png`, `favicon-16.png`, `favicon-32.png`, and `apple-touch-icon.png` generated from the source artwork, with the artwork's black corner padding made transparent (and re-flattened onto the brand cream background for the alpha-intolerant `apple-touch-icon`).
+  - Favicon and `apple-touch-icon` `<link>` tags added to `<head>`, plus a `theme-color` meta tag, so the logo now shows as the icon when the app is added to an iOS home screen (previously a generic page screenshot was used).
+  - Logo displayed next to the "GainPath" title on the onboarding welcome screen and the home screen header.
+  - Introduced `--brand-green`/`--brand-amber` CSS variables and recolored the "GainPath" title text in those two header areas to brand green. The existing sex-based `--accent` system (blue/pink, used for buttons, tabs, badges, progress bars, etc.) is intentionally left untouched — brand colors are chrome-only and don't replace per-user accent personalization.
+- **Home-screen-install prompt, backup nudge, and restore-from-backup shortcut**, addressing the risk that iOS Safari purges `localStorage` (and all workout data) after 7 days of site inactivity if the app isn't installed.
+  - A dismissible banner now appears on the home screen when the app is running in regular Safari (not standalone) explaining that adding it to the Home Screen prevents the 7-day auto-erase, with an inline "How to add" step-by-step (iOS has no programmatic install prompt, so this is instructional). Dismissing it via "Maybe later" persists via `localStorage` and won't reappear.
+  - Once installed (or once the install banner is dismissed), a periodic "Back up your data" nudge appears in the same banner slot for users with at least one completed workout, with a one-tap "Back up now" button wired to the existing `exportData()`. It resurfaces every 7 days, tracked via the most recent of the last export date or last time the nudge was shown/dismissed — never on every single load.
+  - The onboarding welcome screen now has a "Restore from backup" link beneath the usual "Continue" flow, wired to the existing `importData()`, so recovering from a wipe is the first thing a returning user sees instead of something buried in Settings.
+
 ### Fixed
 - **Workout state no longer resets when the app is backgrounded or reloaded mid-workout.** Previously, all workout state (current day, exercise index, set data, elapsed time, rest timer) lived only in JavaScript memory. iOS Safari aggressively suspends/reloads backgrounded tabs, which wiped that memory and forced users back to the home screen, losing all progress on the current session.
   - The full workout state is now persisted to `localStorage` after every set completion, exercise change, and screen transition.

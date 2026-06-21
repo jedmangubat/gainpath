@@ -6,6 +6,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/png" sizes="32x32" href="images/branding/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/branding/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/branding/apple-touch-icon.png">
+<meta name="theme-color" content="#153F29">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GainPath">
@@ -20,6 +24,7 @@
   --txt:#111;--txt2:#666;--txt3:#aaa;
   --bdr:#e0e0e0;
   --accent:#185FA5;
+  --brand-green:#153F29;--brand-amber:#ED8913;
   --radius:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent}
@@ -90,9 +95,12 @@ textarea{resize:vertical;min-height:100px}
 
 <!-- ONBOARDING -->
 <div id="s-ob" class="screen active">
-  <div style="margin-bottom:20px">
-    <div style="font-size:28px;font-weight:700;color:var(--txt)">GainPath</div>
-    <div style="font-size:14px;color:var(--txt2);margin-top:4px">AI-powered workout tracker</div>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <img src="images/branding/logo.png" alt="GainPath logo" width="48" height="48" style="width:48px;height:48px;flex-shrink:0">
+    <div>
+      <div style="font-size:28px;font-weight:700;color:var(--brand-green)">GainPath</div>
+      <div style="font-size:14px;color:var(--txt2);margin-top:4px">AI-powered workout tracker</div>
+    </div>
   </div>
   <div class="ob-progress" id="ob-dots"></div>
 
@@ -107,6 +115,8 @@ textarea{resize:vertical;min-height:100px}
       <button class="opt-btn" id="sex-f" onclick="setSex('female')">♀ Female</button>
     </div>
     <button class="bp" style="width:100%;margin-top:8px;justify-content:center" onclick="obNext(1)">Continue</button>
+    <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--txt2)">Already used GainPath before? <a href="#" style="color:var(--brand-green);font-weight:600;text-decoration:none" onclick="gid('ob-import-file').click();return false;">Restore from backup</a></div>
+    <input type="file" id="ob-import-file" accept=".json" style="display:none" onchange="importData(this)">
   </div>
 
   <div class="ob-step" id="ob-2">
@@ -276,9 +286,12 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-home" class="screen">
   <div id="prt-h"></div>
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
-    <div>
-      <div style="font-size:22px;font-weight:700;color:var(--txt)">GainPath</div>
-      <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="h-gr"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="images/branding/logo.png" alt="GainPath logo" width="36" height="36" style="width:36px;height:36px;flex-shrink:0">
+      <div>
+        <div style="font-size:22px;font-weight:700;color:var(--brand-green)">GainPath</div>
+        <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="h-gr"></div>
+      </div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div style="display:flex;align-items:center;gap:6px;background:var(--bg2);padding:7px 12px;border-radius:20px">
@@ -908,7 +921,7 @@ function goHome(){
   clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;refreshHome();ss('home');
 }
 function refreshHome(){
-  accentColor();gid('h-str').textContent=streak();
+  accentColor();renderHomeBanners();gid('h-str').textContent=streak();
   const sug=suggested();const hr=new Date().getHours();
   const tod=hr<12?'morning':hr<17?'afternoon':'evening';
   if(ST.history.length){const last=getDayName(ST.history[ST.history.length-1].day);gid('h-gr').textContent='Good '+tod+', '+CFG.name+'! Last: '+last;gid('h-sg').innerHTML='Suggested next: <strong style="color:var(--accent)">'+getDayName(sug)+'</strong>';}
@@ -1127,8 +1140,33 @@ async function genPDF(){
   doc.setDrawColor(220,225,235);doc.setLineWidth(0.3);doc.line(pd,285,W-pd,285);doc.setFontSize(8);doc.setTextColor(160,165,180);doc.setFont('helvetica','normal');doc.text('GainPath Workout Tracker - '+mName+' '+year,W/2,289,{align:'center'});
   doc.save('gainpath-'+mName.toLowerCase()+'-'+year+'.pdf');st.textContent='Report saved!';setTimeout(()=>{st.textContent='';},5000);
 }
-function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,exported:new Date().toISOString(),version:'2.0'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup-'+dkey(new Date())+'.json';a.click();URL.revokeObjectURL(url);gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}
-function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.cfg)CFG=Object.assign(CFG,data.cfg);if(data.history)ST.history=data.history;if(data.prs)ST.prs=data.prs;if(data.mw)ST.mw=data.mw;saveCFG();saveData();accentColor();refreshHome();gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
+function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,exported:new Date().toISOString(),version:'2.0'};localStorage.setItem('gp_last_export',data.exported);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup-'+dkey(new Date())+'.json';a.click();URL.revokeObjectURL(url);gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);renderHomeBanners();}
+function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.cfg)CFG=Object.assign(CFG,data.cfg);if(data.history)ST.history=data.history;if(data.prs)ST.prs=data.prs;if(data.mw)ST.mw=data.mw;saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
+function isStandalone(){return navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
+function renderHomeBanners(){
+  const el=gid('prt-h');if(!el)return;
+  if(!isStandalone()&&localStorage.getItem('gp_a2hs_dismissed')!=='true'){
+    el.innerHTML='<div class="prt" style="background:#EAF3DE;border:1px solid #97C459;color:#27500A;display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-home-2" aria-hidden="true" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">Keep GainPath handy</div><div style="font-size:12px;margin-top:2px;line-height:1.5">Install it on your Home Screen for one-tap access — and to make sure Safari never quietly clears your saved workouts.</div><div id="a2hs-steps" style="display:none;font-size:12px;margin-top:8px;line-height:1.6">1. Tap <i class="ti ti-upload" aria-hidden="true"></i> Share in Safari’s toolbar<br>2. Scroll down and tap “Add to Home Screen”<br>3. Tap “Add”</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:12px;padding:6px 12px" onclick="toggleA2HSSteps()">How to add</button><button class="bg" style="font-size:12px;color:#27500A" onclick="dismissA2HS()">Maybe later</button></div></div></div></div>';
+    return;
+  }
+  if(checkBackupNudge()){
+    el.innerHTML='<div class="prt" style="background:#FAEEDA;border:1px solid #E8C97E;color:#633806;display:flex;align-items:center;justify-content:space-between;gap:10px"><div style="display:flex;align-items:center;gap:8px;font-size:13px"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:18px;flex-shrink:0"></i>Back up your data to keep it safe.</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="bp" style="padding:6px 12px;font-size:12px" onclick="backupNudgeExport()">Back up now</button><button class="bg" style="padding:6px 4px;font-size:12px;color:#633806" onclick="dismissBackupNudge()"><i class="ti ti-x" aria-hidden="true"></i></button></div></div>';
+    localStorage.setItem('gp_backup_nudge_seen',new Date().toISOString());
+    return;
+  }
+  el.innerHTML='';
+}
+function toggleA2HSSteps(){const s=gid('a2hs-steps');if(s)s.style.display=s.style.display==='none'?'block':'none';}
+function dismissA2HS(){localStorage.setItem('gp_a2hs_dismissed','true');renderHomeBanners();}
+function checkBackupNudge(){
+  if(!ST.history.length)return false;
+  const exp=localStorage.getItem('gp_last_export'),seen=localStorage.getItem('gp_backup_nudge_seen');
+  const ref=Math.max(exp?new Date(exp).getTime():0,seen?new Date(seen).getTime():0);
+  if(!ref)return true;
+  return (Date.now()-ref)/86400000>=7;
+}
+function dismissBackupNudge(){localStorage.setItem('gp_backup_nudge_seen',new Date().toISOString());gid('prt-h').innerHTML='';}
+function backupNudgeExport(){exportData();gid('prt-h').innerHTML='';}
 
 let fbType='';
 function setFBType(t){
