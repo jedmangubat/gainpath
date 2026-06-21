@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Replaced the sex-based blue/pink `--accent` color system with the brand green/amber palette as the app's single primary theme.** Following up on the logo/branding work below, after seeing the chrome-only version live we decided to broaden brand green to every interactive element (buttons, tabs, toggles, focus states, progress bars) for all users, and to use brand amber specifically as a "highlight" color for PRs, streaks, and the suggested-next-day badge — replacing those elements' previous blue/purple/gray styling.
+  - `--accent` is now a constant brand green (`#153F29`) regardless of `CFG.sex`; `accentColor()`, the monthly PDF report header, and the progress chart line color all updated to match.
+  - The "Suggested" day badge/border, "Suggested next" label, all-time PR values, the "New PR!" toast, and the home screen streak pill now use the brand amber highlight pairing (`#FAEEDA`/`#633806`) instead of blue/purple/gray.
+  - The monthly PDF report's "New PRs" and "Streak" stat tiles and "New personal records" rows now use amber instead of purple, and the header band uses brand green instead of the old sex-based blue/pink.
+  - `CFG.sex` is unchanged and still used for choosing male/female exercise variants — only its effect on color was removed.
+
 ### Added
 - **GainPath branding/logo.** Added the app's new logo (dumbbell + upward arrow mark in brand green/amber) across the app.
   - `images/branding/logo.png`, `favicon-16.png`, `favicon-32.png`, and `apple-touch-icon.png` generated from the source artwork, with the artwork's black corner padding made transparent (and re-flattened onto the brand cream background for the alpha-intolerant `apple-touch-icon`).
