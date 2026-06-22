@@ -6,7 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Rest timer no longer gets stuck at 0 — it now auto-advances** (GitHub issue #1). Previously the countdown just stopped at 0 and the only way back to the workout screen was tapping "Skip rest"; now reaching 0 automatically returns to the workout screen, matching what "Skip rest" already did.
+- **Rest timer now also appears after the last set of an exercise.** Previously `dset()` skipped the rest timer entirely on an exercise's final set; now it shows a "rest before next exercise" countdown, and when that countdown finishes it automatically triggers the same effort-rating ("Next exercise"/"Finish workout") flow as the manual button — it no longer dumps you back on the workout screen.
+- **Rest timer now plays a sound** at 5 seconds remaining and when it ends, via a Web Audio API tone (no asset files, no new dependency) — addressing the issue's request for audio feedback now that auto-advance means you might not be looking at the screen when it ends.
+- **Export backup now always saves as `gainpath-backup.json`** instead of `gainpath-backup-<date>.json`. The dated filename meant every export created a new file rather than overwriting the previous backup, defeating the "tap Export, get the latest backup" workflow; the browser's own download/duplicate-file handling now determines overwrite-vs-rename behavior, but at least repeated exports stop generating an ever-growing pile of differently-named files.
+
 ### Added
+- **Pause/resume control for the workout elapsed-time clock.** A new button next to the elapsed-time display on the workout screen freezes/resumes `ST.es` (e.g. for an interruption mid-session) without losing or jumping the recorded time, and the paused state persists across a backgrounded/reloaded session like the rest of in-progress workout state.
+
 - **Dev-only tooling** (doesn't affect the shipped app, which stays a single `index.html` with no build step):
   - `npm run visual-check` — headless-browser smoke check (Playwright) that loads the onboarding and home screens and fails on any console/page error, replacing one-off ad hoc browser scripts.
   - `npm run lint` — ESLint over the inline `<script>` block, scoped to bug-catching rules (`no-undef`, `no-unused-vars`, etc.) only; deliberately excludes formatting rules since the dense inline-script style is intentional.

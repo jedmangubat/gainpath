@@ -415,7 +415,7 @@ textarea{resize:vertical;min-height:100px}
       <div style="font-size:16px;font-weight:700;color:var(--txt)" id="wo-tit"></div>
       <div style="font-size:12px;color:var(--txt2)" id="wo-pl"></div>
     </div>
-    <div style="font-size:12px;color:var(--txt2);background:var(--bg2);padding:5px 12px;border-radius:20px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span></div>
+    <div style="font-size:12px;color:var(--txt2);background:var(--bg2);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" style="background:none;border:none;padding:0;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
   </div>
   <div class="pbw"><div class="pb" id="wo-pb" style="width:0%"></div></div>
   <div id="ex-area"></div>
@@ -723,7 +723,7 @@ function getDayName(dayId){
 
 // ═══ STATE ═══
 let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null};
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,last:'',sw:'ai',step:1};
 const OB_STEPS=9;
 
@@ -734,7 +734,7 @@ function saveInProgress(){
   if(!ST.day)return;
   const activeEl=document.querySelector('.screen.active');
   const screen=activeEl?activeEl.id.replace('s-',''):'wo';
-  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,screen,ts:Date.now()};
+  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,screen,ts:Date.now()};
   try{localStorage.setItem('gp_wip',JSON.stringify(wip));}catch(e){}
 }
 function clearInProgress(){try{localStorage.removeItem('gp_wip');}catch(e){}}
@@ -745,9 +745,10 @@ function restoreInProgress(){
   ST.day=wip.day;ST.exi=wip.exi;ST.sd=wip.sd;ST.t0=wip.t0;ST.pendingRec=wip.pendingRec;
   ST.mwQueue=wip.mwQueue||[];ST.mwCurrent=wip.mwCurrent||null;
   ST.restEnd=wip.restEnd||null;ST.restInfo=wip.restInfo||null;ST.rFbHtml=wip.rFbHtml||null;ST.rNxHtml=wip.rNxHtml||null;
-  ST.es=Math.floor((Date.now()-ST.t0)/1000);
-  clearInterval(ST.et);
-  ST.et=setInterval(()=>{ST.es=Math.floor((Date.now()-ST.t0)/1000);const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);},1000);
+  ST.paused=wip.paused||false;
+  if(ST.paused){ST.es=wip.es||0;clearInterval(ST.et);ST.et=null;const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);}
+  else{ST.es=Math.floor((Date.now()-ST.t0)/1000);startEtInterval();}
+  updWoPauseBtn();
   gid('wo-tit').textContent=getDayName(ST.day);gid('prt-w').innerHTML='';
   const scr=wip.screen;
   if(scr==='mw'&&ST.mwCurrent){renderMWScreen();}
@@ -759,8 +760,7 @@ function restoreInProgress(){
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();
     gid('r-nx').innerHTML=ST.rNxHtml||'';
     gid('r-fb').innerHTML=ST.rFbHtml||'<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Resumed.</div>';
-    ss('rest');clearInterval(ST.rt);
-    ST.rt=setInterval(()=>{ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();if(ST.rs<=0)clearInterval(ST.rt);},1000);
+    ss('rest');startRestCountdown();
   }
   else if(scr==='feel'){ss('feel');}
   else{renderEx();ss('wo');}
@@ -771,6 +771,14 @@ function mkey(d){return d.toISOString().slice(0,7);}
 function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function gid(id){return document.getElementById(id);}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));gid('s-'+id).classList.add('active');}
+let _actx=null;
+function ensureAudio(){try{if(!_actx)_actx=new (window.AudioContext||window.webkitAudioContext)();if(_actx.state==='suspended')_actx.resume();}catch(e){}}
+function beep(freq,dur){if(!_actx)return;try{const osc=_actx.createOscillator();const gain=_actx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(0.0001,_actx.currentTime);gain.gain.exponentialRampToValueAtTime(0.3,_actx.currentTime+0.01);gain.gain.exponentialRampToValueAtTime(0.0001,_actx.currentTime+dur);osc.connect(gain);gain.connect(_actx.destination);osc.start();osc.stop(_actx.currentTime+dur);}catch(e){}}
+function startEtInterval(){clearInterval(ST.et);ST.et=setInterval(()=>{ST.es=Math.floor((Date.now()-ST.t0)/1000);const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);},1000);}
+function updWoPauseBtn(){const ic=gid('wo-pause-icon');if(ic)ic.className='ti '+(ST.paused?'ti-player-play':'ti-player-pause');const btn=gid('wo-pause-btn');if(btn)btn.setAttribute('aria-label',ST.paused?'Resume workout timer':'Pause workout timer');}
+function toggleWoPause(){if(ST.paused){ST.t0=Date.now()-ST.es*1000;ST.paused=false;startEtInterval();}else{ST.es=Math.floor((Date.now()-ST.t0)/1000);clearInterval(ST.et);ST.paused=true;}updWoPauseBtn();saveInProgress();}
+function startRestCountdown(){clearInterval(ST.rt);ST.rt=setInterval(()=>{ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();if(ST.rs===5)beep(880,.15);if(ST.rs<=0){clearInterval(ST.rt);beep(1320,.3);endRest();}},1000);}
+function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(isLastSet)askExFeel();else{ss('wo');renderEx();}}
 function accentColor(){document.documentElement.style.setProperty('--accent','#153F29');}
 
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
@@ -918,7 +926,7 @@ function goHome(){
     if(!confirm('End this workout? Your progress on this session will be lost.'))return;
     ST.day=null;clearInProgress();
   }
-  clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;refreshHome();ss('home');
+  clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;ST.paused=false;refreshHome();ss('home');
 }
 function refreshHome(){
   accentColor();renderHomeBanners();gid('h-str').textContent=streak();
@@ -966,8 +974,7 @@ function startDay(k){
     return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
   });
   ST.mwQueue=exWithWU.filter(ex=>ex.machine&&ST.mw[ex.name]===undefined).map(ex=>ex.name);
-  ST.es=0;ST.t0=Date.now();clearInterval(ST.et);
-  ST.et=setInterval(()=>{ST.es=Math.floor((Date.now()-ST.t0)/1000);const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);},1000);
+  ST.es=0;ST.t0=Date.now();ST.paused=false;startEtInterval();updWoPauseBtn();
   gid('wo-tit').textContent=getDayName(k);gid('prt-w').innerHTML='';
   if(ST.mwQueue.length){processMWQueue();}else{renderEx();ss('wo');saveInProgress();}
 }
@@ -1025,29 +1032,35 @@ function updSet(i,v){const mwBase=ST.sd[ST.exi].ex.machine&&ST.mw[ST.sd[ST.exi].
 function updRep(i,v){ST.sd[ST.exi].sets[i].r=parseInt(v)||1;}
 function chkPR(name,w,r){if(w===0)return false;const cur=ST.prs[name]||{w:0,r:0};if(w>cur.w||(w===cur.w&&r>cur.r)){ST.prs[name]={w,r,date:new Date().toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})};saveData();return true;}return false;}
 function showPR(name,w,r){const el=gid('prt-w');if(!el)return;el.innerHTML='<div class="prt" style="background:#FAEEDA;border:1px solid #E8C97E;color:#633806"><i class="ti ti-star" aria-hidden="true" style="font-size:18px"></i> New PR! '+name+' \u2014 '+(w>0?w+CFG.unit:'BW')+' \u00d7 '+r+' reps</div>';setTimeout(()=>{el.innerHTML='';},5000);}
-function dset(i){const item=ST.sd[ST.exi];const sets=item.sets;sets[i].done=true;const ex=item.ex;const s=sets[i];if(chkPR(ex.name,s.w,s.r))showPR(ex.name,s.w,s.r);renderEx();if(i<sets.length-1)startRest(ex,i,s,sets[i+1]);}
+function dset(i){const item=ST.sd[ST.exi];const sets=item.sets;sets[i].done=true;const ex=item.ex;const s=sets[i];if(chkPR(ex.name,s.w,s.r))showPR(ex.name,s.w,s.r);renderEx();startRest(ex,i,s,i<sets.length-1?sets[i+1]:null);}
 function startRest(ex,si,done,next){
-  gid('r-en').textContent=ex.name;gid('r-sl').textContent='Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before set '+(next.t==='w'?'W':si+2);
+  const isLastSet=!next;
+  gid('r-en').textContent=ex.name;
+  gid('r-sl').textContent=isLastSet?'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before next exercise':'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before set '+(next.t==='w'?'W':si+2);
   ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;updT();
-  ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next};
+  ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet};
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
-  const dispW=isBW?'Bodyweight':mwBase>0?(+(next.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':next.w+CFG.unit;
-  gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> '+next.r+' reps @ <strong>'+dispW+'</strong>'+(ex.note&&!isBW?' ('+ex.note+')':'');
+  if(isLastSet){
+    gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> '+(ST.exi>=ST.sd.length-1?'Finish workout':'Next exercise');
+  }else{
+    const dispW=isBW?'Bodyweight':mwBase>0?(+(next.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':next.w+CFG.unit;
+    gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> '+next.r+' reps @ <strong>'+dispW+'</strong>'+(ex.note&&!isBW?' ('+ex.note+')':'');
+  }
   ST.rNxHtml=gid('r-nx').innerHTML;
   gid('r-fb').innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Analysing...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
   ST.rFbHtml=gid('r-fb').innerHTML;
-  ss('rest');clearInterval(ST.rt);
-  ST.rt=setInterval(()=>{ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();if(ST.rs<=0)clearInterval(ST.rt);},1000);
+  ss('rest');ensureAudio();startRestCountdown();
   saveInProgress();
   aiFB(ex,done,next,si);
 }
 function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-cir');if(!c)return;c.style.borderColor=ST.rs<=10?'#E24B4A':ST.rs<=30?'#EF9F27':'var(--bdr)';}
 function adj(d){ST.restEnd=(ST.restEnd||Date.now())+d*1000;ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();saveInProgress();}
-function skip(){clearInterval(ST.rt);ST.restEnd=null;ST.restInfo=null;ss('wo');renderEx();}
+function skip(){clearInterval(ST.rt);endRest();}
 async function aiFB(ex,done,next,si){
   const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
   const isBW=ex.note==='bodyweight';const wu=isBW?'bodyweight':done.w+CFG.unit;
-  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\nNext set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) Weight for next set. Plain text only.';
+  const nextLine=next?('Next set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'):'This was the last set of the exercise.\n';
+  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\n'+nextLine+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) '+(next?'Weight for next set.':'Quick recovery tip before the next exercise.')+' Plain text only.';
   try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'Assessment unavailable.';const el=gid('r-fb');if(el)el.textContent=txt;}catch(e){const el=gid('r-fb');if(el)el.textContent='Assessment unavailable.';}
   const el2=gid('r-fb');ST.rFbHtml=el2?el2.innerHTML:null;saveInProgress();
 }
@@ -1140,7 +1153,7 @@ async function genPDF(){
   doc.setDrawColor(220,225,235);doc.setLineWidth(0.3);doc.line(pd,285,W-pd,285);doc.setFontSize(8);doc.setTextColor(160,165,180);doc.setFont('helvetica','normal');doc.text('GainPath Workout Tracker - '+mName+' '+year,W/2,289,{align:'center'});
   doc.save('gainpath-'+mName.toLowerCase()+'-'+year+'.pdf');st.textContent='Report saved!';setTimeout(()=>{st.textContent='';},5000);
 }
-function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,exported:new Date().toISOString(),version:'2.0'};localStorage.setItem('gp_last_export',data.exported);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup-'+dkey(new Date())+'.json';a.click();URL.revokeObjectURL(url);gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);renderHomeBanners();}
+function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,exported:new Date().toISOString(),version:'2.0'};localStorage.setItem('gp_last_export',data.exported);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup.json';a.click();URL.revokeObjectURL(url);gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);renderHomeBanners();}
 function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.cfg)CFG=Object.assign(CFG,data.cfg);if(data.history)ST.history=data.history;if(data.prs)ST.prs=data.prs;if(data.mw)ST.mw=data.mw;saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
 function isStandalone(){return navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
 function renderHomeBanners(){
