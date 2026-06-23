@@ -4,7 +4,7 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.1.2] - 2026-06-24
 
 ### Added
 - **README screenshots.** Added a 6-image screenshot grid (`images/screenshots/`) right under the intro: home/day-picker, the exercise day editor, live workout logging, the bodyweight weight-modifier + plank hold timer together, the weight-progression chart, and the all-time PR list — covering the features that are hard to picture from text alone. Generated with a throwaway Playwright script against seeded demo data (not checked in), screenshotting the `.app` element directly rather than the full viewport so each image is tightly cropped to its actual content.
