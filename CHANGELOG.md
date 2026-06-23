@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **README rewritten to reflect that exercises are no longer fixed per day.** The old "Male/Female workout plans" section listed exact exercises per split/day, which stopped being accurate once exercises became fully reorderable/swappable/deletable. Replaced with a "What each day hits" section describing the muscle groups each day targets (e.g. Push = Chest, Shoulders, Triceps), generated from the actual `EX` muscle-group tags rather than guessed from names, with a note that these are defaults you fully control. Also documented the exercise-customization, planned sets/reps/weight, bodyweight weight-modifier, and plank-timer features in the main Features list, none of which were mentioned there before.
+
 ### Fixed
 - **An in-progress exercise edit (reorder/swap/delete/planned targets), an open swap-picker screen, or an active plank hold could be lost if the app got backgrounded or killed before being saved/committed** — none of these were part of the persisted in-progress snapshot, unlike the rest of an active workout. All three now survive a reload/restore the same way the rest of a workout already does:
   - Opening the day editor — before *or* during a workout — now persists immediately, including swap-picker state (which body part/exercise list is showing) and which row's sets/reps/weight panel is expanded. Restoring drops you back into the same editor screen, mid-workout vs pre-workout context preserved.

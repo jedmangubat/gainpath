@@ -17,12 +17,21 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 - End-of-session AI weight recommendations for every exercise, factoring in RPE, session feel, and previous session data
 
 ### 🏋️ Training splits
-Five split types to choose from:
+Five split types to choose from — see "What each day hits" further down for the muscle groups each one targets:
 - **PPL / Upper-Lower** — Push, Pull, Legs, Upper, Lower (5-day)
 - **5-Day Bro Split** — Legs, Chest, Back, Shoulders, Arms (one muscle group per day)
 - **Alternating Legs/Push/Pull** — Legs A, Push, Legs B, Pull (rotating 4-day)
 - **Upper / Lower** — Upper, Lower A (Legs), Lower B (rotating)
-- **Full Body** — 9-exercise full-body session
+- **Full Body** — full-body session hitting every major muscle group
+
+### 🔀 Full control over each day's exercises
+Picking a day no longer locks you into a fixed exercise list — tap a day to open its editor first:
+- **Reorder** by dragging, **delete**, or **swap** an exercise (pick a body part, then a replacement from that part's pool) — by dragging the handle, tapping the swap/trash icons, or swiping a row (right to swap, left to delete)
+- Your changes become that day's new default automatically, so you don't have to redo them every time
+- Tap into an exercise to set its planned sets, reps, and weight before you start
+- Bodyweight exercises (push-ups, pull-ups, dips, plank) support an optional added weight (vest/belt) or assisted weight (band/machine) modifier instead of a flat "BW" label
+- Plank gets its own hold-duration stopwatch in place of a reps counter, with PRs tracked for longer holds
+- Everything above is also available **mid-workout**, scoped to whatever's left in the session, via the reorder icon on the workout screen
 
 ### 📋 Smart onboarding
 - Name, sex (male/female), body weight, height, body fat %
@@ -76,28 +85,35 @@ Five split types to choose from:
 
 ---
 
-## Male workout plans
+## What each day hits
+
+Exercises are no longer fixed per day — every list below is just the
+**starting default**. Open any day from the home screen to reorder, swap, or
+delete exercises before you start (see "Full control over each day's
+exercises" above); your changes become the new default for that day going
+forward. What *doesn't* change is which muscle groups a given day is built
+around:
 
 ### PPL / Upper-Lower
-| Day | Exercises |
+| Day | Muscles hit |
 |---|---|
-| Push | Incline barbell chest press, Bench dumbbell chest press, Dumbbell fly, Seated dumbbell shoulder press, Dumbbell lateral raise, Triceps pushdown, Cable rope tricep extension |
-| Pull | Lat pulldown, Reverse grip pulldown, Cable row, Cable face pull, Dumbbell reverse fly, Dumbbell bicep curl, Hammer curls |
-| Legs | Machine seated crunch, Vertical leg raise, Plate-loaded standing calf raise, Hack squat, Lying hamstring curl, Dumbbell lunge, Machine adduction |
-| Upper | Incline barbell chest press, Lat pulldown, Seated dumbbell shoulder press, Cable face pull, Dumbbell reverse fly, Triceps pushdown, Dumbbell bicep curl |
-| Lower | Machine seated crunch, Vertical leg raise, Hack squat, Lying hamstring curl, Dumbbell lunge, Machine abduction |
+| Push | Chest, Shoulders, Triceps |
+| Pull | Back, Rear delts, Biceps (Traps too, on the female default pool) |
+| Legs | Quads, Hamstrings, Adductors, Calves, Core |
+| Upper | Chest, Back, Shoulders, Rear delts, Biceps, Triceps |
+| Lower | Quads, Hamstrings, Abductors, Core |
 
 ### 5-Day Bro Split
-| Day | Exercises |
+| Day | Muscles hit |
 |---|---|
-| Legs | Machine seated crunch, Vertical leg raise, Plate-loaded standing calf raise, Hack squat, Lying hamstring curl, Dumbbell lunge |
-| Chest | Incline barbell chest press, Bench dumbbell chest press, Dumbbell fly, Dumbbell pullover |
-| Back | Lat pulldown, Reverse grip pulldown, Cable row, Straight arm cable pulldown |
-| Shoulders | Seated dumbbell shoulder press, Dumbbell lateral raise, Cable face pull, Dumbbell front raise, Machine rear delt fly |
-| Arms | Triceps pushdown, Dumbbell bicep curl, Cable rope tricep extension, Hammer curls, Overhead cable tricep extension, Cable bicep curl |
+| Legs | Quads, Hamstrings, Calves, Core |
+| Chest | Chest |
+| Back | Back |
+| Shoulders | Shoulders, Rear delts |
+| Arms | Biceps, Triceps |
 
 ### Alternating Legs/Push/Pull
-| Rotation | Exercises |
+| Rotation | Muscles hit |
 |---|---|
 | Day 1 — Legs A | Same as PPL Legs day |
 | Day 2 — Push | Same as PPL Push day |
@@ -105,29 +121,18 @@ Five split types to choose from:
 | Day 4 — Pull | Same as PPL Pull day |
 
 ### Upper / Lower
-| Day | Exercises |
+| Day | Muscles hit |
 |---|---|
-| Upper | Incline barbell chest press, Lat pulldown, Seated dumbbell shoulder press, Cable face pull, Dumbbell reverse fly, Triceps pushdown, Dumbbell bicep curl |
+| Upper | Chest, Back, Shoulders, Rear delts, Biceps, Triceps |
 | Lower A | Same as PPL Legs day |
 | Lower B | Same as PPL Lower day |
 
 ### Full Body
-Machine seated crunch, Hack squat, Lying hamstring curl, Plate-loaded standing calf raise, Incline barbell chest press, Lat pulldown, Seated dumbbell shoulder press, Triceps pushdown, Dumbbell bicep curl
+Chest, Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Calves, Core — one exercise per group, every session.
 
----
-
-## Female workout plans
-
-### PPL / Upper-Lower
-| Day | Exercises |
-|---|---|
-| Push | Incline bench dumbbell press, Bench dumbbell press, Seated dumbbell shoulder press, Dumbbell lateral raise, Dumbbell skull crusher, Single-arm dumbbell overhead tricep extension |
-| Pull | Lat pulldown, Cable row, Cable face pull, Dumbbell shrug, Dumbbell bicep curl, Hammer curls |
-| Legs | Decline sit-ups, Leg raise, Leg press calf raise, Leg press, Lying hamstring curl, Dumbbell lunge, Machine adduction |
-| Upper | Bench dumbbell press, Lat pulldown, Seated dumbbell shoulder press, Cable face pull, Dumbbell skull crusher, Dumbbell bicep curl |
-| Lower | Decline sit-ups, Leg raise, Leg press, Lying hamstring curl, Dumbbell lunge, Machine abduction |
-
-*More female split types coming soon.*
+Male and female onboarding pick from slightly different default exercises for
+the same muscle groups (e.g. machine vs. dumbbell variants) — swap freely
+either way, the substitution pool isn't gendered.
 
 ---
 
