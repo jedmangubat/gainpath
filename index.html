@@ -49,12 +49,16 @@ body{background:#f0f2f5;min-height:100vh;display:flex;justify-content:center;pad
 .db{padding:6px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);font-size:12px;cursor:pointer;color:var(--txt);white-space:nowrap}
 .db.ok{background:#EAF3DE;color:#27500A;border-color:#97C459}
 .de-row-wrap{position:relative;margin-bottom:8px;border-radius:var(--radius);overflow:hidden}
-.de-row-actions{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:12px;font-weight:600}
+.de-row-actions{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:12px;font-weight:600;pointer-events:none}
 .de-act-swap{color:#27500A;opacity:0}
 .de-act-del{color:#fff;background:#E24B4A;position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding:0 16px;opacity:0}
 .de-row{position:relative;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:10px;touch-action:pan-y}
 .de-handle{font-size:18px;color:var(--txt3);cursor:grab;touch-action:none;padding:4px}
 .de-row.dragging{box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.de-detail{background:var(--bg2);border-radius:0 0 var(--radius) var(--radius);padding:12px;margin-top:-1px;display:flex;gap:10px;flex-wrap:wrap}
+.de-detail-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:64px}
+.de-detail-field label{font-size:10px;margin-bottom:0}
+.de-detail-field input{width:100%;padding:6px;border:1px solid var(--bdr);border-radius:6px;font-size:13px;background:var(--bg);color:var(--txt);text-align:center}
 .tc{width:150px;height:150px;border-radius:50%;border:3px solid var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;transition:border-color .3s}
 .tn{font-size:42px;font-weight:600;color:var(--txt);letter-spacing:-2px}
 .fb{background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0;font-size:13px;color:var(--txt);line-height:1.7;min-height:54px}
@@ -361,13 +365,13 @@ textarea{resize:vertical;min-height:100px}
 <!-- DAY EDIT -->
 <div id="s-dayedit" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="ss('home')" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeDayEdit()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="font-size:18px;font-weight:700;color:var(--txt)" id="de-tit"></div>
   </div>
-  <div style="font-size:12px;color:var(--txt2);margin-bottom:12px"><i class="ti ti-hand-grab" aria-hidden="true"></i> Drag to reorder &middot; swipe right to swap &middot; swipe left to delete</div>
+  <div style="font-size:12px;color:var(--txt2);margin-bottom:12px"><i class="ti ti-hand-grab" aria-hidden="true"></i> Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</div>
   <div id="de-list"></div>
   <button class="bg" style="margin-bottom:14px" onclick="resetDayEdit()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Reset to default order</button>
-  <button class="bp" style="width:100%;justify-content:center" onclick="commitDayEdit()">Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+  <button class="bp" id="de-commit-btn" style="width:100%;justify-content:center" onclick="commitDayEdit()">Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
 </div>
 
 <!-- SWAP EXERCISE -->
@@ -446,6 +450,7 @@ textarea{resize:vertical;min-height:100px}
       <div style="font-size:16px;font-weight:700;color:var(--txt)" id="wo-tit"></div>
       <div style="font-size:12px;color:var(--txt2)" id="wo-pl"></div>
     </div>
+    <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Reorder remaining exercises"><i class="ti ti-arrows-down-up" style="font-size:18px" aria-hidden="true"></i></button>
     <div style="font-size:12px;color:var(--txt2);background:var(--bg2);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" style="background:none;border:none;padding:0;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
   </div>
   <div class="pbw"><div class="pb" id="wo-pb" style="width:0%"></div></div>
@@ -483,7 +488,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <label id="mw-label">Machine base weight (<span id="mw-unit">kg</span>)</label>
-    <input class="inp" id="mw-inp" type="number" placeholder="e.g. 50" min="0">
+    <input class="inp" id="mw-inp" type="number" placeholder="e.g. 50" min="0" onfocus="this.select()">
     <div style="font-size:12px;color:var(--txt2);margin-top:-6px">Weight of the machine itself without any plates. Only asked once — saved permanently.</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center;margin-top:8px" onclick="saveMW()">Save & continue</button>
@@ -499,7 +504,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <label>Starting weight (<span id="fsw-unit">kg</span>)</label>
-    <input class="inp" id="fsw-inp" type="number" placeholder="e.g. 60" min="0" step="0.5">
+    <input class="inp" id="fsw-inp" type="number" placeholder="e.g. 60" min="0" step="0.5" onfocus="this.select()">
     <div style="font-size:12px;color:var(--txt2);margin-top:-6px">Enter the weight you want to start with. AI will adjust from your next session onwards.</div>
   </div>
   <div class="fb" id="fsw-ai" style="display:none"></div>
@@ -799,8 +804,8 @@ function humanizeMG(mg){return mg.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpper
 
 // ═══ STATE ═══
 let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{}};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null};
-let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null;
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,editMid:false};
+let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,DE_EXPANDED=null;
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,last:'',sw:'ai',step:1};
 const OB_STEPS=9;
 
@@ -950,8 +955,9 @@ function addWarmupFlags(exercises){
 }
 function buildSets(ex,savedW){
   const sets=[];const baseW=savedW!==undefined?savedW:ex.baseW;
+  const nSets=ex.plannedSets||CFG.prefSets;const reps=ex.plannedR||CFG.prefReps;
   if(CFG.warmup&&ex.doWU&&baseW>0){const wuW=Math.round(baseW*0.5*2)/2;sets.push({t:'w',w:wuW,r:CFG.wuReps,done:false});}
-  for(let i=0;i<CFG.prefSets;i++){sets.push({t:'x',w:baseW,r:ex.holdSecs?0:CFG.prefReps,done:false});}
+  for(let i=0;i<nSets;i++){sets.push({t:'x',w:baseW,r:ex.holdSecs?0:reps,done:false});}
   return sets;
 }
 function getSavedWeight(exName,isBW){
@@ -1042,36 +1048,108 @@ function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('
 function saveSettings(){CFG.name=gid('set-name').value.trim()||CFG.name;CFG.bw=parseFloat(gid('set-bw').value)||CFG.bw;CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;CFG.bf=parseFloat(gid('set-bf').value)||null;saveCFG();accentColor();refreshHome();ss('home');}
 function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();location.reload();}
 
-// ═══ DAY EDIT (reorder / delete / swap) ═══
+// ═══ DAY EDIT (reorder / delete / swap / tap-to-edit sets-reps-weight) ═══
 function openDayEdit(k){
-  ST.editDay=k;ST.editList=getEffectiveDayExercises(k).slice();
-  gid('de-tit').textContent=getDayName(k);
+  ST.editDay=k;ST.editMid=false;ST.editList=getEffectiveDayExercises(k).slice();
+  DE_EXPANDED=null;gid('de-tit').textContent=getDayName(k);
+  gid('de-commit-btn').innerHTML='Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
   renderDayEdit();ss('dayedit');
 }
+function openMidWorkoutEdit(){
+  ST.editDay=ST.day;ST.editMid=true;DE_EXPANDED=null;
+  ST.editList=ST.sd.slice(ST.exi+1).map(item=>item.ex);
+  gid('de-tit').textContent=getDayName(ST.day)+' — remaining exercises';
+  gid('de-commit-btn').innerHTML='Save & continue <i class="ti ti-check" aria-hidden="true"></i>';
+  renderDayEdit();ss('dayedit');
+}
+function closeDayEdit(){if(ST.editMid){ST.editMid=false;ss('wo');}else ss('home');}
+function plannedFor(ex){
+  const isBW=ex.note==='bodyweight';
+  const w=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name,isBW)??(isBW?0:ex.baseW));
+  const r=ex.plannedR||CFG.prefReps;
+  const sets=ex.plannedSets||CFG.prefSets;
+  return{w,r,sets,isBW};
+}
+function toggleDEExpand(i){DE_EXPANDED=DE_EXPANDED===i?null:i;renderDayEdit();}
 function renderDayEdit(){
-  gid('de-list').innerHTML=ST.editList.map((ex,i)=>
-    '<div class="de-row-wrap">'+
+  gid('de-list').innerHTML=ST.editList.map((ex,i)=>{
+    const p=plannedFor(ex);const expanded=DE_EXPANDED===i;
+    const bwMode=p.w>0?'add':p.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
+    const weightField=p.isBW?
+      '<div class="de-detail-field"><label>Weight</label><div style="display:flex;gap:4px"><button type="button" class="bw-mode" onclick="cycleDEBWMode('+i+')">'+bwLabel+'</button>'+(bwMode!=='bw'?'<input type="number" min="0" step="0.5" value="'+Math.abs(p.w)+'" onfocus="this.select()" onchange="updDEBWMag('+i+',this.value)">':'')+'</div></div>'
+      :'<div class="de-detail-field"><label>Weight ('+CFG.unit+')</label><input type="number" min="0" step="0.5" value="'+p.w+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'w\',this.value)"></div>';
+    const detail=expanded?
+      '<div class="de-detail">'+
+        '<div class="de-detail-field"><label>Sets</label><input type="number" min="1" max="8" value="'+p.sets+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'sets\',this.value)"></div>'+
+        (ex.holdSecs?'':'<div class="de-detail-field"><label>Reps</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
+        weightField+
+      '</div>':'';
+    return '<div class="de-row-wrap">'+
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
         '<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>'+
-        '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--txt)">'+ex.name+'</div><div style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+'</div></div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--txt)">'+ex.name+'</div><div style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
         '<button class="bg" onclick="openSwap('+i+')" aria-label="Swap exercise"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
         '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="Delete exercise"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
-      '</div>'+
-    '</div>'
-  ).join('');
+      '</div>'+detail+
+    '</div>';
+  }).join('');
+}
+function updPlannedEx(i,field,value){
+  const cur={...ST.editList[i]};
+  if(field==='w')cur.plannedW=parseFloat(value)||0;
+  if(field==='r')cur.plannedR=Math.max(1,parseInt(value)||CFG.prefReps);
+  if(field==='sets')cur.plannedSets=Math.max(1,parseInt(value)||CFG.prefSets);
+  ST.editList[i]=cur;renderDayEdit();
+}
+function cycleDEBWMode(i){
+  const ex=ST.editList[i];const curW=ex.plannedW!==undefined?ex.plannedW:plannedFor(ex).w;
+  const cur=curW>0?'add':curW<0?'asst':'bw';const mag=Math.abs(curW)||2.5;
+  const next=cur==='bw'?'add':cur==='add'?'asst':'bw';
+  ST.editList[i]={...ex,plannedW:next==='add'?mag:next==='asst'?-mag:0};
+  renderDayEdit();
+}
+function updDEBWMag(i,v){
+  const ex=ST.editList[i];const curW=ex.plannedW!==undefined?ex.plannedW:plannedFor(ex).w;
+  const mag=Math.abs(parseFloat(v)||0);const sign=curW<0?-1:1;
+  ST.editList[i]={...ex,plannedW:sign*mag};renderDayEdit();
 }
 function deleteExFromEdit(i){
   if(ST.editList.length<=1){alert('A workout needs at least one exercise.');return;}
-  ST.editList.splice(i,1);renderDayEdit();
+  ST.editList.splice(i,1);DE_EXPANDED=null;renderDayEdit();
 }
-function resetDayEdit(){ST.editList=getDayExercises(ST.editDay,CFG.sex).slice();renderDayEdit();}
+function resetDayEdit(){
+  if(ST.editMid){
+    const def=getDayExercises(ST.editDay,CFG.sex);
+    const doneNames=new Set(ST.sd.slice(0,ST.exi+1).map(item=>item.ex.name));
+    ST.editList=def.filter(ex=>!doneNames.has(ex.name));
+  }else{
+    ST.editList=getDayExercises(ST.editDay,CFG.sex).slice();
+  }
+  DE_EXPANDED=null;renderDayEdit();
+}
 function commitDayEdit(){
+  if(ST.editMid){
+    const kept=ST.sd.slice(0,ST.exi+1);
+    const fullRaw=kept.map(item=>item.ex).concat(ST.editList);
+    const fullWithWU=addWarmupFlags(fullRaw);
+    const newRemaining=fullWithWU.slice(kept.length).map(ex=>{
+      const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
+      const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
+      return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
+    });
+    ST.sd=kept.concat(newRemaining);
+    const fullNames=ST.sd.map(item=>item.ex.name);
+    const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
+    const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
+    if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
+    saveCFG();ST.editMid=false;ss('wo');renderEx();return;
+  }
   const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
   const cur=ST.editList.map(e=>e.name);
   const changed=def.length!==cur.length||def.some((n,i)=>n!==cur[i]);
   if(changed)CFG.customDays[ST.editDay]=cur;else delete CFG.customDays[ST.editDay];
-  saveCFG();startDay(ST.editDay);
+  saveCFG();startDay(ST.editDay,ST.editList);
 }
 function rowDragStart(e,i){
   e.preventDefault();e.stopPropagation();
@@ -1080,7 +1158,7 @@ function rowDragStart(e,i){
   const ghost=wrap.cloneNode(true);
   ghost.style.position='fixed';ghost.style.left=rect.left+'px';ghost.style.top=rect.top+'px';ghost.style.width=rect.width+'px';ghost.style.zIndex='1000';ghost.style.opacity='.95';ghost.style.pointerEvents='none';ghost.style.boxShadow='0 4px 14px rgba(0,0,0,.2)';
   document.body.appendChild(ghost);wrap.style.opacity='.25';
-  let curIdx=i;const offsetY=e.clientY-rect.top;
+  let curIdx=i;const offsetY=e.clientY-rect.top;DE_EXPANDED=null;
   const move=ev=>{
     ghost.style.top=(ev.clientY-offsetY)+'px';
     const rows=[...list.children];
@@ -1116,6 +1194,7 @@ function rowSwipeStart(e,i){
   };
   const up=()=>{
     document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);
+    if(!moved){toggleDEExpand(i);return;}
     row.style.transition='transform .2s';row.style.transform='translateX(0)';
     if(dx>80)openSwap(i);else if(dx<-80)deleteExFromEdit(i);
     setTimeout(()=>{row.style.transition='';},220);
@@ -1139,16 +1218,16 @@ function pickSwapPart(mg){
     EXPOOL_BY_MG[mg].map(ex=>'<button class="day-btn" onclick="pickSwapEx(\''+ex.name.replace(/'/g,"\\'")+'\')"><span>'+ex.name+'</span></button>').join('');
 }
 function pickSwapEx(name){
-  ST.editList[ST.swapIdx]=EXPOOL[name];
+  ST.editList[ST.swapIdx]=EXPOOL[name];DE_EXPANDED=null;
   ss('dayedit');renderDayEdit();
 }
 
-function startDay(k){
-  const rawEx=getEffectiveDayExercises(k);const exWithWU=addWarmupFlags(rawEx);
+function startDay(k,exList){
+  const rawEx=exList||getEffectiveDayExercises(k);const exWithWU=addWarmupFlags(rawEx);
   ST.day=k;ST.exi=0;
   ST.sd=exWithWU.map(ex=>{
     const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
-    let w=saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW));
+    let w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
     return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
   });
   ST.mwQueue=exWithWU.filter(ex=>ex.machine&&ST.mw[ex.name]===undefined).map(ex=>ex.name);
@@ -1190,12 +1269,12 @@ function renderEx(){
     const bwMode=s.w>0?'add':s.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
     const wi=isBW?
       '<button type="button" class="bw-mode" onclick="cycleBWMode('+i+')" aria-label="Bodyweight weight mode">'+bwLabel+'</button>'+
-      (bwMode!=='bw'?'<input class="wi" style="width:46px" type="number" value="'+Math.abs(s.w)+'" step="0.5" min="0" onchange="updBWMag('+i+',this.value)">':'')
-      :'<input class="wi" type="number" value="'+Math.max(0,dispW)+'" step="0.5" min="0" onchange="updSet('+i+',this.value)">';
+      (bwMode!=='bw'?'<input class="wi" style="width:46px" type="number" value="'+Math.abs(s.w)+'" step="0.5" min="0" onfocus="this.select()" onchange="updBWMag('+i+',this.value)">':'')
+      :'<input class="wi" type="number" value="'+Math.max(0,dispW)+'" step="0.5" min="0" onfocus="this.select()" onchange="updSet('+i+',this.value)">';
     const repPart=ex.holdSecs?
       ('<button type="button" class="db" style="min-width:80px" onclick="toggleHold('+i+')"'+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled style="opacity:.4"':'')+'>'+(HOLD_IDX===i?'<i class="ti ti-player-pause" aria-hidden="true"></i> Stop':'<i class="ti ti-player-play" aria-hidden="true"></i> Hold')+'</button>'+
        '<span id="hold-t-'+i+'" style="font-size:13px;font-weight:600;color:var(--txt);min-width:40px;text-align:center">'+(HOLD_IDX===i?'0:00':fmt(s.r))+'</span>')
-      :('<input class="ri" type="number" value="'+s.r+'" min="1" onchange="updRep('+i+',this.value)"><span style="font-size:11px;color:var(--txt2)">reps</span>');
+      :('<input class="ri" type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)"><span style="font-size:11px;color:var(--txt2)">reps</span>');
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
     const sep=ex.holdSecs?'':'<span style="font-size:11px;color:var(--txt2)">'+CFG.unit+'\u00d7</span>';
     return '<div class="sr"><div class="sn'+(s.done?' d':(isW?' w':''))+'">'+(isW?'W':i+1)+'</div>'+wi+sep+repPart+'<button class="db'+(s.done?' ok':'')+'"'+(doneDisabled?' disabled style="opacity:.4"':'')+' onclick="dset('+i+')">'+(s.done?'<i class="ti ti-check" aria-hidden="true"></i> Done':'Mark done')+'</button></div>';

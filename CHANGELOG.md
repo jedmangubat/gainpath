@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Reorder/swap/delete exercises mid-workout, not just before starting.** A new icon button on the workout screen header opens the same exercise-editor used pre-workout, scoped to the remaining (not-yet-reached) exercises in the session — the current and already-completed exercises are left untouched. Saving updates the live session immediately and, like the pre-workout editor, remembers the new order/swap as that day's default going forward.
+- **Tap an exercise in the pre-workout/mid-workout editor to set its planned sets, reps, and weight (or added/assisted weight for bodyweight exercises) before starting it.** Previously the editor only let you reorder/swap/delete; now tapping a row expands an inline editor for that exercise's targets, which are used instead of the usual saved-weight/AI-estimate/app defaults once you reach that exercise.
+- **Tapping into a weight or reps field now auto-selects its current value**, so typing immediately replaces it instead of requiring it to be manually erased first. Applies to every weight/reps number input in the app: live workout sets, the bodyweight magnitude input, the first-set-weight screen, the machine tare-weight screen, and the new planned sets/reps/weight editor.
+
+### Fixed
+- **The swipe-action background layer on exercise-editor rows was intercepting taps on the expanded sets/reps/weight editor underneath it**, making those inputs unclickable on some layouts. It's now purely decorative (`pointer-events:none`) — actions stay driven by the swipe gesture and icon buttons only.
+
 ## [1.1.0] - 2026-06-23
 
 ### Added
