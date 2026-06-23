@@ -4,6 +4,8 @@ A free, open-source AI-powered workout tracking web app. No account needed, no s
 
 🔗 **Live app:** [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath)
 
+GainPath is free, ad-free, and has no subscriptions. If it's been useful to you, consider [☕ supporting development via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com).
+
 ---
 
 ## Features
@@ -156,14 +158,6 @@ The app will appear on your home screen and open full-screen like a native app. 
 ## Contributing
 
 Found a bug or have a feature idea? Use the feedback form inside the app (Settings → Send feedback) or open an issue on this repo.
-
----
-
-## Support
-
-GainPath is free, ad-free, and has no subscriptions. If it's been useful to you, consider supporting development:
-
-[☕ Donate via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com)
 
 ---
 

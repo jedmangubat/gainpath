@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **README: moved the PayPal support link up to the top, under the live-app link**, instead of being the second-to-last section after Contributing — donation asks get buried at the very bottom otherwise.
+
 ## [1.0.0] - 2026-06-23
 
 ### Fixed
