@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **README screenshots.** Added a 6-image screenshot grid (`images/screenshots/`) right under the intro: home/day-picker, the exercise day editor, live workout logging, the bodyweight weight-modifier + plank hold timer together, the weight-progression chart, and the all-time PR list — covering the features that are hard to picture from text alone. Generated with a throwaway Playwright script against seeded demo data (not checked in), screenshotting the `.app` element directly rather than the full viewport so each image is tightly cropped to its actual content.
+
 ### Changed
 - **README rewritten to reflect that exercises are no longer fixed per day.** The old "Male/Female workout plans" section listed exact exercises per split/day, which stopped being accurate once exercises became fully reorderable/swappable/deletable. Replaced with a "What each day hits" section describing the muscle groups each day targets (e.g. Push = Chest, Shoulders, Triceps), generated from the actual `EX` muscle-group tags rather than guessed from names, with a note that these are defaults you fully control. Also documented the exercise-customization, planned sets/reps/weight, bodyweight weight-modifier, and plank-timer features in the main Features list, none of which were mentioned there before.
 

@@ -8,6 +8,23 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## Screenshots
+
+<table>
+<tr>
+<td align="center" width="33%"><img src="images/screenshots/home.png" width="260"><br><sub>Home — day picker, streak, suggested day, recent sessions</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/day-editor.png" width="260"><br><sub>Reorder, swap, or delete exercises — before or during a workout</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/workout.png" width="260"><br><sub>Logging sets — weight, reps, rest timer</sub></td>
+</tr>
+<tr>
+<td align="center" width="33%"><img src="images/screenshots/bodyweight-plank.png" width="260"><br><sub>Bodyweight added/assisted weight + plank hold timer</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/progress.png" width="260"><br><sub>Weight progression chart per exercise</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/prs.png" width="260"><br><sub>All-time personal records</sub></td>
+</tr>
+</table>
+
+---
+
 ## Features
 
 ### 🤖 AI coaching
