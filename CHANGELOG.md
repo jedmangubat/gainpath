@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-23
+
 ### Added
 - **Exercise customization: reorder, delete, and swap exercises on any workout day before starting it.** Tapping a day on the home screen now opens an edit screen listing that day's exercises instead of jumping straight into the workout.
   - Drag the grip handle to reorder, tap the trash icon to delete (or swipe a row right-to-left), tap the swap icon to replace an exercise (or swipe left-to-right) by picking a body part and then a replacement from that part's pool.
