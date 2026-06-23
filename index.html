@@ -473,9 +473,9 @@ textarea{resize:vertical;min-height:100px}
     <button class="bp" style="justify-content:center" onclick="skip()">Skip rest</button>
     <button class="bs" onclick="adj(15)">+15s</button>
   </div>
-  <h2>AI assessment</h2>
-  <div class="fb" id="r-fb"><div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Analysing...<span class="da"><span>.</span><span>.</span><span>.</span></span></div></div>
-  <h2 style="margin-top:14px">Next set</h2>
+  <h2>Tip</h2>
+  <div class="fb" id="r-fb"></div>
+  <h2 style="margin-top:14px" id="r-nx-h">Next set</h2>
   <div class="card" id="r-nx" style="font-size:13px;color:var(--txt)"></div>
 </div>
 
@@ -558,8 +558,6 @@ textarea{resize:vertical;min-height:100px}
     <div class="sc"><div class="sv" id="su-ex"></div><div class="sl">Exercises</div></div>
     <div class="sc"><div class="sv" id="su-se"></div><div class="sl">Sets done</div></div>
   </div>
-  <h2>Next-session recommendations</h2>
-  <div id="su-rc"></div>
   <div style="margin-top:20px;text-align:center"><button class="bp" style="justify-content:center" onclick="goHome()">Back to home</button></div>
 </div>
 
@@ -802,9 +800,924 @@ function buildExercisePool(){
 buildExercisePool();
 function humanizeMG(mg){return mg.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
 
+// ═══ PER-EXERCISE REST-SCREEN TIPS ═══
+const EX_TIPS={
+  "Incline barbell chest press": [
+    "Set the bench between 30 and 45 degrees so you target upper chest, not shoulders.",
+    "Plant your feet flat on the floor and drive them down for a stable base.",
+    "Pull your shoulder blades back and down into the bench before unracking.",
+    "Lower the bar to your upper chest, just below the collarbone.",
+    "Keep a slight arch in your lower back without flaring your ribs up.",
+    "Inhale on the way down and exhale forcefully as you press up.",
+    "Avoid bouncing the bar off your chest to generate momentum.",
+    "Keep your wrists stacked directly over your elbows throughout the press.",
+    "Use a spotter or safety pins since incline presses are harder to bail out of.",
+    "Think about pressing up and slightly back toward your face, not straight up.",
+    "Use the warmup set to groove your bar path before adding heavier plates.",
+    "Don't let your elbows flare past a 45 to 75 degree angle from your torso."
+  ],
+  "Bench dumbbell chest press": [
+    "Plant your feet firmly on the floor for a stable base of leverage.",
+    "Retract your shoulder blades and keep them pinned to the bench throughout.",
+    "Lower the dumbbells until your upper arms are level with the bench, not lower.",
+    "Press the dumbbells up and slightly inward without letting them touch.",
+    "Keep your wrists straight and stacked over your elbows on every rep.",
+    "Exhale as you press up and inhale as you lower the dumbbells.",
+    "Avoid letting your elbows flare straight out to the sides.",
+    "Squeeze your chest at the top instead of locking out and resting.",
+    "Control the descent instead of letting the dumbbells drop quickly.",
+    "Keep a slight, natural arch in your lower back, not an exaggerated one.",
+    "Get the dumbbells into position with control, not by swinging them up.",
+    "Use a spotter or lighter weight near failure since dumbbells can roll inward."
+  ],
+  "Dumbbell fly": [
+    "Use lighter dumbbells than you'd press since flys load the shoulder joint differently.",
+    "Keep a slight, fixed bend in your elbows throughout the entire movement.",
+    "Lower the dumbbells out to the sides until your chest feels a deep stretch.",
+    "Stop the descent once your upper arms are roughly level with the bench.",
+    "Bring the dumbbells back up in an arc, not a straight press path.",
+    "Squeeze your chest together at the top as if hugging a barrel.",
+    "Avoid straightening your elbows, which shifts strain onto the joint.",
+    "Inhale as you open into the stretch and exhale as you bring it together.",
+    "Keep your shoulder blades retracted so the stretch loads your chest, not your shoulders.",
+    "Avoid going so heavy that you lose control at the bottom stretch position.",
+    "Move slowly and deliberately rather than using momentum to fly the weights up.",
+    "Stop immediately if you feel pinching or sharp pain in the front of your shoulder."
+  ],
+  "Incline bench dumbbell press": [
+    "Set the bench to a moderate 30 to 45 degree incline to bias the upper chest.",
+    "Drive your feet into the floor and keep your shoulder blades pinned back.",
+    "Lower the dumbbells to the sides of your upper chest, not your neck.",
+    "Press the dumbbells up and slightly together at the top of each rep.",
+    "Keep your wrists neutral and stacked over your elbows throughout the lift.",
+    "Exhale as you press the dumbbells up and inhale as you lower them.",
+    "Avoid arching excessively, which turns the lift into a flat-bench press.",
+    "Control the dumbbells into starting position rather than kicking them up with your knees.",
+    "Don't let your elbows drop below shoulder level at the bottom of the rep.",
+    "Use the warmup set to find your groove before loading heavier dumbbells.",
+    "Keep your head and upper back in contact with the bench the whole set.",
+    "Avoid letting the dumbbells drift forward over your face on the press."
+  ],
+  "Bench dumbbell press": [
+    "Plant your feet flat on the floor to create a solid pressing base.",
+    "Pull your shoulder blades together and keep them set against the bench.",
+    "Lower the dumbbells until your upper arms are roughly parallel with the floor.",
+    "Press up and slightly inward, finishing with the dumbbells close but not touching.",
+    "Keep your wrists straight and aligned under your elbows the whole set.",
+    "Exhale on the press and inhale as you lower the weight under control.",
+    "Use your warmup set to rehearse the path before going to working weight.",
+    "Avoid flaring your elbows out to a full 90 degrees from your torso.",
+    "Don't bounce the dumbbells off your chest to cheat the bottom position.",
+    "Keep a natural, slight arch in your lower back, not an exaggerated one.",
+    "Maintain control when bringing the dumbbells up from your knees into position.",
+    "Have a spotter nearby when pushing close to failure with heavy dumbbells."
+  ],
+  "Flat barbell bench press": [
+    "Set your grip slightly wider than shoulder width for a balanced bar path.",
+    "Pull your shoulder blades back and down before you unrack the bar.",
+    "Plant your feet flat on the floor and drive them down throughout the lift.",
+    "Lower the bar to your mid-chest, not your neck or stomach.",
+    "Keep your wrists stacked over your elbows rather than bent back.",
+    "Inhale and brace your core before lowering the bar each rep.",
+    "Exhale as you drive the bar up off your chest.",
+    "Avoid bouncing the bar off your chest to add momentum.",
+    "Keep your elbows tucked around 45 to 75 degrees, not flared to 90.",
+    "Use the warmup set to lock in bar path before loading more weight.",
+    "Always use a spotter or safety bars when attempting heavy or max sets.",
+    "Keep your hips on the bench rather than driving them up to assist the press."
+  ],
+  "Decline dumbbell press": [
+    "Secure your legs under the footpads before lowering into the decline position.",
+    "Keep your head and shoulders firmly against the bench throughout the set.",
+    "Lower the dumbbells to the sides of your lower chest, not your collarbone.",
+    "Press up and slightly inward, stopping just short of the dumbbells touching.",
+    "Keep your wrists neutral and stacked directly over your elbows.",
+    "Exhale as you press up and inhale as you lower with control.",
+    "Avoid letting the dumbbells drift toward your face at the top.",
+    "Use lighter loads than flat pressing since blood rushes to your head on a decline.",
+    "Have a spotter hand you the dumbbells since sitting up to start is awkward.",
+    "Don't let your elbows flare past 45 to 75 degrees from your torso.",
+    "Keep your core braced so your torso doesn't slide on the angled bench.",
+    "Sit up slowly afterward to avoid dizziness from the inverted position."
+  ],
+  "Cable chest fly": [
+    "Set both pulleys to roughly chest height for a straight-on fly path.",
+    "Stand with a staggered stance and a slight forward lean for stability.",
+    "Keep a soft, fixed bend in your elbows throughout the entire movement.",
+    "Bring the handles together in front of your chest, not up near your face.",
+    "Squeeze your chest at the center point and pause briefly before releasing.",
+    "Exhale as you bring the handles together and inhale as you open back out.",
+    "Avoid letting the weight yank your arms back into an overstretched position.",
+    "Keep your shoulder blades retracted so your shoulders don't round forward.",
+    "Step forward slightly to keep tension on your chest at the start of the rep.",
+    "Avoid using your back or torso momentum to swing the handles together.",
+    "Control the eccentric instead of letting the cables snap your arms back fast.",
+    "Keep your elbows slightly below shoulder height rather than pressing them up high."
+  ],
+  "Machine chest press": [
+    "Adjust the seat so the handles line up with the middle of your chest.",
+    "Keep your back and head flat against the pad throughout the press.",
+    "Plant your feet flat on the floor for a stable, grounded base.",
+    "Press the handles forward without locking your elbows out hard at the top.",
+    "Exhale as you press out and inhale as you return with control.",
+    "Avoid letting the weight stack slam down between reps.",
+    "Use the warmup set to find the right seat height and grip position.",
+    "Keep your wrists straight rather than bending them around the handles.",
+    "Don't let your shoulders roll forward off the back pad as you press.",
+    "Squeeze your chest together at full extension instead of just pushing through.",
+    "Avoid arching your back off the pad to grind out extra reps.",
+    "Move through a full, controlled range rather than short, partial pulses."
+  ],
+  "Push-ups": [
+    "Keep your hands roughly shoulder-width apart with fingers spread for stability.",
+    "Keep your body in a straight line from head to heels throughout.",
+    "Avoid letting your hips sag or pike up out of plank position.",
+    "Lower your chest until it nearly touches the floor for full range.",
+    "Keep your elbows at roughly 45 degrees from your torso, not flared wide.",
+    "Inhale as you lower down and exhale as you push back up.",
+    "Tuck your chin slightly and keep your neck neutral, not craned forward.",
+    "Brace your core and squeeze your glutes to keep your spine stable.",
+    "Avoid flaring your elbows out to 90 degrees, which can strain your shoulders.",
+    "Spread the load through your whole palm, not just your fingertips.",
+    "Slow down the descent instead of dropping quickly toward the floor.",
+    "Scale to an incline or your knees if you can't maintain full-body alignment."
+  ],
+  "Dumbbell pullover": [
+    "Lie with only your upper back and head on the bench, hips lower.",
+    "Hold one dumbbell with both hands, palms pressing against the inside plates.",
+    "Keep a slight, fixed bend in your elbows throughout the whole movement.",
+    "Lower the dumbbell behind your head until you feel a deep lat and chest stretch.",
+    "Avoid lowering past the point where your shoulders start to pinch or strain.",
+    "Inhale as you lower behind your head and exhale as you pull it back over.",
+    "Keep your core braced so your lower back doesn't arch off the bench.",
+    "Use a lighter weight than you'd expect since this is a stretch-focused movement.",
+    "Pull the dumbbell back over in an arc, not a straight vertical lift.",
+    "Keep your ribcage from flaring up as you reach back into the stretch.",
+    "Move slowly and avoid using momentum to whip the dumbbell back to start.",
+    "Stop the set if you feel any shoulder joint pain rather than pushing through."
+  ],
+  "Lat pulldown": [
+    "Set the thigh pad snug so your hips stay locked during the warmup set and beyond.",
+    "Grip the bar slightly wider than shoulder width with palms facing away from you.",
+    "Lean back about 10 to 15 degrees and keep that angle fixed through the rep.",
+    "Pull your elbows down and back, driving them toward your hips, not just down.",
+    "Drive your chest up and out as the bar approaches your collarbone.",
+    "Pause briefly at the bottom and squeeze your lats before letting the bar rise.",
+    "Control the eccentric for two to three seconds instead of letting the weight yank you up.",
+    "Avoid yanking the bar down with your arms before your shoulder blades engage.",
+    "Don't let your shoulders shrug up toward your ears at the top of the stretch.",
+    "Exhale as you pull the bar down and inhale as you let it rise.",
+    "Think about pulling with your elbows, not gripping harder with your hands.",
+    "Avoid swinging your torso backward to muscle the weight down."
+  ],
+  "Reverse grip pulldown": [
+    "Grip the bar shoulder-width with palms facing you to bias the lower lats and biceps.",
+    "Keep your chest tall and shoulders back before initiating the pull.",
+    "Pull your elbows straight down toward your waist, brushing close to your torso.",
+    "Squeeze your shoulder blades together as the bar reaches your upper chest.",
+    "Lower the bar with control, resisting the stretch instead of letting it snap up.",
+    "Avoid leaning back excessively to compensate for a weight that's too heavy.",
+    "Keep your wrists neutral and avoid curling them to help pull the bar.",
+    "Exhale on the pull down and inhale as you return to full stretch.",
+    "Let your shoulder blades fully spread apart at the top for a complete stretch.",
+    "Don't let your elbows flare out to the sides during the pull.",
+    "Focus on driving your elbows past your ribcage rather than just bending your arms.",
+    "Keep your feet flat and hips still under the pads throughout the set."
+  ],
+  "Cable row": [
+    "Sit with knees slightly bent and feet braced firmly on the footplate.",
+    "Start each rep with arms fully extended and a slight forward lean at the torso.",
+    "Drive your elbows straight back past your ribs while keeping your spine neutral.",
+    "Squeeze your shoulder blades together at the end of the pull and hold briefly.",
+    "Avoid using momentum by rocking your torso backward to move the weight.",
+    "Keep your chest up and avoid rounding your lower back during the stretch.",
+    "Control the return phase so the weight doesn't pull your arms forward abruptly.",
+    "Exhale as you row in and inhale as you extend back out.",
+    "Keep your wrists straight and let your lats and mid-back do the pulling.",
+    "Avoid shrugging your traps up; keep your shoulders pulled down and back.",
+    "Pull the handle toward your lower ribs, not up toward your chest.",
+    "Keep your elbows tucked close rather than flaring them wide on the pull."
+  ],
+  "Straight arm cable pulldown": [
+    "Stand tall with a slight forward hip hinge and a soft bend in your elbows.",
+    "Keep your arms straight throughout the movement, only moving from the shoulder joint.",
+    "Pull the bar down in an arc toward your thighs, not straight down to the floor.",
+    "Squeeze your lats hard at the bottom before letting the bar rise back up.",
+    "Avoid bending your elbows more as the weight gets heavier; that shifts work to triceps.",
+    "Keep your core braced so your lower back doesn't arch as you pull.",
+    "Exhale as the bar travels down and inhale as it returns to the top.",
+    "Control the ascent slowly to keep tension on your lats instead of resetting at the top.",
+    "Avoid leaning your whole body back to assist the pull; let your lats do the work.",
+    "Keep your shoulders down away from your ears throughout the set.",
+    "Focus on the mind-muscle connection by visualizing your lats pulling your arms down.",
+    "Don't let the cable yank your arms back up too quickly between reps."
+  ],
+  "Barbell row": [
+    "Set up with a firm warmup set to groove your hip hinge before adding weight.",
+    "Hinge at the hips with a flat back and your torso roughly 45 degrees to the floor.",
+    "Grip the bar just outside shoulder width and keep your arms relaxed at the bottom.",
+    "Brace your core hard before each pull to protect your lower spine.",
+    "Pull the bar toward your lower ribs or upper abdomen, not your chest.",
+    "Drive your elbows back and squeeze your shoulder blades at the top of the row.",
+    "Avoid jerking the bar up using lower back momentum; pull with your back muscles.",
+    "Keep your neck in a neutral position, looking slightly down rather than craning up.",
+    "Lower the bar under control instead of letting it drop freely.",
+    "Avoid rounding your upper back, especially as fatigue sets in on later sets.",
+    "Exhale forcefully as you row the bar up to your torso.",
+    "Keep your knees softly bent and weight in your midfoot for a stable base."
+  ],
+  "Single-arm dumbbell row": [
+    "Brace your free hand on the bench and keep your spine flat, not twisted.",
+    "Let the dumbbell hang straight down for a full stretch at the bottom of each rep.",
+    "Pull your elbow up and back along your side, brushing close to your ribs.",
+    "Avoid rotating your torso to help heave the weight up on tough reps.",
+    "Squeeze your shoulder blade toward your spine at the top of the pull.",
+    "Keep your working-side hip square to the bench rather than rotating it upward.",
+    "Lower the dumbbell slowly to maintain tension instead of dropping it.",
+    "Exhale as you row the dumbbell up and inhale as you lower it.",
+    "Avoid shrugging your shoulder up toward your ear as you pull.",
+    "Keep your neck neutral and avoid turning your head to watch the weight.",
+    "Focus on leading with your elbow rather than your hand or wrist.",
+    "Switch sides only after matching reps to keep both lats developing evenly."
+  ],
+  "Chest-supported machine row": [
+    "Adjust the chest pad height so it sits firmly against your sternum, not your throat.",
+    "Press your chest into the pad throughout the set to stop your torso from moving.",
+    "Pull the handles back by driving your elbows behind your torso, not just bending arms.",
+    "Squeeze your shoulder blades together fully at the back of each rep.",
+    "Let your arms extend completely at the front for a full stretch through your lats.",
+    "Avoid yanking the handles with a jerky motion; keep the movement smooth and controlled.",
+    "Exhale as you pull the handles back and inhale as you let them return.",
+    "Keep your wrists neutral and avoid curling them to assist the pull.",
+    "Don't let your shoulders round forward as you reach for the stretched position.",
+    "Focus on squeezing your mid-back rather than just moving the handles.",
+    "Avoid using your legs or feet to push yourself away from the pad.",
+    "Keep your neck relaxed and your gaze forward, not straining upward."
+  ],
+  "Pull-ups": [
+    "Grip the bar just outside shoulder width with your thumbs wrapped around it.",
+    "Start from a full dead hang to use the complete range of motion.",
+    "Pull your elbows down and back, leading with your chest toward the bar.",
+    "Avoid kipping or swinging your legs to generate momentum on strict sets.",
+    "Squeeze your shoulder blades together and drive your chest up at the top.",
+    "Lower yourself under control instead of dropping quickly to the dead hang.",
+    "Engage your core and glutes to stop your legs from swinging during reps.",
+    "Exhale as you pull yourself up and inhale as you lower back down.",
+    "Avoid shrugging your shoulders up toward your ears at the bottom of the hang.",
+    "Think about pulling your body up to the bar rather than pulling the bar down.",
+    "Keep your chin clearing the bar without craning your neck forward.",
+    "If full reps are too hard, use a band or assisted machine to maintain full range."
+  ],
+  "Cable face pull": [
+    "Set the cable at upper-chest to head height and start with a light warmup set.",
+    "Grip the rope with thumbs pointing back and pull toward your face, not your chest.",
+    "Flare your elbows high and wide, finishing level with or above your shoulders.",
+    "Externally rotate your hands at the end of the pull so knuckles point behind you.",
+    "Squeeze your rear delts and upper back hard at the peak of each rep.",
+    "Keep your torso upright and avoid leaning back to heave the weight in.",
+    "Avoid using heavy weight that forces your elbows to drop low and forward.",
+    "Control the return to the start instead of letting the cable snap your arms forward.",
+    "Exhale as you pull the rope apart and inhale as you extend back out.",
+    "Keep your chest lifted and shoulder blades pulled down throughout the movement.",
+    "Avoid shrugging your traps; let your rear delts and rotators drive the motion.",
+    "Pause briefly at full contraction to maximize rear-delt engagement."
+  ],
+  "Dumbbell reverse fly standing": [
+    "Hinge forward at the hips until your torso is near parallel to the floor.",
+    "Keep a soft bend in your elbows and maintain it throughout each rep.",
+    "Raise the dumbbells out to the sides in an arc, leading with your elbows.",
+    "Stop the raise around shoulder height rather than pulling the weights up high.",
+    "Squeeze your shoulder blades together at the top before lowering with control.",
+    "Avoid jerking the dumbbells up using momentum from your lower back.",
+    "Keep your neck neutral and avoid craning it forward to see the weights.",
+    "Use lighter dumbbells than you think you need to isolate the rear delts properly.",
+    "Exhale as you raise the dumbbells and inhale as you lower them.",
+    "Avoid letting your torso rise up as the weights get heavy or you fatigue.",
+    "Keep your wrists relatively straight rather than bending them to swing the weight.",
+    "Focus on squeezing your rear delts together rather than just lifting your arms."
+  ],
+  "Machine rear delt fly": [
+    "Adjust the seat so the handles align with your shoulders at the start position.",
+    "Press your chest against the pad to keep your torso from rocking.",
+    "Lead with your elbows as you pull the handles out and back.",
+    "Squeeze your shoulder blades together at the end range of each rep.",
+    "Avoid using your chest or arms to muscle the handles instead of your rear delts.",
+    "Control the return phase so the weight stack doesn't slam down between reps.",
+    "Keep a slight bend in your elbows and hold it constant through the set.",
+    "Exhale as you pull the handles apart and inhale as you let them return.",
+    "Avoid shrugging your shoulders up toward your ears during the movement.",
+    "Stop the range of motion roughly level with your shoulders, not behind your back.",
+    "Focus on the mind-muscle connection by picturing your rear delts pulling your elbows back.",
+    "Keep your feet flat and core braced so your lower back stays still."
+  ],
+  "Seated dumbbell shoulder press": [
+    "Sit tall against the backrest and keep your lower back pressed flat, not arched.",
+    "Start with the dumbbells at ear height before pressing overhead.",
+    "Press the dumbbells up and slightly inward without clanking them together at the top.",
+    "Exhale as you press up and inhale as you lower the dumbbells back down.",
+    "Lower until your elbows are just below shoulder height, not lower.",
+    "Don't lock your elbows out hard at the top to spare your joints.",
+    "Use a lighter warmup set first to prime your rotator cuffs and shoulder joints.",
+    "Keep your wrists stacked directly over your elbows through the whole rep.",
+    "Avoid flaring your elbows too far forward, which shifts load off the delts.",
+    "Brace your core to stop your ribcage from flaring up as you press.",
+    "Focus on pushing through your palms, feeling the front and side delts drive the weight.",
+    "Don't let the dumbbells drift behind your head, which strains the shoulder joint."
+  ],
+  "Dumbbell lateral raise": [
+    "Stand tall with a soft bend in your knees and a slight forward lean.",
+    "Raise the dumbbells out to the sides until your arms are roughly parallel to the floor.",
+    "Lead with your elbows, not your hands, to keep tension on the side delts.",
+    "Use a slight bend in your elbows throughout, never locking them straight.",
+    "Avoid swinging the weights up using momentum from your hips or torso.",
+    "Lower the dumbbells slowly under control instead of dropping them.",
+    "Keep your shoulders down away from your ears, not shrugging as you lift.",
+    "Stop the raise at shoulder height; going higher shifts work to your traps.",
+    "Exhale as you raise the dumbbells and inhale as you lower them.",
+    "Pick a weight light enough that your form stays clean for every rep.",
+    "Picture pouring water from a jug to keep your pinkies slightly higher than your thumbs.",
+    "Avoid using your traps to shrug the weight up; isolate the shoulder movement."
+  ],
+  "Dumbbell front raise": [
+    "Stand with a neutral spine and your core braced before lifting.",
+    "Raise the dumbbells straight out in front of you to about shoulder height.",
+    "Keep a slight bend in your elbows throughout the entire range of motion.",
+    "Lift one arm at a time or both together, but stay controlled either way.",
+    "Avoid using momentum or leaning back to swing the weights upward.",
+    "Lower the dumbbells slowly rather than letting gravity drop them.",
+    "Keep your wrists neutral and avoid bending them as you raise the weight.",
+    "Don't raise past shoulder height, which adds strain without extra delt benefit.",
+    "Exhale on the way up and inhale as you lower back down.",
+    "Focus on feeling the front of your shoulders do the lifting, not your traps.",
+    "Use a palms-down or neutral grip depending on what feels comfortable in your shoulders.",
+    "Choose a lighter weight here since front raises have less mechanical leverage."
+  ],
+  "Barbell overhead press": [
+    "Grip the bar just outside shoulder width with your wrists stacked over your elbows.",
+    "Start with the bar resting on your front shoulders, elbows slightly in front of the bar.",
+    "Brace your core and squeeze your glutes to keep your lower back from arching.",
+    "Press the bar straight up while moving your head back slightly to clear it.",
+    "Finish with the bar over your head and your biceps near your ears.",
+    "Exhale forcefully as you drive the bar overhead.",
+    "Don't lean back excessively to press the weight up; keep your torso upright.",
+    "Lower the bar back to your shoulders under control, not in free fall.",
+    "Use a lighter warmup set to groove the bar path before loading up.",
+    "Keep your feet planted shoulder-width apart for a stable base throughout the lift.",
+    "Avoid flaring your elbows too wide at the bottom, which stresses the shoulder joint.",
+    "Don't push the bar forward in an arc; keep the path as vertical as possible."
+  ],
+  "Machine shoulder press": [
+    "Adjust the seat so the handles line up at shoulder height before starting.",
+    "Keep your back flat against the pad throughout the entire set.",
+    "Press the handles up without locking your elbows out aggressively at the top.",
+    "Exhale as you press and inhale as you return the handles to the start.",
+    "Lower the handles until your upper arms are roughly parallel to the floor.",
+    "Avoid shrugging your shoulders up toward your ears during the press.",
+    "Keep your wrists straight and avoid bending them against the handles.",
+    "Use a controlled tempo rather than letting the machine's weight stack slam down.",
+    "Focus on squeezing your shoulders at the top rather than just moving the handles.",
+    "Don't flare your elbows out wider than the handle path allows.",
+    "Keep your feet flat on the floor for a stable, balanced base.",
+    "Check the handle grip width setting matches a comfortable shoulder position before loading weight."
+  ],
+  "Cable lateral raise": [
+    "Stand sideways to the cable stack so the pulley pulls your arm across your body.",
+    "Set the pulley near the floor so the cable line of pull starts low.",
+    "Raise your arm out to the side until it's roughly parallel to the floor.",
+    "Keep a slight bend in your elbow throughout, not a locked-out arm.",
+    "Lead with your elbow rather than pulling with your hand or wrist.",
+    "Control the cable back down instead of letting the weight yank your arm down.",
+    "Avoid twisting your torso to help lift the handle; isolate the shoulder.",
+    "Keep tension on the cable through the bottom of the rep instead of resting.",
+    "Exhale as you raise your arm and inhale as you lower it back.",
+    "Switch sides evenly so each shoulder gets the same constant-tension benefit.",
+    "Don't shrug your shoulder up toward your ear as you raise the handle.",
+    "Stand far enough from the machine that the cable stays at an angle, not straight down."
+  ],
+  "Arnold press": [
+    "Start seated with the dumbbells in front of your shoulders, palms facing you.",
+    "Rotate your palms outward as you press the dumbbells overhead.",
+    "Keep your back flat against the bench to avoid excess lumbar arching.",
+    "Reverse the rotation smoothly as you lower the dumbbells back to the start.",
+    "Exhale as you press and rotate, inhale as you lower and rotate back.",
+    "Avoid rushing the rotation; let it happen gradually through the full range.",
+    "Keep your core braced so your torso doesn't twist along with your wrists.",
+    "Don't let the dumbbells drift behind your head at the top of the press.",
+    "Use a lighter weight than a standard press since the rotation adds difficulty.",
+    "Keep your elbows tracking slightly in front of your body, not flared out wide.",
+    "Focus on feeling all three deltoid heads work through the rotating path.",
+    "Lower under control rather than letting the dumbbells drop back to the start position."
+  ],
+  "Dumbbell shrug": [
+    "Stand tall with a dumbbell in each hand at your sides, arms straight.",
+    "Lift your shoulders straight up toward your ears without bending your elbows.",
+    "Avoid rolling your shoulders forward or backward; keep the motion vertical.",
+    "Pause briefly at the top and squeeze your traps before lowering.",
+    "Lower the dumbbells slowly instead of letting them drop on the way down.",
+    "Keep your neck relaxed and avoid craning it forward to help the lift.",
+    "Use a firm grip or straps if your hands give out before your traps do.",
+    "Avoid using your legs or hips to bounce the weight upward.",
+    "Exhale as you shrug up and inhale as you lower back down.",
+    "Keep your arms straight and let your traps do all the work, not your biceps.",
+    "Stand with a stable, shoulder-width stance to avoid swaying during heavier sets.",
+    "Don't overload the weight to the point your form breaks down into jerky reps."
+  ],
+  "Barbell shrug": [
+    "Grip the bar just outside your hips with a stable, even grip.",
+    "Stand tall with your chest up and shoulders back before you start the lift.",
+    "Shrug your shoulders straight up toward your ears, keeping your elbows straight.",
+    "Avoid rolling your shoulders in circles; stick to a strict up-and-down path.",
+    "Pause and squeeze at the top of the shrug for a full trap contraction.",
+    "Lower the bar under control rather than dropping it quickly.",
+    "Use chalk or straps if your grip fails before your traps fatigue.",
+    "Keep the bar close to your body throughout the entire movement.",
+    "Avoid using your knees or hips to heave the bar upward.",
+    "Exhale as you shrug up and inhale as you return to the start.",
+    "Keep your neck neutral and avoid tilting your head to assist the lift.",
+    "Don't overarch your lower back trying to shrug heavier loads than you can control."
+  ],
+  "Triceps pushdown": [
+    "Pin your elbows to your sides and keep them locked there the entire set.",
+    "Use a light warmup set to groove the elbow position before loading the bar.",
+    "Lean slightly forward from the hips, not the shoulders, to keep tension on triceps.",
+    "Push the bar down until your arms are fully straight without locking out violently.",
+    "Let the bar rise only until your forearms reach about parallel to the floor.",
+    "Exhale as you press down, inhale as you control the bar back up.",
+    "Avoid using your body weight or a torso lean to muscle the weight down.",
+    "Squeeze and pause briefly at full elbow extension to maximize triceps contraction.",
+    "Keep your wrists firm and straight instead of letting them flex on the bar.",
+    "Resist the urge to let the bar snap back up; control the eccentric phase.",
+    "Set the cable pulley at the top so the starting angle stresses your elbows minimally.",
+    "Stand close to the cable stack so the cable path stays vertical, not angled."
+  ],
+  "Cable rope tricep extension": [
+    "Split the rope ends apart at the bottom to fully contract each triceps head.",
+    "Keep your upper arms glued to your ribcage throughout the movement.",
+    "Extend until your elbows are straight, then squeeze before reversing the motion.",
+    "Avoid flaring your elbows outward as you push the rope down.",
+    "Control the rope back up slowly instead of letting the weight pull your arms.",
+    "Breathe out on the push, in as you let your forearms rise back up.",
+    "Keep a slight forward torso lean instead of standing bolt upright.",
+    "Don't shrug your shoulders up toward your ears as you push down.",
+    "Rotate your wrists slightly outward at the bottom to emphasize the lateral head.",
+    "Stand with a staggered stance for stability rather than locking your knees.",
+    "Keep your core braced so your lower back doesn't arch during the push.",
+    "Stop the rope just above thigh height instead of slamming into your legs."
+  ],
+  "Dumbbell bicep curl": [
+    "Start with a light warmup set to prep your elbows before adding weight.",
+    "Keep your elbows tucked at your sides instead of drifting them forward.",
+    "Curl the dumbbell up without swinging your torso or hips for momentum.",
+    "Lower the weight all the way down until your arms are fully straight.",
+    "Exhale as you curl up, inhale as you lower the dumbbell back down.",
+    "Squeeze your biceps hard at the top instead of just lifting and dropping.",
+    "Avoid letting your shoulders roll forward as the weight gets heavier.",
+    "Control the descent for two to three seconds instead of dropping the weight fast.",
+    "Keep your wrists straight rather than curling them inward at the top.",
+    "Alternate arms or curl together, but keep elbows stationary either way.",
+    "Stand with a slight knee bend instead of locking your legs straight.",
+    "Avoid hyperextending your elbows at the bottom of each rep."
+  ],
+  "Hammer curls": [
+    "Keep your palms facing each other throughout the entire curl.",
+    "Pin your elbows to your sides instead of letting them swing outward.",
+    "Curl with a controlled tempo rather than jerking the dumbbells upward.",
+    "Lower the dumbbells fully to feel a stretch in your forearms and biceps.",
+    "Avoid rotating your wrists toward a regular curl grip during the lift.",
+    "Squeeze your forearm and brachialis muscles at the top of each rep.",
+    "Exhale on the lift, inhale as you lower the dumbbells with control.",
+    "Keep your torso upright instead of leaning back to assist the curl.",
+    "Move each arm independently or together, but avoid uneven shoulder shrugging.",
+    "Avoid letting momentum carry the weight past your natural range of motion.",
+    "Keep your shoulders pulled back and down, not rounded forward.",
+    "Stop the descent just short of locking out hard on your elbows."
+  ],
+  "Dumbbell skull crusher": [
+    "Use a light warmup set to find a safe, comfortable elbow path first.",
+    "Keep your upper arms pointed straight up and perfectly still throughout the set.",
+    "Lower the dumbbells toward your forehead or just behind your head, not your chest.",
+    "Bend only at the elbow; don't let your shoulders move during the rep.",
+    "Inhale as you lower the weight, exhale forcefully as you extend your arms.",
+    "Avoid flaring your elbows outward as the dumbbells descend.",
+    "Use a slow, controlled lowering phase to protect your elbow joints.",
+    "Keep a firm grip and tight wrists so the dumbbells don't tilt unexpectedly.",
+    "Stop the descent if you feel any elbow joint pinching or strain.",
+    "Squeeze your triceps fully at the top without slamming your elbows straight.",
+    "Keep your feet flat and core braced to stabilize your body on the bench.",
+    "Choose a lighter load than you'd guess, since this exercise stresses the elbows."
+  ],
+  "Single-arm dumbbell overhead tricep extension": [
+    "Keep your upper arm close to your head and pointed straight up.",
+    "Lower the dumbbell behind your head until you feel a deep triceps stretch.",
+    "Use your free hand to support your working elbow for added stability.",
+    "Extend your arm fully overhead without locking out aggressively at the top.",
+    "Avoid letting your elbow drift outward away from your head during the rep.",
+    "Exhale as you press up, inhale as you lower the dumbbell behind your head.",
+    "Keep your core tight and ribs down to avoid arching your lower back.",
+    "Move slowly on the way down to keep constant tension on the triceps.",
+    "Avoid twisting your torso to help lift the weight on heavier reps.",
+    "Keep your wrist straight and firm instead of letting it bend backward.",
+    "Sit or stand tall instead of leaning to one side during the extension.",
+    "Switch arms only after completing full controlled reps on the working side."
+  ],
+  "Cable bicep curl": [
+    "Stand far enough from the machine to keep constant cable tension throughout.",
+    "Keep your elbows fixed at your sides instead of drifting forward as you curl.",
+    "Curl the bar up using only your forearms, not your shoulders or back.",
+    "Lower the bar under control until your arms are nearly fully extended.",
+    "Squeeze your biceps at the top instead of just reaching the top position.",
+    "Avoid leaning back to use momentum when the weight feels heavy.",
+    "Exhale as you curl up, inhale as you let the cable pull your arms down.",
+    "Keep your wrists neutral rather than bending them to assist the curl.",
+    "Stand with a slight forward lean rather than locking your knees out straight.",
+    "Avoid letting the cable yank your arms down too quickly between reps.",
+    "Keep your shoulders pulled back and chest up throughout the set.",
+    "Use a full range of motion instead of doing short, partial curls."
+  ],
+  "Barbell curl": [
+    "Keep your elbows pinned to your sides throughout the entire curl.",
+    "Avoid swinging your hips or leaning back to heave the bar up.",
+    "Lower the bar fully until your arms are straight before the next rep.",
+    "Squeeze your biceps hard at the top instead of bouncing into the next rep.",
+    "Exhale as you curl the bar up, inhale as you lower it back down.",
+    "Keep your wrists straight rather than curling them up toward your forearms.",
+    "Use a grip width that keeps your wrists and elbows comfortable, not strained.",
+    "Avoid letting your elbows drift forward as the weight gets challenging.",
+    "Keep your shoulders back and chest up instead of rounding forward.",
+    "Stand with knees slightly soft instead of locking them out completely.",
+    "Control the eccentric phase instead of letting the bar drop quickly.",
+    "Keep your head neutral instead of jutting your chin forward to curl."
+  ],
+  "Preacher curl": [
+    "Rest the back of your upper arms fully on the pad before starting.",
+    "Avoid lifting your elbows off the pad as you curl the weight up.",
+    "Lower the bar until your arms are nearly straight for a full stretch.",
+    "Avoid locking your elbows out hard at the bottom of each rep.",
+    "Squeeze your biceps at the top instead of rushing into the next rep.",
+    "Exhale as you curl up, inhale as you lower the bar back down.",
+    "Keep your wrists firm and straight rather than letting them bend backward.",
+    "Use a slower tempo since the preacher position removes momentum assistance.",
+    "Keep your chest against the pad instead of leaning back during heavy reps.",
+    "Avoid using your shoulders to heave the weight when your biceps fatigue.",
+    "Choose a lighter load than standing curls since leverage is less forgiving here.",
+    "Keep your feet flat on the floor for a stable base throughout the set."
+  ],
+  "Cable rope hammer curl": [
+    "Keep your palms facing each other on the rope throughout the curl.",
+    "Pin your elbows to your sides instead of letting them swing forward.",
+    "Curl the rope up using only your forearms, not your shoulders.",
+    "Lower the rope under control until your arms are nearly fully extended.",
+    "Squeeze your forearms and biceps at the top of every rep.",
+    "Avoid leaning back to use momentum when the weight feels heavy.",
+    "Exhale as you curl up, inhale as you let the cable lower your arms.",
+    "Keep your wrists neutral instead of rotating them during the curl.",
+    "Stand with a stable, slightly staggered stance rather than locking your knees.",
+    "Avoid letting the cable yank your arms down too fast between reps.",
+    "Keep your shoulders back and chest up throughout the movement.",
+    "Use a full range of motion instead of short, partial pulls."
+  ],
+  "Close-grip bench press": [
+    "Grip the bar slightly narrower than shoulder width to target your triceps.",
+    "Keep your elbows tucked close to your torso as you lower the bar.",
+    "Lower the bar to your lower chest instead of flaring it to your upper chest.",
+    "Avoid gripping too narrow, which can strain your wrists and elbows.",
+    "Inhale as you lower the bar, exhale forcefully as you press it up.",
+    "Keep your shoulder blades pulled back and pinned to the bench.",
+    "Avoid bouncing the bar off your chest to generate momentum.",
+    "Keep your feet flat on the floor to drive stability through your press.",
+    "Press the bar in a straight line back toward the rack position.",
+    "Use a spotter or safety bars when pushing close to your max weight.",
+    "Keep your wrists stacked directly above your elbows, not bent backward.",
+    "Squeeze the bar hard and engage your triceps at full lockout."
+  ],
+  "Single-arm tricep kickback": [
+    "Hinge at your hips and keep your back flat, not rounded, throughout.",
+    "Keep your upper arm parallel to the floor and pinned to your side.",
+    "Extend only at the elbow; avoid swinging your upper arm to lift the weight.",
+    "Squeeze your triceps hard at full extension before lowering back down.",
+    "Avoid using momentum or a hip thrust to swing the dumbbell upward.",
+    "Exhale as you extend your arm back, inhale as you bend it back in.",
+    "Keep your neck neutral instead of craning it to look at the weight.",
+    "Support yourself with your free hand on a bench for added stability.",
+    "Use a lighter weight than you'd expect, since leverage here is unforgiving.",
+    "Keep your elbow bent at roughly a right angle at the start of each rep.",
+    "Avoid letting your shoulder rise or rotate as you kick the weight back.",
+    "Control the lowering phase instead of letting your forearm drop quickly."
+  ],
+  "Tricep dips": [
+    "Keep your elbows tracking straight back instead of flaring out to the sides.",
+    "Lower your body until your upper arms are about parallel to the floor.",
+    "Keep your torso upright to emphasize triceps over chest involvement.",
+    "Avoid shrugging your shoulders up toward your ears as you descend.",
+    "Inhale as you lower yourself, exhale as you press back up.",
+    "Stop your descent if you feel any pinching in your shoulder joints.",
+    "Keep your core tight so your hips don't sag away from the bench.",
+    "Press through your palms evenly instead of leaning to one side.",
+    "Add weight or bend your knees more once bodyweight reps feel too easy.",
+    "Avoid locking your elbows out aggressively at the top of each rep.",
+    "Keep your wrists positioned directly under your shoulders, not flared outward.",
+    "Move with control instead of bouncing quickly at the bottom of the dip."
+  ],
+  "Overhead cable tricep extension": [
+    "Face away from the cable machine with the pulley set near the floor.",
+    "Keep your upper arms close to your head and steady throughout the set.",
+    "Extend your forearms forward and up until your arms are fully straight.",
+    "Avoid letting your elbows flare outward as you extend against the cable.",
+    "Lean your torso forward slightly to keep tension off your lower back.",
+    "Exhale as you extend your arms, inhale as you let them bend back.",
+    "Keep your core braced so your back doesn't arch under the cable pull.",
+    "Squeeze your triceps fully at extension instead of stopping short.",
+    "Use a rope attachment and split the ends for added triceps contraction.",
+    "Avoid jerking the cable to start the rep; initiate the move smoothly.",
+    "Keep your wrists firm and straight rather than letting them bend back.",
+    "Control the stretch position instead of letting the cable yank your arms back."
+  ],
+  "Hack squat": [
+    "Set your shoulders snug under the pads and your back flat against the support.",
+    "Place feet shoulder-width on the platform, mid-foot under the load path.",
+    "Lower until your thighs are just past parallel without your heels lifting.",
+    "Drive through your whole foot, favoring your heels over your toes.",
+    "Inhale on the way down, brace your core, exhale as you push up.",
+    "Keep your knees tracking in line with your toes, not caving inward.",
+    "Avoid locking your knees out hard at the top of each rep.",
+    "Use a lighter warmup set to groove depth before adding plates.",
+    "Don't let your lower back round away from the pad at the bottom.",
+    "Focus on feeling your quads stretch and contract through the full range.",
+    "Control the descent for two to three seconds instead of dropping fast.",
+    "Keep the safety catches engaged until you're set and ready to lift."
+  ],
+  "Lying hamstring curl": [
+    "Adjust the ankle pad to sit just above your heels, not your calves.",
+    "Keep your hips pressed flat into the bench throughout the movement.",
+    "Curl your heels toward your glutes through a full, slow range of motion.",
+    "Avoid yanking the weight up using momentum from your lower back.",
+    "Squeeze and pause briefly at peak contraction before lowering.",
+    "Exhale as you curl up, inhale as you lower the pad back down.",
+    "Don't let your hips pop up off the pad as the weight gets heavy.",
+    "Use a light warmup set to wake up the hamstrings before loading up.",
+    "Point your toes slightly to bias the hamstrings over the calves.",
+    "Lower the pad under control instead of letting it snap back.",
+    "Keep your grip on the handles light, not yanking your upper body around.",
+    "Focus on feeling the stretch in your hamstrings at full extension."
+  ],
+  "Dumbbell lunge": [
+    "Keep your torso upright and your core braced through each step.",
+    "Step far enough forward that your front shin stays roughly vertical.",
+    "Lower until your back knee lightly grazes the floor, not slams it.",
+    "Keep your front knee tracking over your foot, not drifting inward.",
+    "Inhale as you lower, exhale as you drive back up.",
+    "Avoid letting your front heel lift off the ground during the descent.",
+    "Push through your front heel to stand back up, not your toes.",
+    "Keep the dumbbells close to your sides instead of swinging them.",
+    "Don't let your back round forward as you lean into the lunge.",
+    "Focus on feeling your front-leg quad and glute do the work.",
+    "Take shorter, controlled steps if walking to avoid losing balance.",
+    "Keep your head and chest up rather than staring down at your feet."
+  ],
+  "Machine adduction": [
+    "Sit fully back in the seat with your spine against the pad.",
+    "Set the pads against your inner thighs just above the knee.",
+    "Squeeze your legs together slowly rather than slamming the pads shut.",
+    "Avoid using your hands on your knees to assist the movement.",
+    "Exhale as you bring your legs together, inhale as you release.",
+    "Pause briefly at full inner-thigh contraction before opening back up.",
+    "Don't let the weight yank your legs open too fast on the return.",
+    "Use a light warmup set to test the range before loading heavier.",
+    "Keep your back flat against the pad, not arching forward.",
+    "Focus on feeling the squeeze in your inner thighs, not your hips.",
+    "Set the starting width so you feel a stretch without straining.",
+    "Keep movements smooth and controlled in both directions."
+  ],
+  "Machine abduction": [
+    "Sit back fully with your hips square and spine against the pad.",
+    "Position the pads on the outside of your knees, not your shins.",
+    "Push your legs apart slowly, leading with your outer hips.",
+    "Avoid jerking the weight open using your lower back for momentum.",
+    "Exhale as you push outward, inhale as you bring legs back in.",
+    "Pause at the widest point to feel your glute medius engage.",
+    "Don't let the pads slam back together under uncontrolled weight.",
+    "Use a light warmup set to find a comfortable starting range.",
+    "Keep your shoulders relaxed and avoid gripping the handles too hard.",
+    "Focus on feeling the outer hip and glute work, not your quads.",
+    "Avoid rounding your lower back away from the pad mid-rep.",
+    "Keep the tempo even rather than bouncing in and out."
+  ],
+  "Leg press": [
+    "Place your feet shoulder-width on the platform, flat from heel to toe.",
+    "Keep your lower back pressed into the seat throughout every rep.",
+    "Lower the platform until your knees reach about ninety degrees.",
+    "Avoid letting your knees cave inward as you press the weight up.",
+    "Inhale as the platform lowers, exhale as you press it away.",
+    "Don't lock your knees out completely or bounce them at the top.",
+    "Use the warmup set to confirm seat position before going heavy.",
+    "Keep your hips glued to the seat, not rounding off it at depth.",
+    "Avoid letting your heels lift off the platform during the press.",
+    "Focus on driving through your whole foot, not just your toes.",
+    "Control the negative instead of letting the platform drop quickly.",
+    "Keep your head and shoulders relaxed against the backrest."
+  ],
+  "Leg press calf raise": [
+    "Place only the balls of your feet on the lower edge of the platform.",
+    "Keep your knees softly locked and stationary throughout the set.",
+    "Lower your heels as far as the platform allows for a full stretch.",
+    "Press through your forefoot to extend your ankles fully at the top.",
+    "Pause briefly at full plantarflexion before lowering back down.",
+    "Exhale as you press up, inhale as you lower your heels.",
+    "Avoid bending your knees to help drive the weight up.",
+    "Use the warmup set to find a safe foot position on the plate.",
+    "Don't bounce out of the bottom stretch; control it instead.",
+    "Keep the range of motion full rather than using short pulses.",
+    "Focus on feeling the stretch and squeeze in your calves, not your quads.",
+    "Keep your feet from sliding by checking your footing each rep."
+  ],
+  "Leg extension": [
+    "Align the machine's pivot point with your knee joint before starting.",
+    "Set the ankle pad just above your feet, resting on your shins.",
+    "Extend your legs until they're straight without snapping your knees locked.",
+    "Avoid using momentum or swinging your torso to help lift the weight.",
+    "Exhale as you extend, inhale as you lower back down.",
+    "Pause briefly at full extension to maximize quad contraction.",
+    "Lower the weight slowly instead of letting it drop fast.",
+    "Use a light warmup set to gauge knee comfort before adding load.",
+    "Keep your back flat against the pad, not arching off it.",
+    "Focus on squeezing your quads hard at the top of each rep.",
+    "Grip the side handles lightly instead of yanking on them.",
+    "Stop short of full lockout if you feel any knee discomfort."
+  ],
+  "Barbell back squat": [
+    "Set the bar across your traps, not resting on your neck bones.",
+    "Brace your core and take a deep breath before unracking the bar.",
+    "Keep your chest up and spine neutral throughout the descent.",
+    "Sit your hips back and down until thighs are at least parallel.",
+    "Keep your knees tracking over your toes, not collapsing inward.",
+    "Drive through your whole foot, not just your toes, to stand up.",
+    "Avoid letting your lower back round at the bottom of the squat.",
+    "Use a light warmup set to dial in bar position and depth.",
+    "Exhale forcefully past the hardest part of the rep, not at the bottom.",
+    "Keep the bar path vertical over your mid-foot the entire rep.",
+    "Don't let your heels rise off the floor as you descend.",
+    "Use safety pins or a spotter when attempting heavier loads."
+  ],
+  "Bulgarian split squat": [
+    "Rest the top of your rear foot on the bench, laces down.",
+    "Keep most of your weight on your front heel, not the back leg.",
+    "Lower straight down until your front thigh is roughly parallel to the floor.",
+    "Keep your torso upright with a slight forward lean from the hips.",
+    "Avoid letting your front knee drift past your toes excessively.",
+    "Inhale as you lower, exhale as you drive back up.",
+    "Don't push off your rear foot to assist the lift.",
+    "Keep the dumbbells at your sides rather than swinging for momentum.",
+    "Focus on feeling your front glute and quad doing the work.",
+    "Set your front foot far enough forward to keep your shin vertical.",
+    "Avoid letting your hips rotate or tilt sideways mid-rep.",
+    "Use a wall or bench for balance until your stability improves."
+  ],
+  "Seated hamstring curl": [
+    "Align the machine's pivot with your knee joint before adjusting pads.",
+    "Set the thigh pad snug to keep your hips from rising during curls.",
+    "Curl your heels down and back through a full range of motion.",
+    "Avoid jerking the weight using your hips or upper body.",
+    "Exhale as you curl down, inhale as you return to the start.",
+    "Pause briefly at peak contraction to maximize hamstring engagement.",
+    "Lower the weight slowly instead of letting it snap back up.",
+    "Use a light warmup set to find a comfortable pad position.",
+    "Keep your back flat against the seat, not arching forward.",
+    "Point your toes slightly to emphasize the hamstrings over the calves.",
+    "Focus on feeling the stretch at the top of each rep.",
+    "Keep your grip on the handles relaxed, not white-knuckled."
+  ],
+  "Romanian deadlift": [
+    "Keep the bar close to your shins and thighs throughout the lift.",
+    "Hinge at your hips, pushing them back as your torso tilts forward.",
+    "Keep a soft bend in your knees rather than locking them straight.",
+    "Maintain a flat, neutral spine from setup through lockout.",
+    "Lower the bar only until you feel a deep hamstring stretch.",
+    "Avoid rounding your lower back to chase a lower bar position.",
+    "Inhale and brace before the descent, exhale as you stand tall.",
+    "Drive your hips forward to finish, not your lower back.",
+    "Keep your shoulders back and chest proud throughout the movement.",
+    "Avoid yanking the bar off the floor; start the pull smoothly.",
+    "Focus on feeling tension build in your hamstrings, not your low back.",
+    "Use a double-overhand or mixed grip and chalk if grip starts slipping."
+  ],
+  "Seated calf raise": [
+    "Set the knee pad snugly against your thighs before starting.",
+    "Place the balls of your feet on the platform, heels hanging free.",
+    "Lower your heels as far as possible for a deep calf stretch.",
+    "Press through your forefeet to rise onto your toes fully.",
+    "Pause briefly at the top to squeeze your calves hard.",
+    "Exhale as you raise, inhale as you lower back down.",
+    "Avoid bouncing out of the bottom stretch position.",
+    "Control the descent slowly instead of letting the pad drop.",
+    "Keep your knees still and bent at the same angle throughout.",
+    "Focus on feeling the stretch and contraction in your calves only.",
+    "Don't let your feet roll inward or outward during the rep.",
+    "Use a full range of motion rather than short, partial pulses."
+  ],
+  "Plate-loaded standing calf raise": [
+    "Set your shoulders under the pads with a slight knee bend, not locked.",
+    "Place the balls of your feet on the platform, heels hanging off the edge.",
+    "Lower your heels as deep as possible to feel a full calf stretch.",
+    "Press up through your forefoot until you're fully on your toes.",
+    "Pause at the top and squeeze your calves before lowering.",
+    "Exhale as you rise, inhale as you lower your heels down.",
+    "Avoid bouncing at the bottom; control the stretch instead.",
+    "Use the warmup set to check footing and balance before loading heavy.",
+    "Keep your torso upright rather than leaning into the shoulder pads.",
+    "Don't let your knees bend and unbend to help drive the weight.",
+    "Focus on feeling the burn in your calves, not your shins.",
+    "Keep your feet from sliding outward by checking placement each set."
+  ],
+  "Machine seated crunch": [
+    "Set the seat height so the chest pad lines up with your upper chest, not your neck.",
+    "Start with a light warmup set to find your range before loading the stack.",
+    "Curl your spine forward by contracting your abs, not by yanking with your arms.",
+    "Exhale fully as you crunch down to deepen the abdominal contraction.",
+    "Keep your feet flat and anchored so your hips stay still through the movement.",
+    "Pause briefly at full contraction and squeeze your abs instead of bouncing.",
+    "Control the return to the start position instead of letting the weight snap back.",
+    "Avoid yanking the handles with your shoulders to fake extra range of motion.",
+    "Keep your neck relaxed and let your abs do the pulling, not your chin.",
+    "Use a moderate weight that lets you feel your abs working through the full set.",
+    "Don't lock your elbows rigidly; let your arms transmit force, not generate it.",
+    "Focus on rounding your lower back into the pad to fully engage your core."
+  ],
+  "Vertical leg raise": [
+    "Press your forearms firmly into the pads and keep your back flat against the support.",
+    "Brace your core before lifting so your lower back doesn't arch off the pad.",
+    "Raise your knees or legs by curling your pelvis up, not just swinging your hips.",
+    "Exhale as you lift your legs and inhale as you lower them with control.",
+    "Lower your legs slowly instead of letting gravity drop them at the bottom.",
+    "Avoid using momentum or swinging to throw your legs upward.",
+    "Stop the descent before your lower back arches away from the pad.",
+    "Keep your shoulders pressed down and avoid shrugging into your ears.",
+    "Raise your knees toward your chest to target your lower abs more directly.",
+    "Squeeze your abs hard at the top instead of just reaching a height goal.",
+    "Keep your grip relaxed on the handles so your abs do the work, not your arms.",
+    "Straighten your legs for a harder variation only once form stays controlled."
+  ],
+  "Decline sit-ups": [
+    "Hook your feet securely under the pads before lowering into the decline bench.",
+    "Cross your arms over your chest or behind your head, not pulling on your neck.",
+    "Curl your chin slightly toward your chest to avoid straining your neck.",
+    "Exhale as you rise up and inhale as you lower back down.",
+    "Lower yourself with control instead of dropping fast to the bottom of the bench.",
+    "Avoid yanking your head and neck to generate momentum upward.",
+    "Engage your abs first before your hip flexors take over the movement.",
+    "Don't fully relax your spine at the bottom; keep light tension in your core.",
+    "Start at a shallow decline angle until your core strength supports a steeper one.",
+    "Keep your lower back from rounding excessively past your natural curve at the top.",
+    "Squeeze your abs at the top rather than rushing straight back down.",
+    "Avoid arching your lower back hard against the bench at the bottom of the rep."
+  ],
+  "Leg raise": [
+    "Use a firm overhand or hanging grip and let your shoulders fully engage before lifting.",
+    "Brace your abs before raising your legs to avoid swinging on the bar.",
+    "Lift your legs by tilting your pelvis up, not just by flexing your hips.",
+    "Exhale as you raise your legs and inhale as you lower them slowly.",
+    "Lower your legs under control instead of letting them drop and swing.",
+    "Avoid using momentum from your shoulders to swing your legs upward.",
+    "Stop your legs before your lower back arches forward excessively.",
+    "Keep a slight bend in your knees if straight-leg raises strain your lower back.",
+    "Squeeze your lower abs at the top instead of just touching the bar height.",
+    "Keep your shoulder blades engaged and avoid hanging passively from the joints.",
+    "Avoid rocking your torso to build swinging momentum for the next rep.",
+    "Build up from bent-knee raises before progressing to straight-leg hanging raises."
+  ],
+  "Plank": [
+    "Stack your shoulders directly over your elbows for stable forearm positioning.",
+    "Brace your core like you're about to be punched in the stomach.",
+    "Squeeze your glutes to keep your hips from sagging toward the floor.",
+    "Keep your body in one straight line from head to heels.",
+    "Breathe steadily and evenly instead of holding your breath during the hold.",
+    "Avoid letting your hips pike up into an inverted-V position.",
+    "Avoid letting your lower back sag, which strains your spine over time.",
+    "Keep your neck neutral by looking at the floor, not straight ahead.",
+    "Press your forearms into the floor to keep your upper back engaged.",
+    "Quit the hold once your form breaks rather than fighting through a sagging plank.",
+    "Keep your feet hip-width apart for a stable, balanced base.",
+    "Focus on quality time under tension rather than chasing a longer hold time."
+  ],
+  "Cable crunch": [
+    "Kneel far enough from the pulley that the cable stays taut throughout the rep.",
+    "Hold the rope by your temples or ears, not gripping it with your hands.",
+    "Hinge from your hips so your hips stay still and your spine does the curling.",
+    "Round your spine downward by contracting your abs, not by pulling with your arms.",
+    "Exhale forcefully as you crunch down toward your knees.",
+    "Keep your hips locked in place instead of sitting back onto your heels.",
+    "Avoid yanking the rope with your shoulders to muscle the weight down.",
+    "Return to the start slowly instead of letting the cable snap you back up.",
+    "Keep slight tension on your abs at the top instead of fully relaxing.",
+    "Focus on curling your ribcage toward your pelvis for a deeper contraction.",
+    "Choose a weight that lets you feel the crunch in your abs, not your arms.",
+    "Keep your neck relaxed and avoid pulling your head down with your hands."
+  ]
+};
+function tipFor(name){const t=EX_TIPS[name];return t&&t.length?t[Math.floor(Math.random()*t.length)]:'Keep your form tight and controlled.';}
+
 // ═══ STATE ═══
 let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{}};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,editMid:false};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,editMid:false,editIncludeCurrent:false};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,DE_EXPANDED=null;
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,last:'',sw:'ai',step:1};
 const OB_STEPS=9;
@@ -817,7 +1730,7 @@ function saveInProgress(){
   const activeEl=document.querySelector('.screen.active');
   const screen=activeEl?activeEl.id.replace('s-',''):(ST.day?'wo':'dayedit');
   const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,screen,ts:Date.now()};
-  if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.deExpanded=DE_EXPANDED;}
+  if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.editIncludeCurrent=ST.editIncludeCurrent;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.deExpanded=DE_EXPANDED;}
   if(HOLD_IDX!==null){wip.holdIdx=HOLD_IDX;wip.holdStart=HOLD_START;}
   try{localStorage.setItem('gp_wip',JSON.stringify(wip));}catch(e){}
 }
@@ -837,7 +1750,7 @@ function restoreInProgress(){
     gid('wo-tit').textContent=getDayName(ST.day);gid('prt-w').innerHTML='';
   }
   if(wip.editDay){
-    ST.editDay=wip.editDay;ST.editList=wip.editList||[];ST.editMid=wip.editMid||false;
+    ST.editDay=wip.editDay;ST.editList=wip.editList||[];ST.editMid=wip.editMid||false;ST.editIncludeCurrent=wip.editIncludeCurrent||false;
     ST.swapIdx=wip.swapIdx!==undefined?wip.swapIdx:null;ST.swapPart=wip.swapPart||null;
     DE_EXPANDED=wip.deExpanded!==undefined?wip.deExpanded:null;
     gid('de-tit').textContent=ST.editMid?(getDayName(ST.editDay)+' — remaining exercises'):getDayName(ST.editDay);
@@ -852,11 +1765,13 @@ function restoreInProgress(){
   else if(scr==='fsw'&&ST.sd[ST.exi]){showFSW(ST.sd[ST.exi].ex);}
   else if(scr==='exfeel'&&ST.sd[ST.exi]){askExFeel();}
   else if(scr==='rest'&&ST.restInfo&&ST.sd[ST.exi]){
-    const ex=ST.sd[ST.exi].ex;const{si,done,next}=ST.restInfo;
-    gid('r-en').textContent=ex.name;gid('r-sl').textContent='Set '+(done.t==='w'?'W':si+1)+' done — rest before set '+(next.t==='w'?'W':si+2);
+    const ex=ST.sd[ST.exi].ex;const{si,done,next,isLastSet}=ST.restInfo;
+    gid('r-en').textContent=ex.name;
+    gid('r-sl').textContent=isLastSet?'Set '+(done.t==='w'?'W':si+1)+' done — rest before next exercise':'Set '+(done.t==='w'?'W':si+1)+' done — rest before set '+(next.t==='w'?'W':si+2);
+    gid('r-nx-h').textContent=isLastSet?(ST.exi<ST.sd.length-1?'Up next':'Almost there'):'Next set';
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();
     gid('r-nx').innerHTML=ST.rNxHtml||'';
-    gid('r-fb').innerHTML=ST.rFbHtml||'<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Resumed.</div>';
+    gid('r-fb').innerHTML=ST.rFbHtml||'';
     ss('rest');startRestCountdown();
   }
   else if(scr==='feel'){ss('feel');}
@@ -1080,12 +1995,13 @@ function openDayEdit(k){
 }
 function openMidWorkoutEdit(){
   ST.editDay=ST.day;ST.editMid=true;DE_EXPANDED=null;
-  ST.editList=ST.sd.slice(ST.exi+1).map(item=>item.ex);
+  ST.editIncludeCurrent=!!(ST.sd[ST.exi]&&!ST.sd[ST.exi].sets[0].done);
+  ST.editList=(ST.editIncludeCurrent?ST.sd.slice(ST.exi):ST.sd.slice(ST.exi+1)).map(item=>item.ex);
   gid('de-tit').textContent=getDayName(ST.day)+' — remaining exercises';
   gid('de-commit-btn').innerHTML='Save & continue <i class="ti ti-check" aria-hidden="true"></i>';
   ss('dayedit');renderDayEdit();
 }
-function clearEditState(){ST.editDay=null;ST.editList=[];ST.editMid=false;ST.swapIdx=null;ST.swapPart=null;DE_EXPANDED=null;}
+function clearEditState(){ST.editDay=null;ST.editList=[];ST.editMid=false;ST.editIncludeCurrent=false;ST.swapIdx=null;ST.swapPart=null;DE_EXPANDED=null;}
 function closeDayEdit(){
   const wasMid=ST.editMid;clearEditState();
   if(wasMid){ss('wo');saveInProgress();}else{ss('home');if(!ST.day)clearInProgress();}
@@ -1149,7 +2065,8 @@ function deleteExFromEdit(i){
 function resetDayEdit(){
   if(ST.editMid){
     const def=getDayExercises(ST.editDay,CFG.sex);
-    const doneNames=new Set(ST.sd.slice(0,ST.exi+1).map(item=>item.ex.name));
+    const lockedCount=ST.editIncludeCurrent?ST.exi:ST.exi+1;
+    const doneNames=new Set(ST.sd.slice(0,lockedCount).map(item=>item.ex.name));
     ST.editList=def.filter(ex=>!doneNames.has(ex.name));
   }else{
     ST.editList=getDayExercises(ST.editDay,CFG.sex).slice();
@@ -1158,7 +2075,7 @@ function resetDayEdit(){
 }
 function commitDayEdit(){
   if(ST.editMid){
-    const kept=ST.sd.slice(0,ST.exi+1);
+    const kept=ST.sd.slice(0,ST.editIncludeCurrent?ST.exi:ST.exi+1);
     const fullRaw=kept.map(item=>item.ex).concat(ST.editList);
     const fullWithWU=addWarmupFlags(fullRaw);
     const newRemaining=fullWithWU.slice(kept.length).map(ex=>{
@@ -1312,7 +2229,7 @@ function renderEx(){
   const isLast=ST.exi>=ST.sd.length-1;
   const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\')">';
   gid('ex-area').innerHTML='<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">'+ex.name+'</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">bodyweight</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+' sets</span></div>'+sh+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?'Finish workout <i class="ti ti-trophy" aria-hidden="true"></i>':'Next exercise <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
-  if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet)showFSW(ex);
+  if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet&&ex.plannedW===undefined)showFSW(ex);
   saveInProgress();
 }
 function showFSW(ex){
@@ -1374,116 +2291,39 @@ function startRest(ex,si,done,next){
   ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;updT();
   ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet};
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const nextItem=ST.exi<ST.sd.length-1?ST.sd[ST.exi+1]:null;
   if(isLastSet){
-    gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> '+(ST.exi>=ST.sd.length-1?'Finish workout':'Next exercise');
+    gid('r-nx-h').textContent=nextItem?'Up next':'Almost there';
+    gid('r-nx').innerHTML=nextItem?'<span style="color:var(--txt2)">Next:</span> <strong>'+nextItem.ex.name+'</strong>':'<span style="color:var(--txt2)">Next:</span> Finish workout';
+    const tipEx=nextItem?nextItem.ex:ex;
+    gid('r-fb').innerHTML=(nextItem?'<span style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">For next: <strong>'+nextItem.ex.name+'</strong></span>':'')+tipFor(tipEx.name);
   }else{
+    gid('r-nx-h').textContent='Next set';
     const dispW=isBW?bwWeightLabel(next.w):mwBase>0?(+(next.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':next.w+CFG.unit;
     const repLbl=ex.holdSecs?'Hold':next.r+' reps';
     gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> '+repLbl+' @ <strong>'+dispW+'</strong>'+(ex.note&&!isBW?' ('+ex.note+')':'');
+    gid('r-fb').innerHTML=tipFor(ex.name);
   }
   ST.rNxHtml=gid('r-nx').innerHTML;
-  gid('r-fb').innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Analysing...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
   ST.rFbHtml=gid('r-fb').innerHTML;
   ss('rest');ensureAudio();startRestCountdown();
   saveInProgress();
-  aiFB(ex,done,next,si);
 }
 function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-cir');if(!c)return;c.style.borderColor=ST.rs<=10?'#E24B4A':ST.rs<=30?'#EF9F27':'var(--bdr)';}
 function adj(d){ST.restEnd=(ST.restEnd||Date.now())+d*1000;ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();saveInProgress();}
 function skip(){clearInterval(ST.rt);endRest();}
-function aiQueueId(){return 'q'+Date.now()+Math.random().toString(36).slice(2,8);}
-async function aiCall(prompt,qItem,onSuccess,onHold){
-  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();onSuccess(d.content&&d.content[0]?d.content[0].text:'');return true;}
-  catch(e){enqueueAiItem(qItem);onHold();return false;}
-}
-function loadAiQueue(){try{return JSON.parse(localStorage.getItem('gp_ai_queue')||'[]');}catch(e){return [];}}
-function saveAiQueue(q){try{localStorage.setItem('gp_ai_queue',JSON.stringify(q));}catch(e){}}
-function enqueueAiItem(item){const q=loadAiQueue();q.push(item);saveAiQueue(q);}
-let _aiFlushing=false;
-async function flushAiQueue(){
-  if(_aiFlushing)return;
-  _aiFlushing=true;
-  let q=loadAiQueue();
-  for(const item of q){
-    item.attempts++;
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:item.prompt}]})});
-      const d=await res.json();
-      deliverAiResult(item,d.content&&d.content[0]?d.content[0].text:'');
-      q=q.filter(i=>i.id!==item.id);
-    }catch(e){
-      if(item.attempts>=item.maxAttempts){deliverAiFailure(item);q=q.filter(i=>i.id!==item.id);}
-    }
-    saveAiQueue(q);
-  }
-  _aiFlushing=false;
-}
-function deliverAiResult(item,txt){
-  const el=gid(item.targetEl);
-  if(el&&el.getAttribute('data-ai-q')===item.id){
-    el.removeAttribute('data-ai-q');
-    if(item.kind==='restFB')el.textContent=txt;
-    else if(item.kind==='exFeel'){el.style.display='block';el.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';}
-    else if(item.kind==='sessionRec')el.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');
-  }else{
-    pushAiInsightBanner(item.label,txt);
-  }
-}
-function deliverAiFailure(item){
-  const el=gid(item.targetEl);
-  if(el&&el.getAttribute('data-ai-q')===item.id){
-    el.removeAttribute('data-ai-q');
-    if(item.kind==='restFB')el.textContent='Insight unavailable.';
-    else if(item.kind==='exFeel'){el.style.display='none';el.innerHTML='';}
-    else if(item.kind==='sessionRec')el.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">Recommendations unavailable.</div>';
-  }
-}
-function pushAiInsightBanner(label,text){
-  let arr;try{arr=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]');}catch(e){arr=[];}
-  arr.push({id:aiQueueId(),label,text});
-  try{localStorage.setItem('gp_ai_insights',JSON.stringify(arr));}catch(e){}
-  renderHomeBanners();
-}
-function dismissAiInsight(id){
-  let arr;try{arr=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]').filter(i=>i.id!==id);}catch(e){arr=[];}
-  try{localStorage.setItem('gp_ai_insights',JSON.stringify(arr));}catch(e){}
-  renderHomeBanners();
-}
-function toggleAiInsightsList(){const s=gid('ai-ins-list');if(s)s.style.display=s.style.display==='none'?'block':'none';}
-async function aiFB(ex,done,next,si){
-  const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
-  const isBW=ex.note==='bodyweight';const wu=isBW?'bodyweight':done.w+CFG.unit;
-  const nextLine=next?('Next set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'):'This was the last set of the exercise.\n';
-  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\n'+nextLine+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) '+(next?'Weight for next set.':'Quick recovery tip before the next exercise.')+' Plain text only.';
-  const qid=aiQueueId();
-  await aiCall(prompt,{id:qid,kind:'restFB',prompt,targetEl:'r-fb',attempts:0,maxAttempts:5,label:'Rest feedback \u2014 '+ex.name},
-    (txt)=>{const el=gid('r-fb');if(el)el.textContent=txt;},
-    ()=>{const el=gid('r-fb');if(el){el.setAttribute('data-ai-q',qid);el.textContent='On hold \u2014 will continue when you\u2019re back online.';}});
-  const el2=gid('r-fb');ST.rFbHtml=el2?el2.innerHTML:null;saveInProgress();
-}
 function prevEx(){if(ST.exi>0){ST.exi--;clearInterval(ST.rt);ss('wo');renderEx();}}
 function nextEx(){if(ST.exi<ST.sd.length-1){ST.exi++;clearInterval(ST.rt);ss('wo');renderEx();}else finishWo();}
 function askExFeel(){
-  const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets.filter(s=>s.done&&s.t!=='w');
+  const item=ST.sd[ST.exi];const ex=item.ex;
+  if(item.sets.some(s=>!s.done)&&!confirm('You still have sets left on '+ex.name+'. Continue anyway?'))return;
+  const sets=item.sets.filter(s=>s.done&&s.t!=='w');
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
   const setsStr=sets.map((s,i)=>{const dispW=isBW?'BW':mwBase>0?(+(s.w-mwBase).toFixed(1))+'+'+mwBase+'='+s.w+CFG.unit:s.w+CFG.unit;return 'Set '+(i+1)+': '+dispW+' \u00d7 '+s.r;}).join(' \u00b7 ')||'No work sets logged';
-  gid('ef-name').textContent=ex.name;gid('ef-sets').textContent=setsStr;gid('ef-ai').style.display='none';gid('ef-ai').innerHTML='';ss('exfeel');saveInProgress();
+  gid('ef-name').textContent=ex.name;gid('ef-sets').textContent=setsStr;ss('exfeel');saveInProgress();
 }
-async function submitExFeel(feel){
+function submitExFeel(feel){
   ST.sd[ST.exi].exFeel=feel;
-  if(feel){
-    const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets.filter(s=>s.done&&s.t!=='w');
-    const isBW=ex.note==='bodyweight';const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
-    const setsStr=sets.map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', ');
-    const feelMap={easy:'too easy',good:'just right',hard:'hard',max:'too much'};
-    const prompt='Exercise: '+ex.name+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+'.\nToday: '+setsStr+'. Feel: '+feelMap[feel]+'.\n'+(le?'Last: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nONE line: recommended weight next session and why (max 15 words). Plain text.';
-    const aiEl=gid('ef-ai');aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Thinking...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
-    const qid=aiQueueId();
-    const ok=await aiCall(prompt,{id:qid,kind:'exFeel',prompt,targetEl:'ef-ai',attempts:0,maxAttempts:5,label:'Next-session tip — '+ex.name},
-      (txt)=>{aiEl.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';},
-      ()=>{aiEl.setAttribute('data-ai-q',qid);aiEl.innerHTML='<div style="font-size:13px;color:var(--txt2)">On hold — will continue when you’re back online.</div>';});
-    if(ok)await new Promise(r=>setTimeout(r,2500));
-  }
   nextEx();
 }
 function finishWo(){clearInterval(ST.et);clearInterval(ST.rt);ST.pendingRec=buildRec();ss('feel');saveInProgress();}
@@ -1498,15 +2338,7 @@ async function submitFeel(feel){
   gid('su-pr').innerHTML=newPRs.length?newPRs.map(p=>'<div style="background:#EEEDFE;border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:8px;font-size:13px;color:#3C3489;font-weight:600"><i class="ti ti-star" aria-hidden="true"></i> New PR: '+p.name+' \u2014 '+(p.w>0?p.w+CFG.unit:'BW')+' \u00d7 '+p.r+' reps</div>').join(''):'';
   const feelColors={easy:'#0F6E56',good:'#185FA5',hard:'#854F0B',max:'#993C1D'};const feelLabel={easy:'Too easy \uD83D\uDE0C',good:'Just right \uD83D\uDCAA',hard:'Hard \uD83D\uDD25',max:'Too much \uD83D\uDE35'}[feel];
   gid('su-feel-tag').innerHTML='<div style="background:var(--bg2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:'+feelColors[feel]+'"><i class="ti ti-mood-smile" aria-hidden="true"></i> Session feel: '+feelLabel+'</div>';
-  const rcEl=gid('su-rc');rcEl.innerHTML='<div class="fb"><div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Generating recommendations...<span class="da"><span>.</span><span>.</span><span>.</span></span></div></div>';
   ss('sum');
-  const prev=ST.history.length>=2?ST.history[ST.history.length-2]:null;
-  const exCtx=ST.sd.map(item=>{const sets=item.sets.filter(s=>s.done&&s.t!=='w');const isBW=item.ex.note==='bodyweight';const feelStr=item.exFeel?' [felt: '+item.exFeel+']':'';return item.ex.name+': '+sets.map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', ')+feelStr;}).join('\n');
-  const prompt='Next-session recs for '+rec.dayName+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'. Overall feel: '+feel+'. Today:\n'+exCtx+'\n'+(prev&&prev.day===ST.day?'Previous: '+(prev.exercises||[]).map(e=>e.name+': '+(e.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', ')).join(' | '):'First session.')+'\nRules: easy=increase, good=keep or +2.5, hard=keep, max=decrease. One line per exercise: "Name: Xkg - note". Plain text.';
-  const qid=aiQueueId();
-  await aiCall(prompt,{id:qid,kind:'sessionRec',prompt,targetEl:'su-rc',attempts:0,maxAttempts:5,label:'Session recommendations \u2014 '+rec.dayName},
-    (txt)=>{rcEl.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');},
-    ()=>{rcEl.setAttribute('data-ai-q',qid);rcEl.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">On hold \u2014 will continue when you\u2019re back online.</div>';});
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
 function initChart(){const sel=gid('ch-sel');if(!sel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});drawChart();}
@@ -1564,12 +2396,6 @@ function renderHomeBanners(){
   const el=gid('prt-h');if(!el)return;
   if(!isStandalone()&&localStorage.getItem('gp_a2hs_dismissed')!=='true'){
     el.innerHTML='<div class="prt" style="background:#EAF3DE;border:1px solid #97C459;color:#27500A;display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-home-2" aria-hidden="true" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">Keep GainPath handy</div><div style="font-size:12px;margin-top:2px;line-height:1.5">Install it on your Home Screen for one-tap access — and to make sure Safari never quietly clears your saved workouts.</div><div id="a2hs-steps" style="display:none;font-size:12px;margin-top:8px;line-height:1.6">1. Tap <i class="ti ti-upload" aria-hidden="true"></i> Share in Safari’s toolbar<br>2. Scroll down and tap “Add to Home Screen”<br>3. Tap “Add”</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:12px;padding:6px 12px" onclick="toggleA2HSSteps()">How to add</button><button class="bg" style="font-size:12px;color:#27500A" onclick="dismissA2HS()">Maybe later</button></div></div></div></div>';
-    return;
-  }
-  let insights;try{insights=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]');}catch(e){insights=[];}
-  if(insights.length){
-    const count=insights.length;
-    el.innerHTML='<div class="prt" style="background:#EEEDFE;border:1px solid #B7AEF0;color:#3C3489;display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-sparkles" aria-hidden="true" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">'+count+' AI insight'+(count>1?'s':'')+' ready</div><div id="ai-ins-list" style="display:none;font-size:12px;margin-top:8px;line-height:1.6">'+insights.map(i=>'<div style="margin-bottom:8px"><strong>'+i.label+'</strong><div>'+i.text+'</div><button class="bg" style="font-size:11px;padding:4px 8px;margin-top:4px" onclick="dismissAiInsight(\''+i.id+'\')">Dismiss</button></div>').join('')+'</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:12px;padding:6px 12px" onclick="toggleAiInsightsList()">View</button></div></div></div></div>';
     return;
   }
   if(checkBackupNudge()){
@@ -1630,8 +2456,6 @@ if(CFG.setup){
 }else{ss('ob');}
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
-window.addEventListener('online',flushAiQueue);
-if(navigator.onLine)flushAiQueue();
 </script>
 </body>
 </html>
