@@ -27,12 +27,6 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ## Features
 
-### 🤖 AI coaching
-- Per-set feedback after every rest — assesses your performance and tells you whether to increase, keep, or decrease weight
-- Per-exercise RPE rating (Too easy / Just right / Hard / Too much) with instant one-line next-session recommendation
-- Overall session feel rating before summary
-- End-of-session AI weight recommendations for every exercise, factoring in RPE, session feel, and previous session data
-
 ### 🏋️ Training splits
 Five split types to choose from — see "What each day hits" further down for the muscle groups each one targets:
 - **PPL / Upper-Lower** — Push, Pull, Legs, Upper, Lower (5-day)
@@ -48,7 +42,8 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Tap into an exercise to set its planned sets, reps, and weight before you start
 - Bodyweight exercises (push-ups, pull-ups, dips, plank) support an optional added weight (vest/belt) or assisted weight (band/machine) modifier instead of a flat "BW" label
 - Plank gets its own hold-duration stopwatch in place of a reps counter, with PRs tracked for longer holds
-- Everything above is also available **mid-workout**, scoped to whatever's left in the session, via the reorder icon on the workout screen
+- Everything above is also available **mid-workout**, scoped to whatever's left in the session (plus the exercise you're currently on, if you haven't done its first set yet), via the reorder icon on the workout screen
+- Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
 
 ### 📋 Smart onboarding
 - Name, sex (male/female), body weight, height, body fat %
@@ -64,10 +59,17 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Warm-up sets on the first exercise per muscle group only, at 50% of working weight
 
 ### ⏱️ Rest timer
-- Automatic rest timer after each set
-- Adjustable with +15s / -15s buttons
-- Color changes: orange at 30s, red at 10s
-- Shorter timer for warm-up sets
+- Automatic rest timer after each set, adjustable with +15s / -15s buttons
+- Color changes: orange at 30s, red at 10s; shorter timer for warm-up sets
+- A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — the last rest before a new exercise tips you on what's coming up instead
+- Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
+
+### 🤖 AI coaching (optional, bring your own API key)
+- Add your own Anthropic API key in Settings to enable real Claude-powered coaching on top of the built-in tips and weight math, which work either way
+- The rest-screen tip gets upgraded in place with a personalized set assessment once Claude responds
+- Your RPE rating gets a one-line next-session weight suggestion
+- The summary screen gets a "Next-session recommendations" note per exercise
+- The key is stored only in your browser, never in exported backups — Anthropic bills usage directly to your key, GainPath itself stays free
 
 ### 📈 Progress tracking
 - Progress charts — max weight per exercise over time
@@ -97,7 +99,7 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 1. Open the app at [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath)
 2. Complete the one-time setup (takes about 2 minutes)
 3. Pick your training day and start logging sets
-4. Rate how each exercise felt — AI adjusts your next weights automatically
+4. Rate how each exercise felt — it's saved with your session, and next time defaults to the weight you last logged
 5. On iPhone: tap Share → **Add to Home Screen** for a native app experience
 
 ---
@@ -169,7 +171,7 @@ The app will appear on your home screen and open full-screen like a native app. 
 ## Tech stack
 
 - Single HTML file — no framework, no build step, no backend
-- AI coaching powered by [Claude](https://anthropic.com) (claude-sonnet-4-6)
+- Optional AI coaching via [Claude](https://anthropic.com) (claude-sonnet-4-6), called directly from the browser with your own API key — no proxy server needed
 - Charts via [Chart.js](https://chartjs.org)
 - PDF export via [jsPDF](https://parall.ax/products/jspdf)
 - Feedback via [EmailJS](https://emailjs.com)

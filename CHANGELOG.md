@@ -4,6 +4,14 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- **Real AI coaching is back, via your own Anthropic API key.** Settings now has an "AI coaching" card to add an Anthropic API key — stored only in this browser's localStorage, never included in exported backups. With a key set: the rest screen's built-in tip gets upgraded in place with a personalized Claude assessment once it arrives, the post-exercise feel rating gets a one-line next-session weight suggestion, and the summary screen gets a "Next-session recommendations" section per exercise. Calls use Anthropic's `anthropic-dangerous-direct-browser-access` header, which exists specifically for client-side apps like this one calling the API with a user-supplied key, since this is a static site with no backend to hide a shared key behind. Without a key, all three features simply stay off (the rest-screen tip and weight-estimate math underneath them still work either way) — no perpetual "on hold" message, no retry queue, no surprise banner days later. If a key is set but a call fails, the post-exercise and summary surfaces say so plainly ("check your API key or connection in Settings"); the rest-screen upgrade fails silently since the offline tip underneath it is already a complete fallback.
+
+### Fixed
+- **README described several AI features that never actually worked.** The "🤖 AI coaching" section (per-set AI feedback, RPE next-session recommendation, end-of-session AI weight recommendations) and a "Tech stack" bullet credited to Claude were describing a feature that called the Anthropic API with no key and had never functioned since launch. Removed the inaccurate claims, rewrote the rest-timer section to describe what's actually there (offline tips, RPE/session-feel rating), and corrected a "How to use" step that overstated automatic weight adjustment — progression has always been a manual decision based on your last logged weight, AI or not.
+
 ## [1.1.2] - 2026-06-24
 
 ### Added
