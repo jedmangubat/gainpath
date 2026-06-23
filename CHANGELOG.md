@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-06-23
+
 ### Added
 - **Reorder/swap/delete exercises mid-workout, not just before starting.** A new icon button on the workout screen header opens the same exercise-editor used pre-workout, scoped to the remaining (not-yet-reached) exercises in the session — the current and already-completed exercises are left untouched. Saving updates the live session immediately and, like the pre-workout editor, remembers the new order/swap as that day's default going forward.
 - **Tap an exercise in the pre-workout/mid-workout editor to set its planned sets, reps, and weight (or added/assisted weight for bodyweight exercises) before starting it.** Previously the editor only let you reorder/swap/delete; now tapping a row expands an inline editor for that exercise's targets, which are used instead of the usual saved-weight/AI-estimate/app defaults once you reach that exercise.
