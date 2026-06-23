@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-23
+
 ### Fixed
 - **Rest timer no longer gets stuck at 0 — it now auto-advances** (GitHub issue #1). Previously the countdown just stopped at 0 and the only way back to the workout screen was tapping "Skip rest"; now reaching 0 automatically returns to the workout screen, matching what "Skip rest" already did.
 - **Rest timer now also appears after the last set of an exercise.** Previously `dset()` skipped the rest timer entirely on an exercise's final set; now it shows a "rest before next exercise" countdown, and when that countdown finishes it automatically triggers the same effort-rating ("Next exercise"/"Finish workout") flow as the manual button — it no longer dumps you back on the workout screen.
