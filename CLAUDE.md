@@ -14,10 +14,11 @@ for local tooling — it never touches what ships in `index.html`.
   today's date, describing what changed and why.
 - **Write clear, descriptive git commit messages.** Never generic ones like
   "update files" or "fix stuff" — explain what changed and why.
-- **After committing, tell the user explicitly:**
-  "Ready to push - please run 'git push origin main' from your terminal"
-  Never attempt to push automatically — this sandboxed session cannot
-  authenticate with GitHub.
+- **Pushing is allowed, but only after explicit confirmation from the user for
+  that specific push.** After committing, ask "Ready to push — push now?"
+  (or similar) and wait for a yes before running `git push origin main`.
+  Never push proactively/silently, and a prior approval doesn't carry over to
+  a later commit — confirm each time.
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
   matching the exact exercise `name` field in the `EX` object in `index.html`
   (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
