@@ -22,6 +22,12 @@ for local tooling — it never touches what ships in `index.html`.
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
   matching the exact exercise `name` field in the `EX` object in `index.html`
   (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
+- **Check `README.md` on every change, update it only if there's a need.** Not a
+  mandatory edit like `CHANGELOG.md` — but if a change makes an existing README
+  claim stale/inaccurate, or adds something user-facing worth documenting, fix it
+  in the same pass rather than letting it drift (this has already happened more
+  than once: a features list described AI behavior that never worked, a "how to
+  use" step overstated what was automatic).
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only
