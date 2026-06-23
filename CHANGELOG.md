@@ -13,11 +13,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Export backup now always saves as `gainpath-backup.json`** instead of `gainpath-backup-<date>.json`. The dated filename meant every export created a new file rather than overwriting the previous backup, defeating the "tap Export, get the latest backup" workflow; the browser's own download/duplicate-file handling now determines overwrite-vs-rename behavior, but at least repeated exports stop generating an ever-growing pile of differently-named files.
 
 ### Added
+- **Offline support via a service worker + web app manifest.** GainPath's app
+  shell (markup, branding icons, and the four CDN scripts/styles it depends
+  on — Tabler Icons, Chart.js, jsPDF, EmailJS) now keeps working with no
+  network on repeat visits, and exercise images cache themselves
+  opportunistically as they're viewed rather than via a hand-maintained
+  precache list.
+  - `manifest.json` — new web app manifest for Android/desktop PWA
+    installability; iOS continues to use the existing `apple-touch-icon`/
+    meta-tag based Add to Home Screen flow, unchanged. Reuses the existing
+    `apple-touch-icon.png` (180x180) and `logo.png` (256x256) as its icon set
+    rather than generating new 192/512 assets — a known minor gap against PWA
+    best practice, not a blocker.
+  - `sw.js` — new service worker. Navigation requests are network-first,
+    falling back to cache when offline, to preserve the always-fresh-when-
+    online intent behind the page's `Cache-Control: no-cache` meta tag;
+    same-origin images are cache-first with opportunistic runtime caching;
+    the four cross-origin CDN files are precached at install and served
+    cache-first at runtime. Requests to `api.anthropic.com` are explicitly
+    passed through untouched — the AI queueing below, not the service
+    worker, owns retry/offline behavior for those calls. Cache versioning is
+    a manually-bumped `CACHE_NAME` string with an `activate` handler that
+    deletes any previously-named cache.
+- **AI assessments now queue and retry instead of just failing when
+  offline.** All three Claude API call sites (per-set rest feedback,
+  per-exercise next-session tip, end-of-workout recommendations) now detect a
+  network failure and, instead of showing "unavailable," show "On hold — will
+  continue when you're back online," persist the prompt to a retry queue
+  (`gp_ai_queue` in `localStorage`), and automatically retry when
+  connectivity returns — on the browser's `online` event, and once at app
+  boot if already online (covering the case where the app was closed while
+  offline and reopened later already connected). If the user is still on the
+  same screen when a retried call succeeds, the result updates in place;
+  otherwise it surfaces as a new "AI insight ready" banner on the home
+  screen, reusing the existing install-nudge/backup-nudge banner slot and
+  disclosure-toggle pattern. Retries are capped at 5 attempts per item.
 - **Pause/resume control for the workout elapsed-time clock.** A new button next to the elapsed-time display on the workout screen freezes/resumes `ST.es` (e.g. for an interruption mid-session) without losing or jumping the recorded time, and the paused state persists across a backgrounded/reloaded session like the rest of in-progress workout state.
 
 - **Dev-only tooling** (doesn't affect the shipped app, which stays a single `index.html` with no build step):
   - `npm run visual-check` — headless-browser smoke check (Playwright) that loads the onboarding and home screens and fails on any console/page error, replacing one-off ad hoc browser scripts.
-  - `npm run lint` — ESLint over the inline `<script>` block, scoped to bug-catching rules (`no-undef`, `no-unused-vars`, etc.) only; deliberately excludes formatting rules since the dense inline-script style is intentional.
+  - `npm run lint` — ESLint over the inline `<script>` block, scoped to bug-catching rules (`no-undef`, `no-unused-vars`, etc.) only; deliberately excludes formatting rules since the dense inline-script style is intentional. Now also lints `sw.js` directly, with a service-worker-scoped globals allowlist (`self`, `caches`, `clients`, etc.) in `eslint.config.js`.
+  - `npm run visual-check`'s static server now serves `.json` (needed for `manifest.json`).
   - `scripts/process_brand_image.py` — reusable Pillow script that turns a square source logo into the full `images/branding/` icon set (transparent-corner logo/favicons + an opaque `apple-touch-icon`), generalizing the one-off processing used for the new logo below.
   - Added a dev-only `package.json`/`package-lock.json` (Playwright, ESLint) and `scripts/requirements.txt` (Pillow) for these tools; updated `.gitignore` for `node_modules/` and the visual-check screenshot output.
 - **README: Support section** linking a PayPal donate button, since GainPath has no subscriptions/ads to fund development.

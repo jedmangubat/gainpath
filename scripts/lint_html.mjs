@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Lints the inline <script> block in index.html (ESLint doesn't look inside
 // HTML by default). Extracts the script text in-memory, lints it, and maps
-// reported line numbers back to their real line in index.html.
+// reported line numbers back to their real line in index.html. Also lints
+// sw.js directly, since it's a real file with its own (service-worker)
+// globals, separate from the inline script's page-context globals.
 //
 // Usage: npm run lint
 
@@ -33,6 +35,15 @@ async function main() {
       const sev = msg.severity === 2 ? 'error' : 'warning';
       if (msg.severity === 2) errorCount++; else warningCount++;
       console.log(`index.html:${realLine}:${msg.column} ${sev} ${msg.message} (${msg.ruleId})`);
+    }
+  }
+
+  const swResults = await eslint.lintFiles([path.join(ROOT, 'sw.js')]);
+  for (const result of swResults) {
+    for (const msg of result.messages) {
+      const sev = msg.severity === 2 ? 'error' : 'warning';
+      if (msg.severity === 2) errorCount++; else warningCount++;
+      console.log(`sw.js:${msg.line}:${msg.column} ${sev} ${msg.message} (${msg.ruleId})`);
     }
   }
 

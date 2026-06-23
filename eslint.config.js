@@ -34,5 +34,21 @@ export default [
       // pattern — each branch's assignment is read at the function's return.
       'no-useless-assignment': 'off'
     }
+  },
+  {
+    files: ['sw.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        self: 'readonly', caches: 'readonly', clients: 'readonly',
+        fetch: 'readonly', Promise: 'readonly', Response: 'readonly',
+        Request: 'readonly', URL: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-vars': ['warn', { args: 'none', caughtErrors: 'none' }],
+      'no-empty': ['error', { allowEmptyCatch: true }]
+    }
   }
 ];

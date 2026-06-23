@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/branding/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/branding/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/branding/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#153F29">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1056,12 +1057,74 @@ function startRest(ex,si,done,next){
 function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-cir');if(!c)return;c.style.borderColor=ST.rs<=10?'#E24B4A':ST.rs<=30?'#EF9F27':'var(--bdr)';}
 function adj(d){ST.restEnd=(ST.restEnd||Date.now())+d*1000;ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();saveInProgress();}
 function skip(){clearInterval(ST.rt);endRest();}
+function aiQueueId(){return 'q'+Date.now()+Math.random().toString(36).slice(2,8);}
+async function aiCall(prompt,qItem,onSuccess,onHold){
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();onSuccess(d.content&&d.content[0]?d.content[0].text:'');return true;}
+  catch(e){enqueueAiItem(qItem);onHold();return false;}
+}
+function loadAiQueue(){try{return JSON.parse(localStorage.getItem('gp_ai_queue')||'[]');}catch(e){return [];}}
+function saveAiQueue(q){try{localStorage.setItem('gp_ai_queue',JSON.stringify(q));}catch(e){}}
+function enqueueAiItem(item){const q=loadAiQueue();q.push(item);saveAiQueue(q);}
+let _aiFlushing=false;
+async function flushAiQueue(){
+  if(_aiFlushing)return;
+  _aiFlushing=true;
+  let q=loadAiQueue();
+  for(const item of q){
+    item.attempts++;
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:item.prompt}]})});
+      const d=await res.json();
+      deliverAiResult(item,d.content&&d.content[0]?d.content[0].text:'');
+      q=q.filter(i=>i.id!==item.id);
+    }catch(e){
+      if(item.attempts>=item.maxAttempts){deliverAiFailure(item);q=q.filter(i=>i.id!==item.id);}
+    }
+    saveAiQueue(q);
+  }
+  _aiFlushing=false;
+}
+function deliverAiResult(item,txt){
+  const el=gid(item.targetEl);
+  if(el&&el.getAttribute('data-ai-q')===item.id){
+    el.removeAttribute('data-ai-q');
+    if(item.kind==='restFB')el.textContent=txt;
+    else if(item.kind==='exFeel'){el.style.display='block';el.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';}
+    else if(item.kind==='sessionRec')el.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');
+  }else{
+    pushAiInsightBanner(item.label,txt);
+  }
+}
+function deliverAiFailure(item){
+  const el=gid(item.targetEl);
+  if(el&&el.getAttribute('data-ai-q')===item.id){
+    el.removeAttribute('data-ai-q');
+    if(item.kind==='restFB')el.textContent='Insight unavailable.';
+    else if(item.kind==='exFeel'){el.style.display='none';el.innerHTML='';}
+    else if(item.kind==='sessionRec')el.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">Recommendations unavailable.</div>';
+  }
+}
+function pushAiInsightBanner(label,text){
+  let arr;try{arr=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]');}catch(e){arr=[];}
+  arr.push({id:aiQueueId(),label,text});
+  try{localStorage.setItem('gp_ai_insights',JSON.stringify(arr));}catch(e){}
+  renderHomeBanners();
+}
+function dismissAiInsight(id){
+  let arr;try{arr=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]').filter(i=>i.id!==id);}catch(e){arr=[];}
+  try{localStorage.setItem('gp_ai_insights',JSON.stringify(arr));}catch(e){}
+  renderHomeBanners();
+}
+function toggleAiInsightsList(){const s=gid('ai-ins-list');if(s)s.style.display=s.style.display==='none'?'block':'none';}
 async function aiFB(ex,done,next,si){
   const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
   const isBW=ex.note==='bodyweight';const wu=isBW?'bodyweight':done.w+CFG.unit;
   const nextLine=next?('Next set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'):'This was the last set of the exercise.\n';
   const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\n'+nextLine+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) '+(next?'Weight for next set.':'Quick recovery tip before the next exercise.')+' Plain text only.';
-  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'Assessment unavailable.';const el=gid('r-fb');if(el)el.textContent=txt;}catch(e){const el=gid('r-fb');if(el)el.textContent='Assessment unavailable.';}
+  const qid=aiQueueId();
+  await aiCall(prompt,{id:qid,kind:'restFB',prompt,targetEl:'r-fb',attempts:0,maxAttempts:5,label:'Rest feedback \u2014 '+ex.name},
+    (txt)=>{const el=gid('r-fb');if(el)el.textContent=txt;},
+    ()=>{const el=gid('r-fb');if(el){el.setAttribute('data-ai-q',qid);el.textContent='On hold \u2014 will continue when you\u2019re back online.';}});
   const el2=gid('r-fb');ST.rFbHtml=el2?el2.innerHTML:null;saveInProgress();
 }
 function prevEx(){if(ST.exi>0){ST.exi--;clearInterval(ST.rt);ss('wo');renderEx();}}
@@ -1081,7 +1144,11 @@ async function submitExFeel(feel){
     const feelMap={easy:'too easy',good:'just right',hard:'hard',max:'too much'};
     const prompt='Exercise: '+ex.name+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+'.\nToday: '+setsStr+'. Feel: '+feelMap[feel]+'.\n'+(le?'Last: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', '):'First session.')+'.\nONE line: recommended weight next session and why (max 15 words). Plain text.';
     const aiEl=gid('ef-ai');aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Thinking...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
-    try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'';aiEl.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';await new Promise(r=>setTimeout(r,2500));}catch(e){aiEl.style.display='none';}
+    const qid=aiQueueId();
+    const ok=await aiCall(prompt,{id:qid,kind:'exFeel',prompt,targetEl:'ef-ai',attempts:0,maxAttempts:5,label:'Next-session tip — '+ex.name},
+      (txt)=>{aiEl.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+txt+'</div>';},
+      ()=>{aiEl.setAttribute('data-ai-q',qid);aiEl.innerHTML='<div style="font-size:13px;color:var(--txt2)">On hold — will continue when you’re back online.</div>';});
+    if(ok)await new Promise(r=>setTimeout(r,2500));
   }
   nextEx();
 }
@@ -1102,7 +1169,10 @@ async function submitFeel(feel){
   const prev=ST.history.length>=2?ST.history[ST.history.length-2]:null;
   const exCtx=ST.sd.map(item=>{const sets=item.sets.filter(s=>s.done&&s.t!=='w');const isBW=item.ex.note==='bodyweight';const feelStr=item.exFeel?' [felt: '+item.exFeel+']':'';return item.ex.name+': '+sets.map(s=>isBW?'BW\u00d7'+s.r:s.w+CFG.unit+'\u00d7'+s.r).join(', ')+feelStr;}).join('\n');
   const prompt='Next-session recs for '+rec.dayName+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'. Overall feel: '+feel+'. Today:\n'+exCtx+'\n'+(prev&&prev.day===ST.day?'Previous: '+(prev.exercises||[]).map(e=>e.name+': '+(e.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'\u00d7'+s.r).join(', ')).join(' | '):'First session.')+'\nRules: easy=increase, good=keep or +2.5, hard=keep, max=decrease. One line per exercise: "Name: Xkg - note". Plain text.';
-  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const d=await res.json();const txt=d.content&&d.content[0]?d.content[0].text:'';rcEl.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');}catch(e){rcEl.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">Recommendations unavailable.</div>';}
+  const qid=aiQueueId();
+  await aiCall(prompt,{id:qid,kind:'sessionRec',prompt,targetEl:'su-rc',attempts:0,maxAttempts:5,label:'Session recommendations \u2014 '+rec.dayName},
+    (txt)=>{rcEl.innerHTML=txt.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');},
+    ()=>{rcEl.setAttribute('data-ai-q',qid);rcEl.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">On hold \u2014 will continue when you\u2019re back online.</div>';});
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
 function initChart(){const sel=gid('ch-sel');if(!sel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});drawChart();}
@@ -1162,6 +1232,12 @@ function renderHomeBanners(){
     el.innerHTML='<div class="prt" style="background:#EAF3DE;border:1px solid #97C459;color:#27500A;display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-home-2" aria-hidden="true" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">Keep GainPath handy</div><div style="font-size:12px;margin-top:2px;line-height:1.5">Install it on your Home Screen for one-tap access — and to make sure Safari never quietly clears your saved workouts.</div><div id="a2hs-steps" style="display:none;font-size:12px;margin-top:8px;line-height:1.6">1. Tap <i class="ti ti-upload" aria-hidden="true"></i> Share in Safari’s toolbar<br>2. Scroll down and tap “Add to Home Screen”<br>3. Tap “Add”</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:12px;padding:6px 12px" onclick="toggleA2HSSteps()">How to add</button><button class="bg" style="font-size:12px;color:#27500A" onclick="dismissA2HS()">Maybe later</button></div></div></div></div>';
     return;
   }
+  let insights;try{insights=JSON.parse(localStorage.getItem('gp_ai_insights')||'[]');}catch(e){insights=[];}
+  if(insights.length){
+    const count=insights.length;
+    el.innerHTML='<div class="prt" style="background:#EEEDFE;border:1px solid #B7AEF0;color:#3C3489;display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-sparkles" aria-hidden="true" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">'+count+' AI insight'+(count>1?'s':'')+' ready</div><div id="ai-ins-list" style="display:none;font-size:12px;margin-top:8px;line-height:1.6">'+insights.map(i=>'<div style="margin-bottom:8px"><strong>'+i.label+'</strong><div>'+i.text+'</div><button class="bg" style="font-size:11px;padding:4px 8px;margin-top:4px" onclick="dismissAiInsight(\''+i.id+'\')">Dismiss</button></div>').join('')+'</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:12px;padding:6px 12px" onclick="toggleAiInsightsList()">View</button></div></div></div></div>';
+    return;
+  }
   if(checkBackupNudge()){
     el.innerHTML='<div class="prt" style="background:#FAEEDA;border:1px solid #E8C97E;color:#633806;display:flex;align-items:center;justify-content:space-between;gap:10px"><div style="display:flex;align-items:center;gap:8px;font-size:13px"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:18px;flex-shrink:0"></i>Back up your data to keep it safe.</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="bp" style="padding:6px 12px;font-size:12px" onclick="backupNudgeExport()">Back up now</button><button class="bg" style="padding:6px 4px;font-size:12px;color:#633806" onclick="dismissBackupNudge()"><i class="ti ti-x" aria-hidden="true"></i></button></div></div>';
     localStorage.setItem('gp_backup_nudge_seen',new Date().toISOString());
@@ -1218,6 +1294,10 @@ if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){refreshHome();ss('home');}
 }else{ss('ob');}
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+window.addEventListener('online',flushAiQueue);
+if(navigator.onLine)flushAiQueue();
 </script>
 </body>
 </html>

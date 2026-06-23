@@ -1,0 +1,13 @@
+{
+  "name": "GainPath — AI Workout Tracker",
+  "short_name": "GainPath",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#153F29",
+  "icons": [
+    { "src": "images/branding/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "images/branding/logo.png", "sizes": "256x256", "type": "image/png" }
+  ]
+}
