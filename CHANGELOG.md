@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **An in-progress exercise edit (reorder/swap/delete/planned targets), an open swap-picker screen, or an active plank hold could be lost if the app got backgrounded or killed before being saved/committed** — none of these were part of the persisted in-progress snapshot, unlike the rest of an active workout. All three now survive a reload/restore the same way the rest of a workout already does:
+  - Opening the day editor — before *or* during a workout — now persists immediately, including swap-picker state (which body part/exercise list is showing) and which row's sets/reps/weight panel is expanded. Restoring drops you back into the same editor screen, mid-workout vs pre-workout context preserved.
+  - Cancelling an edit (back arrow) now explicitly discards it instead of leaving stale data sitting in the persisted snapshot.
+  - An in-progress plank hold now resumes counting from real elapsed wall-clock time on restore, the same way the rest timer and elapsed-workout clock already do — previously it would have silently reset.
+
 ## [1.1.1] - 2026-06-23
 
 ### Added

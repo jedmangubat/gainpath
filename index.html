@@ -813,25 +813,40 @@ function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assig
 function saveCFG(){try{localStorage.setItem('gp_cfg',JSON.stringify(CFG));}catch(e){}}
 function saveData(){try{localStorage.setItem('gp_h',JSON.stringify(ST.history));localStorage.setItem('gp_p',JSON.stringify(ST.prs));localStorage.setItem('gp_mw',JSON.stringify(ST.mw));}catch(e){}}
 function saveInProgress(){
-  if(!ST.day)return;
+  if(!ST.day&&!ST.editDay)return;
   const activeEl=document.querySelector('.screen.active');
-  const screen=activeEl?activeEl.id.replace('s-',''):'wo';
+  const screen=activeEl?activeEl.id.replace('s-',''):(ST.day?'wo':'dayedit');
   const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,screen,ts:Date.now()};
+  if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.deExpanded=DE_EXPANDED;}
+  if(HOLD_IDX!==null){wip.holdIdx=HOLD_IDX;wip.holdStart=HOLD_START;}
   try{localStorage.setItem('gp_wip',JSON.stringify(wip));}catch(e){}
 }
 function clearInProgress(){try{localStorage.removeItem('gp_wip');}catch(e){}}
 function restoreInProgress(){
   let wip;
   try{wip=JSON.parse(localStorage.getItem('gp_wip')||'null');}catch(e){wip=null;}
-  if(!wip||!wip.day)return false;
-  ST.day=wip.day;ST.exi=wip.exi;ST.sd=wip.sd;ST.t0=wip.t0;ST.pendingRec=wip.pendingRec;
-  ST.mwQueue=wip.mwQueue||[];ST.mwCurrent=wip.mwCurrent||null;
-  ST.restEnd=wip.restEnd||null;ST.restInfo=wip.restInfo||null;ST.rFbHtml=wip.rFbHtml||null;ST.rNxHtml=wip.rNxHtml||null;
-  ST.paused=wip.paused||false;
-  if(ST.paused){ST.es=wip.es||0;clearInterval(ST.et);ST.et=null;const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);}
-  else{ST.es=Math.floor((Date.now()-ST.t0)/1000);startEtInterval();}
-  updWoPauseBtn();
-  gid('wo-tit').textContent=getDayName(ST.day);gid('prt-w').innerHTML='';
+  if(!wip||(!wip.day&&!wip.editDay))return false;
+  if(wip.day){
+    ST.day=wip.day;ST.exi=wip.exi;ST.sd=wip.sd;ST.t0=wip.t0;ST.pendingRec=wip.pendingRec;
+    ST.mwQueue=wip.mwQueue||[];ST.mwCurrent=wip.mwCurrent||null;
+    ST.restEnd=wip.restEnd||null;ST.restInfo=wip.restInfo||null;ST.rFbHtml=wip.rFbHtml||null;ST.rNxHtml=wip.rNxHtml||null;
+    ST.paused=wip.paused||false;
+    if(ST.paused){ST.es=wip.es||0;clearInterval(ST.et);ST.et=null;const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);}
+    else{ST.es=Math.floor((Date.now()-ST.t0)/1000);startEtInterval();}
+    updWoPauseBtn();
+    gid('wo-tit').textContent=getDayName(ST.day);gid('prt-w').innerHTML='';
+  }
+  if(wip.editDay){
+    ST.editDay=wip.editDay;ST.editList=wip.editList||[];ST.editMid=wip.editMid||false;
+    ST.swapIdx=wip.swapIdx!==undefined?wip.swapIdx:null;ST.swapPart=wip.swapPart||null;
+    DE_EXPANDED=wip.deExpanded!==undefined?wip.deExpanded:null;
+    gid('de-tit').textContent=ST.editMid?(getDayName(ST.editDay)+' — remaining exercises'):getDayName(ST.editDay);
+    gid('de-commit-btn').innerHTML=ST.editMid?'Save & continue <i class="ti ti-check" aria-hidden="true"></i>':'Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  }
+  if(wip.holdIdx!==undefined&&wip.holdIdx!==null&&wip.holdStart){
+    HOLD_IDX=wip.holdIdx;HOLD_START=wip.holdStart;
+    HOLD_TIMER=setInterval(()=>{const el=gid('hold-t-'+HOLD_IDX);if(el)el.textContent=fmt(Math.round((Date.now()-HOLD_START)/1000));},1000);
+  }
   const scr=wip.screen;
   if(scr==='mw'&&ST.mwCurrent){renderMWScreen();}
   else if(scr==='fsw'&&ST.sd[ST.exi]){showFSW(ST.sd[ST.exi].ex);}
@@ -845,7 +860,15 @@ function restoreInProgress(){
     ss('rest');startRestCountdown();
   }
   else if(scr==='feel'){ss('feel');}
-  else{renderEx();ss('wo');}
+  else if(scr==='dayedit'&&ST.editDay){ss('dayedit');renderDayEdit();}
+  else if(scr==='swap'&&ST.editDay&&ST.editList[ST.swapIdx]){
+    gid('sw-tit').textContent='Swap: '+ST.editList[ST.swapIdx].name;
+    renderSwapParts();
+    if(ST.swapPart)pickSwapPart(ST.swapPart);else gid('sw-exs').innerHTML='';
+    ss('swap');
+  }
+  else if(ST.day){renderEx();ss('wo');}
+  else{ss('home');refreshHome();}
   return true;
 }
 function dkey(d){return d.toISOString().slice(0,10);}
@@ -1053,16 +1076,20 @@ function openDayEdit(k){
   ST.editDay=k;ST.editMid=false;ST.editList=getEffectiveDayExercises(k).slice();
   DE_EXPANDED=null;gid('de-tit').textContent=getDayName(k);
   gid('de-commit-btn').innerHTML='Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
-  renderDayEdit();ss('dayedit');
+  ss('dayedit');renderDayEdit();
 }
 function openMidWorkoutEdit(){
   ST.editDay=ST.day;ST.editMid=true;DE_EXPANDED=null;
   ST.editList=ST.sd.slice(ST.exi+1).map(item=>item.ex);
   gid('de-tit').textContent=getDayName(ST.day)+' — remaining exercises';
   gid('de-commit-btn').innerHTML='Save & continue <i class="ti ti-check" aria-hidden="true"></i>';
-  renderDayEdit();ss('dayedit');
+  ss('dayedit');renderDayEdit();
 }
-function closeDayEdit(){if(ST.editMid){ST.editMid=false;ss('wo');}else ss('home');}
+function clearEditState(){ST.editDay=null;ST.editList=[];ST.editMid=false;ST.swapIdx=null;ST.swapPart=null;DE_EXPANDED=null;}
+function closeDayEdit(){
+  const wasMid=ST.editMid;clearEditState();
+  if(wasMid){ss('wo');saveInProgress();}else{ss('home');if(!ST.day)clearInProgress();}
+}
 function plannedFor(ex){
   const isBW=ex.note==='bodyweight';
   const w=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name,isBW)??(isBW?0:ex.baseW));
@@ -1094,6 +1121,7 @@ function renderDayEdit(){
       '</div>'+detail+
     '</div>';
   }).join('');
+  saveInProgress();
 }
 function updPlannedEx(i,field,value){
   const cur={...ST.editList[i]};
@@ -1143,13 +1171,13 @@ function commitDayEdit(){
     const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
     const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
     if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
-    saveCFG();ST.editMid=false;ss('wo');renderEx();return;
+    saveCFG();clearEditState();ss('wo');renderEx();return;
   }
   const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
   const cur=ST.editList.map(e=>e.name);
   const changed=def.length!==cur.length||def.some((n,i)=>n!==cur[i]);
   if(changed)CFG.customDays[ST.editDay]=cur;else delete CFG.customDays[ST.editDay];
-  saveCFG();startDay(ST.editDay,ST.editList);
+  const day=ST.editDay,list=ST.editList;saveCFG();clearEditState();startDay(day,list);
 }
 function rowDragStart(e,i){
   e.preventDefault();e.stopPropagation();
@@ -1204,10 +1232,10 @@ function rowSwipeStart(e,i){
 function openSwap(i){
   ST.swapIdx=i;ST.swapPart=null;
   gid('sw-tit').textContent='Swap: '+ST.editList[i].name;
-  renderSwapParts();gid('sw-exs').innerHTML='';
-  ss('swap');
+  ss('swap');renderSwapParts();gid('sw-exs').innerHTML='';
+  saveInProgress();
 }
-function closeSwap(){ss('dayedit');}
+function closeSwap(){ss('dayedit');saveInProgress();}
 function renderSwapParts(){
   gid('sw-parts').innerHTML='<div style="font-size:12px;color:var(--txt2);margin-bottom:8px">Choose a body part</div>'+
     Object.keys(EXPOOL_BY_MG).sort().map(mg=>'<button class="opt-btn" style="margin-bottom:8px" onclick="pickSwapPart(\''+mg+'\')">'+humanizeMG(mg)+'</button>').join('');
@@ -1216,6 +1244,7 @@ function pickSwapPart(mg){
   ST.swapPart=mg;
   gid('sw-exs').innerHTML='<div style="font-size:12px;color:var(--txt2);margin:14px 0 8px">'+humanizeMG(mg)+' exercises</div>'+
     EXPOOL_BY_MG[mg].map(ex=>'<button class="day-btn" onclick="pickSwapEx(\''+ex.name.replace(/'/g,"\\'")+'\')"><span>'+ex.name+'</span></button>').join('');
+  saveInProgress();
 }
 function pickSwapEx(name){
   ST.editList[ST.swapIdx]=EXPOOL[name];DE_EXPANDED=null;
@@ -1273,7 +1302,7 @@ function renderEx(){
       :'<input class="wi" type="number" value="'+Math.max(0,dispW)+'" step="0.5" min="0" onfocus="this.select()" onchange="updSet('+i+',this.value)">';
     const repPart=ex.holdSecs?
       ('<button type="button" class="db" style="min-width:80px" onclick="toggleHold('+i+')"'+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled style="opacity:.4"':'')+'>'+(HOLD_IDX===i?'<i class="ti ti-player-pause" aria-hidden="true"></i> Stop':'<i class="ti ti-player-play" aria-hidden="true"></i> Hold')+'</button>'+
-       '<span id="hold-t-'+i+'" style="font-size:13px;font-weight:600;color:var(--txt);min-width:40px;text-align:center">'+(HOLD_IDX===i?'0:00':fmt(s.r))+'</span>')
+       '<span id="hold-t-'+i+'" style="font-size:13px;font-weight:600;color:var(--txt);min-width:40px;text-align:center">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
       :('<input class="ri" type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)"><span style="font-size:11px;color:var(--txt2)">reps</span>');
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
     const sep=ex.holdSecs?'':'<span style="font-size:11px;color:var(--txt2)">'+CFG.unit+'\u00d7</span>';
