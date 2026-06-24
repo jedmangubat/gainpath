@@ -414,15 +414,6 @@ textarea{resize:vertical;min-height:100px}
       <button class="toggle" id="stog-wu" onclick="setSettingWU()"></button>
     </div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">AI coaching</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:12px">Optional. Add your own Anthropic API key to get personalized AI feedback during rest, after each exercise, and at the end of your session — on top of the built-in tips and weight estimates, which work either way. The key is stored only in this browser and is never included in exported backups. Anthropic bills usage directly to your key; GainPath itself stays free. Get a key at <span style="color:var(--txt)">console.anthropic.com</span>.</div>
-    <label>Anthropic API key</label>
-    <input class="inp" id="set-api-key" type="password" placeholder="sk-ant-...">
-    <div id="set-api-status" style="font-size:12px;margin-top:8px"></div>
-    <button class="bs" style="width:100%;margin-top:10px" onclick="saveApiKey()">Save key</button>
-    <button class="bs" style="width:100%;margin-top:8px;color:#E24B4A;border-color:#E24B4A" onclick="clearApiKey()">Remove key</button>
-  </div>
   <button class="bp" style="width:100%;justify-content:center" onclick="saveSettings()">Save changes</button>
   <button class="bs" style="width:100%;margin-top:10px" onclick="ss('feedback')">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()">Reset app</button>
@@ -536,7 +527,6 @@ textarea{resize:vertical;min-height:100px}
       <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('max')"><span class="feel-icon">😵</span><div><div style="font-size:13px;font-weight:700;color:#993C1D">Too much</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">Reduce next time</div></div></button>
     </div>
   </div>
-  <div class="fb" id="ef-ai" style="display:none"></div>
   <button class="bs" style="width:100%;margin-top:4px;font-size:13px" onclick="submitExFeel(null)">Skip</button>
 </div>
 
@@ -545,7 +535,7 @@ textarea{resize:vertical;min-height:100px}
   <div style="text-align:center;margin-bottom:28px;margin-top:8px">
     <i class="ti ti-mood-smile" style="font-size:38px;color:var(--accent)" aria-hidden="true"></i>
     <div style="font-size:20px;font-weight:700;margin-top:10px;color:var(--txt)">How did it feel overall?</div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:4px">Helps AI calibrate your next session</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:4px">Helps track how this session went</div>
   </div>
   <button class="feel-btn" onclick="submitFeel('easy')"><span class="feel-icon">😌</span><div><div style="font-size:14px;font-weight:700;color:#0F6E56">Too easy</div><div style="font-size:12px;color:var(--txt2);margin-top:2px">Could've done more</div></div></button>
   <button class="feel-btn" onclick="submitFeel('good')"><span class="feel-icon">💪</span><div><div style="font-size:14px;font-weight:700;color:#185FA5">Just right</div><div style="font-size:12px;color:var(--txt2);margin-top:2px">Challenging but controlled</div></div></button>
@@ -566,10 +556,6 @@ textarea{resize:vertical;min-height:100px}
     <div class="sc"><div class="sv" id="su-du"></div><div class="sl">Duration</div></div>
     <div class="sc"><div class="sv" id="su-ex"></div><div class="sl">Exercises</div></div>
     <div class="sc"><div class="sv" id="su-se"></div><div class="sl">Sets done</div></div>
-  </div>
-  <div id="su-rc-sec" style="display:none">
-    <h2>Next-session recommendations</h2>
-    <div id="su-rc"></div>
   </div>
   <div style="margin-top:20px;text-align:center"><button class="bp" style="justify-content:center" onclick="goHome()">Back to home</button></div>
 </div>
@@ -1730,7 +1716,7 @@ function tipFor(name){const t=EX_TIPS[name];return t&&t.length?t[Math.floor(Math
 
 // ═══ STATE ═══
 let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{}};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,editMid:false,editIncludeCurrent:false,restToken:0};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,editMid:false,editIncludeCurrent:false};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,DE_EXPANDED=null;
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,last:'',sw:'ai',step:1};
 const OB_STEPS=9;
@@ -1989,7 +1975,6 @@ function openSettings(){
   [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
   gid('stog-wu').classList.toggle('on',CFG.warmup);
   renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
-  gid('set-api-key').value='';renderApiKeyStatus();
   ss('settings');
 }
 function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;}
@@ -1998,34 +1983,6 @@ function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x)
 function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));}
 function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);}
 function saveSettings(){CFG.name=gid('set-name').value.trim()||CFG.name;CFG.bw=parseFloat(gid('set-bw').value)||CFG.bw;CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;CFG.bf=parseFloat(gid('set-bf').value)||null;saveCFG();accentColor();refreshHome();ss('home');}
-function getApiKey(){try{return localStorage.getItem('gp_api_key')||'';}catch(e){return '';}}
-function renderApiKeyStatus(){
-  const el=gid('set-api-status');if(!el)return;
-  const has=!!getApiKey();
-  el.textContent=has?'AI coaching is enabled.':'AI coaching is off — add a key above to enable it.';
-  el.style.color=has?'#0F6E56':'var(--txt2)';
-}
-function saveApiKey(){
-  const v=gid('set-api-key').value.trim();
-  if(v){try{localStorage.setItem('gp_api_key',v);}catch(e){}}
-  gid('set-api-key').value='';
-  renderApiKeyStatus();
-}
-function clearApiKey(){
-  try{localStorage.removeItem('gp_api_key');}catch(e){}
-  gid('set-api-key').value='';
-  renderApiKeyStatus();
-}
-async function aiCall(prompt,maxTokens){
-  const key=getApiKey();
-  if(!key)return{ok:false,reason:'no-key'};
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens||300,messages:[{role:'user',content:prompt}]})});
-    if(!res.ok){let detail='';try{const d=await res.json();detail=d.error&&d.error.message||'';}catch(e){}return{ok:false,reason:'api-error',detail};}
-    const d=await res.json();
-    return{ok:true,text:d.content&&d.content[0]?d.content[0].text:''};
-  }catch(e){return{ok:false,reason:'network'};}
-}
 function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();location.reload();}
 
 // ═══ DAY EDIT (reorder / delete / swap / tap-to-edit sets-reps-weight) ═══
@@ -2348,21 +2305,8 @@ function startRest(ex,si,done,next){
   }
   ST.rNxHtml=gid('r-nx').innerHTML;
   ST.rFbHtml=gid('r-fb').innerHTML;
-  if(getApiKey())aiRestFeedback(ex,done,next,si,++ST.restToken);
   ss('rest');ensureAudio();startRestCountdown();
   saveInProgress();
-}
-async function aiRestFeedback(ex,done,next,si,token){
-  const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
-  const isBW=ex.note==='bodyweight';const wu=isBW?'bodyweight':done.w+CFG.unit;
-  const nextLine=next?('Next set target: '+next.r+' reps @ '+(isBW?'bodyweight':next.w+CFG.unit)+'.\n'):'This was the last set of the exercise.\n';
-  const prompt='Gym athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'.\nExercise: '+ex.name+'. Set '+(si+1)+': '+done.r+' reps @ '+wu+'.\n'+nextLine+(le?'Last session: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'×'+s.r).join(', '):'First session.')+'.\nReply 2-3 short lines: 1) Quick set assessment. 2) One form tip if needed. 3) '+(next?'Weight for next set.':'Quick recovery tip before the next exercise.')+' Plain text only.';
-  const res=await aiCall(prompt);
-  if(token!==ST.restToken)return;
-  if(res.ok){
-    const el=gid('r-fb');if(el)el.innerHTML='<span style="font-size:11px;color:var(--accent);display:block;margin-bottom:4px">Coach</span>'+res.text;
-    ST.rFbHtml=el?el.innerHTML:ST.rFbHtml;saveInProgress();
-  }
 }
 function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-cir');if(!c)return;c.style.borderColor=ST.rs<=10?'#E24B4A':ST.rs<=30?'#EF9F27':'var(--bdr)';}
 function adj(d){ST.restEnd=(ST.restEnd||Date.now())+d*1000;ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();saveInProgress();}
@@ -2375,26 +2319,10 @@ function askExFeel(){
   const sets=item.sets.filter(s=>s.done&&s.t!=='w');
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
   const setsStr=sets.map((s,i)=>{const dispW=isBW?'BW':mwBase>0?(+(s.w-mwBase).toFixed(1))+'+'+mwBase+'='+s.w+CFG.unit:s.w+CFG.unit;return 'Set '+(i+1)+': '+dispW+' \u00d7 '+s.r;}).join(' \u00b7 ')||'No work sets logged';
-  gid('ef-name').textContent=ex.name;gid('ef-sets').textContent=setsStr;gid('ef-ai').style.display='none';gid('ef-ai').innerHTML='';ss('exfeel');saveInProgress();
+  gid('ef-name').textContent=ex.name;gid('ef-sets').textContent=setsStr;ss('exfeel');saveInProgress();
 }
-async function submitExFeel(feel){
+function submitExFeel(feel){
   ST.sd[ST.exi].exFeel=feel;
-  if(feel&&getApiKey()){
-    const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets.filter(s=>s.done&&s.t!=='w');
-    const isBW=ex.note==='bodyweight';const hist=ST.history.filter(h=>h.day===ST.day).slice(-1);const le=hist.length?(hist[0].exercises||[]).find(e=>e.name===ex.name):null;
-    const setsStr=sets.map(s=>isBW?'BW×'+s.r:s.w+CFG.unit+'×'+s.r).join(', ');
-    const feelMap={easy:'too easy',good:'just right',hard:'hard',max:'too much'};
-    const prompt='Exercise: '+ex.name+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+'.\nToday: '+setsStr+'. Feel: '+feelMap[feel]+'.\n'+(le?'Last: '+(le.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>isBW?'BW×'+s.r:s.w+CFG.unit+'×'+s.r).join(', '):'First session.')+'.\nONE line: recommended weight next session and why (max 15 words). Plain text.';
-    const aiEl=gid('ef-ai');aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Thinking...<span class="da"><span>.</span><span>.</span><span>.</span></span></div>';
-    const res=await aiCall(prompt);
-    if(res.ok){
-      aiEl.innerHTML='<div style="font-size:13px;color:var(--txt);line-height:1.6"><strong style="color:var(--accent)">Next session:</strong> '+res.text+'</div>';
-      await new Promise(r=>setTimeout(r,2500));
-    }else{
-      aiEl.innerHTML='<div style="font-size:13px;color:var(--txt2)">Coaching unavailable — check your API key or connection in Settings.</div>';
-      await new Promise(r=>setTimeout(r,1800));
-    }
-  }
   nextEx();
 }
 function finishWo(){clearInterval(ST.et);clearInterval(ST.rt);ST.pendingRec=buildRec();ss('feel');saveInProgress();}
@@ -2402,7 +2330,7 @@ function buildRec(){
   const dayName=getDayName(ST.day);const done=ST.sd.reduce((a,item)=>a+item.sets.filter(s=>s.done).length,0);const now=new Date();
   return{day:ST.day,dayName,date:now.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),dk:dkey(now),mk:mkey(now),dur:fmt(ST.es),sets:done,feel:null,exercises:ST.sd.map(item=>({name:item.ex.name,exFeel:item.exFeel||null,sets:item.sets.map(s=>({w:s.w,r:s.r,done:s.done,t:s.t}))}))};
 }
-async function submitFeel(feel){
+function submitFeel(feel){
   const rec=ST.pendingRec;rec.feel=feel;ST.history.push(rec);saveData();ST.day=null;clearInProgress();
   const newPRs=[];ST.sd.forEach(item=>{item.sets.filter(s=>s.done&&s.w>0).forEach(s=>{if(chkPR(item.ex.name,s.w,s.r))newPRs.push({name:item.ex.name,w:s.w,r:s.r});});});
   gid('su-lb').textContent=rec.dayName+' \u00b7 '+rec.date;gid('su-du').textContent=rec.dur;gid('su-ex').textContent=ST.sd.length;gid('su-se').textContent=rec.sets;
@@ -2410,15 +2338,6 @@ async function submitFeel(feel){
   const feelColors={easy:'#0F6E56',good:'#185FA5',hard:'#854F0B',max:'#993C1D'};const feelLabel={easy:'Too easy \uD83D\uDE0C',good:'Just right \uD83D\uDCAA',hard:'Hard \uD83D\uDD25',max:'Too much \uD83D\uDE35'}[feel];
   gid('su-feel-tag').innerHTML='<div style="background:var(--bg2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:'+feelColors[feel]+'"><i class="ti ti-mood-smile" aria-hidden="true"></i> Session feel: '+feelLabel+'</div>';
   ss('sum');
-  if(!getApiKey())return;
-  gid('su-rc-sec').style.display='block';
-  const rcEl=gid('su-rc');rcEl.innerHTML='<div class="fb"><div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Generating recommendations...<span class="da"><span>.</span><span>.</span><span>.</span></span></div></div>';
-  const prev=ST.history.length>=2?ST.history[ST.history.length-2]:null;
-  const exCtx=ST.sd.map(item=>{const sets=item.sets.filter(s=>s.done&&s.t!=='w');const isBW=item.ex.note==='bodyweight';const feelStr=item.exFeel?' [felt: '+item.exFeel+']':'';return item.ex.name+': '+sets.map(s=>isBW?'BW×'+s.r:s.w+CFG.unit+'×'+s.r).join(', ')+feelStr;}).join('\n');
-  const prompt='Next-session recs for '+rec.dayName+'. Athlete: '+CFG.name+', '+CFG.sex+', '+CFG.exp+', goal: '+CFG.goal+', BW: '+CFG.bw+CFG.unit+(CFG.bf?', BF: '+CFG.bf+'%':'')+'. Overall feel: '+feel+'. Today:\n'+exCtx+'\n'+(prev&&prev.day===ST.day?'Previous: '+(prev.exercises||[]).map(e=>e.name+': '+(e.sets||[]).filter(s=>s.done&&s.t!=='w').map(s=>s.w+CFG.unit+'×'+s.r).join(', ')).join(' | '):'First session.')+'\nRules: easy=increase, good=keep or +2.5, hard=keep, max=decrease. One line per exercise: "Name: Xkg - note". Plain text.';
-  const res=await aiCall(prompt,800);
-  if(res.ok)rcEl.innerHTML=res.text.split('\n').filter(l=>l.trim()).map(l=>'<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt)">'+l+'</div>').join('');
-  else rcEl.innerHTML='<div class="card" style="padding:10px 14px;font-size:13px;color:var(--txt2)">Recommendations unavailable — check your API key or connection in Settings.</div>';
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
 function initChart(){const sel=gid('ch-sel');if(!sel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});drawChart();}

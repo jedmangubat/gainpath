@@ -64,13 +64,6 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — the last rest before a new exercise tips you on what's coming up instead
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
 
-### 🤖 AI coaching (optional, bring your own API key)
-- Add your own Anthropic API key in Settings to enable real Claude-powered coaching on top of the built-in tips and weight math, which work either way
-- The rest-screen tip gets upgraded in place with a personalized set assessment once Claude responds
-- Your RPE rating gets a one-line next-session weight suggestion
-- The summary screen gets a "Next-session recommendations" note per exercise
-- The key is stored only in your browser, never in exported backups — Anthropic bills usage directly to your key, GainPath itself stays free
-
 ### 📈 Progress tracking
 - Progress charts — max weight per exercise over time
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen
@@ -171,7 +164,6 @@ The app will appear on your home screen and open full-screen like a native app. 
 ## Tech stack
 
 - Single HTML file — no framework, no build step, no backend
-- Optional AI coaching via [Claude](https://anthropic.com) (claude-sonnet-4-6), called directly from the browser with your own API key — no proxy server needed
 - Charts via [Chart.js](https://chartjs.org)
 - PDF export via [jsPDF](https://parall.ax/products/jspdf)
 - Feedback via [EmailJS](https://emailjs.com)
