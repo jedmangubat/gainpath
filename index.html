@@ -2317,7 +2317,7 @@ function renderEx(){
   const isLast=ST.exi>=ST.sd.length-1;
   const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\')">';
   let sugHtml='';
-  if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs){
+  if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const sug=fw?suggestWeight(ex,fw.w):null;
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb=sug.delta>0?'felt too easy':'was too much';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 6px" onclick="dismissSuggest()">Dismiss</button></div>';}
