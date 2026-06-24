@@ -425,6 +425,11 @@ textarea{resize:vertical;min-height:100px}
       <button class="toggle" id="stog-wu" onclick="setSettingWU()"></button>
     </div>
   </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Machine base weights</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">The weight of each machine's frame, added to the plates you load to get the total. You're asked once, the first time you use a machine — fix it here if you got it wrong.</div>
+    <div id="set-mw-list"></div>
+  </div>
   <button class="bp" style="width:100%;justify-content:center" onclick="saveSettings()">Save changes</button>
   <button class="bs" style="width:100%;margin-top:10px" onclick="ss('feedback')">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()">Reset app</button>
@@ -2067,8 +2072,17 @@ function openSettings(){
   [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
   gid('stog-wu').classList.toggle('on',CFG.warmup);
   renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
+  renderMWSettings();
   ss('settings');
 }
+function renderMWSettings(){
+  const el=gid('set-mw-list');if(!el)return;
+  const keys=Object.keys(ST.mw).sort();
+  if(!keys.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">No machines recorded yet — you\'ll be asked the first time you use one</div>';return;}
+  el.innerHTML=keys.map(name=>'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="flex:1;font-size:13px;color:var(--txt)">'+name+'</div><input class="inp" style="margin:0;width:70px" type="number" min="0" step="0.5" value="'+ST.mw[name]+'" onfocus="this.select()" onchange="updMWSetting(\''+name.replace(/'/g,"\\'")+'\',this.value)"><span style="font-size:12px;color:var(--txt2)">'+CFG.unit+'</span><button class="bg" onclick="removeMWSetting(\''+name.replace(/'/g,"\\'")+'\')" aria-label="Forget machine base weight"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
+}
+function updMWSetting(name,val){ST.mw[name]=Math.max(0,parseFloat(val)||0);saveData();}
+function removeMWSetting(name){delete ST.mw[name];saveData();renderMWSettings();}
 function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;}
 function setSettingReps(v){CFG.prefReps=v;[8,10,12].forEach(x=>gid('sreps-'+x).classList.toggle('on',x===v));}
 function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));}
