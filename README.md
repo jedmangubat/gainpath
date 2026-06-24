@@ -13,7 +13,7 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 <table>
 <tr>
 <td align="center" width="33%"><img src="images/screenshots/home.png" width="260"><br><sub>Home — day picker, streak, suggested day, recent sessions</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/day-editor.png" width="260"><br><sub>Reorder, swap, or delete exercises — before or during a workout</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/day-editor.png" width="260"><br><sub>Reorder, swap, add, or delete exercises — before or during a workout</sub></td>
 <td align="center" width="33%"><img src="images/screenshots/workout.png" width="260"><br><sub>Logging sets — weight, reps, rest timer</sub></td>
 </tr>
 <tr>
@@ -37,7 +37,7 @@ Five split types to choose from — see "What each day hits" further down for th
 
 ### 🔀 Full control over each day's exercises
 Picking a day no longer locks you into a fixed exercise list — tap a day to open its editor first:
-- **Reorder** by dragging, **delete**, or **swap** an exercise (pick a body part, then a replacement from that part's pool) — by dragging the handle, tapping the swap/trash icons, or swiping a row (right to swap, left to delete)
+- **Reorder** by dragging, **delete**, **swap**, or **add** an exercise (pick a body part, then a pick from that part's pool) — by dragging the handle, tapping the swap/trash/add icons, or swiping a row (right to swap, left to delete)
 - Your changes become that day's new default automatically, so you don't have to redo them every time
 - Tap into an exercise to set its planned sets, reps, and weight before you start
 - Bodyweight exercises (push-ups, pull-ups, dips, plank) support an optional added weight (vest/belt) or assisted weight (band/machine) modifier instead of a flat "BW" label
@@ -103,8 +103,8 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 ## What each day hits
 
 Exercises are no longer fixed per day — every list below is just the
-**starting default**. Open any day from the home screen to reorder, swap, or
-delete exercises before you start (see "Full control over each day's
+**starting default**. Open any day from the home screen to reorder, swap,
+add, or delete exercises before you start (see "Full control over each day's
 exercises" above); your changes become the new default for that day going
 forward. What *doesn't* change is which muscle groups a given day is built
 around:

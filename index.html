@@ -378,7 +378,10 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div style="font-size:12px;color:var(--txt2);margin-bottom:12px"><i class="ti ti-hand-grab" aria-hidden="true"></i> Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</div>
   <div id="de-list"></div>
-  <button class="bg" style="margin-bottom:14px" onclick="resetDayEdit()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Reset to default order</button>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="bg" style="flex:1" onclick="openAddEx()"><i class="ti ti-plus" aria-hidden="true"></i> Add exercise</button>
+    <button class="bg" style="flex:1" onclick="resetDayEdit()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Reset to default</button>
+  </div>
   <button class="bp" id="de-commit-btn" style="width:100%;justify-content:center" onclick="commitDayEdit()">Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
 </div>
 
@@ -1796,8 +1799,8 @@ function restoreInProgress(){
   }
   else if(scr==='feel'){ss('feel');}
   else if(scr==='dayedit'&&ST.editDay){ss('dayedit');renderDayEdit();}
-  else if(scr==='swap'&&ST.editDay&&ST.editList[ST.swapIdx]){
-    gid('sw-tit').textContent='Swap: '+ST.editList[ST.swapIdx].name;
+  else if(scr==='swap'&&ST.editDay&&(ST.swapIdx===null||ST.editList[ST.swapIdx])){
+    gid('sw-tit').textContent=ST.swapIdx===null?'Add exercise':'Swap: '+ST.editList[ST.swapIdx].name;
     renderSwapParts();
     if(ST.swapPart)pickSwapPart(ST.swapPart);else gid('sw-exs').innerHTML='';
     ss('swap');
@@ -2240,6 +2243,12 @@ function openSwap(i){
   ss('swap');renderSwapParts();gid('sw-exs').innerHTML='';
   saveInProgress();
 }
+function openAddEx(){
+  ST.swapIdx=null;ST.swapPart=null;
+  gid('sw-tit').textContent='Add exercise';
+  ss('swap');renderSwapParts();gid('sw-exs').innerHTML='';
+  saveInProgress();
+}
 function closeSwap(){ss('dayedit');saveInProgress();}
 function renderSwapParts(){
   gid('sw-parts').innerHTML='<div style="font-size:12px;color:var(--txt2);margin-bottom:8px">Choose a body part</div>'+
@@ -2252,7 +2261,8 @@ function pickSwapPart(mg){
   saveInProgress();
 }
 function pickSwapEx(name){
-  ST.editList[ST.swapIdx]=EXPOOL[name];DE_EXPANDED=null;
+  if(ST.swapIdx===null)ST.editList.push(EXPOOL[name]);else ST.editList[ST.swapIdx]=EXPOOL[name];
+  DE_EXPANDED=null;
   ss('dayedit');renderDayEdit();
 }
 
