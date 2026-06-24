@@ -46,6 +46,28 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only
   for conventions meant to persist across future sessions.
 
+## Data model & app conventions
+
+- **PRs are derived, not authoritative.** `ST.prs` is a cache rebuilt from
+  `ST.history` by `recomputePRs()`. Any code that mutates a logged session's sets
+  or removes a session (the session editor, delete, future history tooling) MUST
+  call `recomputePRs()` afterward, or a corrected/deleted lift can leave a stale
+  PR behind. Live PR detection during a workout still uses `chkPR()`; keep the two
+  in sync (same "ignore warm-up sets, zero weight only counts for timed holds"
+  rules).
+- **The per-exercise feel rating is functional, not decorative.** `exFeel`
+  ("Too easy / Just right / Hard / Too much", stored per exercise on each history
+  record) drives `suggestWeight()`, which proposes the next weight. Suggestions are
+  always a one-tap **Apply/Dismiss** chip shown before the first set — never a
+  silent auto-change. This is deliberate: progression stays the user's explicit
+  decision (same principle as the manual starting-weight path). Don't wire feel
+  data into anything that changes weights without the user tapping Apply.
+- **Reuse the analytics helpers** rather than recomputing inline:
+  `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
+  warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
+  sessions). Estimated 1RM and volume are shown across the Progress tab, PR list,
+  and session summary — keep their definitions single-sourced.
+
 ## Dev tooling (optional, dev-only — `npm install` once to use)
 
 - **`npm run visual-check`** — starts a static server, loads `index.html` in
