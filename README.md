@@ -18,7 +18,7 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 </tr>
 <tr>
 <td align="center" width="33%"><img src="images/screenshots/bodyweight-plank.png" width="260"><br><sub>Bodyweight added/assisted weight + plank hold timer</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/progress.png" width="260"><br><sub>Weight progression chart per exercise</sub></td>
+<td align="center" width="33%"><img src="images/screenshots/progress.png" width="260"><br><sub>Estimated-1RM progress chart, one bellwether lift per body part</sub></td>
 <td align="center" width="33%"><img src="images/screenshots/prs.png" width="260"><br><sub>All-time personal records</sub></td>
 </tr>
 </table>
@@ -66,8 +66,8 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
 
 ### 📈 Progress tracking
-- Progress charts — plot **max weight**, **estimated 1RM**, or **session volume** per exercise over time
-- Per-exercise session history — every past date for an exercise, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
+- Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
+- Per-exercise session history — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
 - Total training volume (tonnage) on every session summary and in history
 - Streak counter — consecutive training days

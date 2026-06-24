@@ -332,10 +332,11 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div id="p-ch" style="display:none">
     <h2>Progress</h2>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Tracked via one bellwether lift per body part — log it during a workout to see progress here.</div>
     <select id="ch-sel" onchange="drawChart()"></select>
     <select id="ch-metric" onchange="drawChart()">
       <option value="w">Max weight</option>
-      <option value="e">Estimated 1RM</option>
+      <option value="e" selected>Estimated 1RM</option>
       <option value="v">Session volume</option>
     </select>
     <div style="background:var(--bg2);border-radius:10px;padding:14px">
@@ -343,6 +344,7 @@ textarea{resize:vertical;min-height:100px}
       <div id="ch-empty" style="text-align:center;padding:2rem 1rem;font-size:13px;color:var(--txt2);display:none">No data yet — finish a session first</div>
     </div>
     <h2 style="margin-top:18px">Session history</h2>
+    <select id="ch-hist-sel" onchange="renderExHistory(this.value)"></select>
     <div id="ch-hist"></div>
   </div>
   <div id="p-pr" style="display:none">
@@ -2459,7 +2461,12 @@ function submitFeel(feel){
   ss('sum');
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
-function initChart(){const sel=gid('ch-sel');if(!sel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});drawChart();}
+const PR_KEY_LIFTS={chest:'Flat barbell bench press',back:'Barbell row',quads:'Barbell back squat',shoulders:'Barbell overhead press'};
+function initChart(){
+  const sel=gid('ch-sel');if(!sel.options.length)Object.keys(PR_KEY_LIFTS).forEach(mg=>{const o=document.createElement('option');o.value=PR_KEY_LIFTS[mg];o.textContent=humanizeMG(mg)+' — '+PR_KEY_LIFTS[mg];sel.appendChild(o);});
+  const histSel=gid('ch-hist-sel');if(!histSel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;histSel.appendChild(o);});
+  drawChart();renderExHistory(histSel.value);
+}
 function drawChart(){
   const name=gid('ch-sel').value,metric=(gid('ch-metric')&&gid('ch-metric').value)||'w',empty=gid('ch-empty'),canvas=gid('ch-cv');
   const pts=[];ST.history.forEach(h=>{
@@ -2472,7 +2479,6 @@ function drawChart(){
     pts.push({date:h.date,w:y});
   });
   if(ST.chart){ST.chart.destroy();ST.chart=null;}
-  renderExHistory(name);
   if(!pts.length){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
   const accent='#153F29';
