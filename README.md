@@ -55,6 +55,7 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 
 ### ⚖️ Smart weight system
 - Estimates starting weights from your body stats, experience level, and strength baseline
+- Suggests your next weight from how the exercise felt last time — rate it "Too easy" and the app offers a small bump, rate it "Too much" and it offers to back off. Always a one-tap suggestion you can apply or dismiss, never an automatic change
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - Warm-up sets on the first exercise per muscle group only, at 50% of working weight
 
@@ -65,10 +66,12 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
 
 ### 📈 Progress tracking
-- Progress charts — max weight per exercise over time
-- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen
+- Progress charts — plot **max weight**, **estimated 1RM**, or **session volume** per exercise over time
+- Per-exercise session history — every past date for an exercise, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
+- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
+- Total training volume (tonnage) on every session summary and in history
 - Streak counter — consecutive training days
-- Session history
+- Session history — tap any past session to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
 
 ### 📄 Monthly PDF report
 - Color-coded training calendar
