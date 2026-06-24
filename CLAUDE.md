@@ -8,6 +8,19 @@ deliberate; don't introduce a build step for the app to consume `package.json`.
 There is a dev-only `package.json` (Playwright + ESLint, see below) used purely
 for local tooling — it never touches what ships in `index.html`.
 
+**GainPath is not an "AI" product — don't reintroduce AI branding or
+positioning.** An "AI coaching" feature (live Anthropic API calls) was tried and
+removed more than once, and the app was at one point marketed as "AI-powered"
+across its title, splash, onboarding, `manifest.json`, and `README.md`. All of
+that is gone. The only thing that ever looked like "AI" is the starting-weight
+estimate, which is a plain deterministic formula (`getAIEstimatedWeight` in
+`index.html`) over body stats, experience, and strength baseline — describe it
+as an estimate, never as AI. The function name and the `startingWeights:'ai'` /
+`sw-ai` identifiers are kept only for saved-config compatibility; they are not
+user-facing and are not a license to call the feature "AI" in copy. Note the app
+is a PWA: user-facing branding also lives in `manifest.json` (`name`) and the
+service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
+
 ## Standing workflow rules
 
 - **Every code change must include a corresponding `CHANGELOG.md` entry** under

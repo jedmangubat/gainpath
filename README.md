@@ -1,6 +1,6 @@
-# GainPath — AI Workout Tracker
+# GainPath — Workout Tracker
 
-A free, open-source AI-powered workout tracking web app. No account needed, no subscriptions, no ads. Just open it and train.
+A free, open-source workout tracking web app. No account needed, no subscriptions, no ads. Just open it and train.
 
 🔗 **Live app:** [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath)
 
@@ -51,10 +51,10 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Experience level and fitness goal
 - Training frequency → app suggests the right split
 - Preferred reps, sets, rest time, warm-up set preferences
-- Starting weight method — AI estimate or manual entry
+- Starting weight method — estimate from your stats, or manual entry
 
 ### ⚖️ Smart weight system
-- AI estimates starting weights from your body stats, experience level, and strength baseline
+- Estimates starting weights from your body stats, experience level, and strength baseline
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - Warm-up sets on the first exercise per muscle group only, at 50% of working weight
 

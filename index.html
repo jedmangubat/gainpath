@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GainPath">
-<title>GainPath — AI Workout Tracker</title>
+<title>GainPath — Workout Tracker</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -112,7 +112,7 @@ textarea{resize:vertical;min-height:100px}
     <img src="images/branding/logo.png" alt="GainPath logo" width="48" height="48" style="width:48px;height:48px;flex-shrink:0">
     <div>
       <div style="font-size:28px;font-weight:700;color:var(--brand-green)">GainPath</div>
-      <div style="font-size:14px;color:var(--txt2);margin-top:4px">AI-powered workout tracker</div>
+      <div style="font-size:14px;color:var(--txt2);margin-top:4px">Workout tracker</div>
     </div>
   </div>
   <div class="ob-progress" id="ob-dots"></div>
@@ -134,7 +134,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="ob-2">
     <div style="font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px">Body stats</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px">Helps the AI personalise your starting weights</div>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px">Helps personalise your starting weights</div>
     <label>Weight unit</label>
     <div class="g2"><button class="opt-btn on" id="unit-kg" onclick="setUnit('kg')">kg</button><button class="opt-btn" id="unit-lbs" onclick="setUnit('lbs')">lbs</button></div>
     <label>Body weight (<span id="unit-lbl1">kg</span>)</label>
@@ -143,7 +143,7 @@ textarea{resize:vertical;min-height:100px}
     <input class="inp" id="ob-ht" type="number" placeholder="e.g. 175" min="100" max="250">
     <label>Body fat % <span style="font-weight:400;color:var(--txt3)">(optional)</span></label>
     <input class="inp" id="ob-bf" type="number" placeholder="e.g. 18" min="3" max="60">
-    <div style="font-size:12px;color:var(--txt2);margin-top:-8px;margin-bottom:12px">Leave blank if unknown — AI will estimate from other data</div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:-8px;margin-bottom:12px">Leave blank if unknown — we'll estimate from your other stats</div>
     <button class="bp" style="width:100%;justify-content:center" onclick="obNext(2)">Continue</button>
     <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(2)">Back</button>
   </div>
@@ -178,7 +178,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="ob-4">
     <div style="font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px">Training profile</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px">Calibrates your AI coach</div>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px">Tailors your split and starting weights</div>
     <label>Experience level</label>
     <div class="g3" style="margin-bottom:14px">
       <button class="opt-btn" id="exp-beginner" onclick="setExp('beginner')">🌱<br>Beginner<br><span style="font-size:10px;font-weight:400;color:var(--txt2)">0–1 yr</span></button>
@@ -278,12 +278,12 @@ textarea{resize:vertical;min-height:100px}
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px">How should GainPath determine your starting weights?</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
       <button class="opt-btn" id="sw-ai" onclick="setSW('ai')" style="text-align:left;padding:14px 16px">
-        <div style="font-size:14px;font-weight:600;color:var(--txt)">🤖 Let AI estimate</div>
-        <div style="font-size:12px;color:var(--txt2);margin-top:4px;font-weight:400">AI uses your body stats, experience, and strength baseline to suggest starting weights</div>
+        <div style="font-size:14px;font-weight:600;color:var(--txt)">📊 Estimate for me</div>
+        <div style="font-size:12px;color:var(--txt2);margin-top:4px;font-weight:400">Uses your body stats, experience, and strength baseline to suggest starting weights</div>
       </button>
       <button class="opt-btn" id="sw-manual" onclick="setSW('manual')" style="text-align:left;padding:14px 16px">
         <div style="font-size:14px;font-weight:600;color:var(--txt)">✏️ I'll enter my own weights</div>
-        <div style="font-size:12px;color:var(--txt2);margin-top:4px;font-weight:400">You set the weight for each exercise on your first session. AI adjusts from then on.</div>
+        <div style="font-size:12px;color:var(--txt2);margin-top:4px;font-weight:400">You set the weight for each exercise on your first session. It defaults to your last logged weight after that.</div>
       </button>
     </div>
     <div style="background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:16px">
@@ -505,7 +505,7 @@ textarea{resize:vertical;min-height:100px}
   <div class="card">
     <label>Starting weight (<span id="fsw-unit">kg</span>)</label>
     <input class="inp" id="fsw-inp" type="number" placeholder="e.g. 60" min="0" step="0.5" onfocus="this.select()">
-    <div style="font-size:12px;color:var(--txt2);margin-top:-6px">Enter the weight you want to start with. AI will adjust from your next session onwards.</div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:-6px">Enter the weight you want to start with. It defaults to your last logged weight from your next session onwards.</div>
   </div>
   <div class="fb" id="fsw-ai" style="display:none"></div>
   <button class="bp" style="width:100%;justify-content:center;margin-top:8px" onclick="saveFSW()">Use this weight</button>
@@ -1874,7 +1874,7 @@ function updateObSummary(){
   const goalMap={definition:'Muscle definition',strength:'Strength',general:'General fitness'};
   const expMap={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
   const lastMap={'today':'Today','1-2days':'1-2 days ago','3-7days':'3-7 days ago','1-2weeks':'1-2 weeks ago','1month':'1+ month ago','never':'Never / just starting'};
-  gid('ob-summary').innerHTML='👤 <strong>'+OB.name+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'AI estimate':'Manual entry');
+  gid('ob-summary').innerHTML='👤 <strong>'+OB.name+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'Estimated':'Manual entry');
 }
 function obFinish(){
   if(!OB.sw){alert('Please select a starting weight method');return;}
@@ -2235,7 +2235,7 @@ function showFSW(ex){
   if(ex.note==='bodyweight'){ST.sd[ST.exi].wSet=true;return;}
   gid('fsw-exname').textContent=ex.name;gid('fsw-unit').textContent=CFG.unit;gid('fsw-inp').value=ex.baseW||'';
   const aiEl=gid('fsw-ai');
-  if(CFG.keyLifts&&Object.values(CFG.keyLifts).some(v=>v.w>0)){const est=getAIEstimatedWeight(ex);aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> AI suggests: <strong>'+est+CFG.unit+'</strong> based on your strength baseline</div>';}
+  if(CFG.keyLifts&&Object.values(CFG.keyLifts).some(v=>v.w>0)){const est=getAIEstimatedWeight(ex);aiEl.style.display='block';aiEl.innerHTML='<div class="ail"><i class="ti ti-sparkles" aria-hidden="true"></i> Suggested: <strong>'+est+CFG.unit+'</strong> based on your strength baseline</div>';}
   else aiEl.style.display='none';
   ss('fsw');saveInProgress();
 }
