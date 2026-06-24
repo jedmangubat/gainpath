@@ -49,27 +49,44 @@ git rebase --exec "git commit --amend --no-edit -S" origin/main   # re-sign each
 git push --force-with-lease
 ```
 
-## Feature backlog (from the quality review, ranked easy → hard)
+## Feature backlog (from the quality review, with hardness)
 
-Done this session: per-exercise history, edit/delete session, volume + e1RM,
-RPE → weight suggestions.
+Hardness is rated **for this codebase specifically** (single static `index.html`,
+no backend, localStorage, vanilla JS). Ordered hardest → easiest, the same way it
+was proposed.
 
-Still open, roughly easiest first:
-- "Repeat last workout" / quick-start
-- Text search in the exercise swap picker
-- Weekly training goal + smarter streak ("3/4 this week")
-- Surface the existing exercise cue/tip DB on the exercise card (not just rest screen)
-- Rest-timer vibration + sound/mute toggle
-- Bodyweight & measurements tracking with a trend chart (BW collected but never trended)
-- Dark mode
-- Multi-step ramping warm-ups (currently a single 50% set)
-- Plate calculator
-- Custom exercises (user-defined, beyond the ~65 pool)
-- Custom routine/program builder (beyond the 5 fixed split templates)
-- Supersets / circuits / drop sets
-- Weekly muscle-group volume / balance analytics
-- Harder / against-the-grain: cloud sync, social, Apple Health / Google Fit,
-  reliable background rest-timer notifications
+### ✅ Done this session
+- **Per-exercise session history** (was: Easy) — Progress tab lists every past session for an exercise.
+- **Total volume / tonnage** (was: Easy) — on session summary + history.
+- **Estimated 1RM + richer PRs/charts** (was: Medium) — Epley e1RM, chart metric selector (weight / 1RM / volume), e1RM on PRs.
+- **Edit/delete a logged session** (was the easy slice of "history browser", Medium) — detail screen, `recomputePRs()` on save/delete.
+- **RPE → next-weight suggestions** (was: Medium, highest value-to-effort) — one-tap Apply/Dismiss chip from the feel rating.
+
+### Hardest — fights the architecture (backend / platform limits)
+- **Cloud sync & accounts** — needs a backend; against the "no backend, data stays local" ethos. Arguably shouldn't be built.
+- **Social / sharing (feed, followers)** — backend + moderation; out of character for the app.
+- **Apple Health / Google Fit / wearable sync** — browser PWAs can't reach HealthKit reliably; effectively needs a native wrapper. High effort, low feasibility on web.
+- **Reliable background rest-timer notifications** — needs Notifications API + service-worker timing; iOS PWA makes this painful. Partly platform-blocked.
+
+### Hard — big new subsystems, but doable in-file (no backend)
+- **Custom routine/program builder** — beyond the 5 fixed split templates; significant data-model + UI change.
+- **Supersets / circuits / drop sets** — grouping exercises (A1/A2) + dropsets; touches set-rendering and rest logic.
+- **Custom exercises** — user-defined exercises stored in localStorage, folded into `EXPOOL`; must handle the missing image gracefully (YouTube fallback already exists). Hard-leaning-Medium.
+- **Full history browser / calendar view** — the edit/delete *slice* is done; a complete browseable calendar of all sessions is still open. Mostly UI volume.
+- **Weekly muscle-group volume / balance analytics** ("22 sets chest vs 4 back this week") — the `mg` tags already exist on every exercise; the work is the aggregation + viz.
+
+### Medium — clear wins, contained scope
+- **Bodyweight & measurements tracking + trend chart** — BW is collected once but never trended; add weigh-in log + chart (+ optional waist/arms; progress photos push this harder due to storage).
+- **Dark mode** — single light theme today; mechanical but a full inline-CSS variable sweep.
+- **Multi-step ramping warm-ups** — currently exactly one 50% set; lifters want 2–3 ramping sets (e.g. 40/60/80%).
+- **Plate calculator** — "load 20+10+2.5 per side"; self-contained, Medium-leaning-Easy.
+
+### Easy — small, self-contained, high satisfaction
+- **"Repeat last workout" / quick-start** — one tap to re-run the last day with weights prefilled; history already stores everything.
+- **Text search in the swap/exercise picker** — currently muscle-group drill-down only; a search box over `EXPOOL` is a few lines.
+- **Weekly goal + smarter streak** ("3/4 this week") — small extension of existing streak logic.
+- **Surface exercise cues on the exercise card** — the `EX_TIPS` DB (~12 cues each) already exists; show them on the card, not just the rest screen.
+- **Rest-timer sound/vibration toggle** — `navigator.vibrate` on the final beep + a mute switch.
 
 ## To resume
 
