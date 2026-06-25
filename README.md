@@ -8,26 +8,12 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## Screenshots
-
-<table>
-<tr>
-<td align="center" width="33%"><img src="images/screenshots/home.png" width="260"><br><sub>Home — day picker, streak, suggested day, recent sessions</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/day-editor.png" width="260"><br><sub>Reorder, swap, add, or delete exercises — before or during a workout</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/workout.png" width="260"><br><sub>Logging sets — weight, reps, rest timer</sub></td>
-</tr>
-<tr>
-<td align="center" width="33%"><img src="images/screenshots/bodyweight-plank.png" width="260"><br><sub>Bodyweight added/assisted weight + plank hold timer</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/progress.png" width="260"><br><sub>Estimated-1RM progress chart, one bellwether lift per body part</sub></td>
-<td align="center" width="33%"><img src="images/screenshots/prs.png" width="260"><br><sub>All-time personal records</sub></td>
-</tr>
-</table>
-
----
-
 ## Features
 
 ### 🏋️ Training splits
+
+<img src="images/screenshots/home.png" width="260" alt="Home screen — day picker for the chosen split, streak, weekly goal, repeat-last-workout, recent sessions">
+
 Five split types to choose from — see "What each day hits" further down for the muscle groups each one targets:
 - **PPL / Upper-Lower** — Push, Pull, Legs, Upper, Lower (5-day)
 - **5-Day Bro Split** — Legs, Chest, Back, Shoulders, Arms (one muscle group per day)
@@ -36,6 +22,9 @@ Five split types to choose from — see "What each day hits" further down for th
 - **Full Body** — full-body session hitting every major muscle group
 
 ### 🔀 Full control over each day's exercises
+
+<img src="images/screenshots/day-editor.png" width="260" alt="Day editor — reorder, swap, add, or delete exercises, with two exercises linked into a superset">
+
 Picking a day no longer locks you into a fixed exercise list — tap a day to open its editor first:
 - **Reorder** by dragging, **delete**, **swap**, or **add** an exercise (pick a body part, then a pick from that part's pool) — by dragging the handle, tapping the swap/trash/add icons, or swiping a row (right to swap, left to delete)
 - Your changes become that day's new default automatically, so you don't have to redo them every time
@@ -44,8 +33,19 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Plank gets its own hold-duration stopwatch in place of a reps counter, with PRs tracked for longer holds
 - Everything above is also available **mid-workout**, scoped to whatever's left in the session (plus the exercise you're currently on, if you haven't done its first set yet), via the reorder icon on the workout screen
 - Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
+- **Supersets & circuits** — link an exercise with the next one in the editor to pair them (2 linked = superset, 3+ = circuit). During the workout you alternate one set of each back-to-back with no rest, resting once per round. Each exercise still tracks its own feel rating, volume, and PRs
+- **Drop sets** — a "+ Drop" button on any set marks it done and adds a lighter set (70% of the weight) so you can push past failure; it counts toward volume and PRs like any work set
+
+### 🧱 Build your own program
+
+<img src="images/screenshots/program-builder.png" width="260" alt="Custom program builder — name the program and add your own training days">
+
+Not limited to the five built-in splits — tap "Build a custom program" on the home screen to create your own: name it, add and name training days, and set each day's exercises with the full editor (supersets, planned sets/reps/weight and all). Activating it makes the home screen show your custom days; it's editable and deletable later (deleting keeps your logged history), and selectable in Settings next to the built-in splits.
 
 ### 📋 Smart onboarding
+
+<img src="images/screenshots/onboarding.png" width="260" alt="Onboarding splash screen">
+
 - Name, sex (male/female), body weight, height, body fat %
 - Strength baseline — recent weights on key lifts (hack squat, chest press, lat pulldown, overhead press)
 - Experience level and fitness goal
@@ -54,26 +54,49 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Starting weight method — estimate from your stats, or manual entry
 
 ### ⚖️ Smart weight system
+
+<img src="images/screenshots/plate-calc.png" width="260" alt="Plate calculator showing the per-side plate breakdown for a target weight">
+
 - Estimates starting weights from your body stats, experience level, and strength baseline
 - Suggests your next weight from how the exercise felt last time — rate it "Too easy" and the app offers a small bump, rate it "Too much" and it offers to back off. Always a one-tap suggestion you can apply or dismiss, never an automatic change
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
-- Warm-up sets on the first exercise per muscle group only, at 50% of working weight
+- **Plate calculator** — tap the plate icon by any weight to see the per-side breakdown ("20 + 10 + 2.5 per side"), accounting for the bar/machine base weight and your kg/lb plate set
+- Warm-up sets on the first exercise per muscle group — pick 1, 2, or 3 ramping sets (e.g. 40/60/80% of your working weight) in Settings
+- **Straight or pyramid sets** — choose same-weight-across-sets, or a pyramid where reps step down as weight goes up (12/10/8). Either way, change the first set's weight and the rest are calculated for you
 
 ### ⏱️ Rest timer
+
+<img src="images/screenshots/rest-timer.png" width="260" alt="Rest timer with countdown, a form cue for the current exercise, and the next set's target">
+
 - Automatic rest timer after each set, adjustable with +15s / -15s buttons
 - Color changes: orange at 30s, red at 10s; shorter timer for warm-up sets
-- A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — the last rest before a new exercise tips you on what's coming up instead
+- A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
+- Optional beep + vibration when the timer ends, so you don't have to watch the screen (toggle in Settings)
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
 
+### 🌙 Dark mode
+
+<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode">
+
+A full dark theme, toggled in Settings and remembered between sessions.
+
 ### 📈 Progress tracking
+
+<img src="images/screenshots/progress.png" width="260" alt="Progress tab — estimated-1RM chart for a bellwether lift, plus the body-weight trend">
+
 - Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
 - Per-exercise session history — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
 - Total training volume (tonnage) on every session summary and in history
-- Streak counter — consecutive training days
+- **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
+- Streak counter — consecutive training days, plus a weekly goal ("3/5 this week") against your training frequency
+- **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights prefilled
 - Session history — tap any past session to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
 
 ### 📄 Monthly PDF report
+
+<img src="images/screenshots/pdf-report.png" width="260" alt="Export tab — pick a month and generate a PDF training report">
+
 - Color-coded training calendar
 - Session stats (total sessions, sets, new PRs, streak)
 - Bar chart of sessions by day type
@@ -81,11 +104,17 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - New personal records list
 
 ### 💾 Data backup
+
+<img src="images/screenshots/backup.png" width="260" alt="Backup & restore — export your data to JSON or import it on another device">
+
 - Export all your data as a JSON file
 - Restore from backup on any device
 - No cloud account needed
 
 ### 💬 Feedback
+
+<img src="images/screenshots/feedback.png" width="260" alt="Built-in feedback form for bugs, feature requests, and general feedback">
+
 - Built-in feedback form for bug reports, feature requests, and general feedback
 
 ---

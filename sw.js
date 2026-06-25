@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v3';
+const CACHE_NAME = 'gainpath-v4';
 const CDN_URLS = [
   'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
