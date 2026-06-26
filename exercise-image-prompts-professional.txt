@@ -1,11 +1,5 @@
 GainPath — exercise tutorial image generation briefs (ChatGPT / DALL-E)
-Professional creative-brief format. Generated 2026-06-26.
-Machine exercise expansion batch — 10 exercises.
-
-HOW TO USE
-Each brief is fully self-contained and can be submitted to ChatGPT on its
-own. Paste the entire brief for one exercise, generate, save the result as
-the filename given, then move to the next.
+Professional creative-brief format.
 
 GLOBAL ART DIRECTION (restated inside every brief below)
   Medium: Strictly a FLAT-COLOR 2D VECTOR ILLUSTRATION, in the style of a
@@ -54,173 +48,27 @@ GLOBAL ART DIRECTION (restated inside every brief below)
   Exclusions: No on-image text, no logos, no watermarks, no captions.
 
 ============================================================
-CHEST
+PENDING — incline bench rear delt correction
 ============================================================
 
-1. Pec deck
-Save as: images/exercises/pec-deck.png
+The existing "Dumbbell reverse fly standing" entries in the day templates
+(pull_m, upper_m, pull_f, upper_f in index.html) should be renamed to
+"Incline bench dumbbell rear delt fly" once the image below is generated.
+
+1. Incline bench dumbbell rear delt fly
+Save as: images/exercises/incline-bench-dumbbell-rear-delt-fly.png
 Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure seated upright in a pec deck
-machine (rendered with accurate mechanical detail — padded seat, back
-rest, and two pivoting arm pads at chest height), gripping the arm pads
-with both forearms pressed against them. Panel 1 (start): arms open wide,
-arm pads pulled back to the sides at roughly shoulder width or wider.
-Panel 2 (mid): arms drawing inward, pads closing through the midpoint.
-Panel 3 (end): pads fully closed together in front of the chest, pectorals
-visibly contracted. Render the machine frame, seat, and arm pads with clear
-mechanical accuracy in every panel.
+art direction above. Subject: the figure lying prone on an inclined bench,
+chest and torso supported by the bench pad, holding a dumbbell in each
+hand hanging directly below the shoulders. Panel 1 (start): arms hanging
+straight down, dumbbells together below the chest. Panel 2 (mid): arms
+raising out to the sides through the midpoint of the lift. Panel 3 (end):
+arms fully raised out to the sides at shoulder height, shoulder blades
+drawn together at peak contraction. Render the incline bench supporting
+the torso clearly and consistently across every panel.
 
-2. Smith machine bench press
-Save as: images/exercises/smith-machine-bench-press.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure lying supine on a flat bench
-positioned beneath a Smith machine, gripping the bar with both hands above
-the chest. Panel 1 (start): arms fully extended, bar locked out above the
-chest. Panel 2 (mid): bar descending toward the chest. Panel 3 (end): bar
-lowered to touch the chest, elbows flexed. Render the Smith machine's
-vertical guide rails with clear mechanical accuracy in the background of
-every panel.
-
-============================================================
-BACK
-============================================================
-
-3. Smith machine inverted row
-Save as: images/exercises/smith-machine-inverted-row.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: a Smith machine bar set at a low-to-mid
-height, with the figure lying beneath it, body held in a straight plank
-line, heels on the floor, gripping the bar with both hands at arm's
-length. Panel 1 (start): arms fully extended, body hanging straight below
-the bar. Panel 2 (mid): chest drawing toward the bar. Panel 3 (end): chest
-pulled up to touch the bar, elbows fully flexed, body still held in a
-straight line. Render the Smith machine's vertical guide rails with clear
-mechanical accuracy in every panel.
-
-============================================================
-SHOULDERS
-============================================================
-
-4. Smith machine shoulder press
-Save as: images/exercises/smith-machine-shoulder-press.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure seated on a bench positioned
-beneath a Smith machine, gripping the bar at shoulder height. Panel 1
-(start): bar held at shoulder height, elbows bent. Panel 2 (mid): bar
-rising through the press. Panel 3 (end): arms fully extended overhead,
-bar locked out above the head. Render the Smith machine's vertical guide
-rails with clear mechanical accuracy in the background of every panel.
-
-============================================================
-TRAPS
-============================================================
-
-5. Smith machine shrug
-Save as: images/exercises/smith-machine-shrug.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure standing beneath a Smith machine,
-gripping the bar at hip-to-thigh height with both hands, arms hanging
-straight down. Panel 1 (start): shoulders relaxed and fully depressed.
-Panel 2 (mid): shoulders at the midpoint of the shrug. Panel 3 (end):
-shoulders fully elevated toward the ears, traps visibly contracted. Render
-the Smith machine's vertical guide rails with clear mechanical accuracy in
-the background of every panel.
-
-============================================================
-QUADS
-============================================================
-
-6. Smith machine squat
-Save as: images/exercises/smith-machine-squat.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure with a Smith machine bar racked
-across the upper back and shoulders, feet set shoulder-width apart. Panel
-1 (start): standing fully upright. Panel 2 (mid): descending into the
-squat. Panel 3 (end): full squat depth, thighs parallel to the floor or
-just below, knees flexed. Render the Smith machine's vertical guide rails
-with clear mechanical accuracy in the background of every panel.
-
-============================================================
-HAMSTRINGS
-============================================================
-
-7. Smith machine Romanian deadlift
-Save as: images/exercises/smith-machine-romanian-deadlift.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure standing inside a Smith machine,
-gripping the bar at hip-to-thigh height with both hands, arms hanging
-straight down. Panel 1 (start/top): standing fully upright, bar at thigh
-height. Panel 2 (mid): hinging forward at the hips, bar tracking down the
-shins, slight knee bend, back held flat. Panel 3 (end): deep hip hinge,
-bar near mid-shin height, torso close to parallel with the floor, back
-still flat. Render the Smith machine's vertical guide rails with clear
-mechanical accuracy in every panel.
-
-============================================================
-CALVES
-============================================================
-
-8. Smith machine standing calf raise
-Save as: images/exercises/smith-machine-standing-calf-raise.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure standing with a Smith machine bar
-racked across the upper back and shoulders, feet flat on the floor or on a
-small raised block. Panel 1 (start): heels lowered fully. Panel 2 (mid):
-heels at the midpoint of the raise. Panel 3 (end): heels fully raised onto
-the balls of the feet, peak calf contraction visible. Render the Smith
-machine's vertical guide rails with clear mechanical accuracy in the
-background of every panel.
-
-============================================================
-GLUTES
-============================================================
-
-9. Cable glute kickback
-Save as: images/exercises/cable-glute-kickback.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure standing upright facing a cable
-machine (rendered with mechanical accuracy — weight stack, pulley, and low
-cable attachment), a cable cuff attached to one ankle, the opposite hand
-lightly resting on the machine frame for balance, torso leaned slightly
-forward. Panel 1 (start): working leg hanging straight down, cable slack.
-Panel 2 (mid): leg driving back and upward through the midpoint of the
-extension. Panel 3 (end): leg fully extended behind the body at roughly 45
-degrees, glute visibly contracted. Show the same leg performing the
-movement across all three panels.
-
-10. Cable pull-through
-Save as: images/exercises/cable-pull-through.png
-Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure standing facing away from a cable
-machine (rendered with accurate mechanical accuracy — weight stack, floor-
-level pulley), a rope attachment gripped with both hands drawn between the
-legs. Panel 1 (start): figure hinged forward at the hips, rope pulled
-through between the legs toward the cable machine, back flat, slight knee
-bend. Panel 2 (mid): beginning to drive the hips forward, torso rising.
-Panel 3 (end): hips fully extended, figure standing upright, rope handle
-drawn forward to hip height, glutes and hamstrings visibly contracted.
-Render the cable machine and rope attachment with clear mechanical accuracy
-in every panel.
-
-============================================================
-PENDING — rear delt correction (no image yet)
-============================================================
-
-Once images/exercises/incline-bench-dumbbell-rear-delt-fly.png is
-generated, rename "Dumbbell reverse fly standing" to
-"Incline bench dumbbell rear delt fly" in all day templates in index.html
-(pull_m, upper_m, pull_f, upper_f), then generate a separate image for the
-actual standing movement:
-
-  Dumbbell reverse fly standing
-  Save as: images/exercises/dumbbell-reverse-fly-standing.png
-  Brief: Produce a three-panel flat-vector illustration following the global
-  art direction above. Subject: the figure standing upright, feet shoulder-
-  width apart, holding a dumbbell in each hand, torso hinged forward at the
-  hips to roughly 45 degrees, back flat, arms hanging straight down with a
-  slight elbow bend. Panel 1 (start): arms hanging directly below the
-  shoulders, dumbbells close together. Panel 2 (mid): arms raising out to
-  the sides through the midpoint of the arc. Panel 3 (end): arms fully
-  raised out to the sides, approximately level with the torso, rear delts
-  contracted, shoulder blades drawn together. Torso stays at the same hinge
-  angle across all three panels.
+After generating the image and adding it to images/exercises/:
+- Rename "Dumbbell reverse fly standing" → "Incline bench dumbbell rear
+  delt fly" in pull_m, upper_m, pull_f, upper_f in index.html.
+- The existing dumbbell-reverse-fly-standing.png (standing bent-over
+  variant, already in the sub pool as a separate exercise) is unaffected.

@@ -35,6 +35,9 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
   matching the exact exercise `name` field in the `EX` object in `index.html`
   (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
+- **Never add an exercise to the `EX` object without its image already in place.**
+  Pending exercises belong only in `exercise-image-prompts-professional.txt` until
+  their image is generated and copied into `images/exercises/`.
 - **Check `README.md` on every change, update it only if there's a need.** Not a
   mandatory edit like `CHANGELOG.md` — but if a change makes an existing README
   claim stale/inaccurate, or adds something user-facing worth documenting, fix it
