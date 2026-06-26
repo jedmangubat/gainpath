@@ -4,6 +4,13 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.5] - 2026-06-26
+
+### Changed
+- **Russian twist** is no longer locked as bodyweight-only — users can now
+  log a dumbbell weight when they add resistance, while it still defaults
+  to 0 for those doing it unweighted.
+
 ## [1.2.4] - 2026-06-26
 
 ### Changed
