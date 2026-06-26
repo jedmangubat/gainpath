@@ -1,0 +1,369 @@
+GainPath — exercise tutorial image generation briefs (ChatGPT / DALL-E)
+Professional creative-brief format. Generated 2026-06-25.
+Nothing has been added to index.html yet — these briefs are for producing
+images/exercises/<slug>.png before any code changes are made.
+
+HOW TO USE
+Each brief is fully self-contained and can be submitted to ChatGPT on its
+own. Paste the entire brief for one exercise, generate, save the result as
+the filename given, then move to the next.
+
+GLOBAL ART DIRECTION (restated inside every brief below)
+  Medium: Strictly a FLAT-COLOR 2D VECTOR ILLUSTRATION, in the style of a
+    modern fitness-app icon set. This is NOT a 3D render, NOT a
+    photorealistic image, NOT a painterly or airbrushed image, and NOT a
+    photograph. Bold clean black or dark-gray outlines around every shape.
+    Flat cel-shading only — at most one single soft shadow tone per surface
+    (e.g. one shade darker on the underside of an arm), no gradients, no
+    photographic skin texture, no specular highlights, no realistic
+    lighting/shadow falloff. If the result looks like a photo, a 3D render,
+    or a painting rather than a clean flat icon-style illustration, it is
+    wrong — regenerate flatter and simpler.
+  Character: One fixed, reusable mascot design, rendered IDENTICALLY across
+    every panel and every exercise in this library — do not let any
+    attribute drift between images:
+      - Hair: short cropped dark-brown hair, textured crop style, no facial
+        hair, no hat.
+      - Skin tone: a warm light-to-medium tan/beige skin tone (mid-range
+        olive-beige — not pale/white, not deeply tanned, not ruddy).
+        Render this exact tone flatly, with no photographic shading
+        variation across the body.
+      - Build: athletic and lean, broad-shouldered but NOT
+        bodybuilder-extreme or exaggerated — a fitness-app "everyman"
+        proportion, not a hyper-muscular comic-book physique.
+      - Face: simple, calm, neutral expression, minimal facial detail (dot
+        or simple-line eyes, small nose, no visible eyebrow emphasis) —
+        keep the face plain and iconic rather than detailed or photoreal.
+      - Age: appears late 20s to early 30s.
+      - Wardrobe (identical in every image): a fitted heather-gray
+        crew-neck athletic tank top OR a fitted navy tank top (pick one and
+        keep it consistent across the whole set if possible), solid dark
+        navy athletic shorts of mid-thigh length, solid dark navy/blue
+        low-top athletic sneakers with white soles.
+    Treat the above as a locked character sheet, not a loose suggestion —
+    the goal is for every exercise image in the library to look like it
+    was illustrated by the same artist using the same character template.
+  Composition: Three horizontal panels of equal width, arranged side by side
+    and separated by thin gray divider lines, combined into a single image
+    with an overall wide aspect ratio of approximately 2:1 (reference: an
+    existing image set at 1774x887px).
+  Background: Plain light gray/off-white. For free-weight and bodyweight
+    movements, include a faint, low-opacity silhouette of the relevant gym
+    equipment, kept clearly secondary to the figure. For machine and Smith
+    machine movements, render the equipment itself with accurate mechanical
+    detail, as it is functionally central to the exercise.
+  Sequence: Each panel depicts one phase of a single repetition — start,
+    mid-range, and end — unless otherwise noted.
+  Exclusions: No on-image text, no logos, no watermarks, no captions.
+
+============================================================
+GLUTES (new muscle-group category)
+============================================================
+
+1. Barbell hip thrust
+Save as: images/exercises/barbell-hip-thrust.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: an athletic male figure seated on the floor
+with the upper back braced against the edge of a flat bench, knees bent,
+feet planted flat on the floor, a padded barbell positioned across the
+hips. Panel 1 (start): hips lowered toward the floor. Panel 2 (mid):
+hips elevated to roughly the midpoint of the range of motion. Panel 3
+(end): hips fully extended into a straight line from shoulders to knees,
+the barbell raised, glutes visibly contracted. Maintain consistent
+character design, lighting, and background across all three panels.
+
+2. Smith machine hip thrust
+Save as: images/exercises/smith-machine-hip-thrust.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the same figure performing a hip thrust
+braced against a flat bench, hips lowered to fully extended across the
+three panels exactly as in the barbell hip thrust sequence, but loading a
+Smith machine bar across the hips instead of a free barbell. Render the
+Smith machine's vertical guide rails with clear mechanical accuracy in the
+background of every panel.
+
+3. Glute bridge
+Save as: images/exercises/glute-bridge.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor/mat background and no equipment.
+Subject: the figure lying supine on the floor, knees bent, feet flat.
+Panel 1 (start): hips resting low. Panel 2 (mid): hips at the midpoint of
+the lift. Panel 3 (end): hips fully raised into a straight line from
+shoulders to knees, arms relaxed at the sides, glutes visibly contracted.
+
+4. Dumbbell hip thrust
+Save as: images/exercises/dumbbell-hip-thrust.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure performing the same braced hip
+thrust position as the barbell variant (upper back against a flat bench,
+knees bent, feet flat), holding a single dumbbell horizontally across the
+hips with both hands in place of a barbell. Panel 1 (start): hips low.
+Panel 2 (mid): hips at midpoint. Panel 3 (end): hips fully extended,
+glutes contracted.
+
+============================================================
+FOREARMS (new muscle-group category)
+============================================================
+
+5. Dumbbell wrist curl
+Save as: images/exercises/dumbbell-wrist-curl.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure seated on a bench, forearms
+resting along the tops of the thighs, palms facing upward, gripping a
+dumbbell in each hand with the wrists extending just beyond the knees.
+Panel 1 (start): wrists extended downward, dumbbells lowered. Panel 2
+(mid): wrists at the midpoint of the curl. Panel 3 (end): wrists fully
+curled upward, dumbbells raised to peak height.
+
+6. Dumbbell reverse wrist curl
+Save as: images/exercises/dumbbell-reverse-wrist-curl.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: identical seated forearm-on-thigh setup to
+the dumbbell wrist curl, but with palms facing downward. Panel 1 (start):
+wrists flexed downward, knuckles toward the floor. Panel 2 (mid): wrists
+at the midpoint of extension. Panel 3 (end): wrists fully extended
+upward, knuckles toward the ceiling.
+
+7. Dead hang
+Save as: images/exercises/dead-hang.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure hanging from a pull-up bar (a
+pull-up rig rendered in the background), arms fully extended overhead,
+body relaxed in a straight vertical line, feet clear of the floor. This
+movement is a static isometric hold rather than a repeated motion:
+instead of three sequential phases, render the identical hanging position
+in all three panels, varying only the camera angle slightly between
+panels (e.g. front-facing, three-quarter angle, closer framing) to convey
+a sustained hold.
+
+============================================================
+TRICEPS
+============================================================
+
+8. Barbell skull crusher
+Save as: images/exercises/barbell-skull-crusher.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure lying supine on a flat bench,
+gripping a barbell with both hands, arms extended vertically above the
+chest. Panel 1 (start): arms fully extended, bar above the chest. Panel 2
+(mid): elbows flexing, bar descending toward the forehead. Panel 3 (end):
+bar lowered just past the forehead, elbows fully flexed.
+
+9. Diamond push-ups
+Save as: images/exercises/diamond-push-ups.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor background and no equipment.
+Subject: the figure in a push-up plank position with the hands close
+together beneath the chest, thumbs and index fingers touching to form a
+diamond shape. Panel 1 (start): top of the push-up, arms fully extended.
+Panel 2 (mid): midpoint of the descent. Panel 3 (end): bottom position,
+chest near the hands, elbows tracking close to the torso.
+
+============================================================
+HAMSTRINGS
+============================================================
+
+10. Dumbbell Romanian deadlift
+Save as: images/exercises/dumbbell-romanian-deadlift.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing upright, holding a
+dumbbell in each hand in front of the thighs. Panel 1 (start/top):
+standing fully upright, dumbbells at thigh height. Panel 2 (mid): hinging
+forward at the hips, dumbbells tracking down the shins, slight knee bend,
+back held flat. Panel 3 (end): deep hip hinge, dumbbells near mid-shin
+height, torso close to parallel with the floor, back still flat.
+
+11. Smith machine Romanian deadlift
+Save as: images/exercises/smith-machine-romanian-deadlift.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure performing the identical hip-hinge
+sequence described for the dumbbell Romanian deadlift (upright, hinging
+forward, deep hinge near parallel with a flat back throughout), gripping a
+Smith machine bar instead of dumbbells. Render the Smith machine's
+vertical guide rails with clear mechanical accuracy in the background of
+every panel.
+
+============================================================
+CALVES
+============================================================
+
+12. Dumbbell standing calf raise
+Save as: images/exercises/dumbbell-standing-calf-raise.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing upright on flat ground,
+a dumbbell held in each hand at the sides. Panel 1 (start): heels flat on
+the floor. Panel 2 (mid): heels at the midpoint of the raise. Panel 3
+(end): heels fully raised, weight on the balls of the feet, peak
+contraction visible in the calves.
+
+13. Smith machine standing calf raise
+Save as: images/exercises/smith-machine-standing-calf-raise.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing with a Smith machine bar
+racked across the upper back and shoulders, feet flat on the floor or on a
+small raised block. Panel 1 (start): heels down. Panel 2 (mid): heels at
+the midpoint of the raise. Panel 3 (end): heels fully raised onto the
+balls of the feet. Render the Smith machine's vertical guide rails with
+clear mechanical accuracy in the background of every panel.
+
+============================================================
+CORE
+============================================================
+
+14. Russian twist
+Save as: images/exercises/russian-twist.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor background and no equipment.
+Subject: the figure seated on the floor, knees bent, torso leaned back
+slightly from vertical, hands clasped together in front of the chest.
+Panel 1 (start): torso and hands centered. Panel 2: torso rotated toward
+one side, hands directed toward the floor on that side. Panel 3: torso
+rotated toward the opposite side, hands directed toward the floor on that
+side.
+
+15. Mountain climbers
+Save as: images/exercises/mountain-climbers.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor background and no equipment.
+Subject: the figure in a high plank position, hands directly beneath the
+shoulders. Panel 1 (start): both legs extended back in a straight plank.
+Panel 2: one knee driven forward toward the chest, the opposite leg
+extended back. Panel 3: the opposite knee driven forward toward the
+chest, the other leg extended back, conveying the alternating motion.
+
+16. Dumbbell Russian twist
+Save as: images/exercises/dumbbell-russian-twist.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor background. Subject: the figure in
+the identical seated twisting posture described for the Russian twist,
+holding a single dumbbell with both hands in front of the chest in place
+of clasped hands. Panel 1: torso and dumbbell centered. Panel 2: torso and
+dumbbell rotated toward one side. Panel 3: torso and dumbbell rotated
+toward the opposite side.
+
+============================================================
+TRAPS
+============================================================
+
+17. Smith machine shrug
+Save as: images/exercises/smith-machine-shrug.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing beneath a Smith machine,
+gripping the bar at hip-to-thigh height with both hands, arms hanging
+straight down. Panel 1 (start): shoulders relaxed and lowered. Panel 2
+(mid): shoulders at the midpoint of the shrug. Panel 3 (end): shoulders
+fully elevated toward the ears. Render the Smith machine's vertical guide
+rails with clear mechanical accuracy in the background of every panel.
+
+============================================================
+CHEST
+============================================================
+
+18. Smith machine bench press
+Save as: images/exercises/smith-machine-bench-press.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure lying supine on a flat bench
+positioned beneath a Smith machine, gripping the bar with both hands above
+the chest. Panel 1 (start): arms extended, bar locked out above the chest.
+Panel 2 (mid): bar descending toward the chest. Panel 3 (end): bar lowered
+to touch the chest, elbows flexed. Render the Smith machine's vertical
+guide rails with the same level of mechanical detail and accuracy as a
+leg-press machine illustration, in the background of every panel.
+
+============================================================
+BACK
+============================================================
+
+19. Smith machine inverted row
+Save as: images/exercises/smith-machine-inverted-row.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: a Smith machine bar positioned at a low-to-
+mid height, with the figure lying beneath it, body held in a straight
+line, heels on the floor, gripping the bar with both hands at arm's
+length. Panel 1 (start): arms fully extended, body hanging straight below
+the bar. Panel 2 (mid): chest drawing toward the bar. Panel 3 (end): chest
+pulled up to touch the bar, elbows flexed, body still held in a straight
+line. Render the Smith machine's vertical guide rails with clear
+mechanical accuracy in the background of every panel.
+
+============================================================
+QUADS
+============================================================
+
+20. Smith machine squat
+Save as: images/exercises/smith-machine-squat.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure with a Smith machine bar racked
+across the upper back and shoulders, feet set shoulder-width apart. Panel
+1 (start): standing fully upright. Panel 2 (mid): descending into the
+squat. Panel 3 (end): full squat depth, thighs parallel to the floor or
+just below, knees flexed. Mirror the pose progression of a standard
+barbell back squat illustration, substituting the Smith machine apparatus
+for a free barbell and rack, and render its vertical guide rails with
+clear mechanical accuracy in the background of every panel.
+
+============================================================
+SHOULDERS
+============================================================
+
+21. Pike push-ups
+Save as: images/exercises/pike-push-ups.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above, with a plain floor background and no equipment.
+Subject: the figure in an inverted-V position on the floor, hips raised
+high, hands and feet planted on the ground, head directed toward the floor
+between the hands. Panel 1 (start): top position, arms fully extended,
+hips elevated. Panel 2 (mid): elbows flexing during the descent. Panel 3
+(end): bottom position, the top of the head near the floor between the
+hands, elbows flexed.
+
+22. Smith machine shoulder press
+Save as: images/exercises/smith-machine-shoulder-press.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure seated on a bench positioned
+beneath a Smith machine, gripping the bar at shoulder height. Panel 1
+(start): bar held at shoulder height. Panel 2 (mid): bar rising through
+the press. Panel 3 (end): arms fully extended overhead, bar locked out
+above the head. Render the Smith machine's vertical guide rails with
+clear mechanical accuracy in the background of every panel.
+
+============================================================
+CORRECTION — replaces the existing "Dumbbell reverse fly standing" entry
+(its current cue set describes a standing bent-over position, which is
+inconsistent with the corrected exercise below)
+============================================================
+
+23. Incline bench dumbbell rear delt fly
+Save as: images/exercises/incline-bench-dumbbell-rear-delt-fly.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure lying prone on an inclined bench,
+chest and torso supported by the bench pad, holding a dumbbell in each
+hand hanging directly below the shoulders. Panel 1 (start): arms hanging
+straight down, dumbbells together below the chest. Panel 2 (mid): arms
+raising out to the sides through the midpoint of the lift. Panel 3 (end):
+arms fully raised out to the sides at shoulder height, shoulder blades
+drawn together at peak contraction. Render the incline bench supporting
+the torso clearly and consistently across every panel.
+
+POST-SHIP NOTE
+Once this correction lands in index.html, images/exercises/
+dumbbell-reverse-fly-standing.png will no longer be referenced by any
+exercise and becomes orphaned. Delete it or leave it in place — it will
+simply go unused once the rename takes effect.
+
+============================================================
+REAR DELTS (standing variant — new exercise)
+============================================================
+
+24. Dumbbell reverse fly standing
+Save as: images/exercises/dumbbell-reverse-fly-standing.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing upright, feet shoulder-
+width apart, holding a dumbbell in each hand, torso hinged forward at the
+hips to roughly 45 degrees, back flat, arms hanging straight down toward
+the floor with a slight elbow bend. Panel 1 (start): arms hanging directly
+below the shoulders, dumbbells together. Panel 2 (mid): arms raised out to
+the sides, passing through the midpoint of the arc. Panel 3 (end): arms
+fully raised out to the sides, approximately level with the torso, rear
+delts visibly contracted, shoulder blades drawn together. The torso remains
+at the same forward hinge angle across all three panels.

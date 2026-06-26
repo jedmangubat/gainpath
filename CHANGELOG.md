@@ -4,6 +4,16 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.1] - 2026-06-26
+
+### Added
+- **8 new exercises added to the substitution pool** (available via exercise-swap):
+  - *Glutes (new muscle group):* Barbell hip thrust, Smith machine hip thrust, Glute bridge, Dumbbell hip thrust
+  - *Triceps:* Barbell skull crusher
+  - *Forearms (new muscle group):* Dumbbell wrist curl, Dumbbell reverse wrist curl, Dead hang (timed hold)
+- **Standing rear delt fly prompt** added to `exercise-image-prompts-professional.txt` so the actual standing bent-over movement has its own image brief, separate from the incline bench correction.
+- New exercise images copied into `images/exercises/` for all 8 exercises above.
+
 ## [1.2.0] - 2026-06-26
 
 ### Added
