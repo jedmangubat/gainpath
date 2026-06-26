@@ -4,6 +4,22 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.6] - 2026-06-26
+
+### Changed
+- **Streak is now a weekly streak, not a daily one.** Counts consecutive weeks
+  where you completed at least your target number of workouts (`freq`/week).
+  Week boundaries are Monday–Sunday. The current in-progress week doesn't break
+  the streak (it counts only once you hit your target for the week). Label
+  updated to "wk streak" everywhere.
+
+### Fixed
+- **Warm-up sets now follow exercise position, not a hardcoded flag.** Previously,
+  `wu:false` exercises (most cable and dumbbell isolation moves) could never receive
+  a warm-up set even when first in their muscle group. Now the first exercise per
+  muscle group with a non-zero base weight always gets the warm-up, so reordering
+  exercises correctly adapts warm-up assignment to whatever is first.
+
 ## [1.2.5] - 2026-06-26
 
 ### Changed

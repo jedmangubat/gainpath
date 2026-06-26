@@ -328,7 +328,7 @@ textarea{resize:vertical;min-height:100px}
       <div style="display:flex;align-items:center;gap:6px;background:#FAEEDA;padding:7px 12px;border-radius:20px">
         <i class="ti ti-flame" style="color:#E24B4A;font-size:16px" aria-hidden="true"></i>
         <span style="font-size:14px;font-weight:600;color:#633806" id="h-str">0</span>
-        <span style="font-size:12px;color:#633806">streak</span>
+        <span style="font-size:12px;color:#633806">wk streak</span>
       </div>
       <div style="display:flex;align-items:center;gap:6px;background:var(--bg2);padding:7px 12px;border-radius:20px">
         <i class="ti ti-target-arrow" style="color:var(--accent);font-size:16px" aria-hidden="true"></i>
@@ -2058,8 +2058,8 @@ function obFinish(){
 function addWarmupFlags(exercises){
   const seenMG={};
   return exercises.map(ex=>{
-    const shouldWU=ex.wu&&ex.baseW>0&&!seenMG[ex.mg];
-    if(ex.wu&&ex.baseW>0)seenMG[ex.mg]=true;
+    const shouldWU=ex.baseW>0&&!seenMG[ex.mg];
+    if(ex.baseW>0)seenMG[ex.mg]=true;
     return {...ex,doWU:shouldWU};
   });
 }
@@ -2181,11 +2181,21 @@ function sessionsThisWeek(){
 }
 function streak(){
   if(!ST.history.length)return 0;
-  const dates=[...new Set(ST.history.map(h=>h.dk))].sort().reverse();
-  const tod=dkey(new Date()),yes=dkey(new Date(Date.now()-86400000));
-  if(dates[0]!==tod&&dates[0]!==yes)return 0;
-  let n=1;
-  for(let i=1;i<dates.length;i++){const a=new Date(dates[i-1]+'T00:00:00'),b=new Date(dates[i]+'T00:00:00');if((a-b)/86400000===1)n++;else break;}
+  function wk(dk){return dkey(startOfWeek(new Date(dk+'T00:00:00')));}
+  const weekDays={};
+  ST.history.forEach(h=>{const w=wk(h.dk);if(!weekDays[w])weekDays[w]=new Set();weekDays[w].add(h.dk);});
+  const todayWk=dkey(startOfWeek(new Date()));
+  const weeks=Object.keys(weekDays).sort().reverse();
+  // Current week still in progress — don't count or break streak yet
+  let startIdx=0;
+  if(weeks[0]===todayWk&&weekDays[todayWk].size<CFG.freq)startIdx=1;
+  let n=0;
+  for(let i=startIdx;i<weeks.length;i++){
+    const w=weeks[i];
+    if(weekDays[w].size<CFG.freq)break;
+    if(i>startIdx){const prev=new Date(weeks[i-1]+'T00:00:00');prev.setDate(prev.getDate()-7);if(dkey(prev)!==w)break;}
+    n++;
+  }
   return n;
 }
 function getSplitDays(){
@@ -2956,7 +2966,7 @@ async function genPDF(){
   doc.setTextColor(205,225,215);doc.setFontSize(9);doc.text('Generated '+new Date().toLocaleDateString(),W-pd,23,{align:'right'});y=40;
   const totalSets=sessions.reduce((a,h)=>a+h.sets,0);
   const prTM=Object.entries(ST.prs).filter(([,v])=>{if(!v.date)return false;try{const d=new Date(v.date);return d.getFullYear()==year&&String(d.getMonth()+1).padStart(2,'0')===month;}catch(e){return false;}});
-  const stats=[{l:'Sessions',v:sessions.length,c:acRGB},{l:'Total sets',v:totalSets,c:[15,110,86]},{l:'New PRs',v:prTM.length,c:[237,137,19]},{l:'Streak',v:streak(),c:[237,137,19]}];
+  const stats=[{l:'Sessions',v:sessions.length,c:acRGB},{l:'Total sets',v:totalSets,c:[15,110,86]},{l:'New PRs',v:prTM.length,c:[237,137,19]},{l:'Wk streak',v:streak(),c:[237,137,19]}];
   const bW=(cW-9)/4;stats.forEach((s,i)=>{const bx=pd+i*(bW+3);doc.setFillColor(s.c[0],s.c[1],s.c[2]);doc.roundedRect(bx,y,bW,22,3,3,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text(String(s.v),bx+bW/2,y+13,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(s.l,bx+bW/2,y+19,{align:'center'});});y+=30;
   doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Training calendar',pd,y);y+=5;
   const dow=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],cW7=cW/7,cH=10;
