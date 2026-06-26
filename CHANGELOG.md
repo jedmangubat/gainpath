@@ -4,6 +4,28 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.4] - 2026-06-26
+
+### Changed
+- **"Build a custom program" button moved from the home screen to Settings**,
+  placed directly below the split-type selector where it belongs. The home
+  screen now stays focused on starting a workout.
+
+### Added
+- **Cable rope hammer curl** added to the substitution pool with image.
+- **Incline bench dumbbell rear delt fly** image added; the exercise is now
+  renamed from "Dumbbell reverse fly standing" in the Pull and Upper day
+  templates (pull_m, upper_m) — the standing bent-over variant remains in
+  the substitution pool under its own name.
+
+### Fixed
+- Replaced wrong **Arnold press** image (was showing a cable lateral raise)
+  with the correct seated dumbbell rotational press.
+- Replaced wrong **Barbell skull crusher** image (was showing a flat bench
+  press) with the correct skull crusher (bar to forehead, elbows up).
+- Replaced wrong **Overhead cable tricep extension** image with the correct
+  overhead extension (facing away from machine, arms extending overhead).
+
 ## [1.2.3] - 2026-06-26
 
 ### Added

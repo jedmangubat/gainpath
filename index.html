@@ -348,7 +348,6 @@ textarea{resize:vertical;min-height:100px}
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
     <button class="bp" id="h-repeat-btn" style="width:100%;justify-content:center;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
     <div id="dbtn-list"></div>
-    <button class="bg" id="h-prog-btn" style="width:100%;justify-content:center;margin-top:4px" onclick="openProgramBuilder()"></button>
     <div id="h-hist" style="margin-top:16px;display:none">
       <h2>Recent sessions</h2>
       <div id="h-hlist"></div>
@@ -486,7 +485,8 @@ textarea{resize:vertical;min-height:100px}
     <div class="g2" style="margin-bottom:6px"><button class="opt-btn" id="sstyle-straight" onclick="setSettingSetStyle('straight')">Straight sets</button><button class="opt-btn" id="sstyle-pyramid" onclick="setSettingSetStyle('pyramid')">Pyramid sets</button></div>
     <div style="font-size:12px;color:var(--txt2);margin-bottom:12px" id="sstyle-desc"></div>
     <label>Split type</label>
-    <div id="set-split-opts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+    <div id="set-split-opts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
+    <button class="bg" id="set-prog-btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openProgramBuilder()"></button>
     <div class="toggle-row">
       <div><div style="font-size:14px;font-weight:500;color:var(--txt)">Warm-up sets</div></div>
       <button class="toggle" id="stog-wu" onclick="setSettingWU()"></button>
@@ -728,7 +728,7 @@ const EX={
     {name:'Reverse grip pulldown',mg:'back',yt:'reverse+grip+lat+pulldown+form',wu:false,baseW:50},
     {name:'Cable row',mg:'back',yt:'seated+cable+row+form',wu:false,baseW:50},
     {name:'Cable face pull',mg:'rear_delts',yt:'cable+face+pull+rear+delt+form',wu:true,baseW:40},
-    {name:'Dumbbell reverse fly standing',mg:'rear_delts',note:'each hand',yt:'dumbbell+reverse+fly+rear+delt+form',wu:false,baseW:8},
+    {name:'Incline bench dumbbell rear delt fly',mg:'rear_delts',note:'each hand',yt:'incline+dumbbell+rear+delt+fly+form',wu:false,baseW:8},
     {name:'Dumbbell bicep curl',mg:'biceps',note:'each hand',yt:'dumbbell+bicep+curl+form',wu:true,baseW:10},
     {name:'Hammer curls',mg:'biceps',note:'each hand',yt:'hammer+curl+form+tutorial',wu:false,baseW:10}
   ],
@@ -746,7 +746,7 @@ const EX={
     {name:'Lat pulldown',mg:'back',yt:'lat+pulldown+proper+form',wu:true,baseW:50},
     {name:'Seated dumbbell shoulder press',mg:'shoulders',yt:'seated+dumbbell+shoulder+press+form',wu:true,baseW:20},
     {name:'Cable face pull',mg:'rear_delts',yt:'cable+face+pull+rear+delt+form',wu:true,baseW:40},
-    {name:'Dumbbell reverse fly standing',mg:'rear_delts',note:'each hand',yt:'dumbbell+reverse+fly+rear+delt+form',wu:false,baseW:8},
+    {name:'Incline bench dumbbell rear delt fly',mg:'rear_delts',note:'each hand',yt:'incline+dumbbell+rear+delt+fly+form',wu:false,baseW:8},
     {name:'Triceps pushdown',mg:'triceps',yt:'cable+triceps+pushdown+form',wu:true,baseW:50},
     {name:'Dumbbell bicep curl',mg:'biceps',note:'each hand',yt:'dumbbell+bicep+curl+form',wu:true,baseW:10}
   ],
@@ -2224,8 +2224,6 @@ function refreshHome(){
     const rbtn=gid('h-repeat-btn');rbtn.style.display='flex';rbtn.innerHTML='<i class="ti ti-rotate-clockwise" aria-hidden="true"></i> Repeat last workout — '+last;
   }
   else{gid('h-gr').textContent='Good '+tod+', '+CFG.name+'! Ready to train?';gid('h-sg').textContent='Pick your first session below';gid('h-repeat-btn').style.display='none';}
-  const pbtn=gid('h-prog-btn');
-  pbtn.innerHTML=CFG.customProgram?'<i class="ti ti-pencil" aria-hidden="true"></i> Edit "'+CFG.customProgram.name+'"':'<i class="ti ti-layout-grid-add" aria-hidden="true"></i> Build a custom program';
   const con=gid('dbtn-list');con.innerHTML='';
   getSplitDays().forEach(k=>{
     const isSug=k===sug;const last=ST.history.filter(h=>h.day===k).slice(-1)[0];
@@ -2259,6 +2257,8 @@ function openSettings(){
   gid('stog-rs').classList.toggle('on',CFG.restSound);
   gid('stog-dm').classList.toggle('on',CFG.darkMode);
   renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
+  const spbtn=gid('set-prog-btn');
+  spbtn.innerHTML=CFG.customProgram?'<i class="ti ti-pencil" aria-hidden="true"></i> Edit "'+CFG.customProgram.name+'"':'<i class="ti ti-layout-grid-add" aria-hidden="true"></i> Build a custom program';
   renderMWSettings();
   ss('settings');
 }

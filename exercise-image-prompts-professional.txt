@@ -48,27 +48,73 @@ GLOBAL ART DIRECTION (restated inside every brief below)
   Exclusions: No on-image text, no logos, no watermarks, no captions.
 
 ============================================================
-PENDING — incline bench rear delt correction
+BICEPS
 ============================================================
 
-The existing "Dumbbell reverse fly standing" entries in the day templates
-(pull_m, upper_m, pull_f, upper_f in index.html) should be renamed to
-"Incline bench dumbbell rear delt fly" once the image below is generated.
-
-1. Incline bench dumbbell rear delt fly
-Save as: images/exercises/incline-bench-dumbbell-rear-delt-fly.png
+2. Cable rope hammer curl
+Save as: images/exercises/cable-rope-hammer-curl.png
 Brief: Produce a three-panel flat-vector illustration following the global
-art direction above. Subject: the figure lying prone on an inclined bench,
-chest and torso supported by the bench pad, holding a dumbbell in each
-hand hanging directly below the shoulders. Panel 1 (start): arms hanging
-straight down, dumbbells together below the chest. Panel 2 (mid): arms
-raising out to the sides through the midpoint of the lift. Panel 3 (end):
-arms fully raised out to the sides at shoulder height, shoulder blades
-drawn together at peak contraction. Render the incline bench supporting
-the torso clearly and consistently across every panel.
+art direction above. Subject: the figure standing upright facing a cable
+machine (rendered with mechanical accuracy — weight stack, low pulley, and
+rope attachment), gripping the two ends of a rope attachment with both
+hands in a neutral grip (palms facing each other), elbows tucked at the
+sides. Panel 1 (start): arms fully extended downward, rope hanging at
+hip/thigh height. Panel 2 (mid): elbows flexing, rope curling upward
+through the midpoint. Panel 3 (end): elbows fully flexed, rope curled up
+to roughly shoulder height, wrists in neutral position (thumbs up),
+biceps and brachialis visibly contracted. Render the cable machine and
+rope attachment with clear mechanical accuracy in every panel.
 
-After generating the image and adding it to images/exercises/:
-- Rename "Dumbbell reverse fly standing" → "Incline bench dumbbell rear
-  delt fly" in pull_m, upper_m, pull_f, upper_f in index.html.
-- The existing dumbbell-reverse-fly-standing.png (standing bent-over
-  variant, already in the sub pool as a separate exercise) is unaffected.
+============================================================
+CORRECTIONS — replace existing wrong images
+============================================================
+
+3. Arnold press
+Save as: images/exercises/arnold-press.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure seated upright on a bench, holding
+a dumbbell in each hand. Panel 1 (start): both dumbbells held at shoulder
+height with palms facing TOWARD the body (supinated grip, knuckles facing
+outward). Panel 2 (mid): arms pressing upward and rotating simultaneously —
+dumbbells rising, palms beginning to rotate outward. Panel 3 (end): arms
+fully extended overhead, palms now facing fully AWAY from the body
+(pronated at the top), dumbbells raised overhead. The rotation of the
+wrists from palms-in to palms-out as the arms press upward is the defining
+feature of this exercise and must be clearly visible across the three
+panels.
+
+4. Barbell skull crusher
+Save as: images/exercises/barbell-skull-crusher.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure lying supine on a flat bench,
+gripping a barbell with both hands, arms fully extended vertically above
+the chest, ELBOWS POINTING STRAIGHT UP toward the ceiling. Panel 1 (start):
+arms fully extended, bar directly above the chest, elbows locked out.
+Panel 2 (mid): elbows STAYING in place pointing upward as the forearms
+hinge at the elbow, bar descending toward the forehead. Panel 3 (end): bar
+lowered to just above the forehead, elbows still pointing straight up and
+NOT flaring out, forearms angled back. The elbows must remain stationary
+and pointed upward throughout — this is what distinguishes a skull crusher
+from a bench press and must be clearly illustrated.
+
+5. Overhead cable tricep extension
+Save as: images/exercises/overhead-cable-tricep-extension.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing and facing AWAY from a
+cable machine (rendered with mechanical accuracy — weight stack and high
+pulley), gripping a rope attachment with both hands behind the head, the
+cable running from the high pulley overhead. Elbows are raised and pointing
+FORWARD at ear level, upper arms locked in place alongside the head.
+Panel 1 (start): elbows bent, rope gripped behind the head, forearms
+angled back toward the pulley. Panel 2 (mid): forearms extending forward
+and upward through the midpoint. Panel 3 (end): arms fully extended
+overhead, rope pulled forward above the head, triceps visibly contracted.
+The upper arms remain stationary and vertical throughout — only the
+forearms move.
+
+============================================================
+STILL PENDING — no images generated yet
+============================================================
+
+- Dumbbell Russian twist (mg: core, bodyweight)
+- Cable pull-through (mg: glutes, machine)
