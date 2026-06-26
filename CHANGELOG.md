@@ -4,6 +4,24 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.2] - 2026-06-26
+
+### Added
+- **20 new exercises added to the substitution pool** (available via exercise-swap):
+  - *Glutes:* Cable glute kickback, Cable pull-through
+  - *Chest:* Pec deck, Smith machine bench press
+  - *Back:* Smith machine inverted row
+  - *Shoulders:* Smith machine shoulder press, Pike push-ups
+  - *Traps:* Smith machine shrug
+  - *Triceps:* Diamond push-ups
+  - *Hamstrings:* Dumbbell Romanian deadlift, Smith machine Romanian deadlift
+  - *Calves:* Dumbbell standing calf raise, Smith machine standing calf raise
+  - *Quads:* Smith machine squat
+  - *Core:* Russian twist, Mountain climbers
+  - *Rear delts:* Dumbbell reverse fly standing (standing bent-over variant — new exercise, separate from the incline bench correction)
+- New exercise images added for all 20 exercises above.
+- Exercise image prompts file (`exercise-image-prompts-professional.txt`) rewritten with the machine exercise expansion batch (10 briefs) and a pending note for the rear delt correction.
+
 ## [1.2.1] - 2026-06-26
 
 ### Added
