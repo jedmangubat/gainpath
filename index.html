@@ -580,6 +580,10 @@ textarea{resize:vertical;min-height:100px}
     <button class="bp" style="justify-content:center" onclick="skip()">Skip rest</button>
     <button class="bs" onclick="adj(15)">+15s</button>
   </div>
+  <div id="r-feel" style="display:none;background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:20px">
+    <div id="r-feel-q" style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px"></div>
+    <div class="g2" id="r-feel-btns"></div>
+  </div>
   <h2>Tip</h2>
   <div class="fb" id="r-fb"></div>
   <h2 style="margin-top:14px" id="r-nx-h">Next set</h2>
@@ -1877,7 +1881,7 @@ function tipFor(name){const t=EX_TIPS[name];return t&&t.length?t[Math.floor(Math
 
 // ═══ STATE ═══
 let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},customProgram:null,restSound:true,darkMode:false,wuSteps:1,setStyle:'straight'};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,DE_EXPANDED=null;
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
 const OB_STEPS=9;
@@ -1889,7 +1893,7 @@ function saveInProgress(){
   if(!ST.day&&!ST.editDay)return;
   const activeEl=document.querySelector('.screen.active');
   const screen=activeEl?activeEl.id.replace('s-',''):(ST.day?'wo':'dayedit');
-  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,plateIdx:ST.plateIdx,feelQueue:ST.feelQueue,feelTarget:ST.feelTarget,ssGroupEnd:ST.ssGroupEnd,screen,ts:Date.now()};
+  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,plateIdx:ST.plateIdx,feelQueue:ST.feelQueue,feelTarget:ST.feelTarget,ssGroupEnd:ST.ssGroupEnd,restRated:ST.restRated||false,screen,ts:Date.now()};
   if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.editIncludeCurrent=ST.editIncludeCurrent;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.swapSearch=ST.swapSearch;wip.deExpanded=DE_EXPANDED;}
   if(HOLD_IDX!==null){wip.holdIdx=HOLD_IDX;wip.holdStart=HOLD_START;}
   try{localStorage.setItem('gp_wip',JSON.stringify(wip));}catch(e){}
@@ -1904,7 +1908,7 @@ function restoreInProgress(){
     ST.mwQueue=wip.mwQueue||[];ST.mwCurrent=wip.mwCurrent||null;
     ST.restEnd=wip.restEnd||null;ST.restInfo=wip.restInfo||null;ST.rFbHtml=wip.rFbHtml||null;ST.rNxHtml=wip.rNxHtml||null;
     ST.plateIdx=wip.plateIdx!==undefined?wip.plateIdx:null;
-    ST.feelQueue=wip.feelQueue||[];ST.feelTarget=wip.feelTarget!==undefined?wip.feelTarget:null;ST.ssGroupEnd=wip.ssGroupEnd!==undefined?wip.ssGroupEnd:null;
+    ST.feelQueue=wip.feelQueue||[];ST.feelTarget=wip.feelTarget!==undefined?wip.feelTarget:null;ST.ssGroupEnd=wip.ssGroupEnd!==undefined?wip.ssGroupEnd:null;ST.restRated=wip.restRated||false;
     ST.paused=wip.paused||false;
     if(ST.paused){ST.es=wip.es||0;clearInterval(ST.et);ST.et=null;const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);}
     else{ST.es=Math.floor((Date.now()-ST.t0)/1000);startEtInterval();}
@@ -1935,6 +1939,7 @@ function restoreInProgress(){
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();
     gid('r-nx').innerHTML=ST.rNxHtml||'';
     gid('r-fb').innerHTML=ST.rFbHtml||'';
+    if(isLastSet&&ST.restInfo.ssReturn==null){gid('r-feel').style.display='block';renderRestFeel(ST.exi);}else gid('r-feel').style.display='none';
     ss('rest');startRestCountdown();
   }
   else if(scr==='feel'){ss('feel');}
@@ -1960,7 +1965,7 @@ function startEtInterval(){clearInterval(ST.et);ST.et=setInterval(()=>{ST.es=Mat
 function updWoPauseBtn(){const ic=gid('wo-pause-icon');if(ic)ic.className='ti '+(ST.paused?'ti-player-play':'ti-player-pause');const btn=gid('wo-pause-btn');if(btn)btn.setAttribute('aria-label',ST.paused?'Resume workout timer':'Pause workout timer');}
 function toggleWoPause(){if(ST.paused){ST.t0=Date.now()-ST.es*1000;ST.paused=false;startEtInterval();}else{ST.es=Math.floor((Date.now()-ST.t0)/1000);clearInterval(ST.et);ST.paused=true;}updWoPauseBtn();saveInProgress();}
 function startRestCountdown(){clearInterval(ST.rt);ST.rt=setInterval(()=>{ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();if(ST.rs===5)beep(880,.15);if(ST.rs<=0){clearInterval(ST.rt);beep(1320,.3);if(CFG.restSound&&navigator.vibrate)navigator.vibrate(200);endRest();}},1000);}
-function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet)askExFeel();else{ss('wo');renderEx();}}
+function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet){if(ST.restRated){ST.restRated=false;nextEx();}else askExFeel();}else{ss('wo');renderEx();}}
 function accentColor(){document.documentElement.style.setProperty('--accent',CFG.darkMode?'#2ECC71':'#153F29');}
 
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
@@ -2604,7 +2609,7 @@ function startDay(k,exList){
     return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
   });
   ST.mwQueue=exWithWU.filter(ex=>ex.machine&&ST.mw[ex.name]===undefined).map(ex=>ex.name);
-  ST.feelQueue=[];ST.feelTarget=null;ST.ssGroupEnd=null;
+  ST.feelQueue=[];ST.feelTarget=null;ST.ssGroupEnd=null;ST.restRated=false;
   ST.es=0;ST.t0=Date.now();ST.paused=false;startEtInterval();updWoPauseBtn();
   gid('wo-tit').textContent=getDayName(k);gid('prt-w').innerHTML='';
   if(ST.mwQueue.length){processMWQueue();}else{renderEx();ss('wo');saveInProgress();}
@@ -2816,8 +2821,26 @@ function addDropSet(i){
   sets.splice(i+1,0,{t:'d',w:dropW,r:s.r,done:false});
   renderEx();saveInProgress();
 }
+const FEEL_OPTS=[
+  {k:'easy',icon:'😌',label:'Too easy',color:'#0F6E56',sub:'Could go heavier'},
+  {k:'good',icon:'💪',label:'Just right',color:'#185FA5',sub:'Good challenge'},
+  {k:'hard',icon:'🔥',label:'Hard',color:'#854F0B',sub:'Near my limit'},
+  {k:'max',icon:'😵',label:'Too much',color:'#993C1D',sub:'Reduce next time'}
+];
+function setPrepLabel(ex,s){
+  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const dispW=isBW?bwWeightLabel(s.w):mwBase>0?(+(s.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':s.w+CFG.unit;
+  return (ex.holdSecs?'Hold':s.r+' reps')+' @ '+dispW;
+}
+function renderRestFeel(P){
+  const item=ST.sd[P];if(!item)return;const sel=item.exFeel;
+  gid('r-feel-q').textContent=sel!=null?'Rated — tap to change':'How did '+item.ex.name+' feel?';
+  gid('r-feel-btns').innerHTML=FEEL_OPTS.map(o=>'<button class="feel-btn" style="margin-bottom:0'+(sel===o.k?';border-color:var(--accent);background:#E8F2EC':'')+'" onclick="restRate(\''+o.k+'\')"><span class="feel-icon">'+o.icon+'</span><div><div style="font-size:13px;font-weight:700;color:'+o.color+'">'+o.label+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+o.sub+'</div></div></button>').join('');
+}
+function restRate(feel){const P=ST.exi;if(!ST.sd[P])return;ST.sd[P].exFeel=feel;ST.restRated=true;renderRestFeel(P);saveInProgress();}
 function startRest(ex,si,done,next,ssReturn){
   const isLastSet=!next;const ssRound=ssReturn!=null;
+  ST.restRated=false;gid('r-feel').style.display='none';
   gid('r-en').textContent=ex.name;
   gid('r-sl').textContent=ssRound?'Superset round done \u2014 rest before the next round':isLastSet?'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before next exercise':'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before set '+(next.t==='w'?'W':si+2);
   ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;updT();
@@ -2833,7 +2856,12 @@ function startRest(ex,si,done,next,ssReturn){
     gid('r-fb').innerHTML=tipFor(nx.name);
   }else if(isLastSet){
     gid('r-nx-h').textContent=nextItem?'Up next':'Almost there';
-    gid('r-nx').innerHTML=nextItem?'<span style="color:var(--txt2)">Next:</span> <strong>'+nextItem.ex.name+'</strong>':'<span style="color:var(--txt2)">Next:</span> Finish workout';
+    if(nextItem){
+      const nx=nextItem.ex;const fs=nextItem.sets[0];
+      const fsLine=fs?'<div style="margin-top:6px;font-size:12px;color:var(--txt2)">'+(fs.t==='w'?'Warm-up set':'First set')+': <strong style="color:var(--txt)">'+setPrepLabel(nx,fs)+'</strong></div>':'';
+      gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> <strong>'+nx.name+'</strong>'+fsLine;
+    }else gid('r-nx').innerHTML='<span style="color:var(--txt2)">Next:</span> Finish workout';
+    gid('r-feel').style.display='block';renderRestFeel(ST.exi);
     const tipEx=nextItem?nextItem.ex:ex;
     gid('r-fb').innerHTML=(nextItem?'<span style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">For next: <strong>'+nextItem.ex.name+'</strong></span>':'')+tipFor(tipEx.name);
   }else{

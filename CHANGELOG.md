@@ -4,6 +4,21 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.7] - 2026-06-27
+
+### Added
+- **Rate an exercise while the last-set rest timer is still counting down.** The
+  per-exercise "How did it feel?" buttons now appear inline on the rest screen
+  after an exercise's final set, so you can tap your rating during the rest
+  instead of waiting for the timer to end. If you rate during the rest, the app
+  skips straight to the next exercise when rest finishes; if you don't, the
+  standalone rating screen still appears as before. (Superset round-rests are
+  unaffected — this only applies to the rest after an exercise's last set.)
+- **The last-set rest timer now previews the next exercise's first set.** In
+  addition to the next exercise's name, it shows the weight and reps of its
+  first (or warm-up) set, so you can set up plates/machine and get ready while
+  resting.
+
 ## [1.2.6] - 2026-06-26
 
 ### Changed

@@ -71,8 +71,9 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Automatic rest timer after each set, adjustable with +15s / -15s buttons
 - Color changes: orange at 30s, red at 10s; shorter timer for warm-up sets
 - A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
+- The rest after an exercise's last set previews the next exercise — its name plus the weight and reps of its first (or warm-up) set — so you can set up while you rest
 - Optional beep + vibration when the timer ends, so you don't have to watch the screen (toggle in Settings)
-- Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much), plus an overall session feel rating before the summary screen
+- Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
 ### 🌙 Dark mode
 
