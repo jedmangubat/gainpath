@@ -32,6 +32,15 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   (or similar) and wait for a yes before running `git push origin main`.
   Never push proactively/silently, and a prior approval doesn't carry over to
   a later commit — confirm each time.
+- **Version bumps must be tagged and released, not just pushed.** When a commit
+  bumps the version (the `(vX.Y.Z)` in its message + the new `CHANGELOG.md`
+  entry), then once the user approves that push, also create and push the
+  matching annotated tag (`git tag -a vX.Y.Z` → `git push origin vX.Y.Z`) and
+  publish the GitHub release (`gh release create vX.Y.Z` with the version's
+  CHANGELOG notes) in the same step — no separate request needed beyond the
+  push approval. This keeps GitHub's Releases page in sync with shipped code;
+  it previously drifted (releases sat at v1.1.1 while `main` was at v1.2.6
+  because the v1.2.x commits were pushed but never tagged).
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
   matching the exact exercise `name` field in the `EX` object in `index.html`
   (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
