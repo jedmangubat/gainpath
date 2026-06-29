@@ -117,3 +117,131 @@ STILL PENDING — no images generated yet
 ============================================================
 
 - Cable pull-through (mg: glutes, machine)
+
+============================================================
+NEW EXERCISES — awaiting images before adding to app
+============================================================
+
+6. Cable tricep kickback
+Save as: images/exercises/cable-tricep-kickback.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing beside a low cable pulley
+machine (rendered with mechanical accuracy — weight stack, low pulley, and
+single D-handle attachment), torso hinged forward at roughly 45 degrees,
+one hand gripping the D-handle with palm facing inward, upper arm tucked
+tightly against the torso and held parallel to the ground throughout. The
+non-working arm rests on the knee or hangs at the side. Panel 1 (start):
+elbow bent at 90 degrees, forearm pointing straight down toward the floor,
+cable pulling from the low pulley. Panel 2 (mid): elbow extending, forearm
+sweeping back and upward through the midpoint. Panel 3 (end): arm fully
+extended behind the body, hand pushed back past the hip, tricep visibly
+contracted, upper arm still locked parallel to the ground. The upper arm
+must not drop or swing in any panel — only the forearm moves at the elbow.
+
+7. Wide-grip cable row
+Save as: images/exercises/wide-grip-cable-row.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure seated on a cable row machine bench
+(rendered with mechanical accuracy — weight stack, low pulley, seat, and
+footrests), feet flat on the footrests, knees slightly bent, torso upright.
+The figure grips a long straight bar attachment with both hands placed
+WIDER than shoulder width, palms facing downward (overhand/pronated grip).
+Panel 1 (start): arms fully extended forward toward the pulley, upper back
+slightly rounded as the shoulder blades protract and stretch forward.
+Panel 2 (mid): elbows bending and flaring outward wide as the bar is drawn
+back through the midpoint. Panel 3 (end): bar pulled in to the lower
+chest/upper abdomen, elbows flared out to the sides at roughly 90 degrees
+from the torso, shoulder blades fully retracted and squeezed together,
+torso remaining upright. The wide elbow flare (not tucked close to the body
+as in a narrow row) is the defining feature and must be clearly visible.
+
+8. Dumbbell sumo squat
+Save as: images/exercises/dumbbell-sumo-squat.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing with feet significantly
+wider than shoulder width, toes angled outward at roughly 45 degrees,
+holding a single dumbbell vertically with BOTH hands clasped around the top
+plate, the dumbbell hanging straight down between the legs (goblet-style
+hold). Panel 1 (start): standing tall, dumbbell hanging between legs, feet
+wide and toes out. Panel 2 (mid): hips and knees bending, torso staying
+upright, dumbbell descending between the thighs through the midpoint.
+Panel 3 (end): at the bottom of the squat — thighs at or below parallel to
+the floor, knees tracking over the toes in line with the wide stance,
+dumbbell clearing the floor between the legs, chest up. The wide stance and
+the dumbbell hanging centrally between the legs (not held at the chest) are
+the defining features.
+
+9. Single-arm cable fly
+Save as: images/exercises/single-arm-cable-fly.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing sideways to a cable
+machine (rendered with mechanical accuracy — weight stack and high pulley),
+one hand gripping a single D-handle attached to the HIGH pulley, the
+working arm extended outward and slightly upward in a wide arc. The torso
+faces forward (perpendicular to the cable machine), feet staggered slightly
+for balance. The non-working arm rests at the hip. Panel 1 (start): working
+arm extended outward toward the high pulley, nearly in line with the
+shoulder, cable taut, chest stretched. Panel 2 (mid): arm sweeping forward
+and downward across the body through the midpoint. Panel 3 (end): working
+arm crossed fully in front of the chest toward the opposite shoulder, elbow
+slightly soft (not locked), pectoral visibly contracted. The sweeping arc
+from the high pulley across the body, done with one arm, is the defining
+feature.
+
+10. Chin-ups
+Save as: images/exercises/chin-ups.png
+NOTE: This exercise was originally listed as "Close-grip pull-ups" but is
+correctly named Chin-ups (underhand/supinated grip). Image already generated
+and saved as chin-ups.png.
+Brief (for reference): Three-panel illustration — dead hang with underhand
+grip, mid-pull with elbows driving down and back, chin above bar at top.
+Palms face toward the body throughout (underhand/supinated grip).
+
+11. EZ bar front raise
+Save as: images/exercises/ez-bar-front-raise.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure standing upright with feet
+shoulder-width apart, holding an EZ curl bar (rendered accurately with its
+characteristic W-shaped / zigzag bends) with both hands using the inner
+angled grips, palms facing partially inward (semi-pronated). Arms hang
+straight down in front of the thighs in the starting position.
+Panel 1 (start): EZ bar at thigh level, arms straight down, slight forward
+lean not present — figure is tall and upright. Panel 2 (mid): arms raising
+forward through the midpoint, EZ bar at about waist-to-chest height, elbows
+remaining straight (not bent). Panel 3 (end): EZ bar raised to shoulder
+height, arms parallel to the floor, front deltoids visibly contracted.
+The EZ bar's distinctive bent/angled shape must be clearly recognizable in
+every panel — not a straight barbell.
+
+12. Hack squat calf raise
+Save as: images/exercises/hack-squat-calf-raise.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure positioned on a hack squat machine
+(rendered with mechanical accuracy — angled sled, back pad, shoulder pads,
+and footplate), back flat against the angled back pad, shoulders under the
+padded shoulder bars. Only the BALLS OF THE FEET are on the lower edge of
+the footplate, with heels hanging off the bottom edge — legs are fully
+extended (knees straight, NOT bent) for the entire movement. This is a
+calf raise, not a leg press. Panel 1 (start): heels dropped as far down as
+possible below the footplate edge, calves fully stretched, ankles in maximum
+dorsiflexion. Panel 2 (mid): heels rising through the midpoint, ankles
+neutral. Panel 3 (end): heels fully raised as high as possible above the
+footplate edge, calves visibly contracted, weight on the balls of the feet,
+ankles in full plantar flexion. Legs stay locked straight throughout — the
+only movement is at the ankle.
+
+13. Back extension
+Save as: images/exercises/back-extension.png
+Brief: Produce a three-panel flat-vector illustration following the global
+art direction above. Subject: the figure using a 45-degree hyperextension
+bench (rendered with mechanical accuracy — angled padded frame, hip pad, and
+ankle/foot rollers that secure the legs). The figure's hips rest on the hip
+pad, feet hooked under the ankle rollers, legs straight. Arms are crossed
+over the chest. Panel 1 (start): torso hanging straight down toward the
+floor, spine flexed, upper body below the hip pad level. Panel 2 (mid):
+torso rising through the midpoint, spine extending. Panel 3 (end): torso
+fully raised to horizontal (parallel to the floor) or just slightly above,
+back muscles (erector spinae / lower back) visibly contracted, spine in
+neutral to slight extension — NOT hyperextended past horizontal. The
+45-degree angle of the bench frame and the figure's hips pivoting on the
+pad are the defining features.

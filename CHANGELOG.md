@@ -4,6 +4,41 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.8] - 2026-06-29
+
+### Added
+- **8 new exercises** added to the exercise pool (available via Add/Swap in any
+  day): Chin-ups, Wide-grip cable row, Cable tricep kickback, Dumbbell sumo
+  squat, Single-arm cable fly, EZ bar front raise, Hack squat calf raise, Back
+  extension. Each has its image, form tips, and step-by-step instructions.
+- **Exercise instruction sheet.** A `?` button next to every exercise name during
+  a workout opens a bottom sheet with step-by-step instructions — equipment
+  setup, starting position, movement, and key form notes. Instructions are stored
+  in a dedicated `EX_INSTRUCTIONS` structure separate from `EX_TIPS`; the random
+  coaching tip shown during rest is unchanged. ~90 exercises covered.
+- **Toggle a completed set back to undone.** Tapping a "Done" set during a
+  workout now marks it undone again, so accidental taps can be corrected without
+  abandoning the session.
+
+### Changed
+- **Day config persists when you go back.** Opening a workout day to configure
+  exercises (add, remove, reorder, change weight) and then tapping back without
+  starting now saves those changes automatically — the day reopens with your
+  edits intact next time.
+- **Mid-workout exercise edits apply on back.** Changes made via the mid-workout
+  edit screen (reorder, swap, weight adjustments) now apply immediately when you
+  tap back, without requiring the "Save & continue" button.
+- **New exercise weight defaults to your estimated weight.** When adding an
+  exercise for the first time, the weight field in the day-edit config now shows
+  the estimated starting weight based on your profile instead of the generic base
+  weight.
+- **Merged flat dumbbell bench press duplicates.** All instances of
+  `Bench dumbbell press` are now unified under `Bench dumbbell chest press`.
+  Removed the stale duplicate entry from the exercise pool and the program day
+  lists.
+- **Removed duplicate `Incline bench dumbbell rear delt fly`** from the upper-body
+  day — was appearing twice in the same day.
+
 ## [1.2.7] - 2026-06-27
 
 ### Added

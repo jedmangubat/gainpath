@@ -70,7 +70,10 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 - Automatic rest timer after each set, adjustable with +15s / -15s buttons
 - Color changes: orange at 30s, red at 10s; shorter timer for warm-up sets
-- A random tip on the exercise you're resting from, picked from curated form/efficiency/safety cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
+- Tap the **`?` button** next to any exercise name during a workout to open a step-by-step instruction sheet — equipment setup, starting position, the full movement, and key form notes for that exercise
+
+  <img src="images/screenshots/exercise-instructions.png" width="260" alt="Exercise instruction sheet — ordered steps from setup to motion for Flat barbell bench press">
+- A random form tip on the exercise you're resting from, picked from curated cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
 - The rest after an exercise's last set previews the next exercise — its name plus the weight and reps of its first (or warm-up) set — so you can set up while you rest
 - Optional beep + vibration when the timer ends, so you don't have to watch the screen (toggle in Settings)
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
