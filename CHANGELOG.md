@@ -4,6 +4,16 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.9] - 2026-06-29
+
+### Changed
+- **Renamed 3 exercises** to standard fitness industry names:
+  - `Cable row` → `Seated cable row`
+  - `Dumbbell reverse fly standing` → `Bent-over dumbbell reverse fly`
+  - `Vertical leg raise` → `Hanging leg raise`
+- **Added missing step-by-step instructions** for Smith machine bench press
+  (was the only exercise in the pool without an EX_INSTRUCTIONS entry).
+
 ## [1.2.8] - 2026-06-29
 
 ### Added
