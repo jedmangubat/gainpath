@@ -8,6 +8,20 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v1.3.0
+
+A visual refresh across the entire app — same layout and features, more
+depth and polish:
+- Softer shadows and a rounder corner radius on cards, buttons, and day tiles
+- Gradient fills on primary buttons, the suggested-day highlight, and PR badges
+- The home screen's greeting, streak, and weekly goal are now unified into one panel
+- The rest timer's countdown ring now visibly sweeps down as time elapses
+- Session-summary stats (duration, volume, exercises, sets) are now color-coded at a glance
+- Smoother transitions moving between screens
+- Progress charts got a gradient fill and a dark-mode gridline fix (they were nearly invisible in dark mode before)
+
+---
+
 ## Features
 
 ### 🏋️ Training splits

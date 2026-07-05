@@ -53,6 +53,26 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   in the same pass rather than letting it drift (this has already happened more
   than once: a features list described AI behavior that never worked, a "how to
   use" step overstated what was automatic).
+- **README "What's new" section.** A notable user-facing change (new feature,
+  visual refresh, etc.) gets a `## ✨ What's new in vX.Y.Z` section added right
+  after the intro (above `## Features`), describing it in user-facing terms.
+  When the *next* version bump ships, fold that section's bullets into the
+  permanent `## Features` list (merge into the relevant existing subsection, or
+  add a new one) and delete the "What's new" section — replacing it with a
+  fresh one for the new version if that release also warrants one. Only one
+  "What's new" section should exist at a time.
+- **README screenshots go stale — regenerate them when the UI changes
+  visually.** The images under `images/screenshots/` are real captures of the
+  app, referenced by `README.md`. A visual-only change (redesign, restyled
+  component, new screen) should regenerate the affected screenshots via a
+  throwaway Playwright script (seed realistic localStorage state, click
+  through to each screen, screenshot at `deviceScaleFactor: 2`) rather than
+  leaving them showing the old look. Two gotchas hit while doing this the
+  first time: (1) `index.html` registers a service worker unconditionally, and
+  (2) screens fade in via a CSS animation on `.screen.active` — take the
+  screenshot only after both the page has settled and a short
+  (~300ms+) wait past any screen transition, or the capture shows a
+  half-rendered/washed-out frame.
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only

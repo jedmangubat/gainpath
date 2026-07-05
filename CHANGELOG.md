@@ -4,6 +4,36 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] - 2026-07-05
+
+### Changed
+- **Visual refresh across the whole app.** Same layout, brand colors, and
+  single-file architecture — a bolder token layer instead of a flat one:
+  - New shadow scale and a bumped corner radius (12px → 16px) applied to cards,
+    day buttons, buttons, and stat tiles.
+  - Primary buttons, the suggested-day border, the "Done" set chip, and PR
+    badges now use a brand-green gradient instead of a flat fill.
+  - The home screen's logo/greeting/streak/weekly-goal are unified into one
+    tinted hero panel instead of floating separately.
+  - The rest-timer ring is now a conic-gradient that visibly sweeps down as
+    rest elapses (same red/amber/neutral thresholds as before), instead of a
+    static colored border.
+  - The session-summary stat tiles (Duration/Volume/Exercises/Sets) each get
+    a distinct subtle color tint instead of being visually identical.
+  - Screen navigation gets a brief fade/slide transition
+    (`prefers-reduced-motion` respected).
+- **Fixed a real dark-mode bug in the Progress charts**: gridlines were
+  hardcoded to `rgba(0,0,0,.05)`, which was nearly invisible on dark
+  backgrounds. Grid and tick colors are now derived from the active theme, and
+  the line chart's fill is now a canvas gradient instead of a flat translucent
+  color.
+- **Fixed a display bug in session volume**: large volumes rendered as e.g.
+  "2kkg" (the abbreviated "2k" ran straight into the "kg" unit with no
+  separator). `fmtVol()` now inserts a space before the unit when abbreviating.
+- Regenerated every screenshot in `images/screenshots/` (referenced from
+  `README.md`) to reflect the new visual design — they were still showing the
+  old flat look.
+
 ## [1.2.9] - 2026-06-29
 
 ### Changed
