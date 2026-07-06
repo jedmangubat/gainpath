@@ -1,12 +1,12 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v5';
+const CACHE_NAME = 'gainpath-v6';
 const CDN_URLS = [
-  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css',
+  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js'
+  'https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js'
 ];
 const SHELL_URLS = [
   './', './index.html', './manifest.json',
@@ -19,7 +19,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) =>
       cache.addAll(SHELL_URLS).then(() =>
         Promise.all(CDN_URLS.map((url) =>
-          fetch(url, { mode: 'cors' }).then((res) => cache.put(url, res)).catch(() => {})
+          fetch(url, { mode: 'cors' }).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
         ))
       )
     )
@@ -64,7 +64,7 @@ self.addEventListener('fetch', (event) => {
   if (CDN_URLS.includes(req.url)) {
     event.respondWith(
       caches.match(req).then((cached) => cached || fetch(req, { mode: 'cors' }).then((res) => {
-        caches.open(CACHE_NAME).then((c) => c.put(req, res.clone()));
+        if (res.ok) caches.open(CACHE_NAME).then((c) => c.put(req, res.clone()));
         return res;
       }))
     );

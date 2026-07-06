@@ -60,7 +60,12 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   permanent `## Features` list (merge into the relevant existing subsection, or
   add a new one) and delete the "What's new" section — replacing it with a
   fresh one for the new version if that release also warrants one. Only one
-  "What's new" section should exist at a time.
+  "What's new" section should exist at a time. **Bug-fix-only releases don't
+  enumerate their fixes in the README** — no new "What's new" section for
+  them; at most a general line like "bug fixes and stability improvements" if
+  one is warranted. The detailed list always lives in `CHANGELOG.md`. In a
+  mixed release, features get bullets and fixes get one general line
+  (headline-worthy fixes can be named briefly).
 - **README screenshots go stale — regenerate them when the UI changes
   visually.** The images under `images/screenshots/` are real captures of the
   app, referenced by `README.md`. A visual-only change (redesign, restyled

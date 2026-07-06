@@ -4,6 +4,56 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2026-07-06
+
+### Fixed
+- **Weekly streak was stuck at 1 in timezones ahead of UTC.** Date keys
+  (`dkey`/`mkey`) were derived via `toISOString()` (UTC), so in UTC+ timezones
+  (e.g. the Philippines, UTC+8) the streak's week-continuity check compared a
+  once-shifted week key against a twice-shifted one and always broke after the
+  first week — two complete weeks showed as a 1-week streak. Keys are now built
+  from local date components, and a one-time migration repairs any stored
+  session whose `dk`/`mk` was stamped with the previous day's UTC date (the
+  human-readable `date` field was always local, so it's the source of truth).
+  The same bug also stamped any workout logged before 8:00 AM with yesterday's
+  date, which skewed "this week" counts and the PDF report's calendar.
+
+### Added
+- **Workout calendar on the home screen.** "Recent sessions" is now led by a
+  monthly calendar: days you trained are filled with the workout's day-type
+  color (with a legend below), today is outlined, a dot marks days with more
+  than one session, and tapping a day opens that session for review/editing.
+  Month arrows navigate back to your first logged month, and a footer line
+  summarizes the month (workouts + total volume lifted). The compact recent-
+  sessions list stays below the calendar.
+- **Exercise pickers are sorted by equipment.** The swap/add exercise lists
+  (and search results) now order each muscle group's exercises barbell →
+  dumbbell → machine → cable → other → bodyweight, with a small equipment
+  label on each row, so a given exercise is much faster to find.
+- **Rep targets set during a workout now carry over.** Changing a set's reps
+  mid-workout is remembered the same way weights are: the next session
+  pre-fills that exercise's rep target from your last completed work set
+  (explicit per-day planned reps and the pyramid scheme still behave as
+  before; timed holds are excluded).
+
+### Security
+- **Hardened backup import against malicious files.** Imported backups are now
+  shape-validated (bad files no longer half-apply before erroring) and all
+  imported strings are stripped of HTML metacharacters; user-visible strings
+  (day names, session fields, machine names, PR entries) are HTML-escaped at
+  render time, and inline-handler arguments are properly escaped so quotes in
+  imported data can't inject script.
+- **CDN scripts are now integrity-pinned.** Chart.js, jsPDF, EmailJS, and the
+  Tabler icons stylesheet load with Subresource Integrity hashes and exact
+  pinned versions (EmailJS `@4` → `@4.4.1`, Tabler `@latest` → `@2.47.0`), so
+  a compromised or corrupted CDN response is rejected by the browser. The
+  service worker no longer caches failed CDN responses (which SRI would then
+  reject forever) and its cache was bumped to `gainpath-v6`.
+
+### Changed
+- Regenerated `home.png` and `dark-mode.png` screenshots to show the new
+  calendar, and updated the README (features, screenshots' alt text).
+
 ## [1.3.0] - 2026-07-05
 
 ### Changed

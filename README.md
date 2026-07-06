@@ -8,17 +8,20 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.3.0
+## ✨ What's new in v1.4.0
 
-A visual refresh across the entire app — same layout and features, more
-depth and polish:
-- Softer shadows and a rounder corner radius on cards, buttons, and day tiles
-- Gradient fills on primary buttons, the suggested-day highlight, and PR badges
-- The home screen's greeting, streak, and weekly goal are now unified into one panel
-- The rest timer's countdown ring now visibly sweeps down as time elapses
-- Session-summary stats (duration, volume, exercises, sets) are now color-coded at a glance
-- Smoother transitions moving between screens
-- Progress charts got a gradient fill and a dark-mode gridline fix (they were nearly invisible in dark mode before)
+- **Workout calendar** — the home screen now shows a monthly calendar with
+  your training days color-coded by workout type. Tap a day to open that
+  session, browse back through past months, and see each month's workout
+  count and total volume at a glance
+- **Find exercises faster** — the swap/add exercise lists are now ordered by
+  equipment within each body part (barbells first, then dumbbells, machines,
+  cables, and bodyweight), with an equipment label on every row
+- **Your reps stick** — change a set's rep count during a workout and the
+  next session pre-fills that exercise with the same reps, just like weights
+  already carried over
+- Plus bug fixes and under-the-hood security hardening — including the weekly
+  streak, which previously never counted past 1
 
 ---
 
@@ -26,7 +29,7 @@ depth and polish:
 
 ### 🏋️ Training splits
 
-<img src="images/screenshots/home.png" width="260" alt="Home screen — day picker for the chosen split, streak, weekly goal, repeat-last-workout, recent sessions">
+<img src="images/screenshots/home.png" width="260" alt="Home screen — day picker for the chosen split, streak, weekly goal, repeat-last-workout, and the color-coded workout calendar">
 
 Five split types to choose from — see "What each day hits" further down for the muscle groups each one targets:
 - **PPL / Upper-Lower** — Push, Pull, Legs, Upper, Lower (5-day)
@@ -40,7 +43,7 @@ Five split types to choose from — see "What each day hits" further down for th
 <img src="images/screenshots/day-editor.png" width="260" alt="Day editor — reorder, swap, add, or delete exercises, with two exercises linked into a superset">
 
 Picking a day no longer locks you into a fixed exercise list — tap a day to open its editor first:
-- **Reorder** by dragging, **delete**, **swap**, or **add** an exercise (pick a body part, then a pick from that part's pool) — by dragging the handle, tapping the swap/trash/add icons, or swiping a row (right to swap, left to delete)
+- **Reorder** by dragging, **delete**, **swap**, or **add** an exercise (pick a body part, then a pick from that part's pool, ordered barbell → dumbbell → machine → cable → bodyweight with an equipment label on each row) — by dragging the handle, tapping the swap/trash/add icons, or swiping a row (right to swap, left to delete)
 - Your changes become that day's new default automatically, so you don't have to redo them every time
 - Tap into an exercise to set its planned sets, reps, and weight before you start
 - Bodyweight exercises (push-ups, pull-ups, dips, plank) support an optional added weight (vest/belt) or assisted weight (band/machine) modifier instead of a flat "BW" label
@@ -92,11 +95,14 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Optional beep + vibration when the timer ends, so you don't have to watch the screen (toggle in Settings)
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
-### 🌙 Dark mode
+### 🎨 Design & dark mode
 
-<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode">
+<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode, showing the workout calendar">
 
-A full dark theme, toggled in Settings and remembered between sessions.
+A clean card-based design with gradient accents: color-coded session-summary
+stats, a rest-timer ring that visibly sweeps down as time elapses, smooth
+screen transitions (`prefers-reduced-motion` respected), and a full dark
+theme toggled in Settings and remembered between sessions.
 
 ### 📈 Progress tracking
 
@@ -107,8 +113,9 @@ A full dark theme, toggled in Settings and remembered between sessions.
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
 - Total training volume (tonnage) on every session summary and in history
 - **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
-- Streak counter — consecutive training days, plus a weekly goal ("3/5 this week") against your training frequency
-- **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights prefilled
+- **Workout calendar** — a monthly calendar on the home screen with training days color-coded by workout type; tap a day to open that session, browse past months, and see monthly totals
+- Streak counter — consecutive weeks hitting your training frequency, plus a weekly goal ("3/5 this week")
+- **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
 - Session history — tap any past session to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
 
 ### 📄 Monthly PDF report
