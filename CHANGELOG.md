@@ -4,6 +4,16 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.1] - 2026-07-09
+
+### Fixed
+- **Chart y-axis labels showed raw floating-point noise** (e.g.
+  `83.80000000000001kg`) for body-weight and estimated-1RM values whose
+  auto-generated tick steps didn't land on clean decimals — a pre-existing
+  bug, exposed while regenerating the v1.5.0 screenshots with realistic
+  weigh-in data. Chart.js's tick values are now rounded to one decimal place
+  before being labeled.
+
 ## [1.5.0] - 2026-07-09
 
 ### Changed
