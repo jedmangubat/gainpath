@@ -4,6 +4,33 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.0] - 2026-07-10
+
+### Changed
+- **Made the "Forge" redesign match what was actually proposed and approved.**
+  v1.5.0 shipped a much more conservative interpretation than the approved
+  mockup — orange was only used as a small streak/border highlight, green
+  stayed the primary button/accent color in both themes, and the app still
+  opened in light mode by default. None of that matched the bold, dark-first
+  design that was actually signed off on. This release corrects it:
+  - **Orange (`--accent`) is now the primary accent in both themes** —
+    buttons, focus rings, the active tab, the calendar's "today" outline,
+    toggles, and both progress-tab charts (previously all green) now use the
+    Forge orange. Primary-button text switched from white to a warm near-
+    black (`--accent-ink`) since white no longer meets contrast against the
+    brighter dark-mode orange.
+  - **Dark mode is now the default** for new installs (`CFG.darkMode`
+    defaults to `true`), matching the mockup's dark-first flagship look
+    instead of requiring a trip to Settings to see it. `manifest.json`'s
+    `background_color`/`theme_color` and the `<meta name="theme-color">` tag
+    were updated to the dark background so the PWA splash screen and browser
+    chrome match on first launch.
+  - Green is preserved as a secondary/positive-confirmation color (checkmarks,
+    the "this week" pill, the logo wordmark) rather than removed.
+  - Regenerated all 12 README screenshots again to reflect the corrected
+    palette and the new dark-first default.
+  - Bumped the service worker cache to `gainpath-v8`.
+
 ## [1.5.1] - 2026-07-09
 
 ### Fixed

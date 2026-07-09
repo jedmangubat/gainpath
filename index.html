@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="images/branding/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/branding/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#153F29">
+<meta name="theme-color" content="#14120F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GainPath">
@@ -21,14 +21,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
 <style>
 :root{
-  --bg:#fff;--bg2:#F6F4F0;--bg3:#EDE8DF;
+  --bg:#fff;--bg2:#F5EFE4;--bg3:#EBE1CE;
   --txt:#171310;--txt2:#655D4E;--txt3:#A69C8C;
-  --bdr:#E2DBCB;
-  --accent:#153F29;--accent-2:#1E7A4C;
+  --bdr:#DED2B8;
+  --accent:#D9480F;--accent-2:#F2703A;
   --brand-green:#153F29;--brand-amber:#ED8913;
-  --brand-forge:#D9480F;--forge-text:#8A2E05;
+  --brand-forge:#D9480F;--forge-text:#8A2E05;--accent-ink:#1F0D02;
   --brand-gold:#8A5B00;--gold-text:#6B4A00;
-  --page-bg:#EFEBE3;
+  --page-bg:#EAE0CB;
   --radius:11px;
   --shadow-sm:0 1px 2px rgba(20,16,10,.07),0 1px 1px rgba(20,16,10,.05);
   --shadow-md:0 5px 14px rgba(20,16,10,.10);
@@ -42,9 +42,9 @@ html[data-theme="dark"]{
   --bg:#14120F;--bg2:#1F1C17;--bg3:#262219;
   --txt:#F5F1E8;--txt2:#A79E8E;--txt3:#7A7364;
   --bdr:#332E24;
-  --accent:#2ECC71;--accent-2:#63EEB4;
+  --accent:#FF5A1F;--accent-2:#FF8F5C;
   --brand-green:#3DDC97;--brand-amber:#F2A33D;
-  --brand-forge:#FF5A1F;--forge-text:#FF8F5C;
+  --brand-forge:#FF5A1F;--forge-text:#FF8F5C;--accent-ink:#1F0D02;
   --brand-gold:#FFC53D;--gold-text:#FFD873;
   --page-bg:#0A0908;
   --shadow-sm:0 1px 2px rgba(0,0,0,.5);
@@ -84,7 +84,7 @@ body{background:var(--page-bg);min-height:100vh;display:flex;justify-content:cen
 .day-btn:hover{background:var(--bg2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .day-btn:active{transform:translateY(0);box-shadow:var(--shadow-sm)}
 .day-btn.sug{border:2px solid var(--brand-forge);background:var(--bg);box-shadow:var(--shadow-sm)}
-.bp{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;letter-spacing:.01em;cursor:pointer;transition:transform .12s,box-shadow .15s,opacity .15s;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm)}
+.bp{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;letter-spacing:.01em;cursor:pointer;transition:transform .12s,box-shadow .15s,opacity .15s;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm)}
 .bp:hover{opacity:.92}.bp:active{transform:scale(.97)}
 .bs{background:var(--bg2);color:var(--txt);border:1px solid var(--bdr);border-radius:10px;padding:11px 20px;font-size:14px;cursor:pointer;transition:background .15s,transform .12s}
 .bs:hover{background:var(--bg3)}.bs:active{transform:scale(.97)}
@@ -140,14 +140,14 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .prt{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;color:#3C3489;font-weight:500;margin-bottom:10px;animation:si .3s ease}
 @keyframes si{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .feel-btn{width:100%;padding:13px 16px;border:1.5px solid var(--bdr);border-radius:var(--radius);background:var(--bg);font-size:14px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:all .15s;box-shadow:var(--shadow-sm)}
-.feel-btn:hover{border-color:var(--accent);background:var(--tint-green-1);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.feel-btn:hover{border-color:var(--accent);background:var(--tint-forge-1);transform:translateY(-1px);box-shadow:var(--shadow-md)}
 .feel-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0}
 .ob-step{display:none}.ob-step.active{display:block}
 .inp{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:10px;font-size:15px;background:var(--bg);color:var(--txt);margin-bottom:12px;outline:none}
 .inp:focus{border-color:var(--accent)}
 .opt-btn{padding:12px 8px;border:1.5px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s;width:100%}
 .opt-btn:hover{border-color:var(--accent)}
-.opt-btn.on{border-color:transparent;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.opt-btn.on{border-color:transparent;background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
 label{font-size:13px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
 h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
 .ob-progress{display:flex;gap:4px;margin-bottom:24px}
@@ -2878,7 +2878,7 @@ function showExInstructions(name){const steps=EX_INSTRUCTIONS[name];gid('exinfo-
 function closeExInfo(){gid('exinfo-overlay').style.display='none';gid('exinfo-sheet').style.display='none';document.body.style.overflow='';}
 
 // ═══ STATE ═══
-let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},customProgram:null,restSound:true,darkMode:false,wuSteps:1,setStyle:'straight'};
+let CFG={name:'',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},customProgram:null,restSound:true,darkMode:true,wuSteps:1,setStyle:'straight'};
 let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,DE_EXPANDED=null;
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
@@ -2982,7 +2982,7 @@ function updWoPauseBtn(){const ic=gid('wo-pause-icon');if(ic)ic.className='ti '+
 function toggleWoPause(){if(ST.paused){ST.t0=Date.now()-ST.es*1000;ST.paused=false;startEtInterval();}else{ST.es=Math.floor((Date.now()-ST.t0)/1000);clearInterval(ST.et);ST.paused=true;}updWoPauseBtn();saveInProgress();}
 function startRestCountdown(){clearInterval(ST.rt);ST.rt=setInterval(()=>{ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();if(ST.rs===5)beep(880,.15);if(ST.rs<=0){clearInterval(ST.rt);beep(1320,.3);if(CFG.restSound&&navigator.vibrate)navigator.vibrate(200);endRest();}},1000);}
 function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet){if(ST.restRated){ST.restRated=false;nextEx();}else askExFeel();}else{ss('wo');renderEx();}}
-function accentColor(){document.documentElement.style.setProperty('--accent',CFG.darkMode?'#2ECC71':'#153F29');}
+function accentColor(){document.documentElement.style.setProperty('--accent',CFG.darkMode?'#FF5A1F':'#D9480F');}
 
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
 function setUnit(v){
@@ -3501,7 +3501,7 @@ function renderDayEdit(){
     const grp=editGroupInfo(i);
     const grpLabel=grp&&grp.isFirst?'<div style="font-size:11px;font-weight:600;color:var(--accent);margin:6px 0 -2px 4px">'+(grp.size>2?'Circuit':'Superset')+' — '+grp.size+' exercises, no rest between them</div>':'';
     const linksNext=!!ex.linkNext;
-    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:#fff':'')+'" onclick="toggleLinkNext('+i+')" aria-label="Link with next exercise (superset/circuit)" title="Link with next exercise"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
+    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:var(--accent-ink)':'')+'" onclick="toggleLinkNext('+i+')" aria-label="Link with next exercise (superset/circuit)" title="Link with next exercise"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
     const bwMode=p.w>0?'add':p.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
     const weightField=p.isBW?
       '<div class="de-detail-field"><label>Weight</label><div style="display:flex;gap:4px"><button type="button" class="bw-mode" onclick="cycleDEBWMode('+i+')">'+bwLabel+'</button>'+(bwMode!=='bw'?'<input type="number" min="0" step="0.5" value="'+Math.abs(p.w)+'" onfocus="this.select()" onchange="updDEBWMag('+i+',this.value)">':'')+'</div></div>'
@@ -3512,7 +3512,7 @@ function renderDayEdit(){
         (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>Reps (pyramid)</label><div style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>Reps</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
         weightField+
       '</div>':'';
-    const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:#fff;margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
+    const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:var(--accent-ink);margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
     return grpLabel+'<div class="de-row-wrap'+(grp?' de-grp'+(grp.isFirst?' de-grp-first':'')+(grp.isLast?' de-grp-last':''):'')+'">'+
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
@@ -3769,7 +3769,7 @@ function renderEx(){
   gid('wo-pb').style.width=Math.round((ST.exi/ST.sd.length)*100)+'%';
   gid('wo-pl').textContent='Exercise '+(ST.exi+1)+' of '+ST.sd.length;
   const ssGrp=woGroup(ST.exi);
-  const ssBanner=ssGrp?'<div style="background:var(--accent);color:#fff;border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
+  const ssBanner=ssGrp?'<div style="background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
   const wuCount=sets.filter(s=>s.t==='w').length;let wuSeen=0,workSeen=0;
   const sh=sets.map((s,i)=>{
