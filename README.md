@@ -8,20 +8,18 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.4.0
+## ✨ What's new in v1.5.0
 
-- **Workout calendar** — the home screen now shows a monthly calendar with
-  your training days color-coded by workout type. Tap a day to open that
-  session, browse back through past months, and see each month's workout
-  count and total volume at a glance
-- **Find exercises faster** — the swap/add exercise lists are now ordered by
-  equipment within each body part (barbells first, then dumbbells, machines,
-  cables, and bodyweight), with an equipment label on every row
-- **Your reps stick** — change a set's rep count during a workout and the
-  next session pre-fills that exercise with the same reps, just like weights
-  already carried over
-- Plus bug fixes and under-the-hood security hardening — including the weekly
-  streak, which previously never counted past 1
+- **A bolder, warmer redesign.** Cards are flatter and blockier, corners are
+  tighter, and screen titles are now bold uppercase headers instead of plain
+  sentence case. Both the light and dark themes got a warmer, less clinical
+  neutral palette.
+- **Your streak now stands out.** The weekly-streak pill on the home screen
+  gets its own signature orange highlight instead of blending in with other
+  badges.
+- **New PRs get their own color.** Personal records — the "New PR!" toast and
+  every entry in your PR list — are now shown in a dedicated gold, separate
+  from the app's general amber "suggestion" color.
 
 ---
 
@@ -76,6 +74,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 - Estimates starting weights from your body stats, experience level, and strength baseline
 - Suggests your next weight from how the exercise felt last time — rate it "Too easy" and the app offers a small bump, rate it "Too much" and it offers to back off. Always a one-tap suggestion you can apply or dismiss, never an automatic change
+- Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - **Plate calculator** — tap the plate icon by any weight to see the per-side breakdown ("20 + 10 + 2.5 per side"), accounting for the bar/machine base weight and your kg/lb plate set
 - Warm-up sets on the first exercise per muscle group — pick 1, 2, or 3 ramping sets (e.g. 40/60/80% of your working weight) in Settings
@@ -99,10 +98,12 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 <img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode, showing the workout calendar">
 
-A clean card-based design with gradient accents: color-coded session-summary
-stats, a rest-timer ring that visibly sweeps down as time elapses, smooth
-screen transitions (`prefers-reduced-motion` respected), and a full dark
-theme toggled in Settings and remembered between sessions.
+A clean, blocky card-based design: bold uppercase headers, color-coded
+session-summary stats, a dedicated orange highlight for your training streak
+and a dedicated gold for personal records, a rest-timer ring that visibly
+sweeps down as time elapses, smooth screen transitions (`prefers-reduced-motion`
+respected), and a full dark theme toggled in Settings and remembered between
+sessions.
 
 ### 📈 Progress tracking
 

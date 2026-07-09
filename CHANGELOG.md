@@ -4,6 +4,35 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.0] - 2026-07-09
+
+### Changed
+- **"Forge" visual identity.** A palette and component pass across the whole
+  app, evolving the v1.3.0 refresh toward a bolder, block-based look:
+  - Warm-toned neutrals replace the previous cool greys in both themes (dark
+    mode's background is now a warm near-black `#14120F` instead of neutral
+    `#1c1c1e`; light mode's page background and borders got the same warm
+    shift).
+  - Gradients on buttons, badges, progress bars, the home-screen hero card,
+    and stat pills are flattened to solid fills — cards read as blocks, not
+    glows. Card borders are thicker (1.5px) and corner radii are tighter
+    (`--radius` 16px → 11px) for a harder-edged feel.
+  - Screen titles and section headers (onboarding steps, sheet titles, `h2`,
+    `label`) are now bold, uppercase, and tightly tracked instead of regular
+    sentence case.
+  - Two new semantic colors: a **Forge orange** highlight (`--brand-forge`)
+    now marks the streak pill, the home hero's top edge, and the suggested-
+    workout border — the one "hot" accent reserved for moments that deserve
+    attention. A dedicated **PR gold** (`--brand-gold`) now marks the "New
+    PR!" toast and every PR value in the PR list, separating personal-record
+    moments from the existing amber "suggestion" color they used to share.
+  - Consolidated several ad-hoc hardcoded hex colors (suggestion chips,
+    machine-weight badges, install/backup nudges, warm-up/dropset badges)
+    into the existing design-token system for consistency and easier future
+    theming.
+- Bumped the service worker cache to `gainpath-v7` since the cached CSS
+  shell changed.
+
 ## [1.4.0] - 2026-07-06
 
 ### Fixed
