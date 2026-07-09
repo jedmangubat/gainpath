@@ -4,6 +4,38 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.1] - 2026-07-10
+
+### Changed
+- **v1.6.0 flipped the "Forge" accent in the wrong direction — reverted, and
+  went bolder where it actually mattered.** Comparing the shipped app
+  side-by-side against the approved mockup showed v1.6.0 had it backwards:
+  the mockup keeps green as the primary action color (Start workout, Apply,
+  Mark done, Next exercise) and spends orange sparingly on the moments meant
+  to pop — the streak, PR gold, the suggested-day border — not on every
+  button and focus ring. This release corrects that and, separately, fixes
+  why the redesign read as barely-there even before the color mistake: several
+  screens never got the bold-uppercase title treatment the rest of the app
+  did.
+  - **Green (`--accent`) is the primary/interactive color again** in both
+    themes — buttons, the active tab, focus rings, toggles, the calendar's
+    "today" outline, and both progress charts. Orange (`--brand-forge`)
+    stays reserved for the streak, PR values, and the suggested-day border.
+  - **The home streak is now a full-width hero block** instead of a small
+    pill — a big solid-orange card with a large streak number, replacing the
+    understated badge that made the whole redesign feel like nothing had
+    changed.
+  - **Bold uppercase screen titles extended to the spots the original sweep
+    missed**: the workout screen's day title, the exercise name during a
+    workout, and each day's name in the home list now match the same
+    bold/uppercase/tight-tracking treatment already used on onboarding and
+    settings titles.
+  - The weight-suggestion "Apply" chip is now a green pill instead of a flat
+    gray button, matching its counterpart in the mockup.
+  - Dark-mode-by-default from v1.6.0 is unchanged — this release only
+    corrects color roles and typographic consistency, not the theme default.
+  - Bumped the service worker cache to `gainpath-v9`.
+
 ## [1.6.0] - 2026-07-10
 
 ### Changed

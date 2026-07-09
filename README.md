@@ -8,18 +8,18 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.6.0
+## ✨ What's new in v1.6.1
 
-- **Dark mode is now the default.** GainPath opens in its bold, warm dark
-  theme first — the look most people saw in the redesign preview. Switch to
-  light in Settings any time; your choice is remembered.
-- **Orange is now the primary accent everywhere**, not just a small streak
-  highlight — buttons, focus states, the active tab, the calendar's "today"
-  outline, and both progress charts all carry it, so the app reads as
-  consistently bold in both themes.
-- Cards are flatter and blockier, corners are tighter, and screen titles are
-  bold uppercase headers instead of plain sentence case. A dedicated gold
-  marks personal records, separate from the app's amber "suggestion" color.
+- **A real hero moment for your streak.** The home screen's streak is now a
+  bold, full-width orange card with a big number, instead of a small pill —
+  the first thing you see when you open the app.
+- **Green is back as the primary action color** (Start workout, Apply, Mark
+  done), with orange reserved for the streak, PR values, and the
+  suggested-day border — bold accents that stay legible instead of orange
+  competing with itself everywhere.
+- Bold uppercase titles now extend to every screen — the workout title, the
+  exercise name mid-workout, and each day's name on the home list all match
+  the same tightly-tracked header style used elsewhere in the app.
 
 ---
 
@@ -98,13 +98,14 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 <img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode, showing the workout calendar">
 
-A clean, blocky card-based design: bold uppercase headers, a warm orange
-accent that carries the primary buttons, focus states, active tab, and charts
-throughout, a dedicated gold for personal records, color-coded session-summary
-stats, a rest-timer ring that visibly sweeps down as time elapses, smooth
-screen transitions (`prefers-reduced-motion` respected), and a full dark
-theme — the default look on first open — switchable to light in Settings
-and remembered between sessions.
+A clean, blocky card-based design: bold uppercase headers, a green accent
+that carries the primary buttons, focus states, active tab, and charts, a
+bold orange hero card for your streak plus the suggested-day border, a
+dedicated gold for personal records, color-coded session-summary stats, a
+rest-timer ring that visibly sweeps down as time elapses, smooth screen
+transitions (`prefers-reduced-motion` respected), and a full dark theme —
+the default look on first open — switchable to light in Settings and
+remembered between sessions.
 
 ### 📈 Progress tracking
 
