@@ -18,7 +18,9 @@ export default [
         setInterval: 'readonly', clearInterval: 'readonly',
         alert: 'readonly', confirm: 'readonly', prompt: 'readonly',
         location: 'readonly', history: 'readonly',
-        Chart: 'readonly', jspdf: 'readonly', emailjs: 'readonly'
+        Chart: 'readonly', jspdf: 'readonly', emailjs: 'readonly',
+        performance: 'readonly', requestAnimationFrame: 'readonly',
+        Notification: 'readonly'
       }
     },
     rules: {

@@ -8,18 +8,31 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.6.1
+## ✨ What's new in v1.7.0
 
-- **A real hero moment for your streak.** The home screen's streak is now a
-  bold, full-width orange card with a big number, instead of a small pill —
-  the first thing you see when you open the app.
-- **Green is back as the primary action color** (Start workout, Apply, Mark
-  done), with orange reserved for the streak, PR values, and the
-  suggested-day border — bold accents that stay legible instead of orange
-  competing with itself everywhere.
-- Bold uppercase titles now extend to every screen — the workout title, the
-  exercise name mid-workout, and each day's name on the home list all match
-  the same tightly-tracked header style used elsewhere in the app.
+- **"Ledger" — a complete visual makeover.** GainPath now looks like the
+  paper training logbook it replaces: a graph-paper light theme with white
+  cards and a red-ink accent, monospaced numerals and headers like
+  handwritten entries, PRs stamped on in red like a rubber stamp, and a
+  pen-stroke underline on the active tab. Dark mode becomes a **blueprint**
+  — navy paper, light grid, the same ink logic. Light is now the default;
+  your saved theme choice is kept.
+- **23 new exercises** in the substitution pool — front squat, deadlift,
+  trap-bar-free classics like the T-bar row, chest dips, EZ bar curls,
+  machine lateral raise, push press, ab wheel rollout, farmers carry, and
+  more — every one with its own illustrated 3-panel guide, form tips, and
+  step-by-step instructions.
+- **The calendar is now your session browser.** Tap any colored day to see
+  every session logged that day and jump straight into viewing, fixing, or
+  deleting it — browse any month with the arrows. (The separate "Recent
+  sessions" list is gone; the calendar does its job better.)
+- **A rest timer you can't miss.** The final 5 seconds now beep and vibrate
+  every second, the volume is much louder, and hitting zero fires a triple
+  beep with a long buzz. If you've switched apps, GainPath sends a
+  notification instead (Android; on iPhone the alert lands the moment you
+  come back).
+- **Beginners get pointed to the Bro Split** during onboarding — one muscle
+  group per day is the simplest split to learn.
 
 ---
 
@@ -64,7 +77,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Name, sex (male/female), body weight, height, body fat %
 - Strength baseline — recent weights on key lifts (hack squat, chest press, lat pulldown, overhead press)
 - Experience level and fitness goal
-- Training frequency → app suggests the right split
+- Training frequency → app suggests the right split (beginners are pointed to the one-muscle-group-per-day Bro Split — the simplest to learn)
 - Preferred reps, sets, rest time, warm-up set preferences
 - Starting weight method — estimate from your stats, or manual entry
 
@@ -85,27 +98,32 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 <img src="images/screenshots/rest-timer.png" width="260" alt="Rest timer with countdown, a form cue for the current exercise, and the next set's target">
 
 - Automatic rest timer after each set, adjustable with +15s / -15s buttons
-- Color changes: orange at 30s, red at 10s; shorter timer for warm-up sets
+- The ring turns red for the final 10 seconds; shorter timer for warm-up sets
 - Tap the **`?` button** next to any exercise name during a workout to open a step-by-step instruction sheet — equipment setup, starting position, the full movement, and key form notes for that exercise
 
   <img src="images/screenshots/exercise-instructions.png" width="260" alt="Exercise instruction sheet — ordered steps from setup to motion for Flat barbell bench press">
 - A random form tip on the exercise you're resting from, picked from curated cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
 - The rest after an exercise's last set previews the next exercise — its name plus the weight and reps of its first (or warm-up) set — so you can set up while you rest
-- Optional beep + vibration when the timer ends, so you don't have to watch the screen (toggle in Settings)
+- Optional sound & vibration you can't sleep through (toggle in Settings): the last 5 seconds beep and buzz every second, and zero fires a triple-beep alarm with a long vibration
+- If you've switched to another app when the timer ends, GainPath sends a **notification** to pull you back (Android/desktop; iPhone PWAs can't run timers in the background, so there the alarm fires the instant you reopen the app)
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
 ### 🎨 Design & dark mode
 
-<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in dark mode, showing the workout calendar">
+<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in blueprint dark mode, showing the workout calendar">
 
-A clean, blocky card-based design: bold uppercase headers, a green accent
-that carries the primary buttons, focus states, active tab, and charts, a
-bold orange hero card for your streak plus the suggested-day border, a
-dedicated gold for personal records, color-coded session-summary stats, a
-rest-timer ring that visibly sweeps down as time elapses, smooth screen
-transitions (`prefers-reduced-motion` respected), and a full dark theme —
-the default look on first open — switchable to light in Settings and
-remembered between sessions.
+The **"Ledger"** look — a paper training logbook, rebuilt as an app. The
+light theme (the default) is graph paper: a faint grid ground, white cards
+with hairline borders, monospaced headers and numerals like handwritten
+entries, a red-ink accent on the primary buttons, active tab, focus states,
+and charts, a full-width streak card with a red ledger rule, ink-toned day
+colors on the calendar, and PRs stamped on in a rotated red rubber-stamp
+style. Motion follows the same idea: quick paper-flat screen transitions, a
+pen-stroke underline that draws across the active tab, and a streak number
+that ticks up like an odometer (`prefers-reduced-motion` respected
+throughout). Dark mode flips the logbook to a **blueprint** — navy paper,
+light grid, warm signal-orange ink — switchable in Settings and remembered
+between sessions.
 
 ### 📈 Progress tracking
 
@@ -116,10 +134,10 @@ remembered between sessions.
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
 - Total training volume (tonnage) on every session summary and in history
 - **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
-- **Workout calendar** — a monthly calendar on the home screen with training days color-coded by workout type; tap a day to open that session, browse past months, and see monthly totals
+- **Workout calendar = session browser** — a monthly calendar on the home screen with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals
 - Streak counter — consecutive weeks hitting your training frequency, plus a weekly goal ("3/5 this week")
 - **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
-- Session history — tap any past session to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
+- Tap into any past session from the calendar to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
 
 ### 📄 Monthly PDF report
 

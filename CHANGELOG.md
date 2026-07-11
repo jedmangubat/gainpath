@@ -4,6 +4,86 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.7.0] - 2026-07-12
+
+### Added
+- **23 new exercises in the substitution pool**, each with a generated
+  3-panel illustrated guide (images/exercises/), ~6 curated form tips, and
+  step-by-step instructions: Barbell front squat, Goblet squat, Walking
+  lunge, Dumbbell step-up, Barbell deadlift, Cable glute kickback, T-bar row
+  (machine-base-weight aware), Machine-assisted pull-up, Single-arm lat
+  pulldown, Chest dips, Barbell upright row, Machine lateral raise, Barbell
+  push press, EZ bar curl, Incline dumbbell curl, Concentration curl,
+  Reverse EZ bar curl, Machine preacher curl, Overhead EZ bar tricep
+  extension, Ab wheel rollout, Side plank (timed hold), Bicycle crunch, and
+  Farmers carry (timed hold with weight). "Goblet" now classifies as
+  dumbbell equipment in the picker ordering.
+- **`noPR` exercise flag** — Machine-assisted pull-up's logged weight is the
+  *assistance* (lower = stronger), which would invert PR logic, so it's
+  excluded from PR detection and recomputation.
+- **Calendar session browser** — tapping a colored calendar day now opens a
+  panel under the grid listing every session from that day (duration,
+  volume, sets, session feel), each opening the existing session
+  view/edit/delete screen. Month navigation resets the selection.
+- **Background rest-timer notifications (best effort)** — when the rest
+  timer ends while the app is hidden, a service-worker notification fires
+  (with vibration; tapping it refocuses the app). Notification permission is
+  requested when a workout starts (only if rest sound is on). A
+  `visibilitychange` reconcile fires the full alarm immediately on return if
+  the timer expired while backgrounded — which is also the honest iOS PWA
+  behavior, since iOS suspends PWA timers entirely.
+- **Beginner split suggestion** — choosing "Beginner" experience makes
+  onboarding suggest the 5-Day Bro Split ("one muscle group per day is the
+  simplest way to learn") instead of the frequency-based suggestion; still
+  freely overridable.
+
+### Changed
+- **"Ledger" visual makeover (Direction A of the approved 5-option
+  proposal, built 1:1 to its mockups).** The app now reads as a paper
+  training logbook:
+  - Light theme = graph paper: `#F7F4EC` paper ground with a faint blue
+    grid, white cards, ink `#232B36`, red-ink accent `#B23A2E` (buttons,
+    active tab, focus, charts, timer-urgent), stamp green `#2F6B4F`,
+    ochre `#946F17`, ledger gold `#8A6A1F`.
+  - Dark theme = blueprint: `#0F1722` paper, light grid, cards `#15202E`,
+    ink `#DCE6F2`, signal accent `#FF7A5C`, brass `#D9B24A`.
+  - **Light is now the default theme** (an existing saved preference wins).
+  - Display type & numerals in the system monospace stack (SF Mono/Menlo)
+    with uppercase tracking on titles, tabs, buttons, labels; tabular
+    numerals on timers, streak, stats, and weight inputs.
+  - Shape language: 5px base radius (4–6px across controls), 1px hairline
+    borders, drop shadows removed; the streak hero is now a white ledger
+    card with a 4px red rule and a red numeral.
+  - PR moments are **red rubber stamps**: rotated, bordered, stamp-in
+    animation (`.pr-stamp`) for the live PR toast and the summary PR list.
+  - Motion spec: 160ms ease-out screen fade-up, 500ms pen-stroke underline
+    drawing across the active tab, odometer-style streak count-up — all
+    disabled under `prefers-reduced-motion`.
+  - Day-type colors (calendar, day icons, PDF, custom-program palette)
+    re-inked to a muted ledger family; feel-rating colors re-inked to
+    match; progress charts draw straight ruled segments (tension 0) in
+    accent red.
+  - PDF report header/stat blocks re-inked (red/green/ochre); manifest and
+    `theme-color` are now paper `#F7F4EC`, updated dynamically per theme.
+- **Rest-timer alerts are much louder and actually final** — beep gain
+  0.3 → 0.85, each of the last 5 seconds beeps + vibrates (100ms), and zero
+  triggers a rising triple beep plus a long `[300,120,300,120,600]`
+  vibration pattern (Android; iOS Safari ignores `navigator.vibrate`).
+- The home "Recent sessions" list and its View-all toggle are **removed** —
+  the calendar browser replaces them without duplicating the list.
+
+### Fixed
+- ESLint config now declares the `performance`, `requestAnimationFrame`,
+  and `Notification` browser globals used by the new tick/notification code.
+
+### Infrastructure
+- `sw.js`: `CACHE_NAME` bumped to `gainpath-v10`; added a
+  `notificationclick` handler that focuses (or reopens) the app.
+- Repo cleanup: retired the completed image-prompt files and the fully
+  implemented 2026-06-24 feature backlog; `feature-backlog-review.txt` is
+  now the fresh 2026-07-11 backlog with the picked features (5–7, 9–18)
+  queued as the next milestone.
+
 ## [1.6.1] - 2026-07-10
 
 ### Changed

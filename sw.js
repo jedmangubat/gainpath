@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v9';
+const CACHE_NAME = 'gainpath-v10';
 const CDN_URLS = [
   'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
@@ -78,4 +78,15 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match(req))
     );
   }
+});
+
+// Focus (or open) the app when a rest-timer notification is tapped.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      if (clients.openWindow) return clients.openWindow('./');
+    })
+  );
 });
