@@ -8,47 +8,23 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.8.0
+## ✨ What's new in v1.8.1
 
-- **Your own gym, modeled exactly.** Add custom exercises for machines or
-  movements that aren't in the built-in list (with a YouTube-tutorial
-  fallback instead of a bundled photo), and tell GainPath what plates and
-  dumbbells you actually own in a new "My gym" section in Settings — the
-  plate calculator and weight suggestions will only ever propose
-  combinations you can really load.
-- **Notes that remember for you.** Jot a note on any exercise mid-workout
-  ("seat position 4", "left shoulder pinch") or on the whole session — next
-  time you land on that exercise, GainPath reminds you what you wrote.
-- **A streak that survives real life.** Mark a single day or a whole week
-  as planned rest (sick, traveling, deloading) in Settings, and your weekly
-  streak pauses instead of resetting to zero.
-- **A deload nudge when you need it.** If your last three sessions all felt
-  Hard or Too Much, or a tracked lift has stalled for three sessions
-  running, a home banner offers to auto-load your next session's weights at
-  -30% — one tap to apply, one to dismiss.
-- **Weekly muscle balance**, in the Progress tab — hard sets per muscle
-  group this week, with a flag when a mirror-muscle pair (chest/back,
-  quads/hamstrings, biceps/triceps) looks lopsided.
-- **PR history, not just your PR now.** Tap any personal record to see the
-  full timeline of every time that record was broken.
-- **Hold timer beeps.** Timed holds (plank, dead hang, farmers carry…) now
-  beep through the final 5 seconds and alert you the moment you match your
-  last best — audible feedback instead of watching the clock.
-- **±weight steppers** beside every weight input during logging — two taps
-  instead of the keyboard for the vast majority of adjustments.
-- **Keep the screen awake** during a workout (toggle in Settings) — no more
-  Face ID between every set.
-- **Shareable session card** — after "Session done!", share a designed
-  summary card (day, duration, volume, PRs) via your phone's share sheet,
-  or long-press to save it.
-- **Smarter backup nudges** — the reminder now also tracks sessions since
-  your last export, not just days.
-- **CSV export**, alongside JSON and PDF, of every logged set —
-  spreadsheet-ready.
-- **Apple Watch sync.** A Settings toggle that automatically starts and
-  ends a Watch strength-training workout the moment you start/finish in
-  GainPath, via a Shortcut you build once — and can optionally pull that
-  workout's calories back into GainPath.
+- **Tap what you have, not how much.** The "My gym" equipment picker now
+  works the same way for plates and dumbbells: tap a chip for each
+  denomination you own from a standard-rack preset list. Dumbbells
+  replaced the old single increment/max (which couldn't represent a real
+  rack that steps unevenly, e.g. 1kg jumps up to 10kg then 2.5kg jumps
+  after) and plates dropped the per-denomination quantity field, since
+  plate count essentially never gates a real load.
+- **Settings is now sectioned.** Instead of one long scrolling screen,
+  Settings is a menu of six rows (Profile, Preferences, My gym, Machine
+  base weights, Planned rest, Apple Watch sync), each opening its own
+  screen and saving automatically when you back out of it.
+- **A much more detailed Apple Watch Shortcuts walkthrough** — numbered,
+  exact-tap-path steps for building the start shortcut, the end shortcut,
+  testing the sync, and the optional calorie pull-back, instead of a
+  three-line summary.
 
 ---
 
@@ -79,6 +55,7 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
 - **Supersets & circuits** — link an exercise with the next one in the editor to pair them (2 linked = superset, 3+ = circuit). During the workout you alternate one set of each back-to-back with no rest, resting once per round. Each exercise still tracks its own feel rating, volume, and PRs
 - **Drop sets** — a "+ Drop" button on any set marks it done and adds a lighter set (70% of the weight) so you can push past failure; it counts toward volume and PRs like any work set
+- **Custom exercises** — for a machine or movement not in the built-in database, add your own (name, muscle group, equipment) from the swap/add-exercise picker. No bundled photo is required — the exercise card falls back to a YouTube search link instead. Fully deletable, and everything (PRs, charts, history, suggestions, export/import) picks it up automatically
 
 ### 🧱 Build your own program
 
@@ -106,6 +83,9 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - **Plate calculator** — tap the plate icon by any weight to see the per-side breakdown ("20 + 10 + 2.5 per side"), accounting for the bar/machine base weight and your kg/lb plate set
+- **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, snapping a suggested dumbbell weight to the nearest one on your rack even if it steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after)
+- **Deload & overtraining advisor** — if your last three sessions all felt Hard or Too Much, or a tracked lift has stalled for three sessions running, a home banner offers to auto-load your next session's weights at −30%, one tap to apply or dismiss
+- **±weight steppers** beside every weight input during logging — two taps instead of the keyboard for the vast majority of adjustments
 - Warm-up sets on the first exercise per muscle group — pick 1, 2, or 3 ramping sets (e.g. 40/60/80% of your working weight) in Settings
 - **Straight or pyramid sets** — choose same-weight-across-sets, or a pyramid where reps step down as weight goes up (12/10/8). Either way, change the first set's weight and the rest are calculated for you
 
@@ -121,6 +101,8 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - A random form tip on the exercise you're resting from, picked from curated cues for every exercise in the database — also shown on the exercise card while you log, and the last rest before a new exercise tips you on what's coming up instead
 - The rest after an exercise's last set previews the next exercise — its name plus the weight and reps of its first (or warm-up) set — so you can set up while you rest
 - Optional sound & vibration you can't sleep through (toggle in Settings): the last 5 seconds beep and buzz every second, and zero fires a triple-beep alarm with a long vibration
+- **Hold timer beeps** — timed holds (plank, dead hang, farmers carry…) beep through the final 5 seconds and fire a stronger alert the moment you match or beat your last logged best, the same audible-feedback pattern as the rest timer
+- **Keep the screen awake** during a workout (toggle in Settings) — no more Face ID between every set
 - If you've switched to another app when the timer ends, GainPath sends a **notification** to pull you back (Android/desktop; iPhone PWAs can't run timers in the background, so there the alarm fires the instant you reopen the app)
 - Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
@@ -147,13 +129,17 @@ between sessions.
 
 - Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
 - Per-exercise session history — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
-- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM
+- **Notes that remember for you** — jot a note on any exercise mid-workout ("seat position 4", "left shoulder pinch") or on the whole session; next time you land on that exercise, GainPath reminds you what you wrote
+- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best
+- **Weekly muscle-group volume balance** — hard sets per muscle group this week, sorted as horizontal bars, with a flag when a mirror-muscle pair (chest/back, quads/hamstrings, biceps/triceps) looks lopsided
 - Total training volume (tonnage) on every session summary and in history
 - **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
 - **Workout calendar = session browser** — a monthly calendar on the home screen with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals
+- **A streak that survives real life** — mark a single day or a whole week as planned rest (sick, traveling, deloading) in Settings, and your weekly streak pauses instead of resetting to zero
 - Streak counter — consecutive weeks hitting your training frequency, plus a weekly goal ("3/5 this week")
 - **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
 - Tap into any past session from the calendar to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
+- **Shareable session card** — after "Session done!", share a designed summary card (day, duration, volume, PRs) via your phone's share sheet, or long-press to save it
 
 ### 📄 Monthly PDF report
 
@@ -169,9 +155,14 @@ between sessions.
 
 <img src="images/screenshots/backup.png" width="260" alt="Backup & restore — export your data to JSON or import it on another device">
 
-- Export all your data as a JSON file
+- Export all your data as a JSON file, or as a flat **CSV** of every logged set (date, day, exercise, set, weight, reps, feel) for your own analysis
 - Restore from backup on any device
 - No cloud account needed
+- A reminder nudges you to back up periodically — after enough days or enough logged sessions since your last export, whichever comes first
+
+### ⌚ Apple Watch sync
+
+GainPath is a pure web app with no HealthKit access, so this works by triggering a Shortcut you build once (named in Settings, with a detailed in-app setup walkthrough): a Settings toggle makes starting or finishing a workout in GainPath automatically start or end a "Traditional Strength Training" workout on a paired Apple Watch, so you never touch the Watch by hand. Heart rate and calories still come from the Watch's own sensors — and the completed workout's calories can optionally be pulled back into GainPath too.
 
 ### 💬 Feedback
 

@@ -4,6 +4,46 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.1] - 2026-07-12
+
+### Changed
+- **Dumbbell inventory is now a tap-what-you-have list, not an
+  increment/max.** `CFG.dumbbellInc`/`dumbbellMax` assumed a rack steps
+  uniformly from 0 to some max, which doesn't match how commercial gyms are
+  actually stocked (e.g. 1kg jumps from 1–10kg, then 2.5kg jumps up to
+  40kg+ — two different step sizes on the same rack, which no single
+  increment can represent). Replaced with `CFG.gymDumbbells`, an explicit
+  array of owned weights chosen by tapping chips from a standard-rack
+  preset list (`DUMBBELLS`, 1–60kg / 5–150lbs), the same interaction as the
+  plate picker below. `roundToGymWeight()` now snaps a suggested dumbbell
+  weight to the nearest value actually in that array. A one-time
+  `migrateDumbbellInc()` expands any existing `dumbbellInc`/`dumbbellMax`
+  pair into the equivalent list on load, so no one's existing setup is
+  lost.
+- **Plate inventory is now owned/not-owned, not a quantity per plate.**
+  `CFG.gymPlates` used to store how many pairs of each denomination you
+  own; `calcPlates()` now treats any denomination you've marked owned as
+  available in unlimited quantity instead of capping by count — plate
+  count essentially never gates a real load, and it was one more number to
+  type for no practical benefit. The Settings UI changed from a number
+  input per denomination to the same tap-to-toggle chip as dumbbells.
+- **Settings is now sectioned instead of one long scroll.** What was a
+  single `#s-settings` screen with six stacked cards (Profile, Preferences,
+  Machine base weights, My gym, Planned rest, Apple Watch sync) is now a
+  menu of six rows, each opening its own sub-screen
+  (`#s-setprofile`/`setprefs`/`setequip`/`setmachines`/`setrestplan`/
+  `setwatch`). Every field still lives in the DOM regardless of which
+  screen is active, so a sub-screen's back button just calls
+  `collectSettingsFields()` (reads every field, writes `CFG`, saves) before
+  returning to the menu — autosave-on-exit, matching how the individual
+  toggles already behaved, with no separate global "Save changes" button
+  needed anymore.
+- **Apple Watch Shortcuts setup instructions rewritten with much more
+  detail** — numbered steps naming the exact action names, fields, and tap
+  sequence in the iOS Shortcuts app for the start shortcut, the end
+  shortcut, first-run testing, and the optional calorie-sync steps,
+  instead of the previous three-line summary.
+
 ## [1.8.0] - 2026-07-12
 
 ### Added

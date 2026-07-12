@@ -166,6 +166,10 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .opt-btn{padding:12px 8px;border:1px solid var(--bdr);border-radius:5px;background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s;width:100%}
 .opt-btn:hover{border-color:var(--accent)}
 .opt-btn.on{border-color:transparent;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.chip-tog{padding:9px 4px;border:1px solid var(--bdr);border-radius:5px;background:var(--bg);font-size:12px;font-weight:600;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s}
+.chip-tog:hover{border-color:var(--accent)}
+.chip-tog.on{border-color:transparent;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
 label{font-size:13px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
 h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
 .ob-progress{display:flex;gap:4px;margin-bottom:24px}
@@ -574,15 +578,37 @@ textarea{resize:vertical;min-height:100px}
     <button class="bg" onclick="ss('home')"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Settings</div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Profile</div>
+  <button class="day-btn" onclick="ss('setprofile')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-user" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>Profile</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Name, body weight, height, body fat</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setprefs')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-adjustments" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>Preferences</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Units, reps, rest, split, warm-ups, dark mode</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setequip')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>My gym</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Plates and dumbbells you actually have</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-dumbbell" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>Machine base weights</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>Planned rest</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:15px" aria-hidden="true"></i>Apple Watch sync</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')">Send feedback</button>
+  <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()">Reset app</button>
+</div>
+
+<!-- SETTINGS: PROFILE -->
+<div id="s-setprofile" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Profile</div>
+  </div>
+  <div class="card">
     <label>Name</label><input class="inp" id="set-name" type="text">
     <label>Body weight (<span id="set-unit-lbl">kg</span>)</label><input class="inp" id="set-bw" type="number">
     <label>Height (cm)</label><input class="inp" id="set-ht" type="number">
     <label>Body fat % <span style="font-weight:400;color:var(--txt3)">(optional)</span></label><input class="inp" id="set-bf" type="number">
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Preferences</div>
+</div>
+
+<!-- SETTINGS: PREFERENCES -->
+<div id="s-setprefs" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Preferences</div>
+  </div>
+  <div class="card">
     <label>Weight unit</label>
     <div class="g2"><button class="opt-btn" id="sunit-kg" onclick="setSettingUnit('kg')">kg</button><button class="opt-btn" id="sunit-lbs" onclick="setSettingUnit('lbs')">lbs</button></div>
     <label>Preferred reps</label>
@@ -618,24 +644,42 @@ textarea{resize:vertical;min-height:100px}
       <button class="toggle" id="stog-wl" onclick="setSettingWakeLock()"></button>
     </div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Machine base weights</div>
+</div>
+
+<!-- SETTINGS: EQUIPMENT -->
+<div id="s-setequip" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">My gym</div>
+  </div>
+  <div class="card">
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Tap what you actually have — the plate calculator and weight suggestions will only use combinations you can really load. Leave everything off to skip this (unrestricted, standard-gym assumption).</div>
+    <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:8px">Plates owned (<span id="set-gym-unit1">kg</span>, per pair)</div>
+    <div id="set-plate-inv" class="chip-grid" style="margin-bottom:14px"></div>
+    <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:8px">Dumbbells owned (<span id="set-gym-unit2">kg</span>, per hand)</div>
+    <div id="set-db-inv" class="chip-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:0"></div>
+  </div>
+</div>
+
+<!-- SETTINGS: MACHINE BASE WEIGHTS -->
+<div id="s-setmachines" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Machine base weights</div>
+  </div>
+  <div class="card">
     <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">The weight of each machine's frame, added to the plates you load to get the total. You're asked once, the first time you use a machine — fix it here if you got it wrong.</div>
     <div id="set-mw-list"></div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">My gym</div>
-    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Tell GainPath what plates and dumbbells you actually have — the plate calculator and weight suggestions will only use combinations you can really load. Leave everything at 0 to skip this (unrestricted, standard-gym assumption).</div>
-    <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:8px">Plate pairs owned (<span id="set-gym-unit1">kg</span>)</div>
-    <div id="set-plate-inv" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px"></div>
-    <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:8px">Dumbbell rack</div>
-    <div class="g2" style="margin-bottom:0">
-      <div><label style="font-size:11px">Increment (<span id="set-gym-unit2">kg</span>)</label><input class="inp" id="set-db-inc" type="number" min="0" step="0.5" placeholder="e.g. 2.5"></div>
-      <div><label style="font-size:11px">Max available (<span id="set-gym-unit3">kg</span>)</label><input class="inp" id="set-db-max" type="number" min="0" step="0.5" placeholder="optional"></div>
-    </div>
+</div>
+
+<!-- SETTINGS: PLANNED REST -->
+<div id="s-setrestplan" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Planned rest</div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Planned rest</div>
+  <div class="card">
     <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Sick, traveling, or taking a deload week? Mark it so your streak pauses instead of resetting to zero.</div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="bs" style="flex:1;font-size:13px" onclick="markTodayRestDay()"><i class="ti ti-calendar-x" aria-hidden="true"></i> Mark today</button>
@@ -643,8 +687,15 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div id="set-rest-list"></div>
   </div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Apple Watch sync</div>
+</div>
+
+<!-- SETTINGS: APPLE WATCH SYNC -->
+<div id="s-setwatch" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">Apple Watch sync</div>
+  </div>
+  <div class="card">
     <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">GainPath is a web app and can't write to Health directly — but it can trigger a Shortcut you build once, which starts/ends a "Traditional Strength Training" workout on your Watch automatically, so you never touch the Watch by hand. Calories still come from the Watch's own sensors.</div>
     <div class="toggle-row">
       <div><div style="font-size:14px;font-weight:500;color:var(--txt)">Sync workouts to Apple Watch</div></div>
@@ -658,16 +709,34 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <button type="button" class="bg" style="padding:4px 8px;font-size:12px" onclick="toggleHSSteps()">How to set this up</button>
     <div id="hs-steps" style="display:none;font-size:12px;color:var(--txt2);margin-top:10px;line-height:1.7">
-      In the iOS <strong>Shortcuts</strong> app, create two shortcuts:<br>
-      1. Name it exactly as entered above (start), add a single <strong>"Start Workout"</strong> action, type <strong>Traditional Strength Training</strong>.<br>
-      2. Name it exactly as entered above (end), add a single <strong>"End Workout"</strong> action.<br>
-      Optional — to also pull calories back into GainPath: at the end of the "End Workout" shortcut, add <strong>"Find Workouts"</strong> (sorted by start date, newest first, limit 1) → get its <strong>Active Energy</strong> → <strong>"Open URLs"</strong> pointed at<br>
-      <code style="font-size:11px;word-break:break-all">https://jedmangubat.github.io/gainpath/?syncCalories=[Active Energy]</code>
+      <div style="font-weight:700;color:var(--txt)">1. Open the Shortcuts app</div>
+      It's a pre-installed Apple app — a white icon with a colorful looping ribbon. If it's not on a Home Screen, swipe down and search Spotlight for "Shortcuts".
+      <div style="font-weight:700;color:var(--txt);margin-top:10px">2. Build the start shortcut</div>
+      • On the <strong>My Shortcuts</strong> tab, tap the <strong>+</strong> in the top-right corner.<br>
+      • Tap the shortcut's name at the top (shows "New Shortcut") and rename it to <strong>exactly</strong> match the "Start-workout Shortcut name" field above — capitalization and spacing must match, since that's how GainPath finds it.<br>
+      • Tap <strong>Add Action</strong> (or the <strong>+</strong> inside the editor), type <strong>Start Workout</strong> into the search bar, and tap the "Start Workout" action to add it.<br>
+      • The action now shows a workout-type field (defaults to something like "Run") — tap it, scroll or search, and pick <strong>Traditional Strength Training</strong>.<br>
+      • Tap <strong>Done</strong> in the top-right to save the shortcut.
+      <div style="font-weight:700;color:var(--txt);margin-top:10px">3. Build the end shortcut</div>
+      • Go back to <strong>My Shortcuts</strong> and tap <strong>+</strong> again.<br>
+      • Rename it to <strong>exactly</strong> match the "End-workout Shortcut name" field above.<br>
+      • Tap <strong>Add Action</strong>, type <strong>End Workout</strong> into the search bar, and add it — no further configuration needed for the basic version.<br>
+      • Tap <strong>Done</strong> to save.
+      <div style="font-weight:700;color:var(--txt);margin-top:10px">4. Turn the toggle on above and test it</div>
+      • Turn on <strong>"Sync workouts to Apple Watch"</strong>, confirm the two names above match your shortcuts exactly, then tap the back arrow to save.<br>
+      • Start a workout in GainPath — within a couple seconds, your Watch should show a "Traditional Strength Training" workout starting on its own (you may see a one-time iOS permission prompt the very first time; allow it).<br>
+      • If nothing happens: open Shortcuts, tap the shortcut, and run it manually once — iOS sometimes needs that first manual run before it'll trust an automated one.
+      <div style="font-weight:700;color:var(--txt);margin-top:10px">5. Optional — pull calories back into GainPath</div>
+      This adds three more actions to the <strong>end</strong> shortcut, after "End Workout":<br>
+      • Open the end shortcut, tap <strong>Add Action</strong>, search for <strong>Find Workouts</strong>, and add it. Tap into the action to expand its options and set <strong>Sorted By: Start Date</strong>, <strong>Order: Latest First</strong>, <strong>Limit: 1</strong> — this grabs the workout you just ended.<br>
+      • Tap <strong>Add Action</strong> again, search for <strong>Get Details of Workouts</strong>, add it, and set the detail it fetches to <strong>Active Energy</strong>. (On newer iOS, you can skip this by tapping the blue "Find Workouts" result chip inside the next action and picking "Active Energy" straight from it.)<br>
+      • Tap <strong>Add Action</strong> once more, search for <strong>Open URLs</strong>, and add it.<br>
+      • Tap inside the Open URLs text field and type:<br>
+      <code style="font-size:11px;word-break:break-all">https://jedmangubat.github.io/gainpath/?syncCalories=</code><br>
+      then, still inside that same field, tap the blue <strong>Active Energy</strong> variable chip (from the Get Details action) to insert it right after — the field should end up reading as one continuous URL with the blue variable pill on the end, not literal text.<br>
+      • Tap <strong>Done</strong> to save. Next time you finish a workout with sync on, GainPath opens briefly with that URL and logs the calorie total automatically.
     </div>
   </div>
-  <button class="bp" style="width:100%;justify-content:center" onclick="saveSettings()">Save changes</button>
-  <button class="bs" style="width:100%;margin-top:10px" onclick="ss('feedback')">Send feedback</button>
-  <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()">Reset app</button>
 </div>
 
 <!-- SESSION DETAIL / EDIT -->
@@ -3412,7 +3481,19 @@ function checkHealthSyncReturn(){
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
 const OB_STEPS=9;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();mergeCustomExercises();}catch(e){}}
+function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();mergeCustomExercises();}catch(e){}}
+// One-time migration: old uniform dumbbellInc/dumbbellMax settings become an
+// explicit list of owned weights, since real racks aren't a uniform step
+// (e.g. 1kg jumps below 10kg, 2.5kg jumps above) and a single increment can't
+// represent that.
+function migrateDumbbellInc(){
+  if(CFG.gymDumbbells!==undefined)return;
+  CFG.gymDumbbells=[];
+  if(CFG.dumbbellInc>0){
+    const max=CFG.dumbbellMax>0?CFG.dumbbellMax:(CFG.unit==='kg'?50:120);
+    for(let w=CFG.dumbbellInc;w<=max+1e-6;w+=CFG.dumbbellInc)CFG.gymDumbbells.push(Math.round(w*100)/100);
+  }
+}
 function mergeCustomExercises(){
   (CFG.customExercises||[]).forEach(ex=>{
     if(!EXPOOL[ex.name]){EXPOOL[ex.name]=ex;(EXPOOL_BY_MG[ex.mg]=EXPOOL_BY_MG[ex.mg]||[]).push(ex);EXPOOL_BY_MG[ex.mg].sort(equipSort);}
@@ -3954,12 +4035,14 @@ function openSettings(){
   renderRestSettings();
   ss('settings');
 }
+function dbId(w){return String(w).replace('.','_');}
 function renderGymSettings(){
-  ['set-gym-unit1','set-gym-unit2','set-gym-unit3'].forEach(id=>gid(id).textContent=CFG.unit);
+  ['set-gym-unit1','set-gym-unit2'].forEach(id=>{const el=gid(id);if(el)el.textContent=CFG.unit;});
   const denoms=PLATES[CFG.unit]||PLATES.kg;
-  gid('set-plate-inv').innerHTML=denoms.map(d=>'<div><label style="font-size:11px">'+d+CFG.unit+'</label><input class="inp" style="margin-bottom:0" type="number" min="0" step="1" id="set-plate-'+d+'" value="'+(CFG.gymPlates[d]||'')+'" placeholder="0"></div>').join('');
-  gid('set-db-inc').value=CFG.dumbbellInc||'';
-  gid('set-db-max').value=CFG.dumbbellMax||'';
+  gid('set-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(CFG.gymPlates[d]?' on':'')+'" id="set-plate-'+d+'" onclick="this.classList.toggle(\'on\')">'+d+CFG.unit+'</button>').join('');
+  const dbList=DUMBBELLS[CFG.unit]||DUMBBELLS.kg;
+  const owned=new Set(CFG.gymDumbbells||[]);
+  gid('set-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="set-db-'+dbId(w)+'" onclick="this.classList.toggle(\'on\')">'+w+'</button>').join('');
 }
 function renderMWSettings(){
   const el=gid('set-mw-list');if(!el)return;
@@ -3982,17 +4065,22 @@ function setSettingDarkMode(){CFG.darkMode=!CFG.darkMode;gid('stog-dm').classLis
 function setSettingWakeLock(){CFG.wakeLock=!CFG.wakeLock;gid('stog-wl').classList.toggle('on',CFG.wakeLock);if(!CFG.wakeLock)releaseWakeLock();}
 function setSettingHealthSync(){CFG.healthSync=!CFG.healthSync;gid('stog-hs').classList.toggle('on',CFG.healthSync);gid('hs-fields').style.display=CFG.healthSync?'block':'none';}
 function toggleHSSteps(){const s=gid('hs-steps');if(s)s.style.display=s.style.display==='none'?'block':'none';}
-function saveSettings(){
+// Every settings field lives in the DOM regardless of which sub-screen is
+// active, so one pass reading them all is enough — called whenever any
+// settings sub-screen's back button is tapped (autosave-on-exit, no
+// separate global "Save" button).
+function collectSettingsFields(){
   CFG.name=gid('set-name').value.trim()||CFG.name;CFG.bw=parseFloat(gid('set-bw').value)||CFG.bw;CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;CFG.bf=parseFloat(gid('set-bf').value)||null;
   const denoms=PLATES[CFG.unit]||PLATES.kg;const gymPlates={};
-  denoms.forEach(d=>{const n=Math.max(0,parseInt(gid('set-plate-'+d).value)||0);if(n>0)gymPlates[d]=n;});
+  denoms.forEach(d=>{if(gid('set-plate-'+d).classList.contains('on'))gymPlates[d]=1;});
   CFG.gymPlates=gymPlates;
-  CFG.dumbbellInc=parseFloat(gid('set-db-inc').value)||null;
-  CFG.dumbbellMax=parseFloat(gid('set-db-max').value)||null;
+  const dbList=DUMBBELLS[CFG.unit]||DUMBBELLS.kg;
+  CFG.gymDumbbells=dbList.filter(w=>gid('set-db-'+dbId(w)).classList.contains('on'));
   CFG.healthSyncStartShortcut=gid('set-hs-start').value.trim()||CFG.healthSyncStartShortcut;
   CFG.healthSyncEndShortcut=gid('set-hs-end').value.trim()||CFG.healthSyncEndShortcut;
-  saveCFG();accentColor();refreshHome();ss('home');
+  saveCFG();
 }
+function closeSettingsSection(){collectSettingsFields();accentColor();refreshHome();ss('settings');}
 function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();location.reload();}
 
 // ═══ CUSTOM PROGRAM BUILDER ═══
@@ -4397,6 +4485,14 @@ function startDay(k,exList){
   if(ST.mwQueue.length){processMWQueue();}else{renderEx();ss('wo');saveInProgress();}
 }
 const PLATES={kg:[25,20,15,10,5,2.5,1.25],lbs:[45,35,25,10,5,2.5]};
+// Standard commercial-gym dumbbell rack denominations. Real racks aren't a
+// uniform step (1kg jumps below 10kg, 2.5kg jumps above is a common shape),
+// so this is presented as a flat tap-what-you-have list, same as plates,
+// rather than an increment/max the user would have to fit their rack into.
+const DUMBBELLS={
+  kg:[1,2,3,4,5,6,7,8,9,10,12.5,15,17.5,20,22.5,25,27.5,30,32.5,35,37.5,40,45,50,55,60],
+  lbs:[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,140,150]
+};
 function gymHasPlateInventory(){return Object.values(CFG.gymPlates||{}).some(n=>n>0);}
 function calcPlates(perSide){
   const denoms=PLATES[CFG.unit]||PLATES.kg;
@@ -4404,7 +4500,7 @@ function calcPlates(perSide){
   let remaining=Math.max(0,Math.round(perSide*4)/4);
   const counts=[];
   denoms.forEach(d=>{
-    const owned=limited?(CFG.gymPlates[d]||0):Infinity;
+    const owned=limited?(CFG.gymPlates[d]?Infinity:0):Infinity;
     const n=Math.min(Math.floor(remaining/d+1e-6),owned);
     if(n>0){counts.push({d,n});remaining=Math.round((remaining-n*d)*100)/100;}
   });
@@ -4414,10 +4510,9 @@ function roundToGymWeight(ex,w){
   if(w<=0||ex.note==='bodyweight'||ex.holdSecs)return w;
   const isDB=equipRank(ex)===1;
   if(isDB){
-    if(!(CFG.dumbbellInc>0))return w;
-    let r=Math.round(w/CFG.dumbbellInc)*CFG.dumbbellInc;
-    if(CFG.dumbbellMax>0)r=Math.min(r,CFG.dumbbellMax);
-    return Math.max(0,Math.round(r*2)/2);
+    const owned=CFG.gymDumbbells||[];
+    if(!owned.length)return w;
+    return owned.reduce((best,d)=>Math.abs(d-w)<Math.abs(best-w)?d:best,owned[0]);
   }
   if(!gymHasPlateInventory())return w;
   const base=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:(CFG.unit==='kg'?20:45);
