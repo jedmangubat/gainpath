@@ -4,6 +4,23 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.2] - 2026-07-12
+
+### Removed
+- **Dropped the optional "pull calories back into GainPath" step from Apple
+  Watch sync.** Its instructions (former walkthrough step 5) named a
+  Shortcuts action, "Find Workouts", that doesn't exist — iOS's
+  `Find Health Samples` action has no Workouts type, only quantity/category
+  types like Active Calories, and reliably scoping a calorie sum to just
+  the one just-ended workout (rather than the whole day) would require
+  passing a timestamp between two separate Shortcuts, which was too fragile
+  for what was meant to be a minor bonus. The core sync (auto start/end a
+  Watch workout via `healthSyncTrigger()`) is unaffected and unchanged.
+  Removed the now-dead `checkHealthSyncReturn()`/`?syncCalories=` handling,
+  the `HEALTH_SYNC_TOAST` banner, and the `rec.calories` display in the
+  session-edit subtitle and calendar day panel, since nothing can set that
+  field anymore.
+
 ## [1.8.1] - 2026-07-12
 
 ### Changed

@@ -726,15 +726,6 @@ textarea{resize:vertical;min-height:100px}
       • Turn on <strong>"Sync workouts to Apple Watch"</strong>, confirm the two names above match your shortcuts exactly, then tap the back arrow to save.<br>
       • Start a workout in GainPath — within a couple seconds, your Watch should show a "Traditional Strength Training" workout starting on its own (you may see a one-time iOS permission prompt the very first time; allow it).<br>
       • If nothing happens: open Shortcuts, tap the shortcut, and run it manually once — iOS sometimes needs that first manual run before it'll trust an automated one.
-      <div style="font-weight:700;color:var(--txt);margin-top:10px">5. Optional — pull calories back into GainPath</div>
-      This adds three more actions to the <strong>end</strong> shortcut, after "End Workout":<br>
-      • Open the end shortcut, tap <strong>Add Action</strong>, search for <strong>Find Workouts</strong>, and add it. Tap into the action to expand its options and set <strong>Sorted By: Start Date</strong>, <strong>Order: Latest First</strong>, <strong>Limit: 1</strong> — this grabs the workout you just ended.<br>
-      • Tap <strong>Add Action</strong> again, search for <strong>Get Details of Workouts</strong>, add it, and set the detail it fetches to <strong>Active Energy</strong>. (On newer iOS, you can skip this by tapping the blue "Find Workouts" result chip inside the next action and picking "Active Energy" straight from it.)<br>
-      • Tap <strong>Add Action</strong> once more, search for <strong>Open URLs</strong>, and add it.<br>
-      • Tap inside the Open URLs text field and type:<br>
-      <code style="font-size:11px;word-break:break-all">https://jedmangubat.github.io/gainpath/?syncCalories=</code><br>
-      then, still inside that same field, tap the blue <strong>Active Energy</strong> variable chip (from the Get Details action) to insert it right after — the field should end up reading as one continuous URL with the blue variable pill on the end, not literal text.<br>
-      • Tap <strong>Done</strong> to save. Next time you finish a workout with sync on, GainPath opens briefly with that URL and logs the calorie total automatically.
     </div>
   </div>
 </div>
@@ -3460,23 +3451,11 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 // ═══ APPLE WATCH SYNC (via Shortcuts — GainPath has no direct HealthKit access) ═══
-let HEALTH_SYNC_TOAST=null;
 function healthSyncTrigger(phase){
   if(!CFG.healthSync)return;
   const name=phase==='start'?CFG.healthSyncStartShortcut:CFG.healthSyncEndShortcut;
   if(!name)return;
   try{location.href='shortcuts://run-shortcut?name='+encodeURIComponent(name);}catch(e){}
-}
-function checkHealthSyncReturn(){
-  const params=new URLSearchParams(location.search);
-  if(!params.has('syncCalories'))return;
-  const kcal=parseFloat(params.get('syncCalories'));
-  history.replaceState(null,'',location.pathname);
-  if(!(kcal>0)||!ST.history.length)return;
-  const rec=ST.history[ST.history.length-1];
-  rec.calories=Math.round(kcal);
-  saveData();
-  HEALTH_SYNC_TOAST='Synced '+Math.round(kcal)+' kcal from Apple Watch — added to '+rec.date+'’s session.';
 }
 let OB={sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
 const OB_STEPS=9;
@@ -3835,7 +3814,7 @@ function renderExHistory(name){
     '</div>';
   }).join('');
 }
-function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=rec.date+' · '+rec.dur+(rec.calories?' · '+rec.calories+' kcal':'');renderSessionEdit();ss('session');}
+function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=rec.date+' · '+rec.dur;renderSessionEdit();ss('session');}
 function renderSessionEdit(){
   const rec=ST.editSessionData;
   gid('se-list').innerHTML='<div class="card"><label style="margin-bottom:4px">Session note</label><textarea class="inp" style="min-height:50px;margin-bottom:0" oninput="ST.editSessionData.note=this.value" placeholder="Optional">'+esc(rec.note||'')+'</textarea></div>'+
@@ -3890,7 +3869,7 @@ function renderCal(){
   if(ST.calSel&&byDay[ST.calSel]){
     const rows=byDay[ST.calSel].map(i=>{
       const h=ST.history[i];const vol=sessionVolume(h);
-      return '<button class="cal-sess" onclick="openSession('+i+')"><div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(h.dayName)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(h.dur)+(vol>0?' · '+fmtVol(vol,CFG.unit):'')+' · '+h.sets+' sets'+(h.feel&&FEEL_META[h.feel]?' · '+FEEL_META[h.feel].e+' '+FEEL_META[h.feel].l:'')+(h.calories?' · '+h.calories+' kcal':'')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3)" aria-hidden="true"></i></button>';
+      return '<button class="cal-sess" onclick="openSession('+i+')"><div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(h.dayName)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(h.dur)+(vol>0?' · '+fmtVol(vol,CFG.unit):'')+' · '+h.sets+' sets'+(h.feel&&FEEL_META[h.feel]?' · '+FEEL_META[h.feel].e+' '+FEEL_META[h.feel].l:'')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3)" aria-hidden="true"></i></button>';
     }).join('');
     const selDate=ST.history[byDay[ST.calSel][0]].date;
     dayPanel='<div class="cal-day-panel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:700;color:var(--txt)">'+esc(selDate)+'</span><button class="bg" style="padding:2px 6px" onclick="selCalDay('+jsArg(ST.calSel)+')" aria-label="Close day view"><i class="ti ti-x" aria-hidden="true"></i></button></div>'+rows+'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Tap a session to view, fix, or delete it.</div></div>';
@@ -3985,7 +3964,6 @@ function goHome(){
 }
 function refreshHome(){
   accentColor();renderHomeBanners();
-  if(HEALTH_SYNC_TOAST){gid('prt-h').innerHTML='<div class="prt" style="background:var(--tint-green-1);border:1px solid var(--tint-green-2);color:var(--brand-green)"><i class="ti ti-heart-rate-monitor" aria-hidden="true"></i> '+esc(HEALTH_SYNC_TOAST)+'</div>';HEALTH_SYNC_TOAST=null;}
   tickNum(gid('h-str'),streak());
   gid('h-week').textContent=sessionsThisWeek()+'/'+CFG.freq;
   const sug=suggested();const hr=new Date().getHours();
@@ -5179,7 +5157,7 @@ async function sendFeedback(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
 }
 
-load();checkHealthSyncReturn();applyTheme();OB.step=1;obDots();
+load();applyTheme();OB.step=1;obDots();
 if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){refreshHome();ss('home');}

@@ -8,26 +8,6 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.8.1
-
-- **Tap what you have, not how much.** The "My gym" equipment picker now
-  works the same way for plates and dumbbells: tap a chip for each
-  denomination you own from a standard-rack preset list. Dumbbells
-  replaced the old single increment/max (which couldn't represent a real
-  rack that steps unevenly, e.g. 1kg jumps up to 10kg then 2.5kg jumps
-  after) and plates dropped the per-denomination quantity field, since
-  plate count essentially never gates a real load.
-- **Settings is now sectioned.** Instead of one long scrolling screen,
-  Settings is a menu of six rows (Profile, Preferences, My gym, Machine
-  base weights, Planned rest, Apple Watch sync), each opening its own
-  screen and saving automatically when you back out of it.
-- **A much more detailed Apple Watch Shortcuts walkthrough** — numbered,
-  exact-tap-path steps for building the start shortcut, the end shortcut,
-  testing the sync, and the optional calorie pull-back, instead of a
-  three-line summary.
-
----
-
 ## Features
 
 ### 🏋️ Training splits
@@ -73,6 +53,10 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Training frequency → app suggests the right split (beginners are pointed to the one-muscle-group-per-day Bro Split — the simplest to learn)
 - Preferred reps, sets, rest time, warm-up set preferences
 - Starting weight method — estimate from your stats, or manual entry
+
+### ⚙️ Organized Settings
+
+Settings is a menu of six sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync — each opening its own screen and saving automatically when you back out, instead of one long scrolling page.
 
 ### ⚖️ Smart weight system
 
@@ -162,7 +146,7 @@ between sessions.
 
 ### ⌚ Apple Watch sync
 
-GainPath is a pure web app with no HealthKit access, so this works by triggering a Shortcut you build once (named in Settings, with a detailed in-app setup walkthrough): a Settings toggle makes starting or finishing a workout in GainPath automatically start or end a "Traditional Strength Training" workout on a paired Apple Watch, so you never touch the Watch by hand. Heart rate and calories still come from the Watch's own sensors — and the completed workout's calories can optionally be pulled back into GainPath too.
+GainPath is a pure web app with no HealthKit access, so this works by triggering a Shortcut you build once (named in Settings, with a detailed in-app setup walkthrough): a Settings toggle makes starting or finishing a workout in GainPath automatically start or end a "Traditional Strength Training" workout on a paired Apple Watch, so you never touch the Watch by hand. Heart rate and calories still come from the Watch's own sensors.
 
 ### 💬 Feedback
 
