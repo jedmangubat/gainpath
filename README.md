@@ -8,31 +8,47 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.7.0
+## ✨ What's new in v1.8.0
 
-- **"Ledger" — a complete visual makeover.** GainPath now looks like the
-  paper training logbook it replaces: a graph-paper light theme with white
-  cards and a red-ink accent, monospaced numerals and headers like
-  handwritten entries, PRs stamped on in red like a rubber stamp, and a
-  pen-stroke underline on the active tab. Dark mode becomes a **blueprint**
-  — navy paper, light grid, the same ink logic. Light is now the default;
-  your saved theme choice is kept.
-- **23 new exercises** in the substitution pool — front squat, deadlift,
-  trap-bar-free classics like the T-bar row, chest dips, EZ bar curls,
-  machine lateral raise, push press, ab wheel rollout, farmers carry, and
-  more — every one with its own illustrated 3-panel guide, form tips, and
-  step-by-step instructions.
-- **The calendar is now your session browser.** Tap any colored day to see
-  every session logged that day and jump straight into viewing, fixing, or
-  deleting it — browse any month with the arrows. (The separate "Recent
-  sessions" list is gone; the calendar does its job better.)
-- **A rest timer you can't miss.** The final 5 seconds now beep and vibrate
-  every second, the volume is much louder, and hitting zero fires a triple
-  beep with a long buzz. If you've switched apps, GainPath sends a
-  notification instead (Android; on iPhone the alert lands the moment you
-  come back).
-- **Beginners get pointed to the Bro Split** during onboarding — one muscle
-  group per day is the simplest split to learn.
+- **Your own gym, modeled exactly.** Add custom exercises for machines or
+  movements that aren't in the built-in list (with a YouTube-tutorial
+  fallback instead of a bundled photo), and tell GainPath what plates and
+  dumbbells you actually own in a new "My gym" section in Settings — the
+  plate calculator and weight suggestions will only ever propose
+  combinations you can really load.
+- **Notes that remember for you.** Jot a note on any exercise mid-workout
+  ("seat position 4", "left shoulder pinch") or on the whole session — next
+  time you land on that exercise, GainPath reminds you what you wrote.
+- **A streak that survives real life.** Mark a single day or a whole week
+  as planned rest (sick, traveling, deloading) in Settings, and your weekly
+  streak pauses instead of resetting to zero.
+- **A deload nudge when you need it.** If your last three sessions all felt
+  Hard or Too Much, or a tracked lift has stalled for three sessions
+  running, a home banner offers to auto-load your next session's weights at
+  -30% — one tap to apply, one to dismiss.
+- **Weekly muscle balance**, in the Progress tab — hard sets per muscle
+  group this week, with a flag when a mirror-muscle pair (chest/back,
+  quads/hamstrings, biceps/triceps) looks lopsided.
+- **PR history, not just your PR now.** Tap any personal record to see the
+  full timeline of every time that record was broken.
+- **Hold timer beeps.** Timed holds (plank, dead hang, farmers carry…) now
+  beep through the final 5 seconds and alert you the moment you match your
+  last best — audible feedback instead of watching the clock.
+- **±weight steppers** beside every weight input during logging — two taps
+  instead of the keyboard for the vast majority of adjustments.
+- **Keep the screen awake** during a workout (toggle in Settings) — no more
+  Face ID between every set.
+- **Shareable session card** — after "Session done!", share a designed
+  summary card (day, duration, volume, PRs) via your phone's share sheet,
+  or long-press to save it.
+- **Smarter backup nudges** — the reminder now also tracks sessions since
+  your last export, not just days.
+- **CSV export**, alongside JSON and PDF, of every logged set —
+  spreadsheet-ready.
+- **Apple Watch sync.** A Settings toggle that automatically starts and
+  ends a Watch strength-training workout the moment you start/finish in
+  GainPath, via a Shortcut you build once — and can optionally pull that
+  workout's calories back into GainPath.
 
 ---
 

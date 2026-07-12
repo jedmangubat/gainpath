@@ -4,6 +4,90 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.0] - 2026-07-12
+
+### Added
+- **Custom exercises** — add a user-defined exercise (name, muscle group,
+  equipment) from the swap/add-exercise picker for anything the built-in
+  database doesn't cover. No bundled image is required: the exercise card
+  falls back to a YouTube search link the same way a missing built-in image
+  would. Stored in `CFG.customExercises` and merged into `EXPOOL` on load
+  and on save/delete, so PRs, charts, history, suggestions, and export/
+  import all pick it up automatically since they're keyed off `EXPOOL`
+  rather than a hardcoded list. Deletable from the same screen; a day
+  still referencing a deleted custom exercise safely falls back to its
+  default exercise list.
+- **Plate & dumbbell inventory ("My gym")** — a new Settings section to
+  record plate pairs owned per denomination and the dumbbell rack's
+  increment/max. When set, the plate calculator (`calcPlates`) only uses
+  plates you actually have instead of assuming an unlimited standard set,
+  and the RPE-based weight suggestion (`suggestWeight`) rounds to the
+  nearest weight achievable with your inventory (`roundToGymWeight`) —
+  dumbbell increment for dumbbell exercises, plate-combination search for
+  barbell/machine ones. Leaving everything at 0 keeps the old unrestricted
+  behavior.
+- **Per-session & per-exercise notes** — an "Add note" button on each
+  exercise during logging (with the previous note for that exercise shown
+  as a hint the next time you visit it), plus an optional session-level
+  note on the post-workout feel screen. Both are editable afterward from
+  the session edit screen, and shown in per-exercise history cards.
+- **Streak shield / planned rest** — mark a single day or a whole week as
+  planned rest from a new Settings section; `streak()` now bridges a
+  marked rest week (doesn't count it, doesn't break on it either) and
+  reduces a week's required session count by however many rest days fall
+  in it (minimum 1), instead of resetting to zero.
+- **Deload & overtraining advisor** — a deterministic (not AI-branded)
+  check: if the last 3 sessions all rated "Hard"/"Too much", or a tracked
+  key lift's estimated 1RM has been flat or falling for 3 sessions, a home
+  banner offers a one-tap "Deload next session" (loads the next workout's
+  weights at -30%, consumed once) or dismiss (re-checked again after 3
+  more sessions).
+- **Weekly muscle-group volume balance** — a new Progress-tab card
+  aggregating hard sets per muscle group for the selected week (with
+  prev/next navigation), sorted as horizontal bars, with an imbalance flag
+  when a mirror-muscle pair (chest/back, quads/hamstrings, biceps/triceps)
+  is lopsided.
+- **PR history timeline** — tapping a personal record in the PR list now
+  opens the exercise-instructions bottom sheet repurposed to show every
+  time that record was broken, not just the current best.
+- **In-app hold-timer beeps** — timed-hold exercises (plank, dead hang,
+  farmers carry…) now beep+vibrate through the final 5 seconds approaching
+  your last logged best for that exercise, and fire a stronger alert the
+  moment you match or beat it — the same audible-feedback pattern as the
+  rest timer, instead of eyeballing a wall clock. Restored correctly if
+  the app is reloaded mid-hold.
+- **±weight steppers** — small −/+ buttons beside the weight input on each
+  set during logging (2.5 kg/5 lbs step, or 1 kg/2 lbs for dumbbell
+  exercises under 20 kg/lb) as a two-tap alternative to the keyboard.
+- **Keep-screen-awake (Wake Lock)** — a Settings toggle that requests a
+  screen wake lock for the duration of a workout (re-acquired automatically
+  if the tab is backgrounded and returns to foreground mid-workout, on
+  browsers that support the Wake Lock API).
+- **Shareable session summary card** — a "Share" button on the "Session
+  done!" screen renders a canvas card (day, date, duration, volume, new
+  PRs) and hands it to the Web Share API's file-sharing when available,
+  falling back to an inline image the user can press-and-hold to save.
+- **CSV export** — alongside the existing JSON backup and PDF report, a
+  flat CSV of every logged set (date, day, exercise, set, weight, reps,
+  feel) for users who want to build their own analysis.
+- **Apple Watch sync via Shortcuts** — GainPath is a pure PWA with no
+  HealthKit access, so this works by triggering a `shortcuts://` URL: a
+  Settings toggle makes starting/finishing a workout in GainPath
+  automatically start/end a "Traditional Strength Training" workout on a
+  paired Apple Watch, via two Shortcuts the user builds once (named
+  configurably in Settings, with in-app setup instructions). A workout's
+  calories can optionally be pulled back into GainPath too — the "End
+  Workout" Shortcut can look up the completed workout's Active Energy and
+  open a `?syncCalories=` URL back into the PWA, which attaches it to the
+  most recent session (`rec.calories`, surfaced in the calendar day panel
+  and session-edit subtitle) on next load.
+
+### Changed
+- **Backup nudge** now also tracks sessions since the last export/dismiss
+  (nudges at 15+ sessions, in addition to the existing 7-day check), and
+  the banner text names the actual session count when that's what
+  triggered it.
+
 ## [1.7.0] - 2026-07-12
 
 ### Added

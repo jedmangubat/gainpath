@@ -1,228 +1,46 @@
 GainPath — feature backlog (fresh review)
-Updated 2026-07-11 · replaces the 2026-06-24 backlog
+Updated 2026-07-12 · previous review's 13 picked items shipped in v1.8.0
 
-Ordered HARDEST -> EASIEST. Difficulty is rated for this codebase
-specifically: a single static index.html, no backend, localStorage,
-vanilla JS, PWA. Each entry says what it is, and — clearly — how it
-improves the app and its users.
+Shipped in v1.8.0 (2026-07-12): deload/overtraining advisor, custom
+exercises, weekly muscle-group volume balance, plate & dumbbell inventory,
+shareable session summary card, in-app hold timer beeps, backup health
+nudges (enhanced), per-session/per-exercise notes, keep-screen-awake, quick
+±weight steppers, streak shield / planned rest, CSV export, PR history
+timeline — plus an added Apple Watch sync via Shortcuts (not on the
+original list; requested alongside the batch).
 
-Cleared from the old backlog (shipped or shipping in v1.7.0):
-  - Dark mode, plate calculator, bodyweight & measurements tracking,
-    multi-step ramping warm-ups, custom program builder, supersets,
-    repeat-last-workout, picker text search, weekly goal + streak,
-    exercise cues on card, rest sound/vibration toggle — all shipped
-    in v1.2–v1.6.
-  - True calendar/browse-all-sessions view — SHIPPING NOW (v1.7.0):
-    the calendar becomes the session browser; Recent sessions list
-    removed.
-  - Reliable background rest-timer notifications — SHIPPING NOW
-    (v1.7.0), with the honest platform caveat that iOS PWAs only
-    reconcile when reopened; Android gets true notifications.
-  - Exercise pool expansion — moved to its own proposal file,
-    exercise-image-prompts-professional.txt (35 candidates awaiting
-    your picks).
+Remaining, unpicked — same hardness ordering as before:
 
-============================================================
-HARDEST — fights the architecture or the platform
-============================================================
+1. Native app wrapper (Capacitor/Tauri shell around the PWA) — HARDEST.
+   Converts three permanent PWA weaknesses at once: guaranteed rest-timer
+   notifications on iPhone, real haptics, and direct HealthKit/Google Fit
+   read+write access. v1.8.0's Shortcuts-based Watch sync gets close to the
+   write side for Apple users without this, but reading isn't as clean and
+   there's still no Android equivalent — this remains the one move that
+   actually lifts the ceiling.
 
-1. Native app wrapper (Capacitor/Tauri shell around the PWA)
-   What: wrap the existing index.html in a thin native iOS/Android
-   shell. The web app stays the single source of truth.
-   Why it's hardest: new toolchain, signing, App Store review, and a
-   second distribution channel to maintain — everything the
-   "one static file" philosophy avoids.
-   How it improves the app: it converts three permanent PWA
-   weaknesses into solved problems at once — guaranteed rest-timer
-   notifications even on iPhone, real haptics instead of
-   navigator.vibrate (ignored by iOS Safari), and HealthKit/Google
-   Fit access. If GainPath ever feels limited, this is the single
-   move that lifts the ceiling; nothing else on this list does.
+2. Cloud backup & sync (accounts) — HARDEST. Needs a real backend, against
+   the "your data stays on your device" design. Item 12 from the old list
+   (now shipped, enhanced backup nudges) covers most of the practical value
+   at a fraction of the cost — revisit only if GainPath outgrows personal
+   use.
 
-2. Cloud backup & sync (accounts)
-   What: user accounts with automatic history sync across devices.
-   Why it's hardest: needs a real backend — hosting, auth, privacy
-   obligations. Directly against the "your data stays on your
-   device" design.
-   How it improves the app: today one cleared Safari cache or lost
-   phone erases months of training history unless the user manually
-   exported. Sync makes data loss structurally impossible and
-   enables phone+iPad use. Honest counterweight: item 12 (backup
-   nudges) captures ~80% of this value at ~2% of the cost, so this
-   should only happen if GainPath ever grows beyond personal use.
+3. Apple Health / Google Fit integration (full read/write) — HARDEST,
+   blocked without item 1. v1.8.0 ships a partial version of this for
+   Apple users (Shortcuts-based start/end + optional calorie readback);
+   this entry is now specifically about direct HealthKit access without a
+   Shortcuts intermediary, plus Android/Google Fit (unaddressed).
 
-3. Apple Health / Google Fit integration
-   What: write completed workouts (type, duration, volume) to the
-   phone's health store.
-   Why it's hard: effectively blocked while GainPath is a pure PWA —
-   requires item 1 first.
-   How it improves the app: GainPath sessions would count toward
-   activity rings/Move goals, and coexist with whatever else the
-   user tracks (runs, weight from a smart scale). It makes GainPath
-   a citizen of the user's health ecosystem instead of an island.
+4. Progress photos — HARD. Needs IndexedDB, image downscaling, and
+   storage-pressure handling; must stay out of the JSON export. For a
+   "definition" goal user this is arguably the missing core feature.
 
-============================================================
-HARD — big subsystems, but fully doable in-file
-============================================================
+8. Drop sets & rest-pause sets on top of what shipped in v1.4 (drop sets
+   exist; rest-pause doesn't) — HARD(ish). Rest-pause changes what "a set"
+   is in a way drop sets didn't quite — short-rest continuation sets need
+   their own timer/volume/PR handling.
 
-4. Progress photos
-   What: periodic physique photos attached to weigh-ins, with a
-   side-by-side compare view.
-   Why it's hard: photos blow past localStorage limits immediately —
-   needs IndexedDB, image downscaling/compression, and storage-
-   pressure handling; also must be excluded from JSON export or the
-   backup file becomes enormous.
-   How it improves the app: strength numbers lag visual change;
-   photos are the motivation layer numbers can't provide. For a
-   "definition" goal user (an onboarding option!) this is arguably
-   the missing core feature.
-
-5. Deload & overtraining advisor (deterministic, not "AI")
-   What: watch the per-exercise feel ratings and volume trend the
-   app already stores; when several sessions trend "Hard"/"Too
-   much" or e1RM stalls 3+ sessions, suggest a deload week (e.g.
-   "-30% weights this week?") as an Apply/Dismiss chip — same
-   consent pattern as the existing weight suggestions.
-   Why it's hard: the detection rules need care to avoid nagging;
-   touches suggestion logic, session generation, and copy. Must
-   stay a transparent formula (per project rules: never branded AI).
-   How it improves the app: beginners don't know when to back off —
-   they stall, get beat up, and quit. The app already collects the
-   exact data needed; this turns it into the coaching moment with
-   the highest real-world value.
-
-6. Custom exercises
-   What: user-defined exercises (name, muscle group, equipment)
-   folded into the picker, with YouTube-search fallback instead of
-   a bundled image.
-   Why it's hard: EXPOOL is currently a fixed constant; custom
-   entries must survive in every consumer (PRs, charts, suggestions,
-   export/import, image lookup) without the guaranteed image the
-   image-naming rule assumes.
-   How it improves the app: no database covers every gym. One
-   missing machine currently means the user's real training silently
-   doesn't fit the app; this removes the last "sorry, can't log
-   that" wall.
-
-7. Weekly muscle-group volume balance
-   What: a Progress-tab view aggregating weekly hard sets per muscle
-   group from the mg tag every exercise already has ("Chest 14 sets ·
-   Back 6 sets — imbalance").
-   Why it's hard(ish): new aggregation + a new chart and the "what's
-   balanced?" reference ranges; pure computation, no data-model
-   change.
-   How it improves the app: the classic self-taught failure mode is
-   invisible imbalance (mirror muscles get everything). This makes
-   it visible in one glance and quietly teaches programming sense —
-   strong differentiator for a free tracker.
-
-8. Drop sets & rest-pause sets
-   What: intensity techniques on the last set (weight drops within
-   one set; short-rest continuation sets), configured per exercise.
-   Why it's hard(ish): supersets shipped in v1.4, but these change
-   what "a set" is — set rendering, rest-timer behavior, volume math
-   and PR logic all need a sub-set concept.
-   How it improves the app: intermediate/advanced users use these
-   weekly; today they either fake-log them (corrupting volume/PR
-   data) or don't log them. Closes the last gap between "what I did"
-   and "what I could record".
-
-============================================================
-MEDIUM — clear wins, contained scope
-============================================================
-
-9. Plate & dumbbell inventory ("my gym")
-   What: let the user record available plates (pairs) and the
-   dumbbell rack increments; the plate calculator then only shows
-   loadable combinations, and weight suggestions round to weights
-   that physically exist in their gym.
-   How it improves the app: kills the most common friction moment —
-   being told "try 62.5 kg" when the rack jumps 60→65. Suggestions
-   go from theoretically right to actually usable, which directly
-   increases how often users tap Apply.
-
-10. Shareable session summary card
-    What: after "Session done!", render a clean PNG (canvas) of the
-    summary — day, duration, volume, PRs — via the Web Share API /
-    long-press save.
-    How it improves the app: users already screenshot summaries to
-    send to friends. A designed card makes the habit effortless and
-    is the only realistic growth loop a no-backend app has — every
-    share is an ad with zero infrastructure.
-
-11. In-app hold timer for timed exercises
-    What: for timed holds (Plank, Dead hang, Side plank if added), a
-    live count-up/target countdown inside the set row with the same
-    beeps as the rest timer, instead of eyeballing a wall clock.
-    How it improves the app: timed exercises are currently the only
-    movements the app can't actively guide through. One less reason
-    to reach for a separate stopwatch mid-workout.
-
-12. Backup health nudges
-    What: track sessions-since-last-export; after N sessions or M
-    weeks, show a small dismissible home banner ("32 sessions since
-    your last backup — Export now?"), one tap to the existing
-    export.
-    How it improves the app: localStorage is one aggressive "clear
-    browsing data" away from gone. This is the cheap insurance
-    version of feature 2 — it can't prevent loss, but it makes
-    "I lost everything and my last backup was yesterday" the normal
-    case. Highest value-per-effort in the Medium tier.
-
-13. Per-session & per-exercise notes
-    What: a small free-text note on any exercise during logging
-    ("left shoulder pinch", "seat position 4") and on the session,
-    shown in history and on the next visit to that exercise.
-    How it improves the app: machine seat settings and pain flags
-    are exactly what lifters forget between sessions. The next-visit
-    resurfacing turns notes from a diary into a memory prosthetic.
-
-============================================================
-EASY — small, self-contained, high satisfaction
-============================================================
-
-14. Keep-screen-awake during workouts (Wake Lock API)
-    What: a settings toggle; request a screen wake lock while a
-    session or rest timer is active.
-    How it improves the app: the #1 mid-workout annoyance — the
-    screen locking between sets, forcing FaceID/PIN with chalky
-    hands every 90 seconds. ~20 lines including the toggle;
-    supported in iOS 16.4+/Android Chrome.
-
-15. Quick ±2.5 steppers on weight inputs
-    What: small −/+ buttons beside each weight input during logging
-    (step = 2.5 kg / 5 lbs, or 1 kg for dumbbells under 20).
-    How it improves the app: typing numbers on a phone keyboard
-    mid-set is the clumsiest interaction in the whole flow; ~90% of
-    weight changes are one increment up or down. Two taps replace
-    keyboard entry almost everywhere.
-
-16. Streak shield / planned rest weeks
-    What: mark a week as planned rest (holiday, illness, deload):
-    the streak pauses instead of resetting to zero.
-    How it improves the app: a streak that dies during a flu or a
-    family trip punishes life, not laziness — and a dead long streak
-    is the single most demotivating thing a habit tracker can do.
-    One flag in the streak() walk fixes it.
-
-17. CSV export
-    What: alongside JSON backup and PDF report, a flat CSV of all
-    sets (date, day, exercise, set, weight, reps, feel).
-    How it improves the app: JSON is for machines, PDF is for
-    reading — CSV is for the spreadsheet crowd (and Jed's own
-    Financial-Command-Center instincts). Power users get analysis
-    freedom without GainPath having to build every chart they might
-    ever want.
-
-18. PR history timeline per exercise
-    What: on the PR list, tapping an exercise shows its full PR
-    progression (every time the record moved, not just the current
-    best) as a mini timeline.
-    How it improves the app: "current PR" says where you are; the
-    trail of broken records says how far you've come — cheap,
-    data-already-exists motivation on the app's proudest screen.
-
-============================================================
-END — reply with numbers to green-light, and I'll pull them into
-versioned milestones (deepest-value pick per tier: 14 + 12 + 9 + 5).
-============================================================
+Everything else from the previous review (custom exercises, muscle
+balance, plate/dumbbell inventory, session summary card, hold timer,
+backup nudges, notes, wake lock, steppers, streak shield, CSV export, PR
+timeline) shipped in v1.8.0 — see CHANGELOG.md.
