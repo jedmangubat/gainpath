@@ -8,12 +8,13 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.8.3
+## ✨ What's new in v1.9.0
 
-- **Persistent bottom navigation** — Workouts, Calendar, Progress, PRs, and Export are now always-visible tabs at the bottom of the screen, so navigation never disappears while you're browsing a day's exercises, Settings, or anywhere else in the app.
-- **Workout calendar is its own tab** — previously buried at the bottom of the Workouts tab, it's now a dedicated Calendar tab.
-- **Smarter streak messaging** — the streak card's message now adapts to your progress: an invitation to start at zero, encouragement through the first few weeks, and stronger praise the longer the streak runs. The streak number itself is smaller and less overpowering.
-- **Cleaner settings entry point** — the top-right button is now just a bigger gear icon, no "Settings" label.
+- **GainPath now speaks English, Japanese, and 한국어** — a language picker (all three shown directly, not buried in a dropdown) sits at the top of onboarding and at the top of Settings. Every screen, the full 119-exercise database (names, coaching tips, and step-by-step instructions), and the home screen's time-of-day-aware greeting are all fully localized in every language, not just the UI chrome.
+- **Colors now match the logo** — the app's primary accent is back to the brand green and amber (mountain-path green, arrow amber) instead of the red introduced in a prior redesign, across every screen, the PDF export, and the shareable session card.
+- **A cleaner, more consistent visual scale** — font sizes, icon sizes, and spacing throughout the app were consolidated onto real design-system scales, and several under-sized tap targets (the per-set weight +/− buttons, the exercise info button) were grown for easier tapping mid-workout.
+- **Name is now first/last** in onboarding and Settings → Profile, and the home greeting addresses you by first name only.
+- Bug fixes and stability improvements — see `CHANGELOG.md` for details.
 
 ---
 
@@ -56,7 +57,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 <img src="images/screenshots/onboarding.png" width="260" alt="Onboarding splash screen">
 
-- Name, sex (male/female), body weight, height, body fat %
+- Language (English / 日本語 / 한국어), first and last name, sex (male/female), body weight, height, body fat %
 - Strength baseline — recent weights on key lifts (hack squat, chest press, lat pulldown, overhead press)
 - Experience level and fitness goal
 - Training frequency → app suggests the right split (beginners are pointed to the one-muscle-group-per-day Bro Split — the simplest to learn)
@@ -65,7 +66,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-Settings is a menu of six sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync — each opening its own screen and saving automatically when you back out, instead of one long scrolling page.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of six sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Workouts, Calendar, Progress, PRs, and Export are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
 
 ### ⚖️ Smart weight system
 
@@ -106,14 +107,15 @@ Settings is a menu of six sections — Profile, Preferences, My gym, Machine bas
 The **"Ledger"** look — a paper training logbook, rebuilt as an app. The
 light theme (the default) is graph paper: a faint grid ground, white cards
 with hairline borders, monospaced headers and numerals like handwritten
-entries, a red-ink accent on the primary buttons, active tab, focus states,
-and charts, a compact streak card with a red ledger rule, ink-toned day
-colors on the calendar, and PRs stamped on in a rotated red rubber-stamp
-style. Motion follows the same idea: quick paper-flat screen transitions and
-a streak number that ticks up like an odometer (`prefers-reduced-motion`
-respected throughout). Dark mode flips the logbook to a **blueprint** — navy paper,
-light grid, warm signal-orange ink — switchable in Settings and remembered
-between sessions.
+entries, a green-and-amber accent (matching the GainPath logo) on the
+primary buttons, active tab, focus states, and charts, a compact streak
+card with an amber ledger rule, ink-toned day colors on the calendar, and
+PRs stamped on in a rotated amber-gold rubber-stamp style. Motion follows
+the same idea: quick paper-flat screen transitions and a streak number that
+ticks up like an odometer (`prefers-reduced-motion` respected throughout).
+Dark mode flips the logbook to a **blueprint** — navy paper, light grid,
+the same green-and-amber accent in brighter dark-mode tones — switchable in
+Settings and remembered between sessions.
 
 ### 📈 Progress tracking
 

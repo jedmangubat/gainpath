@@ -4,6 +4,114 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.9.0] - 2026-07-14
+
+### Changed
+- **Consolidated the fragmented type scale.** 19 distinct inline font sizes
+  (10-42px) collapsed to a real scale — 11/13/15/17/20/24/32px — plus three
+  deliberately-kept exceptions for elements tuned in a prior release:
+  `.tn` (42px rest-timer countdown), `.bn-item i` (26px bottom-nav icons,
+  bumped in v1.8.3), and `.streak-hero-num`/onboarding wordmark (28px,
+  shrunk from 44px in v1.8.3). Body/label text moved from the 12-14px range
+  toward 13-15px, closer to Apple HIG's 17px default body size.
+- **Consolidated icon sizes to three tiers**: 16px (inline icons — settings
+  menu rows, chevrons, banner icons), 20px (button icons — back arrows,
+  the settings gear, action buttons), 32px (hero icons — empty states,
+  modal headers). Collapsed from 9 previously scattered values
+  (15/16/18/20/24/32/34/36/38px).
+- **Grew several under-sized icon-only tap targets.** The base `.bg` button
+  padding went from `4px 8px` to `9px 11px` (covers every header back-arrow
+  and most icon-only buttons app-wide). The per-set weight −/+ and
+  plate-calculator buttons (the ones flagged as ~26×28px, well under
+  Apple's 44×44pt minimum) grew to `8px 9px` — meaningfully bigger without
+  reintroducing the row-overflow bug fixed above (the `.sr` flex-wrap fix
+  gives this room to grow safely). The exercise "?" instructions button
+  grew from a 28px to a 34px circle, and the workout pause/play toggle
+  gained an invisible 8px extended hit area via negative margin.
+  **Not fully at 44×44pt** — going further inside the set row would have
+  meant either shrinking other elements or reintroducing overflow risk;
+  this is a deliberate partial improvement, not full compliance.
+- **Consolidated all padding onto a 4/8/12/16/24px spacing grid.** 27
+  distinct padding combinations (many off-grid, e.g. `11px 20px`, `13px 16px`,
+  `9px 4px`) snapped to the nearest valid grid pair — down to 13 combinations,
+  all grid-aligned. Highest-impact single change: `.bp`/`.bs` (every primary
+  and secondary button app-wide) went from `11px 20px` to `12px 24px`.
+  Verified screen-by-screen (onboarding, home, exercise/workout, calendar,
+  progress, PRs, export, settings + preferences) with before/after
+  screenshots — no overflow, no layout breaks, zero console errors.
+
+### Added
+- **Full Japanese and Korean localization.** New `CFG.lang`, a `STRINGS`
+  dictionary (`STRINGS.en`/`.ja`/`.ko`, 269 keys), `t(key)` lookup with
+  English fallback, and `applyLang()` which walks
+  `data-i18n`/`data-i18n-ph`/`data-i18n-aria` attributes across the app.
+  A language picker (English / 日本語 / 한국어) sits at the top of
+  onboarding step 1 and at the top of the main Settings screen — all 3
+  options shown directly, not buried in a dropdown. Covers every static
+  screen (onboarding, home, settings, day-edit, program-builder,
+  swap/custom-exercise, session, feedback, workout/rest, summary) plus
+  the dynamic strings that matter most while actually training: the home
+  greeting (time-of-day and name-aware), streak messages, the day-selection
+  list (exercise counts, "Suggested"/"Not done yet"), day names (Push day,
+  Pull day, etc.), and the live workout screen (exercise progress counter,
+  Mark done/+Drop/Add note, rep/set labels, Next exercise/Finish workout).
+  All 119 exercises' names, tips, and step-by-step instructions are fully
+  translated and swap in based on the selected language
+  (`exDisplayName()`, `tipsFor()`, `instructionsFor()`), verified for
+  natural, gym-accurate terminology in both languages — not machine-literal
+  translations. Embedded HTML (unit-label spans like `kg`/`lbs`) is
+  preserved exactly across all three languages. Also closed a pre-existing
+  English-only gap: "Dumbbell standing calf raise" had no tips at all in
+  any language (`EX_TIPS` never had an entry for it) — added 6 tips in
+  English, Japanese, and Korean matching the style of the other calf-raise
+  variants.
+  **Known remaining gap:** a handful of lower-traffic dynamic strings
+  (PR-list rendering, calendar tooltips, session-summary share card,
+  export-screen status messages, some `alert()` dialogs, and the detailed
+  Apple Watch setup walkthrough) still display in English regardless of
+  the selected language — noted here rather than silently left unclear.
+
+### Fixed
+- **The per-set "Mark done" button (and "+ Drop") could be pushed entirely
+  off-screen.** The set row (`.sr`) laid out the set number, weight
+  controls, rep controls, and action buttons as one non-wrapping flex row —
+  on any screen narrower than ~520px of packed controls (i.e. most phones),
+  the row simply overflowed past the right edge, hiding the done/drop
+  buttons with no way to reach them. Grouped the weight controls and
+  rep/hold controls into their own `.sr-grp` spans and the action buttons
+  into `.sr-actions`, and let `.sr` wrap — the row now flows onto a second
+  line on narrow screens instead of clipping.
+- **Rest-timer completion notification silently never fired.** `notifyRestDone()`
+  bailed unless `document.hidden` was true, but the only code path that
+  fires after the app was actually backgrounded is the `visibilitychange`
+  reconcile handler — which runs exactly when `document.hidden` flips back
+  to `false`. So reopening the app after a background rest timer finished
+  showed nothing: no beep, no notification, nothing in Notification Center.
+  `finalRestAlert`/`notifyRestDone` now take a `missed` flag the reconcile
+  path sets explicitly, so the full beep/vibration/notification alert fires
+  immediately on reopen. (True delivery *while* the phone is locked needs a
+  real push server — tracked separately, since iOS suspends page JS in the
+  background and there's no way around that from client code alone.)
+
+### Changed
+- **Name is now First name / Last name**, both in onboarding and in
+  Settings → Profile, instead of one free-text field. The home-screen
+  greeting ("Good morning, ...") now uses only the first name.
+  `CFG.firstName`/`CFG.lastName` are the source of truth; `CFG.name` (used
+  by PDF/email export) is kept in sync via `updateFullName()`.
+  `migrateName()` splits any existing saved `CFG.name` into first/last on
+  first load after updating.
+- **Color scheme reverted to match the logo.** The v1.7.0 "Ledger" redesign
+  introduced a red (`#B23A2E`) as the primary `--accent` and
+  `--brand-forge` color, which doesn't appear anywhere in the actual
+  GainPath logo (dark green mountain/path + amber arrow, cream
+  background). `--accent` is back to the brand green, and `--brand-forge`
+  (PR stamps, streak-hero border, suggested-day emphasis) now points to the
+  amber/gold tones instead of red, in both light and dark themes. Also
+  fixed two places still hardcoding the old red as raw hex instead of a CSS
+  var: the shareable session-summary card (canvas-rendered) and the PDF
+  export's header bar.
+
 ## [1.8.3] - 2026-07-13
 
 ### Added
