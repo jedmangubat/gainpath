@@ -66,9 +66,9 @@ body{background:var(--page-bg);min-height:100vh;display:flex;justify-content:cen
 .screen{display:none}.screen.active{display:block;animation:screen-in .16s ease-out}
 @keyframes screen-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pr-stamp{from{opacity:0;transform:rotate(-1.5deg) scale(1.35)}to{opacity:1;transform:rotate(-1.5deg) scale(1)}}
-@media (prefers-reduced-motion:reduce){.screen.active,.pr-stamp,.tab.on::after{animation:none !important}}
+@media (prefers-reduced-motion:reduce){.screen.active,.pr-stamp{animation:none !important}}
 /* Display type & numerals — the "handwritten entries" of the logbook */
-h2,label,.bp,.bs,.tab,.bdg,.cal-tit,.streak-hero-lbl,.streak-hero-cta,.tt,#wo-tit,#de-tit,#sw-tit,#se-tit,#ef-name,#mw-title,#r-en,#exinfo-name{font-family:var(--font-mono);letter-spacing:.03em}
+h2,label,.bp,.bs,.bdg,.cal-tit,.streak-hero-lbl,.streak-hero-cta,.tt,#wo-tit,#de-tit,#sw-tit,#se-tit,#ef-name,#mw-title,#r-en,#exinfo-name{font-family:var(--font-mono);letter-spacing:.03em}
 .tn,.sv,.wi,.ri,.streak-hero-num,#wo-el,#plate-target,input[type=number]{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 .pr-stamp{display:flex;align-items:center;gap:8px;background:var(--tint-gold-1);border:1.5px solid var(--brand-forge);border-radius:4px;padding:10px 14px;margin-bottom:8px;font-size:13px;font-weight:700;color:var(--forge-text);transform:rotate(-1.5deg);animation:pr-stamp .18s ease-out}
 .card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
@@ -142,12 +142,14 @@ h2,label,.bp,.bs,.tab,.bdg,.cal-tit,.streak-hero-lbl,.streak-hero-cta,.tt,#wo-ti
 html[data-theme="dark"] .sc.c3::before{background:linear-gradient(160deg,#16233a,transparent)}
 html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35,transparent)}
 .sv{font-size:22px;font-weight:700;color:var(--txt);position:relative;font-variant-numeric:tabular-nums}.sl{font-size:12px;color:var(--txt2);margin-top:3px;position:relative}
-.tab{flex:1;padding:10px 4px;border:none;background:transparent;font-size:12px;color:var(--txt2);cursor:pointer;position:relative;transition:color .15s}
-.tab.on{color:var(--accent);font-weight:700}
-.tab.on::after{content:'';position:absolute;left:10%;right:10%;bottom:-1px;height:2px;background:var(--accent);transform-origin:left;animation:penline .5s ease both}
+.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:var(--bg);border-top:1px solid var(--bdr);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:50}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:none;background:transparent;color:var(--txt2);cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-family:var(--font-mono);transition:color .15s}
+.bn-item i{font-size:20px}
+.bn-item.on{color:var(--accent)}
+.app.has-nav .screen.active{padding-bottom:70px}
 @keyframes penline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.streak-hero{background:var(--bg);color:var(--accent-ink);border:1px solid var(--bdr);border-left:4px solid var(--brand-forge);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.streak-hero-num{font-size:44px;font-weight:800;letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;color:var(--brand-forge)}
+.streak-hero{background:var(--bg);color:var(--accent-ink);border:1px solid var(--bdr);border-left:4px solid var(--brand-forge);border-radius:var(--radius);padding:14px 20px;margin-bottom:12px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.streak-hero-num{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--brand-forge)}
 .streak-hero-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;opacity:.85;margin-top:2px}
 .streak-hero-cta{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
 .hero-pill{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:6px}
@@ -399,35 +401,29 @@ textarea{resize:vertical;min-height:100px}
         <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="h-gr"></div>
       </div>
     </div>
-    <button class="bg" style="font-size:12px;padding:2px 6px" onclick="openSettings()"><i class="ti ti-settings" aria-hidden="true"></i> Settings</button>
+    <button class="bg" style="padding:6px 8px" onclick="openSettings()" aria-label="Settings"><i class="ti ti-settings" style="font-size:24px" aria-hidden="true"></i></button>
   </div>
   <div class="streak-hero">
     <div>
       <div class="streak-hero-num" id="h-str">0</div>
       <div class="streak-hero-lbl">Wk streak</div>
     </div>
-    <div class="streak-hero-cta"><i class="ti ti-arrow-right" aria-hidden="true"></i> Keep it up</div>
+    <div class="streak-hero-cta"><i class="ti ti-flame" id="h-str-ic" aria-hidden="true"></i> <span id="h-str-cta">Start your streak</span></div>
   </div>
   <div class="hero-pill hero-pill-green" style="display:inline-flex;margin-bottom:16px">
     <i class="ti ti-target-arrow" style="color:var(--brand-green);font-size:16px" aria-hidden="true"></i>
     <span style="font-size:14px;font-weight:600;color:var(--brand-green)" id="h-week">0/0</span>
     <span style="font-size:12px;color:var(--brand-green)">this week</span>
   </div>
-  <div style="display:flex;border-bottom:1px solid var(--bdr);margin-bottom:16px">
-    <button class="tab on" id="t-wk" onclick="stab('wk')">Workouts</button>
-    <button class="tab" id="t-ch" onclick="stab('ch')">Progress</button>
-    <button class="tab" id="t-pr" onclick="stab('pr')">PRs</button>
-    <button class="tab" id="t-ex" onclick="stab('ex')">Export</button>
-  </div>
   <div id="p-wk">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
     <button class="bp" id="h-repeat-btn" style="width:100%;justify-content:center;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
     <div id="dbtn-list"></div>
-    <div id="h-hist" style="margin-top:16px;display:none">
-      <h2>Workout calendar</h2>
-      <div style="font-size:12px;color:var(--txt2);margin-bottom:8px">Tap a colored day to see and edit its sessions — browse any month with the arrows.</div>
-      <div id="h-cal"></div>
-    </div>
+  </div>
+  <div id="p-cal" style="display:none">
+    <h2>Workout calendar</h2>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px">Tap a colored day to see and edit its sessions — browse any month with the arrows.</div>
+    <div id="h-cal"></div>
   </div>
   <div id="p-ch" style="display:none">
     <h2>Progress</h2>
@@ -931,6 +927,15 @@ textarea{resize:vertical;min-height:100px}
     <img id="share-preview-img" style="max-width:100%;border-radius:8px;box-shadow:var(--shadow-md)" alt="Session summary card">
     <div style="font-size:11px;color:var(--txt2);margin-top:8px">Press and hold the image to save it</div>
   </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bnav">
+  <button class="bn-item on" id="bn-wk" onclick="bnav('wk')"><i class="ti ti-barbell" aria-hidden="true"></i>Workouts</button>
+  <button class="bn-item" id="bn-cal" onclick="bnav('cal')"><i class="ti ti-calendar" aria-hidden="true"></i>Calendar</button>
+  <button class="bn-item" id="bn-ch" onclick="bnav('ch')"><i class="ti ti-chart-line" aria-hidden="true"></i>Progress</button>
+  <button class="bn-item" id="bn-pr" onclick="bnav('pr')"><i class="ti ti-trophy" aria-hidden="true"></i>PRs</button>
+  <button class="bn-item" id="bn-ex" onclick="bnav('ex')"><i class="ti ti-download" aria-hidden="true"></i>Export</button>
 </div>
 
 </div>
@@ -3569,7 +3574,13 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 // JS-escape backslash/quote, then HTML-escape so quotes can't end the attribute.
 function jsArg(s){return esc("'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'");}
 function gid(id){return document.getElementById(id);}
-function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));gid('s-'+id).classList.add('active');}
+const NO_NAV_SCREENS=new Set(['ob','wo','rest','mw','plate','fsw','exfeel','feel','sum']);
+function ss(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));gid('s-'+id).classList.add('active');
+  const showNav=!NO_NAV_SCREENS.has(id);
+  gid('bnav').style.display=showNav?'flex':'none';
+  document.querySelector('.app').classList.toggle('has-nav',showNav);
+}
 let _actx=null;
 function ensureAudio(){try{if(!_actx)_actx=new (window.AudioContext||window.webkitAudioContext)();if(_actx.state==='suspended')_actx.resume();}catch(e){}}
 function beep(freq,dur){if(!CFG.restSound||!_actx)return;try{const osc=_actx.createOscillator();const gain=_actx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(0.0001,_actx.currentTime);gain.gain.exponentialRampToValueAtTime(0.85,_actx.currentTime+0.01);gain.gain.exponentialRampToValueAtTime(0.0001,_actx.currentTime+dur);osc.connect(gain);gain.connect(_actx.destination);osc.start();osc.stop(_actx.currentTime+dur);}catch(e){}}
@@ -3950,9 +3961,10 @@ function suggested(){
   return days[(idx+1)%days.length];
 }
 function stab(t){
-  ['wk','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('t-'+x).classList.toggle('on',x===t);});
-  if(t==='ch')initChart();if(t==='pr')renderPRs();if(t==='ex')initExport();
+  ['wk','cal','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
+  if(t==='cal')renderCal();if(t==='ch')initChart();if(t==='pr')renderPRs();if(t==='ex')initExport();
 }
+function bnav(t){ss('home');stab(t);}
 function goHome(){
   const activeEl=document.querySelector('.screen.active');
   const midWorkout=activeEl&&['s-wo','s-rest','s-mw','s-fsw','s-exfeel'].includes(activeEl.id);
@@ -3962,9 +3974,18 @@ function goHome(){
   }
   clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;ST.paused=false;refreshHome();ss('home');
 }
+function streakMsg(n){
+  if(n===0)return{ic:'ti-flame',t:'Start your streak this week'};
+  if(n===1)return{ic:'ti-flame',t:'First week logged — keep going'};
+  if(n<=3)return{ic:'ti-trending-up',t:'Momentum is building'};
+  if(n<=7)return{ic:'ti-shield-check',t:"Don't break the chain"};
+  return{ic:'ti-crown',t:n+' weeks strong — unstoppable'};
+}
 function refreshHome(){
   accentColor();renderHomeBanners();
   tickNum(gid('h-str'),streak());
+  const sm=streakMsg(streak());
+  gid('h-str-ic').className='ti '+sm.ic;gid('h-str-cta').textContent=sm.t;
   gid('h-week').textContent=sessionsThisWeek()+'/'+CFG.freq;
   const sug=suggested();const hr=new Date().getHours();
   const tod=hr<12?'morning':hr<17?'afternoon':'evening';
@@ -3982,9 +4003,7 @@ function refreshHome(){
     btn.innerHTML='<div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti '+(DI[k]||'ti-player-play')+'" style="margin-right:8px;color:'+(DC[k]||'var(--accent)')+';font-size:15px" aria-hidden="true"></i>'+esc(getDayName(k))+(isSug?'<span class="bdg" style="margin-left:8px;background:var(--tint-amber-1);color:var(--tint-amber-text)">Suggested</span>':'')+'</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">'+exList.length+' exercises \u00b7 '+(last?'Last: '+esc(last.date):'Not done yet')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>';
     btn.onclick=()=>openDayEdit(k);con.appendChild(btn);
   });
-  const hs=gid('h-hist');
-  if(ST.history.length){hs.style.display='block';renderCal();}
-  else hs.style.display='none';
+  renderCal();
 }
 function openSettings(){
   gid('set-name').value=CFG.name;gid('set-bw').value=CFG.bw;gid('set-ht').value=CFG.ht;gid('set-bf').value=CFG.bf||'';

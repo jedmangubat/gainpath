@@ -4,6 +4,37 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.3] - 2026-07-13
+
+### Added
+- **Persistent bottom tab bar.** The Workouts/Progress/PRs/Export tabs used
+  to live at the top of the home screen and vanish the moment you navigated
+  anywhere else (a day editor, Settings, etc.), leaving no visible sense of
+  where you were in the app. They're now a fixed bottom navigation bar
+  (Workouts, Calendar, Progress, PRs, Export) that stays visible across the
+  home screen, day editor, program builder, swap/custom-exercise pickers,
+  and every Settings screen. It hides only during the focused workout flow
+  (active exercise, rest timer, mini-workout logging, feel rating, session
+  summary) and onboarding, where a distraction-free full screen makes more
+  sense. New `ss()`-level `NO_NAV_SCREENS` set and `.app.has-nav` class
+  drive the show/hide; `bnav(t)` jumps home and switches tabs in one call.
+- **The workout calendar is now its own "Calendar" tab** instead of being
+  embedded at the bottom of the Workouts tab (previously hidden entirely
+  until at least one session was logged). `renderCal()` now runs
+  unconditionally in `refreshHome()` so it's always current when opened.
+
+### Changed
+- **Streak messaging now adapts to the streak count** instead of always
+  reading a static "Keep it up". A zero streak now invites you to start
+  ("Start your streak this week"), a 1-week streak encourages continuing,
+  2–3 weeks calls out building momentum, 4–7 weeks pushes not breaking the
+  chain, and 8+ weeks praises the run by name (`streakMsg()` in
+  `index.html`). The streak number itself also shrunk (44px → 28px) so it
+  no longer dominates the card at the expense of the message next to it.
+- **Settings entry point is icon-only.** The top-right button dropped its
+  "Settings" label in favor of a larger (24px) gear icon alone, freeing it
+  from competing with the GainPath wordmark for attention.
+
 ## [1.8.2] - 2026-07-12
 
 ### Removed

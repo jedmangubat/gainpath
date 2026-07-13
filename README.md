@@ -8,11 +8,20 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v1.8.3
+
+- **Persistent bottom navigation** — Workouts, Calendar, Progress, PRs, and Export are now always-visible tabs at the bottom of the screen, so navigation never disappears while you're browsing a day's exercises, Settings, or anywhere else in the app.
+- **Workout calendar is its own tab** — previously buried at the bottom of the Workouts tab, it's now a dedicated Calendar tab.
+- **Smarter streak messaging** — the streak card's message now adapts to your progress: an invitation to start at zero, encouragement through the first few weeks, and stronger praise the longer the streak runs. The streak number itself is smaller and less overpowering.
+- **Cleaner settings entry point** — the top-right button is now just a bigger gear icon, no "Settings" label.
+
+---
+
 ## Features
 
 ### 🏋️ Training splits
 
-<img src="images/screenshots/home.png" width="260" alt="Home screen — day picker for the chosen split, streak, weekly goal, repeat-last-workout, and the color-coded workout calendar">
+<img src="images/screenshots/home.png" width="260" alt="Home screen — day picker for the chosen split, streak, weekly goal, repeat-last-workout, and the bottom tab bar">
 
 Five split types to choose from — see "What each day hits" further down for the muscle groups each one targets:
 - **PPL / Upper-Lower** — Push, Pull, Legs, Upper, Lower (5-day)
@@ -92,18 +101,17 @@ Settings is a menu of six sections — Profile, Preferences, My gym, Machine bas
 
 ### 🎨 Design & dark mode
 
-<img src="images/screenshots/dark-mode.png" width="260" alt="The home screen in blueprint dark mode, showing the workout calendar">
+<img src="images/screenshots/dark-mode.png" width="260" alt="The Calendar tab in blueprint dark mode">
 
 The **"Ledger"** look — a paper training logbook, rebuilt as an app. The
 light theme (the default) is graph paper: a faint grid ground, white cards
 with hairline borders, monospaced headers and numerals like handwritten
 entries, a red-ink accent on the primary buttons, active tab, focus states,
-and charts, a full-width streak card with a red ledger rule, ink-toned day
+and charts, a compact streak card with a red ledger rule, ink-toned day
 colors on the calendar, and PRs stamped on in a rotated red rubber-stamp
-style. Motion follows the same idea: quick paper-flat screen transitions, a
-pen-stroke underline that draws across the active tab, and a streak number
-that ticks up like an odometer (`prefers-reduced-motion` respected
-throughout). Dark mode flips the logbook to a **blueprint** — navy paper,
+style. Motion follows the same idea: quick paper-flat screen transitions and
+a streak number that ticks up like an odometer (`prefers-reduced-motion`
+respected throughout). Dark mode flips the logbook to a **blueprint** — navy paper,
 light grid, warm signal-orange ink — switchable in Settings and remembered
 between sessions.
 
@@ -118,7 +126,7 @@ between sessions.
 - **Weekly muscle-group volume balance** — hard sets per muscle group this week, sorted as horizontal bars, with a flag when a mirror-muscle pair (chest/back, quads/hamstrings, biceps/triceps) looks lopsided
 - Total training volume (tonnage) on every session summary and in history
 - **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
-- **Workout calendar = session browser** — a monthly calendar on the home screen with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals
+- **Workout calendar = session browser** — its own Calendar tab with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals
 - **A streak that survives real life** — mark a single day or a whole week as planned rest (sick, traveling, deloading) in Settings, and your weekly streak pauses instead of resetting to zero
 - Streak counter — consecutive weeks hitting your training frequency, plus a weekly goal ("3/5 this week")
 - **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
