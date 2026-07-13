@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   summary) and onboarding, where a distraction-free full screen makes more
   sense. New `ss()`-level `NO_NAV_SCREENS` set and `.app.has-nav` class
   drive the show/hide; `bnav(t)` jumps home and switches tabs in one call.
+  Icons and labels sized up (20px → 26px icons, 10px → 11px labels, more
+  padding) after the first pass read as too subtle to register as tabs.
 - **The workout calendar is now its own "Calendar" tab** instead of being
   embedded at the bottom of the Workouts tab (previously hidden entirely
   until at least one session was logged). `renderCal()` now runs
