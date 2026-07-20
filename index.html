@@ -187,6 +187,12 @@ h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;let
 .ob-progress{display:flex;gap:4px;margin-bottom:24px}
 .ob-dot{height:4px;border-radius:8px;background:var(--bdr);flex:1;transition:background .3s}
 .ob-dot.on{background:var(--accent)}
+.tut-ss-wrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--bdr);box-shadow:0 8px 24px rgba(36,59,54,.18);max-height:54vh;max-width:100%;aspect-ratio:390/844;margin:0 auto}
+.tut-ss-wrap img{width:100%;height:100%;display:block;object-fit:cover}
+.tut-tooltip{position:absolute;background:var(--bg);border-radius:10px;padding:12px 14px;box-shadow:0 8px 20px rgba(0,0,0,.3);max-width:82%}
+.tut-tooltip-title{font-family:var(--font-display);font-weight:700;font-size:14px;margin-bottom:3px;color:var(--txt)}
+.tut-tooltip-body{font-size:12px;color:var(--txt2);line-height:1.45}
+.tut-step-badge{position:absolute;top:-10px;left:-10px;width:24px;height:24px;border-radius:50%;background:var(--brand-forge);color:#fff;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
 select,textarea{font-size:13px;width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);color:var(--txt);margin-bottom:12px;outline:none;appearance:none;-webkit-appearance:none}
 select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:100px}
@@ -606,6 +612,7 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_restplan">Planned rest</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_restplan_sub">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()" data-i18n="btn_reset_app">Reset app</button>
 </div>
@@ -779,6 +786,68 @@ textarea{resize:vertical;min-height:100px}
   </div>
 </div>
 
+<!-- TUTORIAL -->
+<div id="s-tutorial" class="screen" ontouchstart="tutTouchStart(event)" ontouchend="tutTouchEnd(event)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div class="tt" style="font-size:19px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="tut_title">How GainPath works</div>
+    <button type="button" class="bg" onclick="tutSkip()" style="font-size:13px" data-i18n="btn_skip">Skip</button>
+  </div>
+  <div class="ob-progress" id="tut-dots"></div>
+
+  <div class="ob-step active" id="tut-1">
+    <div class="tut-ss-wrap">
+      <img src="images/tutorial/home.png" alt="GainPath home screen">
+      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="3.1" y="30.5" width="93.8" height="10.3" rx="3" fill="#000"/></mask></defs>
+        <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
+        <rect x="3.1" y="30.5" width="93.8" height="10.3" rx="3" fill="none" stroke="#946F17" stroke-width=".6"/>
+      </svg>
+      <div class="tut-tooltip" style="left:5%;top:44%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
+    </div>
+  </div>
+
+  <div class="ob-step" id="tut-2">
+    <div class="tut-ss-wrap">
+      <img src="images/tutorial/workout.png" alt="GainPath workout logging screen">
+      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="66.4" y="53.6" width="27.1" height="7" rx="3" fill="#000"/></mask></defs>
+        <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask2)"/>
+        <rect x="66.4" y="53.6" width="27.1" height="7" rx="3" fill="none" stroke="#946F17" stroke-width=".6"/>
+      </svg>
+      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut2_body">Enter the weight and reps, tap Mark done, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
+    </div>
+  </div>
+
+  <div class="ob-step" id="tut-3">
+    <div class="tut-ss-wrap">
+      <img src="images/tutorial/progress.png" alt="GainPath Progress tab">
+      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+        <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="38.4" y="90.5" width="23.5" height="9" rx="3" fill="#000"/></mask></defs>
+        <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask3)"/>
+        <rect x="38.4" y="90.5" width="23.5" height="9" rx="3" fill="none" stroke="#946F17" stroke-width=".6"/>
+      </svg>
+      <div class="tut-tooltip" style="left:5%;top:76%"><div class="tut-step-badge">3</div><div class="tut-tooltip-title" data-i18n="tut3_title">Track your progress</div><div class="tut-tooltip-body" data-i18n="tut3_body">Tap here anytime to see your strength climb over time, plus your full PR list and training calendar.</div></div>
+    </div>
+  </div>
+
+  <div class="ob-step" id="tut-4">
+    <div class="tut-ss-wrap">
+      <img src="images/tutorial/home.png" alt="GainPath home screen">
+      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="84.7" y="1.2" width="13.2" height="6.8" rx="3" fill="#000"/></mask></defs>
+        <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask4)"/>
+        <rect x="84.7" y="1.2" width="13.2" height="6.8" rx="3" fill="none" stroke="#946F17" stroke-width=".6"/>
+      </svg>
+      <div class="tut-tooltip" style="right:5%;top:12%;left:5%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut4_body">Settings is where you edit exercises, build a custom program, and tell GainPath which plates and dumbbells you have. Back up your data anytime from Export — no account needed.</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+    <button type="button" class="bg" id="tut-back-btn" onclick="tutBack()" style="visibility:hidden" data-i18n="btn_back">Back</button>
+    <button class="bp" id="tut-next-btn" onclick="tutNext()">Next →</button>
+  </div>
+</div>
+
 <!-- SESSION DETAIL / EDIT -->
 <div id="s-session" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -921,6 +990,17 @@ textarea{resize:vertical;min-height:100px}
   <ol id="exinfo-list" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px"></ol>
 </div>
 
+<!-- WHAT'S NEW -->
+<div id="whatsnew-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeWhatsNew()"></div>
+<div id="whatsnew-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"><i class="ti ti-sparkles" style="color:var(--brand-forge);margin-right:6px" aria-hidden="true"></i><span id="whatsnew-version"></span></div>
+    <button class="bg" onclick="closeWhatsNew()" aria-label="Close" data-i18n-aria="aria_close_instructions" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
+  </div>
+  <ul id="whatsnew-list" style="margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--txt);line-height:1.5"></ul>
+  <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeWhatsNew()" data-i18n="btn_got_it">Got it</button>
+</div>
+
 <!-- PER-EXERCISE FEEL -->
 <div id="s-exfeel" class="screen">
   <div style="text-align:center;margin-bottom:6px;margin-top:8px">
@@ -1002,6 +1082,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
+const APP_VERSION='1.10.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.YOUR-SUBDOMAIN.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1015,6 +1096,25 @@ function track(event){
     if(navigator.sendBeacon)navigator.sendBeacon(ANALYTICS_ENDPOINT+'/e',payload);
     else fetch(ANALYTICS_ENDPOINT+'/e',{method:'POST',body:payload,keepalive:true}).catch(()=>{});
   }catch(e){}
+}
+
+// ═══ WHAT'S NEW — a one-time sheet shown to returning users (CFG.setup
+// already true) whose CFG.lastSeenVersion doesn't match APP_VERSION. Not
+// shown to first-time users (they see it all via onboarding + the tutorial)
+// or while a workout is being restored. Every version bump that ships a
+// user-facing feature should update WHATS_NEW_ITEMS alongside the README's
+// "What's new" section — see CLAUDE.md. ═══
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+function showWhatsNew(){
+  gid('whatsnew-version').textContent=t('whatsnew_heading')+' v'+APP_VERSION;
+  gid('whatsnew-list').innerHTML=WHATS_NEW_ITEMS.map(k=>'<li>'+t(k)+'</li>').join('');
+  gid('whatsnew-overlay').style.display='block';gid('whatsnew-sheet').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeWhatsNew(){
+  CFG.lastSeenVersion=APP_VERSION;saveCFG();
+  gid('whatsnew-overlay').style.display='none';gid('whatsnew-sheet').style.display='none';
+  document.body.style.overflow='';
 }
 
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -8102,6 +8202,7 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   wakeLock:false,
   healthSync:false,healthSyncStartShortcut:'GainPath Start Workout',healthSyncEndShortcut:'GainPath End Workout',
   leadEmail:'',leadSubmitted:false,
+  lastSeenVersion:'0',tutorialSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
 let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
@@ -8312,6 +8413,24 @@ en:{
 "notify_done_title": "You're on the list",
 "notify_done_sub": "We'll email you when the native app ships. No account, no spam.",
 "btn_notify_undo": "Use a different email",
+"menu_tutorial": "How to use",
+"menu_tutorial_sub": "Revisit the quick walkthrough",
+"tut_title": "How GainPath works",
+"btn_next": "Next",
+"btn_get_started": "Get started",
+"tut1_title": "Pick a day",
+"tut1_body": "Tap any day to start — GainPath pre-fills weights from last time you did it.",
+"tut2_title": "Log each set",
+"tut2_body": "Enter the weight and reps, tap Mark done, then rest with the built-in timer. GainPath catches new personal records automatically.",
+"tut3_title": "Track your progress",
+"tut3_body": "Tap here anytime to see your strength climb over time, plus your full PR list and training calendar.",
+"tut4_title": "Make it yours",
+"tut4_body": "Settings is where you edit exercises, build a custom program, and tell GainPath which plates and dumbbells you have. Back up your data anytime from Export — no account needed.",
+"whatsnew_heading": "What's new in",
+"btn_got_it": "Got it",
+"whatsnew_item1": "New \"Trail\" look — a full visual redesign leaning into the mountain-path logo, with a Progress tab that reads like an elevation profile.",
+"whatsnew_item2": "Optional native-app launch notification — leave an email in Settings → Native app updates to hear when the iOS/Android app ships.",
+"whatsnew_item3": "Bug fixes and stability improvements.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -8591,6 +8710,24 @@ ja:{
 "notify_done_title": "登録しました",
 "notify_done_sub": "ネイティブアプリが公開されたらメールでお知らせします。アカウント不要、スパムもありません。",
 "btn_notify_undo": "別のメールアドレスを使う",
+"menu_tutorial": "使い方",
+"menu_tutorial_sub": "簡単な使い方ガイドをもう一度見る",
+"tut_title": "GainPathの使い方",
+"btn_next": "次へ",
+"btn_get_started": "はじめる",
+"tut1_title": "曜日を選ぶ",
+"tut1_body": "好きな曜日をタップして開始 — 前回のウェイトが自動で入力されます。",
+"tut2_title": "セットを記録",
+"tut2_body": "重量とレップ数を入力して「完了にする」をタップ、その後は内蔵タイマーで休憩。自己ベストは自動で検出されます。",
+"tut3_title": "進捗を確認",
+"tut3_body": "ここをタップすればいつでも筋力の推移、PR一覧、トレーニングカレンダーを確認できます。",
+"tut4_title": "自分好みにカスタマイズ",
+"tut4_body": "設定では種目の編集、自分だけのプログラム作成、持っているプレートやダンベルの登録ができます。データはExportからいつでもバックアップ可能 — アカウントは不要です。",
+"whatsnew_heading": "アップデート情報",
+"btn_got_it": "了解",
+"whatsnew_item1": "新デザイン「Trail」— マウンテンパスのロゴを活かした全面リニューアル。Progressタブは登山の標高プロファイルのような表示に。",
+"whatsnew_item2": "ネイティブアプリ公開通知（任意）— 設定 → ネイティブアプリの最新情報 からメールアドレスを登録すると、iOS/Androidアプリ公開時にお知らせします。",
+"whatsnew_item3": "不具合修正と安定性の向上。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -8871,6 +9008,24 @@ ko:{
 "notify_done_title": "등록 완료",
 "notify_done_sub": "네이티브 앱이 출시되면 이메일로 알려드릴게요. 계정도, 스팸도 없습니다.",
 "btn_notify_undo": "다른 이메일 사용하기",
+"menu_tutorial": "사용 방법",
+"menu_tutorial_sub": "간단한 사용법 안내 다시 보기",
+"tut_title": "GainPath 사용 방법",
+"btn_next": "다음",
+"btn_get_started": "시작하기",
+"tut1_title": "요일 선택",
+"tut1_body": "원하는 요일을 탭하여 시작하세요 — 지난번 중량이 자동으로 채워집니다.",
+"tut2_title": "세트 기록하기",
+"tut2_body": "중량과 횟수를 입력하고 완료 표시를 탭한 뒤, 내장 타이머로 휴식하세요. 새로운 개인 기록은 자동으로 감지됩니다.",
+"tut3_title": "진행 상황 확인",
+"tut3_body": "여기를 탭하면 언제든 근력 변화 그래프, 전체 PR 목록, 훈련 캘린더를 볼 수 있습니다.",
+"tut4_title": "나만의 설정",
+"tut4_body": "설정에서 운동 편집, 나만의 프로그램 만들기, 보유한 플레이트와 덤벨 등록이 가능합니다. Export에서 언제든 데이터를 백업할 수 있어요 — 계정은 필요 없습니다.",
+"whatsnew_heading": "업데이트 소식",
+"btn_got_it": "확인",
+"whatsnew_item1": "새로운 \"Trail\" 디자인 — 마운틴 패스 로고를 살린 전면 리디자인. Progress 탭이 등반 고도 프로필처럼 표시됩니다.",
+"whatsnew_item2": "네이티브 앱 출시 알림(선택) — 설정 → 네이티브 앱 소식 에서 이메일을 등록하면 iOS/Android 앱 출시 시 알려드립니다.",
+"whatsnew_item3": "버그 수정 및 안정성 개선.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -9251,8 +9406,44 @@ function updateObSummary(){
 }
 function obFinish(){
   if(!OB.sw){alert('Please select a starting weight method');return;}
-  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true});
-  saveCFG();accentColor();refreshHome();ss('home');
+  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true,lastSeenVersion:APP_VERSION});
+  saveCFG();accentColor();refreshHome();
+  showTutorial(true);
+}
+
+// ═══ TUTORIAL — a persistent, revisitable "how it works" walkthrough shown
+// once after onboarding (skippable) and reachable anytime from Settings.
+// Whenever a future feature needs a "how to use it" explanation, add a step
+// here (bump TUT_TOTAL, add a #tut-N .ob-step) rather than leaving it stale. ═══
+const TUT_TOTAL=4;
+let TUT={step:1,fromOnboarding:false};
+function tutDots(){
+  const el=gid('tut-dots');el.innerHTML='';
+  for(let i=1;i<=TUT_TOTAL;i++){const d=document.createElement('div');d.className='ob-dot'+(i<=TUT.step?' on':'');el.appendChild(d);}
+}
+function renderTutStep(){
+  document.querySelectorAll('#s-tutorial .ob-step').forEach(el=>el.classList.remove('active'));
+  gid('tut-'+TUT.step).classList.add('active');
+  tutDots();
+  gid('tut-back-btn').style.visibility=TUT.step===1?'hidden':'visible';
+  const isLast=TUT.step===TUT_TOTAL;
+  gid('tut-next-btn').innerHTML=isLast?(TUT.fromOnboarding?t('btn_get_started'):t('btn_done')):(t('btn_next')+' →');
+}
+function showTutorial(fromOnboarding){TUT.step=1;TUT.fromOnboarding=!!fromOnboarding;renderTutStep();ss('tutorial');}
+function tutNext(){if(TUT.step>=TUT_TOTAL){tutFinish();return;}TUT.step++;renderTutStep();}
+function tutBack(){if(TUT.step<=1)return;TUT.step--;renderTutStep();}
+function tutSkip(){tutFinish();}
+function tutFinish(){
+  CFG.tutorialSeen=true;saveCFG();
+  if(TUT.fromOnboarding){refreshHome();ss('home');}else{ss('settings');}
+}
+let TUT_TOUCH_X=null;
+function tutTouchStart(e){TUT_TOUCH_X=e.changedTouches[0].clientX;}
+function tutTouchEnd(e){
+  if(TUT_TOUCH_X===null)return;
+  const dx=e.changedTouches[0].clientX-TUT_TOUCH_X;TUT_TOUCH_X=null;
+  if(Math.abs(dx)<40)return;
+  if(dx<0)tutNext();else tutBack();
 }
 
 function addWarmupFlags(exercises){
@@ -10766,7 +10957,10 @@ async function sendFeedback(){
 load();applyTheme();applyLang();OB.step=1;obDots();
 if(CFG.setup){
   accentColor();
-  if(!restoreInProgress()){refreshHome();ss('home');}
+  if(!restoreInProgress()){
+    refreshHome();ss('home');
+    if(CFG.lastSeenVersion!==APP_VERSION)showWhatsNew();
+  }
 }else{ss('ob');}
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}

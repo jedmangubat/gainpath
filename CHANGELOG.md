@@ -61,6 +61,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   it — submissions go to the analytics Worker's `/lead` endpoint, stored
   outside localStorage so they survive a device change. Localized in
   English, Japanese, and Korean.
+- **A persistent, revisitable tutorial.** First-time users see it once
+  right after onboarding (skippable); anyone can reopen it later from
+  Settings → How to use. Four steps, each a real screenshot of the app with
+  a dimmed spotlight ring around the exact element to tap and a tooltip
+  explaining the action — pick a day, log a set, check Progress, and find
+  Settings/backup. Swipe left/right between steps, or use Back/Next.
+  Reference screenshots live in `images/tutorial/`, captured with the
+  add-to-home-screen banner dismissed for a predictable layout.
+- **A "What's New" sheet for returning users.** Shown once after an update
+  (compares `CFG.lastSeenVersion` against `APP_VERSION`), listing the
+  current version's user-facing highlights in a bottom sheet. First-time
+  users don't see it — they get the tutorial instead. Both the sheet's
+  content (`WHATS_NEW_ITEMS`) and the tutorial should be kept current on
+  every future version bump — see `CLAUDE.md`.
 
 ## [1.9.0] - 2026-07-14
 

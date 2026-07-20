@@ -72,6 +72,24 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   one is warranted. The detailed list always lives in `CHANGELOG.md`. In a
   mixed release, features get bullets and fixes get one general line
   (headline-worthy fixes can be named briefly).
+- **In-app "What's New" and the persistent tutorial (added v1.10.0) need the
+  same upkeep as the README's "What's new" section — don't let them go
+  stale.** `WHATS_NEW_ITEMS` (near the top of `index.html`'s script, next to
+  `APP_VERSION`) drives a one-time bottom-sheet shown to returning users
+  whose `CFG.lastSeenVersion` doesn't match `APP_VERSION`; bump
+  `APP_VERSION` and rewrite `WHATS_NEW_ITEMS` on every version bump that
+  ships a user-facing feature (mirror the README bullets, condensed). The
+  tutorial (`#s-tutorial`, `TUT_TOTAL` steps, functions prefixed `tut*`) is
+  a spotlight-on-screenshot walkthrough shown once after onboarding
+  (skippable) and reachable anytime from Settings → How to use. If a new
+  feature needs a "how to use it" explanation (not just a changelog bullet),
+  add a step to the tutorial rather than leaving it frozen at whatever it
+  covered when first built — bump `TUT_TOTAL`, add a `#tut-N` `.ob-step`
+  following the existing screenshot+spotlight+tooltip pattern, and capture
+  its reference screenshot into `images/tutorial/` the same way (dedicated
+  Playwright capture with the "Add to Home Screen" banner dismissed via
+  `gp_a2hs_dismissed`, using `getBoundingClientRect()` percentages for the
+  spotlight/tooltip coordinates — see the v1.10.0 commit for the pattern).
 - **README screenshots go stale — regenerate them when the UI changes
   visually.** The images under `images/screenshots/` are real captures of the
   app, referenced by `README.md`. A visual-only change (redesign, restyled
