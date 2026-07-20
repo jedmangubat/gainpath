@@ -61,14 +61,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   it — submissions go to the analytics Worker's `/lead` endpoint, stored
   outside localStorage so they survive a device change. Localized in
   English, Japanese, and Korean.
-- **A persistent, revisitable tutorial.** First-time users see it once
-  right after onboarding (skippable); anyone can reopen it later from
-  Settings → How to use. Four steps, each a real screenshot of the app with
-  a dimmed spotlight ring around the exact element to tap and a tooltip
-  explaining the action — pick a day, log a set, check Progress, and find
-  Settings/backup. Swipe left/right between steps, or use Back/Next.
-  Reference screenshots live in `images/tutorial/`, captured with the
-  add-to-home-screen banner dismissed for a predictable layout.
+- **A persistent, revisitable tutorial covering the whole app.** First-time
+  users see it once right after onboarding (skippable); anyone can reopen
+  it later from Settings → How to use. Eleven steps, each a real screenshot
+  with a dimmed spotlight ring around the exact element to tap and a
+  tooltip explaining the action: pick a day, customize a day's exercises,
+  build a custom program, log a set, calculate plates, rest with tips,
+  check Progress, celebrate PRs, browse the calendar, generate PDF
+  reports/back up data, and find Settings. Swipe left/right between steps,
+  or use Back/Next. Reference screenshots live in `images/tutorial/`,
+  captured with the add-to-home-screen banner dismissed and their spotlight
+  coordinates measured precisely via `getBoundingClientRect()`, not
+  eyeballed.
 - **A "What's New" sheet for returning users.** Shown once after an update
   (compares `CFG.lastSeenVersion` against `APP_VERSION`), listing the
   current version's user-facing highlights in a bottom sheet. First-time
