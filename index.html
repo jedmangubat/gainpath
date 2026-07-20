@@ -1167,7 +1167,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
 const APP_VERSION='1.10.0';
-const ANALYTICS_ENDPOINT='https://gainpath-analytics.YOUR-SUBDOMAIN.workers.dev';
+const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
   if(!id){id=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxxxxxxxxxx'.replace(/x/g,()=>Math.floor(Math.random()*16).toString(16)));localStorage.setItem('gp_anon_id',id);}

@@ -3,6 +3,6 @@ main = "src/index.js"
 compatibility_date = "2025-01-01"
 
 kv_namespaces = [
-  { binding = "EVENTS", id = "REPLACE_WITH_EVENTS_NAMESPACE_ID" },
-  { binding = "LEADS", id = "REPLACE_WITH_LEADS_NAMESPACE_ID" },
+  { binding = "EVENTS", id = "4cc56a3b8f1241d2979147d3da77deb9" },
+  { binding = "LEADS", id = "b86189f61a5246eda0bd258b65f040a9" },
 ]

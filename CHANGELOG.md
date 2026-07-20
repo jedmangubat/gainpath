@@ -4,6 +4,18 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- **Deployed the analytics Worker** to `https://gainpath-analytics.jedmangubat.workers.dev`
+  and wired the live URL into `ANALYTICS_ENDPOINT` in `index.html` — analytics
+  and the email-capture Settings screen are no longer inert. Registered the
+  `jedmangubat.workers.dev` subdomain and created the `EVENTS`/`LEADS` KV
+  namespaces (IDs now in `analytics-worker/wrangler.toml`); `STATS_SECRET`
+  was generated and uploaded as a Worker secret (not committed anywhere).
+  Verified end-to-end: `/stats` correctly rejects requests without the key,
+  and a test beacon posted through `/e` shows up in `/stats` output.
+
 ## [1.10.0] - 2026-07-20
 
 ### Changed
