@@ -20,7 +20,8 @@ export default [
         location: 'readonly', history: 'readonly',
         Chart: 'readonly', jspdf: 'readonly', emailjs: 'readonly',
         performance: 'readonly', requestAnimationFrame: 'readonly',
-        Notification: 'readonly', URLSearchParams: 'readonly', File: 'readonly'
+        Notification: 'readonly', URLSearchParams: 'readonly', File: 'readonly',
+        crypto: 'readonly'
       }
     },
     rules: {

@@ -4,6 +4,64 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.10.0] - 2026-07-20
+
+### Changed
+- **New visual direction: "Trail"**, replacing the "Ledger" (paper training
+  logbook) theme from v1.7.0-v1.9.0. Leans into the GainPath mountain-path
+  logo instead of a handwritten-journal metaphor: a topographic contour-line
+  background motif, Fraunces serif display type on headers/numerals (in
+  place of monospace), rounder 10px corners, dashed set/toggle dividers, and
+  a `ti-mountain`/`ti-flag` bottom-nav icon pair for Progress/PRs. The
+  moss-green + amber accent colors are unchanged — they were already
+  logo-matched as of v1.9.0. All existing CSS variable *names* were kept
+  (only values changed), so this is a full re-skin, not a rewrite.
+- **Progress tab's chart is now an "elevation profile."** The estimated-1RM
+  chart gets a smoother ridge-line curve, and every point that set a new
+  best at the time (not just the current all-time PR) is marked with a
+  larger amber waypoint dot — PRs read as flags along an ascent, echoing the
+  logo's mountain path. Body-weight chart gets the same smoother curve for
+  visual consistency.
+- Chose this direction from three candidate mockups after review (Chalk &
+  Iron, Trail/Topo, Meet Day/Scoreboard) — screenshots generated and
+  reviewed before any code changed.
+
+### Fixed
+- **GitHub repo "About" description** still read "Free AI-powered workout
+  tracker... per-set AI coaching..." — a leftover from before the AI-coaching
+  feature was removed in v1.2.0. Updated via `gh repo edit` to match the
+  no-AI positioning already reflected everywhere else (README, manifest.json,
+  in-app copy were already clean).
+
+### Added
+- **`TRIAL_GOALS.md`** — a written go/no-go bar for the free-trial period
+  ahead of a possible paid native iOS build: 30-day retention proxy (≥15% of
+  anonymous first-use IDs), second-workout rate (≥35% within 14 days), and
+  PDF-report engagement (≥15/month). Seeded with moderate starting numbers,
+  meant to be revisited once real usage data comes in.
+- **`analytics-worker/`** — a self-hosted Cloudflare Worker (deployed
+  separately from the app, never bundled into `index.html`) providing
+  privacy-first, aggregate-only usage analytics: session count, per-action
+  usage (workout completed, PR hit, PDF generated, data exported, custom
+  program built), and the 30-day retention / second-workout metrics
+  `TRIAL_GOALS.md` is measured against. Tracks a random client-generated
+  `gp_anon_id`, never anything that identifies a real person. Not Google
+  Analytics, no third-party analytics service. See `analytics-worker/README.md`
+  for deploy steps.
+- **Anonymous usage tracking wired into the app.** A `track()` helper
+  (fire-and-forget, via `navigator.sendBeacon`) fires at six points: workout
+  started, workout completed, PR hit, PDF report generated, data exported
+  (JSON or CSV), and custom program saved. No-op until `ANALYTICS_ENDPOINT`
+  is set to a deployed Worker URL, so it's inert out of the box. The
+  "no account needed" claim in the README still holds — this is anonymous,
+  aggregate-only measurement, not an account.
+- **Optional "notify me when the native app ships" email capture**, in
+  Settings → Native app updates. Explicit opt-in (a button tap, not
+  autosave), clearly labeled as optional, and the app works fully without
+  it — submissions go to the analytics Worker's `/lead` endpoint, stored
+  outside localStorage so they survive a device change. Localized in
+  English, Japanese, and Korean.
+
 ## [1.9.0] - 2026-07-14
 
 ### Changed

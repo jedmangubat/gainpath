@@ -1,0 +1,12 @@
+{
+  "name": "gainpath-analytics-worker",
+  "private": true,
+  "description": "Cloudflare Worker: anonymous usage analytics + optional email capture for the GainPath free trial. Infra-only, deployed separately — not part of what index.html ships.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

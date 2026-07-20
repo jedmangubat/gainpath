@@ -8,12 +8,11 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.9.0
+## ✨ What's new in v1.10.0
 
-- **GainPath now speaks English, Japanese, and 한국어** — a language picker (all three shown directly, not buried in a dropdown) sits at the top of onboarding and at the top of Settings. Every screen, the full 119-exercise database (names, coaching tips, and step-by-step instructions), and the home screen's time-of-day-aware greeting are all fully localized in every language, not just the UI chrome.
-- **Colors now match the logo** — the app's primary accent is back to the brand green and amber (mountain-path green, arrow amber) instead of the red introduced in a prior redesign, across every screen, the PDF export, and the shareable session card.
-- **A cleaner, more consistent visual scale** — font sizes, icon sizes, and spacing throughout the app were consolidated onto real design-system scales, and several under-sized tap targets (the per-set weight +/− buttons, the exercise info button) were grown for easier tapping mid-workout.
-- **Name is now first/last** in onboarding and Settings → Profile, and the home greeting addresses you by first name only.
+- **New look: "Trail"** — a full visual redesign leaning into the GainPath mountain-path logo. Topographic contour lines in the background, a warm serif display type, rounder cards, and a Progress tab that visualizes your training as an elevation profile — every point that set a new best marked as a flag along the ascent. Replaces the previous "Ledger" paper-logbook theme.
+- **Optional native-app launch notification** — in Settings → Native app updates, leave an email if you want to hear when the upcoming iOS/Android app ships. Completely optional; GainPath still needs no account to use.
+- Added anonymous, aggregate-only usage analytics (random per-device ID, no accounts, no third-party trackers, no personal data) to help gauge whether this free trial is worth building a paid native app around — see `CHANGELOG.md` for details.
 - Bug fixes and stability improvements — see `CHANGELOG.md` for details.
 
 ---
@@ -66,7 +65,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of six sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Workouts, Calendar, Progress, PRs, and Export are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of seven sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync, Native app updates — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Workouts, Calendar, Progress, PRs, and Export are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
 
 ### ⚖️ Smart weight system
 
@@ -102,20 +101,22 @@ A language picker (English / 日本語 / 한국어) sits at the top, then a menu
 
 ### 🎨 Design & dark mode
 
-<img src="images/screenshots/dark-mode.png" width="260" alt="The Calendar tab in blueprint dark mode">
+<img src="images/screenshots/dark-mode.png" width="260" alt="The Calendar tab in Trail's dark mode">
 
-The **"Ledger"** look — a paper training logbook, rebuilt as an app. The
-light theme (the default) is graph paper: a faint grid ground, white cards
-with hairline borders, monospaced headers and numerals like handwritten
-entries, a green-and-amber accent (matching the GainPath logo) on the
-primary buttons, active tab, focus states, and charts, a compact streak
-card with an amber ledger rule, ink-toned day colors on the calendar, and
-PRs stamped on in a rotated amber-gold rubber-stamp style. Motion follows
-the same idea: quick paper-flat screen transitions and a streak number that
-ticks up like an odometer (`prefers-reduced-motion` respected throughout).
-Dark mode flips the logbook to a **blueprint** — navy paper, light grid,
-the same green-and-amber accent in brighter dark-mode tones — switchable in
-Settings and remembered between sessions.
+The **"Trail"** look, leaning into the GainPath mountain-path logo. The
+light theme (the default) has a warm, fog-toned background with a subtle
+topographic contour-line pattern, rounded cream cards, a serif display type
+(Fraunces) on headers and numerals in place of the previous monospace
+styling, and the same green-and-amber accent (matching the GainPath logo)
+on primary buttons, the active tab, focus states, and charts. PRs still
+stamp on in a rotated amber-gold style, and the Progress tab's chart reads
+as an elevation profile — every point that set a new best marked with a
+larger amber waypoint dot, like flags along an ascent. Motion follows the
+same idea: quick screen transitions and a streak number that ticks up like
+an odometer (`prefers-reduced-motion` respected throughout). Dark mode
+flips it to a **summit night** — deep moss-navy background, the same
+green-and-amber accent in brighter dark-mode tones — switchable in Settings
+and remembered between sessions.
 
 ### 📈 Progress tracking
 
