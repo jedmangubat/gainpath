@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   was generated and uploaded as a Worker secret (not committed anywhere).
   Verified end-to-end: `/stats` correctly rejects requests without the key,
   and a test beacon posted through `/e` shows up in `/stats` output.
+- **Bumped `sw.js` `CACHE_NAME`** (v16 → v17). It had only been bumped once
+  across the whole v1.10.0 body of work despite three subsequent commits
+  changing `index.html` (the 11-step tutorial, its tooltip-overlap fixes,
+  and the live analytics endpoint above) — meaning anyone whose browser had
+  already picked up v16 would keep being served that earlier, incomplete
+  `index.html` from cache. This bump makes sure the service worker actually
+  fetches the current shell for every change shipped so far.
 
 ## [1.10.0] - 2026-07-20
 
