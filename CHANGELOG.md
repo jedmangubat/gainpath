@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **`npm run test:units`** — new dev-only Playwright-based unit test harness
+  (`scripts/test_units.mjs`) covering `e1rm`, `sessionVolume`, `fmtVol`,
+  `recomputePRs`, and `chkPR`. Boots the real `index.html` the same way
+  `visual-check` does and calls the actual `window`-scope functions, so it
+  exercises production code rather than a reimplementation. Added after
+  installing the Superpowers Claude Code plugin and adopting its
+  `test-driven-development` skill — verified the harness catches real bugs by
+  deliberately breaking the `noPR` check in `recomputePRs`, confirming the
+  test failed, then reverting.
+
 ### Changed
 - **Deployed the analytics Worker** to `https://gainpath-analytics.jedmangubat.workers.dev`
   and wired the live URL into `ANALYTICS_ENDPOINT` in `index.html` — analytics

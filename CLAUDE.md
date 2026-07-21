@@ -151,3 +151,37 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   canvas color to transparent and re-flattening onto an opaque brand background
   for the alpha-intolerant `apple-touch-icon`. Requires Pillow
   (`pip3 install -r scripts/requirements.txt`).
+- **`npm run test:units`** — unit-tests GainPath's pure calculation functions
+  (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`) against the real
+  inline script, using the same Playwright boot pattern as `visual-check`
+  (seed `localStorage`, load `index.html`, call the real `window`-scope
+  functions from `page.evaluate`) rather than reimplementing their logic in
+  the test. Guards exactly the invariants called out below under "PRs are
+  derived, not authoritative" — warm-up sets ignored, `noPR` exercises
+  excluded, zero weight only counting for `holdSecs` exercises, and
+  `chkPR`/`recomputePRs` staying in sync. Add a case here whenever one of
+  those functions changes.
+
+## Claude Code plugins
+
+- **`superpowers` (obra/superpowers, via the official marketplace) is
+  installed** — a general-purpose agent-methodology plugin (TDD, systematic
+  debugging, planning, subagent-driven review), not fitness-domain-specific.
+  Only `test-driven-development` and `systematic-debugging` are actively
+  adopted here (see `npm run test:units` above, and reach for the
+  `systematic-debugging` skill's 4-phase root-cause method on any gnarly bug
+  report rather than ad hoc troubleshooting).
+- **Deliberately not adopted:** turning GainPath's recurring procedures
+  (batch exercise adds, README screenshot regen, the version/tag/release
+  flow) into `.claude/skills/` files. Superpowers' own `writing-skills` skill
+  states project-specific conventions belong in the project's instructions
+  file, not in a skill — which is exactly what this CLAUDE.md already is. It
+  also requires a full pressure-tested RED-GREEN-REFACTOR cycle with
+  subagents before any new skill ships, which isn't worth the overhead for
+  internal-only documentation. Don't re-propose converting these sections
+  into skills without a genuine cross-project reuse case.
+- Also deliberately left opt-in (not adopted): `using-git-worktrees`,
+  `finishing-a-development-branch`, `requesting-code-review`,
+  `receiving-code-review` — these assume a feature-branch + PR-review
+  workflow, but GainPath commits directly to `main`. Adopting them would be a
+  workflow change, not a pure add; only pick them up if that changes.
