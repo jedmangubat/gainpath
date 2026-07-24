@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Kinetic Athletic visual reskin.** New color palette (light mode: lime-green
+  `#4F7D16` accent on a clean white/off-white base; dark mode: bright lime
+  `#C6F24E` accent on near-black) and new typography (Archivo / Space Grotesk
+  for display and body, Space Mono for numerics), replacing the previous
+  forest-green + Fraunces serif look. The topographic background texture and the
+  tutorial spotlight SVGs were recolored to match. Visual-only — no changes to
+  app behavior, data model, or features; only theme CSS, the `<head>` font
+  links, and the accent/theme-color and share-card canvas color literals in
+  `accentColor()` were touched.
+- Bumped service worker `CACHE_NAME` to `gainpath-v19` so the restyled app shell
+  is picked up on next load.
+- **Note:** the reskin loads its fonts from `fonts.googleapis.com`, which the
+  service worker does not precache; offline, text falls back to the system font
+  stack (`system-ui`) rather than the Kinetic typefaces.
+
 ## [1.10.1] - 2026-07-24
 
 ### Added
