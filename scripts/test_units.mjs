@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Unit-tests GainPath's pure calculation functions (e1rm, sessionVolume,
-// fmtVol, recomputePRs, chkPR) against the real inline script, by seeding
+// fmtVol, recomputePRs, chkPR, suggestWeight, roundToGymWeight) against the
+// real inline script, by seeding
 // localStorage and loading index.html in a real headless browser — same
 // boot pattern as visual_check.mjs. This exercises the actual production
 // code (window-scope functions), not a reimplementation of it.
@@ -149,6 +150,60 @@ async function main() {
       chkPR('Bench press', 110, 4, false), true);
     check('chkPR after beating it reflects the new weight in ST.prs',
       ST.prs['Bench press'], { w: 110, r: 4, date: ST.prs['Bench press'].date });
+
+    // ── suggestWeight — RIR autoregulation. These read ST.history via
+    // exHistory(), so swap in a controlled history per case. Leave the gym
+    // inventory empty so roundToGymWeight is a no-op and deltas are exact.
+    // 'Barbell row' (mg:back) gives a full increment of 5kg and a small step of
+    // 2.5kg, so 'easy' and 'good' are distinguishable.
+    CFG.unit = 'kg'; CFG.gymDumbbells = []; CFG.gymPlates = {};
+    const rowEx = { name: 'Barbell row', mg: 'back' };
+    const mkSess = (name, exFeel, w) => ({ date: 'd', exercises: [{ name, exFeel, sets: [{ done: true, t: 'x', w, r: 8 }] }] });
+
+    ST.history = [mkSess('Barbell row', 'easy', 50)];
+    check('suggestWeight: 5+ reps left → +full increment (5kg)',
+      suggestWeight(rowEx, 50), { feel: 'easy', delta: 5, newW: 55 });
+    ST.history = [mkSess('Barbell row', 'good', 50)];
+    check('suggestWeight: 3–4 reps left → +small step (2.5kg)',
+      suggestWeight(rowEx, 50), { feel: 'good', delta: 2.5, newW: 52.5 });
+    ST.history = [mkSess('Barbell row', 'hard', 50)];
+    check('suggestWeight: 1–2 reps left → hold (no suggestion)',
+      suggestWeight(rowEx, 50), null);
+    ST.history = [mkSess('Barbell row', 'max', 50)];
+    check('suggestWeight: single failure → hold',
+      suggestWeight(rowEx, 50), null);
+    ST.history = [mkSess('Barbell row', 'max', 50), mkSess('Barbell row', 'max', 50)];
+    check('suggestWeight: two failures in a row → deload',
+      suggestWeight(rowEx, 50), { feel: 'max', delta: -5, newW: 45 });
+
+    // ── roundToGymWeight — equipment-aware snapping (round to owned gear).
+    // Dumbbells: user owns whole numbers 1–10 only, so nothing 2.5 is ever
+    // proposed.
+    const dbEx = { name: 'Dumbbell curl', mg: 'biceps' };
+    CFG.gymDumbbells = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    check('roundToGymWeight up: dumbbell 6.5 → next owned (7), never 2.5-steps',
+      roundToGymWeight(dbEx, 6.5, 'up'), 7);
+    check('roundToGymWeight down: dumbbell 6.5 → 6',
+      roundToGymWeight(dbEx, 6.5, 'down'), 6);
+    check('roundToGymWeight up: exact owned weight stays',
+      roundToGymWeight(dbEx, 7, 'up'), 7);
+    check('roundToGymWeight up: above the rack → the heaviest owned',
+      roundToGymWeight(dbEx, 15, 'up'), 10);
+    check('roundToGymWeight nearest (default dir): closest owned',
+      roundToGymWeight(dbEx, 6.4), 6);
+
+    // Plates: user owns a 20/10/5 set (per pair); loadable per-side totals are
+    // multiples of 5 on a 20kg bar. Snap up/down to the true next-loadable.
+    CFG.gymDumbbells = []; CFG.gymPlates = { 20: 1, 10: 1, 5: 1 };
+    check('roundToGymWeight up: barbell 68 → next loadable total (70)',
+      roundToGymWeight(rowEx, 68, 'up'), 70);
+    check('roundToGymWeight down: barbell 68 → prev loadable total (60)',
+      roundToGymWeight(rowEx, 68, 'down'), 60);
+    check('roundToGymWeight up: already-loadable total is unchanged',
+      roundToGymWeight(rowEx, 60, 'up'), 60);
+    CFG.gymPlates = {};
+    check('roundToGymWeight: no inventory configured → pass-through',
+      roundToGymWeight(rowEx, 63, 'up'), 63);
 
     return out;
   });

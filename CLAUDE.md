@@ -124,13 +124,25 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   PR behind. Live PR detection during a workout still uses `chkPR()`; keep the two
   in sync (same "ignore warm-up sets, zero weight only counts for timed holds"
   rules).
-- **The per-exercise feel rating is functional, not decorative.** `exFeel`
-  ("Too easy / Just right / Hard / Too much", stored per exercise on each history
-  record) drives `suggestWeight()`, which proposes the next weight. Suggestions are
-  always a one-tap **Apply/Dismiss** chip shown before the first set — never a
-  silent auto-change. This is deliberate: progression stays the user's explicit
-  decision (same principle as the manual starting-weight path). Don't wire feel
-  data into anything that changes weights without the user tapping Apply.
+- **The per-exercise rating is functional, not decorative.** `exFeel` is a
+  last-set **reps-in-reserve (RIR)** rating — "On your last set, how many reps
+  could you still have done?": 5+ / 3–4 / 1–2 / 0-to-failure. The stored keys are
+  still `easy`/`good`/`hard`/`max` (kept for history compatibility — do not
+  rename), but their user-facing labels live in `RIR_META` and `FEEL_OPTS`
+  (per-exercise), **separate from `FEEL_META`** which is the untouched
+  session-level "overall feel" rating (same keys, different labels — don't
+  collapse them). `exFeel` drives `suggestWeight()`: 5+ → +full increment, 3–4 →
+  +small step, 1–2 → hold, and two `max` sessions in a row → deload. Suggestions
+  are always a one-tap **Apply/Dismiss** chip — never a silent auto-change;
+  progression stays the user's explicit decision. Don't wire the rating into
+  anything that changes weights without the user tapping Apply.
+- **Weight the app proposes must be loadable from the user's gear.**
+  `suggestWeight()`, warm-up sets in `buildSets()`, and `getAIEstimatedWeight()`
+  all pass their result through `roundToGymWeight(ex, w, dir)` — `dir='up'` snaps
+  to the next-higher plate/dumbbell the user owns (Settings → My gym;
+  `CFG.gymDumbbells` / `CFG.gymPlates`), `'down'` for deloads, `'nearest'` is the
+  legacy default. It's a no-op when no inventory is configured. Never surface a
+  proposed weight (suggestion, warm-up, estimate) without snapping it.
 - **Reuse the analytics helpers** rather than recomputing inline:
   `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past

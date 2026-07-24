@@ -1099,12 +1099,12 @@ textarea{resize:vertical;min-height:100px}
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="ef-sets"></div>
   </div>
   <div style="background:var(--bg2);border-radius:10px;padding:14px;margin:14px 0">
-    <div style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" data-i18n="ef_question">How did this exercise feel?</div>
+    <div style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" data-i18n="ef_question">On your last set, how many reps could you still have done?</div>
     <div class="g2">
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('easy')"><span class="feel-icon">😌</span><div><div style="font-size:13px;font-weight:700;color:#3C8464" data-i18n="feel_too_easy">Too easy</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="feel_could_go_heavier">Could go heavier</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('good')"><span class="feel-icon">💪</span><div><div style="font-size:13px;font-weight:700;color:#4A6FA5" data-i18n="feel_just_right">Just right</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="feel_good_challenge">Good challenge</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('hard')"><span class="feel-icon">🔥</span><div><div style="font-size:13px;font-weight:700;color:#A5822B" data-i18n="feel_hard">Hard</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="feel_near_limit">Near my limit</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('max')"><span class="feel-icon">😵</span><div><div style="font-size:13px;font-weight:700;color:#C05A3E" data-i18n="feel_too_much">Too much</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="feel_reduce_next">Reduce next time</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('easy')"><span class="feel-icon">😌</span><div><div style="font-size:13px;font-weight:700;color:#3C8464" data-i18n="rir_5plus">5+ reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_5plus_sub">Way too light</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('good')"><span class="feel-icon">💪</span><div><div style="font-size:13px;font-weight:700;color:#4A6FA5" data-i18n="rir_3_4">3–4 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_3_4_sub">Room to grow</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('hard')"><span class="feel-icon">🔥</span><div><div style="font-size:13px;font-weight:700;color:#A5822B" data-i18n="rir_1_2">1–2 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_1_2_sub">Dialed in</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('max')"><span class="feel-icon">😵</span><div><div style="font-size:13px;font-weight:700;color:#C05A3E" data-i18n="rir_0">0 — to failure</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_0_sub">Nothing left</div></div></button>
     </div>
   </div>
   <button class="bs" style="width:100%;margin-top:4px;font-size:13px" onclick="submitExFeel(null)" data-i18n="btn_skip">Skip</button>
@@ -1172,7 +1172,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='1.10.1';
+const APP_VERSION='2.0.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1194,7 +1194,7 @@ function track(event){
 // or while a workout is being restored. Every version bump that ships a
 // user-facing feature should update WHATS_NEW_ITEMS alongside the README's
 // "What's new" section — see CLAUDE.md. ═══
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
 function showWhatsNew(){
   gid('whatsnew-version').textContent=t('whatsnew_heading')+' v'+APP_VERSION;
   gid('whatsnew-list').innerHTML=WHATS_NEW_ITEMS.map(k=>'<li>'+t(k)+'</li>').join('');
@@ -8397,7 +8397,15 @@ en:{
 "de_hint": "Drag to reorder · tap to edit sets/reps/weight · swipe right to swap · swipe left to delete",
 "dumbbells_owned_label": "Dumbbells owned (<span id=\"set-gym-unit2\">kg</span>, per hand)",
 "duration_label": "Duration",
-"ef_question": "How did this exercise feel?",
+"ef_question": "On your last set, how many reps could you still have done?",
+"rir_5plus": "5+ reps left",
+"rir_5plus_sub": "Way too light",
+"rir_3_4": "3–4 reps left",
+"rir_3_4_sub": "Room to grow",
+"rir_1_2": "1–2 reps left",
+"rir_1_2_sub": "Dialed in",
+"rir_0": "0 — to failure",
+"rir_0_sub": "Nothing left",
 "end_shortcut_label": "End-workout Shortcut name",
 "equipment_label": "Equipment",
 "exercise_name_label": "Exercise name",
@@ -8533,8 +8541,9 @@ en:{
 "tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch, switch dark mode, and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Exercise images now work fully offline — every exercise illustration is saved to your device, so they show up at the gym even with no signal.",
-"whatsnew_item2": "Bug fixes and stability improvements.",
+"whatsnew_item1": "A brand-new look — “Kinetic Athletic”: a brighter lime-green accent, cleaner light and dark themes, and fresh typography, bundled to work fully offline.",
+"whatsnew_item2": "The per-exercise rating is now about your last set: how many reps you had left in the tank. Your answer fine-tunes next session's weight suggestion.",
+"whatsnew_item3": "Weight suggestions and warm-ups now snap to the plates and dumbbells you actually own — set them under Settings → My gym, and you'll never be told to load something you don't have.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -8709,7 +8718,15 @@ ja:{
 "de_hint": "ドラッグで並べ替え・タップでセット/レップ/重量を編集・右スワイプで種目を入れ替え・左スワイプで削除",
 "dumbbells_owned_label": "所有ダンベル (<span id=\"set-gym-unit2\">kg</span>、片手分)",
 "duration_label": "所要時間",
-"ef_question": "この種目の感触はどうでしたか?",
+"ef_question": "最後のセットで、あと何回できましたか?",
+"rir_5plus": "あと5回以上",
+"rir_5plus_sub": "軽すぎる",
+"rir_3_4": "あと3〜4回",
+"rir_3_4_sub": "伸びしろあり",
+"rir_1_2": "あと1〜2回",
+"rir_1_2_sub": "ちょうど良い",
+"rir_0": "0回・限界まで",
+"rir_0_sub": "余力なし",
 "end_shortcut_label": "ワークアウト終了ショートカット名",
 "equipment_label": "器具",
 "exercise_name_label": "種目名",
@@ -8844,8 +8861,9 @@ ja:{
 "tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、ダークモード切り替え、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "種目の画像がオフラインでも完全に表示されるようになりました。すべての種目イラストが端末に保存されるので、電波のないジムでも表示されます。",
-"whatsnew_item2": "不具合修正と安定性の向上。",
+"whatsnew_item1": "デザインを一新 ——「Kinetic Athletic」: より鮮やかなライムグリーンのアクセント、洗練されたライト／ダークテーマ、新しいフォント。すべてオフラインでも動作します。",
+"whatsnew_item2": "種目ごとの評価が「最後のセットであと何回できたか」に変わりました。その回答が次回の重量提案を微調整します。",
+"whatsnew_item3": "重量の提案とウォームアップが、実際に持っているプレートとダンベルに合わせて丸められます。設定→マイジムで登録すれば、持っていない重量を指定されることはありません。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -9021,7 +9039,15 @@ ko:{
 "de_hint": "드래그하여 순서 변경 · 탭하여 세트/반복 횟수/무게 수정 · 오른쪽으로 스와이프하여 교체 · 왼쪽으로 스와이프하여 삭제",
 "dumbbells_owned_label": "보유한 덤벨 (<span id=\"set-gym-unit2\">kg</span>, 한 손 기준)",
 "duration_label": "소요 시간",
-"ef_question": "이 운동, 어떠셨나요?",
+"ef_question": "마지막 세트에서 몇 개 더 할 수 있었나요?",
+"rir_5plus": "5개 이상 남음",
+"rir_5plus_sub": "너무 가벼움",
+"rir_3_4": "3–4개 남음",
+"rir_3_4_sub": "성장 여지 있음",
+"rir_1_2": "1–2개 남음",
+"rir_1_2_sub": "딱 좋음",
+"rir_0": "0개 — 실패까지",
+"rir_0_sub": "여력 없음",
 "end_shortcut_label": "운동 종료 단축어 이름",
 "equipment_label": "장비",
 "exercise_name_label": "운동 이름",
@@ -9156,8 +9182,9 @@ ko:{
 "tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 다크 모드 전환, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "이제 운동 이미지가 오프라인에서도 완전히 표시됩니다 — 모든 운동 일러스트가 기기에 저장되어 신호가 없는 헬스장에서도 나타납니다.",
-"whatsnew_item2": "버그 수정 및 안정성 개선.",
+"whatsnew_item1": "완전히 새로운 디자인 — “Kinetic Athletic”: 더 밝은 라임그린 강조색, 깔끔해진 라이트·다크 테마, 새로운 서체. 모두 오프라인에서도 작동합니다.",
+"whatsnew_item2": "이제 운동별 평가가 마지막 세트 기준입니다: 몇 개를 더 할 수 있었는지 답하면 다음 세션의 무게 제안이 조정됩니다.",
+"whatsnew_item3": "무게 제안과 워밍업이 실제 보유한 원판과 덤벨에 맞춰집니다 — 설정 → 내 체육관에서 등록하면 없는 무게를 제안받지 않습니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -9592,7 +9619,7 @@ function buildSets(ex,savedW){
   const nSets=ex.plannedSets||CFG.prefSets;const reps=getSavedReps(ex.name)||ex.plannedR||CFG.prefReps;
   if(CFG.warmup&&ex.doWU&&baseW>0){
     const ramp=WU_RAMPS[CFG.wuSteps]||WU_RAMPS[1];
-    ramp.forEach(pct=>{const wuW=Math.round(baseW*pct*2)/2;sets.push({t:'w',w:wuW,r:CFG.wuReps,done:false});});
+    ramp.forEach(pct=>{let wuW=Math.round(baseW*pct*2)/2;const snapped=roundToGymWeight(ex,wuW,'up');if(snapped<baseW)wuW=snapped;sets.push({t:'w',w:wuW,r:CFG.wuReps,done:false});});
   }
   if(isPyramidEx(ex)){
     const pReps=pyramidReps(nSets);const inc=weightIncrement(ex);
@@ -9629,7 +9656,10 @@ function getAIEstimatedWeight(ex){
   else if(mg==='shoulders'&&lifts.ohp&&lifts.ohp.w>0){est=Math.round(lifts.ohp.w*0.6*2)/2;}
   else if((mg==='quads'||mg==='hamstrings')&&lifts.squat&&lifts.squat.w>0){est=Math.round(lifts.squat.w*0.7*2)/2;}
   else{est=Math.round(ex.baseW*expMult*2)/2||ex.baseW;}
-  return Math.max(est,2.5);
+  // Snap the estimate up to a weight the user can actually load (no-op if no
+  // gym inventory is configured); never propose e.g. a 2.5 kg dumbbell he
+  // doesn't own.
+  return roundToGymWeight(ex,Math.max(est,2.5),'up');
 }
 
 // ═══ ANALYTICS: volume, estimated 1RM, per-exercise history, RPE-based suggestions ═══
@@ -9639,8 +9669,13 @@ function fmtVol(v,unit){const u=unit||'';return v>=1000?(Math.round(v/100)/10)+'
 function exHistory(name){const out=[];ST.history.forEach((h,idx)=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');if(ws.length)out.push({idx,date:h.date,exFeel:ex.exFeel,note:ex.note||null,sets:ws});});return out;}
 function lastSessionEx(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex)return ex;}return null;}
 function lastNoteForExercise(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex&&ex.note)return ex.note;}return null;}
+// FEEL_META = the session-level "how did it feel overall" rating (unchanged).
+// RIR_META  = the per-exercise last-set "reps left in the tank" rating. Same
+// stored keys (easy/good/hard/max) and colors, different labels — kept as two
+// maps so relabeling the per-exercise rating never touches the session one.
 const FEEL_META={easy:{l:'Too easy',c:'#3C8464',e:'😌'},good:{l:'Just right',c:'#4A6FA5',e:'💪'},hard:{l:'Hard',c:'#A5822B',e:'🔥'},max:{l:'Too much',c:'#C05A3E',e:'😵'}};
-function feelChip(feel){const m=FEEL_META[feel];return m?'<span class="bdg" style="background:var(--bg2);color:'+m.c+'">'+m.e+' '+m.l+'</span>':'';}
+const RIR_META={easy:{l:'5+ reps left',c:'#3C8464',e:'😌'},good:{l:'3–4 reps left',c:'#4A6FA5',e:'💪'},hard:{l:'1–2 reps left',c:'#A5822B',e:'🔥'},max:{l:'0 — to failure',c:'#C05A3E',e:'😵'}};
+function feelChip(feel){const m=RIR_META[feel];return m?'<span class="bdg" style="background:var(--bg2);color:'+m.c+'">'+m.e+' '+m.l+'</span>':'';}
 function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg);return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}
 function stepIncrement(ex,curW){
   if(equipRank(ex)===1&&curW<20)return CFG.unit==='kg'?1:2;
@@ -9652,15 +9687,26 @@ function stepWeight(i,delta){
   const dispW=ex.machine&&mwBase>0?+(sets[i].w-mwBase).toFixed(1):sets[i].w;
   updSet(i,Math.max(0,Math.round((dispW+delta)*2)/2));
 }
+// Propose next-session weight from the last-set reps-left rating (RIR):
+//   5+ left (easy) → +full increment · 3–4 left (good) → +small step ·
+//   1–2 left (hard) → hold (ideal, no suggestion) ·
+//   0/failure (max) → hold, unless failed two sessions running → deload.
+// Always snapped to loadable equipment and surfaced as a one-tap Apply chip.
 function suggestWeight(ex,curW){
   if(ex.note==='bodyweight'||ex.holdSecs)return null;
-  const last=lastSessionEx(ex.name);if(!last||!last.exFeel)return null;
-  if(last.exFeel!=='easy'&&last.exFeel!=='max')return null;
-  const inc=weightIncrement(ex);
-  const delta=last.exFeel==='easy'?inc:-inc;
-  const newW=roundToGymWeight(ex,Math.max(0,Math.round((curW+delta)*2)/2));
+  const hist=exHistory(ex.name);if(!hist.length)return null;
+  const f=hist[hist.length-1].exFeel;if(!f)return null;
+  let delta=0,dir='up';
+  if(f==='easy')delta=weightIncrement(ex);
+  else if(f==='good')delta=stepIncrement(ex,curW);
+  else if(f==='max'){
+    const prev=hist.length>=2?hist[hist.length-2].exFeel:null;
+    if(prev==='max'){delta=-weightIncrement(ex);dir='down';}
+  }
+  if(delta===0)return null;
+  const newW=roundToGymWeight(ex,Math.max(0,Math.round((curW+delta)*2)/2),dir);
   if(newW===curW)return null;
-  return{feel:last.exFeel,delta:Math.round((newW-curW)*2)/2,newW};
+  return{feel:f,delta:Math.round((newW-curW)*2)/2,newW};
 }
 function pyramidReps(nSets){const reps=[];for(let i=0;i<nSets;i++)reps.push(Math.max(12-2*i,2));return reps;}
 function isPyramidEx(ex){return CFG.setStyle==='pyramid'&&ex.note!=='bodyweight'&&!ex.holdSecs;}
@@ -10401,24 +10447,45 @@ function calcPlates(perSide){
   });
   return{counts,remaining};
 }
-function roundToGymWeight(ex,w){
+// Snap a weight to what the user can actually load from their logged plates/
+// dumbbells ("My gym"). dir='up' picks the next-higher available weight
+// (progressive-overload / warm-up bias), 'down' the next-lower (for deloads),
+// 'nearest' the closest (legacy default — keeps any older caller unchanged).
+// With no inventory configured it's a no-op.
+function roundToGymWeight(ex,w,dir){
   if(w<=0||ex.note==='bodyweight'||ex.holdSecs)return w;
+  dir=dir||'nearest';
   const isDB=equipRank(ex)===1;
   if(isDB){
-    const owned=CFG.gymDumbbells||[];
+    const owned=(CFG.gymDumbbells||[]).slice().sort((a,b)=>a-b);
     if(!owned.length)return w;
+    if(dir==='up'){const hit=owned.find(d=>d>=w-1e-6);return hit!==undefined?hit:owned[owned.length-1];}
+    if(dir==='down'){for(let i=owned.length-1;i>=0;i--)if(owned[i]<=w+1e-6)return owned[i];return owned[0];}
     return owned.reduce((best,d)=>Math.abs(d-w)<Math.abs(best-w)?d:best,owned[0]);
   }
   if(!gymHasPlateInventory())return w;
   const base=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:(CFG.unit==='kg'?20:45);
   const targetPerSide=(w-base)/2;
   if(targetPerSide<=0)return w;
+  const loadable=t=>calcPlates(t).remaining<=0.01; // calcPlates clamps neg→0
+  const total=t=>Math.round((base+t*2)*2)/2;
+  // Scan the real loadable per-side grid (0.25 = calcPlates' rounding step) so
+  // the next-higher/lower loadable combo is found for any target, not just ones
+  // that happen to land on a weight-increment boundary.
+  if(dir==='up'){
+    for(let t=targetPerSide;t<=targetPerSide+50.001;t=Math.round((t+0.25)*100)/100)if(loadable(t))return total(t);
+    return w;
+  }
+  if(dir==='down'){
+    for(let t=targetPerSide;t>=-0.001;t=Math.round((t-0.25)*100)/100)if(loadable(Math.max(0,t)))return total(Math.max(0,t));
+    return w;
+  }
   const inc=weightIncrement(ex)/2;
   for(let d=0;d<=4;d++){
     for(const sign of(d===0?[0]:[-1,1])){
       const trial=targetPerSide+sign*d*inc;
       if(trial<0)continue;
-      if(calcPlates(trial).remaining<=0.01)return Math.round((base+trial*2)*2)/2;
+      if(loadable(trial))return total(trial);
     }
   }
   return w;
@@ -10519,7 +10586,7 @@ function renderEx(){
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const sug=fw?suggestWeight(ex,fw.w):null;
-    if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb=sug.delta>0?'felt too easy':'was too much';
+    if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb={easy:'you had 5+ reps left',good:'you had 3–4 reps left',max:'you hit failure'}[sug.feel]||'time to adjust';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db ok" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">Dismiss</button></div>';}
   }
   gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+exDisplayName(ex.name)+'</div><button type="button" onclick="showExInstructions(\''+ex.name+'\')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sh+sugHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
@@ -10660,10 +10727,10 @@ function addDropSet(i){
   renderEx();saveInProgress();
 }
 const FEEL_OPTS=[
-  {k:'easy',icon:'😌',label:'Too easy',color:'#3C8464',sub:'Could go heavier'},
-  {k:'good',icon:'💪',label:'Just right',color:'#4A6FA5',sub:'Good challenge'},
-  {k:'hard',icon:'🔥',label:'Hard',color:'#A5822B',sub:'Near my limit'},
-  {k:'max',icon:'😵',label:'Too much',color:'#C05A3E',sub:'Reduce next time'}
+  {k:'easy',icon:'😌',label:'5+ reps left',color:'#3C8464',sub:'Way too light'},
+  {k:'good',icon:'💪',label:'3–4 reps left',color:'#4A6FA5',sub:'Room to grow'},
+  {k:'hard',icon:'🔥',label:'1–2 reps left',color:'#A5822B',sub:'Dialed in'},
+  {k:'max',icon:'😵',label:'0 — to failure',color:'#C05A3E',sub:'Nothing left'}
 ];
 function setPrepLabel(ex,s){
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
@@ -10672,7 +10739,7 @@ function setPrepLabel(ex,s){
 }
 function renderRestFeel(P){
   const item=ST.sd[P];if(!item)return;const sel=item.exFeel;
-  gid('r-feel-q').textContent=sel!=null?'Rated — tap to change':'How did '+item.ex.name+' feel?';
+  gid('r-feel-q').textContent=sel!=null?'Rated — tap to change':'On your last set of '+item.ex.name+', how many reps left?';
   gid('r-feel-btns').innerHTML=FEEL_OPTS.map(o=>'<button class="feel-btn" style="margin-bottom:0'+(sel===o.k?';border-color:var(--accent);background:var(--tint-green-1)':'')+'" onclick="restRate(\''+o.k+'\')"><span class="feel-icon">'+o.icon+'</span><div><div style="font-size:13px;font-weight:700;color:'+o.color+'">'+o.label+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+o.sub+'</div></div></button>').join('');
 }
 function restRate(feel){const P=ST.exi;if(!ST.sd[P])return;ST.sd[P].exFeel=feel;ST.restRated=true;renderRestFeel(P);saveInProgress();}

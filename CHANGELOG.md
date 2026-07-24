@@ -6,7 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-24
+
+This is a milestone release: a full visual redesign ("Kinetic Athletic")
+alongside a reworked per-exercise rating and smarter, equipment-aware weight
+suggestions. No breaking data changes — existing history and settings carry
+over untouched.
+
 ### Changed
+- **The per-exercise rating is now about your last set — reps in reserve (RIR).**
+  Instead of "How did this exercise feel? (Too easy / Just right / Hard / Too
+  much)", GainPath now asks *"On your last set, how many reps could you still
+  have done?"* with four buckets: **5+ reps left / 3–4 reps left / 1–2 reps left /
+  0 — to failure**. This is a more precise autoregulation signal. The stored
+  values (`easy`/`good`/`hard`/`max`) and colors are unchanged, so past history
+  keeps working; older sessions simply render with the new labels. The separate
+  end-of-session "how did it feel overall" rating is untouched.
+- **Weight suggestions now use the whole RIR scale.** 5+ reps left → suggests a
+  full increment heavier; 3–4 left → a smaller step up; 1–2 left → hold (the
+  ideal zone, no suggestion); hitting failure two sessions in a row → suggests a
+  deload. Suggestions remain a one-tap Apply/Dismiss chip — never a silent
+  change. The chip copy now reflects the reps-left wording.
+- **Suggestions, warm-ups, and the starting-weight estimate now snap to the
+  plates and dumbbells you actually own** (Settings → My gym). Snapping rounds
+  **up** to the next weight you can load — so the app never proposes, e.g., a
+  2.5 kg dumbbell when your rack is whole numbers only, or a barbell total you
+  can't build. A deload snaps down instead. With no gym inventory configured,
+  behavior is unchanged. (`roundToGymWeight` gained a direction argument;
+  warm-up sets and `getAIEstimatedWeight` now call it, and the plate search
+  scans the real loadable grid so it works for any target.)
 - **Kinetic Athletic visual reskin.** New color palette (light mode: lime-green
   `#4F7D16` accent on a clean white/off-white base; dark mode: bright lime
   `#C6F24E` accent on near-black) and new typography (Archivo / Space Grotesk
@@ -23,8 +51,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   servers. Also removed the now-unused Fraunces font link (and its entry in the
   service worker `CDN_URLS`). Latin-only by design — JA/KO text keeps the system
   font fallback, as before.
-- Bumped service worker `CACHE_NAME` to `gainpath-v20` so the restyled shell and
-  bundled fonts are picked up on next load.
+- Bumped `APP_VERSION` to `2.0.0` and the service worker `CACHE_NAME` to
+  `gainpath-v22` so the restyled shell, bundled fonts, and new behavior are
+  picked up on next load. Updated the in-app "What's New" sheet accordingly.
+
+### Testing
+- `scripts/test_units.mjs` now also covers `suggestWeight` (each RIR bucket plus
+  the repeated-failure deload) and `roundToGymWeight` (up/down/nearest snapping
+  for dumbbells and plates, and the no-inventory pass-through).
 
 ## [1.10.1] - 2026-07-24
 

@@ -8,10 +8,14 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.10.1
+## ✨ What's new in v2.0.0
 
-- **Exercise images now work fully offline.** Every exercise illustration is saved to your device when GainPath loads, so the demo images show up at the gym even with no signal — not just the exercises you happened to open while online. (Built-in exercises whose image can't load now show a neutral placeholder instead of an unrelated link.)
-- Bug fixes and stability improvements — see `CHANGELOG.md` for details.
+A milestone release — a full redesign plus a smarter approach to progression.
+
+- **A brand-new look — "Kinetic Athletic."** A brighter lime-green accent, cleaner light/dark palettes, and new Archivo / Space Grotesk / Space Mono typography across every screen, bundled to work fully offline.
+- **Rate your last set, not a vibe.** After each exercise GainPath now asks *"On your last set, how many reps could you still have done?"* — **5+ / 3–4 / 1–2 / 0 (to failure)**. It's a sharper read on how hard the set really was than the old "how did it feel."
+- **Smarter weight suggestions from that answer.** 5+ reps left bumps the weight up a full step, 3–4 nudges it a little, 1–2 holds (you're in the sweet spot), and failing two sessions running suggests a deload. Still a one-tap Apply/Dismiss chip — never an automatic change.
+- **Suggestions match your actual gym.** Weight suggestions, warm-ups, and the starting-weight estimate now round **up to the next plate or dumbbell you actually own** (set them under Settings → My gym) — so you're never told to load a 2.5 kg dumbbell you don't have or a barbell total you can't build.
 
 ---
 
@@ -70,11 +74,11 @@ A language picker (English / 日本語 / 한국어) sits at the top, then a menu
 <img src="images/screenshots/plate-calc.png" width="260" alt="Plate calculator showing the per-side plate breakdown for a target weight">
 
 - Estimates starting weights from your body stats, experience level, and strength baseline
-- Suggests your next weight from how the exercise felt last time — rate it "Too easy" and the app offers a small bump, rate it "Too much" and it offers to back off. Always a one-tap suggestion you can apply or dismiss, never an automatic change
+- Suggests your next weight from how many reps you had left on your last set — "5+ reps left" offers a full bump, "3–4 left" a small step, "1–2 left" holds you in the sweet spot, and failing two sessions in a row offers a deload. Always a one-tap suggestion you can apply or dismiss, never an automatic change
 - Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - **Plate calculator** — tap the plate icon by any weight to see the per-side breakdown ("20 + 10 + 2.5 per side"), accounting for the bar/machine base weight and your kg/lb plate set
-- **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, snapping a suggested dumbbell weight to the nearest one on your rack even if it steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after)
+- **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, rounding a suggested weight **up to the next dumbbell or plate total you own** even if the rack steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after) — and warm-ups and the starting-weight estimate snap the same way
 - **Deload & overtraining advisor** — if your last three sessions all felt Hard or Too Much, or a tracked lift has stalled for three sessions running, a home banner offers to auto-load your next session's weights at −30%, one tap to apply or dismiss
 - **±weight steppers** beside every weight input during logging — two taps instead of the keyboard for the vast majority of adjustments
 - Warm-up sets on the first exercise per muscle group — pick 1, 2, or 3 ramping sets (e.g. 40/60/80% of your working weight) in Settings
@@ -95,7 +99,7 @@ A language picker (English / 日本語 / 한국어) sits at the top, then a menu
 - **Hold timer beeps** — timed holds (plank, dead hang, farmers carry…) beep through the final 5 seconds and fire a stronger alert the moment you match or beat your last logged best, the same audible-feedback pattern as the rest timer
 - **Keep the screen awake** during a workout (toggle in Settings) — no more Face ID between every set
 - If you've switched to another app when the timer ends, GainPath sends a **notification** to pull you back (Android/desktop; iPhone PWAs can't run timers in the background, so there the alarm fires the instant you reopen the app)
-- Per-exercise RPE rating after each exercise (Too easy / Just right / Hard / Too much) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
+- Per-exercise reps-in-reserve rating after each exercise ("On your last set, how many reps could you still have done?" — 5+ / 3–4 / 1–2 / 0 to failure) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
 ### 🎨 Design & dark mode
 
