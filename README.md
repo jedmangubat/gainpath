@@ -8,12 +8,9 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v1.10.0
+## ✨ What's new in v1.10.1
 
-- **New look: "Trail"** — a full visual redesign leaning into the GainPath mountain-path logo. Topographic contour lines in the background, a warm serif display type, rounder cards, and a Progress tab that visualizes your training as an elevation profile — every point that set a new best marked as a flag along the ascent. Replaces the previous "Ledger" paper-logbook theme.
-- **A guided tutorial covering the whole app** — eleven swipeable screens, each a real screenshot with a spotlight ring around exactly what to tap: picking a day, customizing exercises, building a custom program, logging sets, the plate calculator, rest timer, Progress, PRs, Calendar, PDF reports/backups, and Settings. Shown once after onboarding (skip anytime), and always reachable again from Settings → How to use.
-- **Optional native-app launch notification** — in Settings → Native app updates, leave an email if you want to hear when the upcoming iOS/Android app ships. Completely optional; GainPath still needs no account to use.
-- Added anonymous, aggregate-only usage analytics (random per-device ID, no accounts, no third-party trackers, no personal data) to help gauge whether this free trial is worth building a paid native app around — see `CHANGELOG.md` for details.
+- **Exercise images now work fully offline.** Every exercise illustration is saved to your device when GainPath loads, so the demo images show up at the gym even with no signal — not just the exercises you happened to open while online. (Built-in exercises whose image can't load now show a neutral placeholder instead of an unrelated link.)
 - Bug fixes and stability improvements — see `CHANGELOG.md` for details.
 
 ---

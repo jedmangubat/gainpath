@@ -43,7 +43,15 @@ service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
   because the v1.2.x commits were pushed but never tagged).
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
   matching the exact exercise `name` field in the `EX` object in `index.html`
-  (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`).
+  (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`). These are
+  precached for offline use by the service worker: `sw.js` holds an
+  `EX_IMAGE_URLS` list of every file in `images/exercises/`. **When you add or
+  remove an exercise image, update `EX_IMAGE_URLS` in `sw.js` to match and bump
+  `CACHE_NAME`** — otherwise new images won't be part of the offline precache
+  (they'll still cache on-demand when viewed online, but not offline-first).
+  A built-in exercise whose image fails to load shows a neutral placeholder;
+  only `custom:true` exercises fall back to a YouTube-search "Tutorial" link
+  (`exImgFallback` branches on `custom`).
 - **Never add an exercise to the `EX` object without its image already in place.**
   When proposing/adding a batch of new exercises, stage them in a dedicated
   image-prompts `.txt` at the repo root (self-contained, paste-ready prompt per

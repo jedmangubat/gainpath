@@ -1166,7 +1166,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='1.10.0';
+const APP_VERSION='1.10.1';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1188,7 +1188,7 @@ function track(event){
 // or while a workout is being restored. Every version bump that ships a
 // user-facing feature should update WHATS_NEW_ITEMS alongside the README's
 // "What's new" section — see CLAUDE.md. ═══
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
 function showWhatsNew(){
   gid('whatsnew-version').textContent=t('whatsnew_heading')+' v'+APP_VERSION;
   gid('whatsnew-list').innerHTML=WHATS_NEW_ITEMS.map(k=>'<li>'+t(k)+'</li>').join('');
@@ -8428,6 +8428,7 @@ en:{
 "ph_last_name": "Last name",
 "tip_fallback": "Keep your form tight and controlled.",
 "instructions_coming_soon": "Detailed instructions coming soon for this exercise.",
+"img_unavailable_offline": "Image unavailable offline — reconnect to load it.",
 "exercises_label": "Exercises",
 "exp_advanced": "Advanced",
 "exp_advanced_yrs": "3+ yrs",
@@ -8526,9 +8527,8 @@ en:{
 "tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch, switch dark mode, and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "New \"Trail\" look — a full visual redesign leaning into the mountain-path logo, with a Progress tab that reads like an elevation profile.",
-"whatsnew_item2": "Optional native-app launch notification — leave an email in Settings → Native app updates to hear when the iOS/Android app ships.",
-"whatsnew_item3": "Bug fixes and stability improvements.",
+"whatsnew_item1": "Exercise images now work fully offline — every exercise illustration is saved to your device, so they show up at the gym even with no signal.",
+"whatsnew_item2": "Bug fixes and stability improvements.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -8740,6 +8740,7 @@ ja:{
 "ph_last_name": "姓",
 "tip_fallback": "フォームをしっかり保ち、コントロールして行いましょう。",
 "instructions_coming_soon": "この種目の詳しい説明は近日公開予定です。",
+"img_unavailable_offline": "オフラインでは画像を読み込めません。再接続すると表示されます。",
 "exercises_label": "種目",
 "exp_advanced": "上級者",
 "exp_advanced_yrs": "3年以上",
@@ -8837,9 +8838,8 @@ ja:{
 "tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、ダークモード切り替え、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "新デザイン「Trail」— マウンテンパスのロゴを活かした全面リニューアル。Progressタブは登山の標高プロファイルのような表示に。",
-"whatsnew_item2": "ネイティブアプリ公開通知（任意）— 設定 → ネイティブアプリの最新情報 からメールアドレスを登録すると、iOS/Androidアプリ公開時にお知らせします。",
-"whatsnew_item3": "不具合修正と安定性の向上。",
+"whatsnew_item1": "種目の画像がオフラインでも完全に表示されるようになりました。すべての種目イラストが端末に保存されるので、電波のないジムでも表示されます。",
+"whatsnew_item2": "不具合修正と安定性の向上。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -9052,6 +9052,7 @@ ko:{
 "ph_last_name": "성",
 "tip_fallback": "자세를 단단히 유지하고 조절하며 수행하세요.",
 "instructions_coming_soon": "이 운동에 대한 자세한 설명은 곧 제공될 예정입니다.",
+"img_unavailable_offline": "오프라인에서는 이미지를 불러올 수 없습니다. 다시 연결하면 표시됩니다.",
 "exercises_label": "운동",
 "exp_advanced": "상급",
 "exp_advanced_yrs": "3년 이상",
@@ -9149,9 +9150,8 @@ ko:{
 "tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 다크 모드 전환, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "새로운 \"Trail\" 디자인 — 마운틴 패스 로고를 살린 전면 리디자인. Progress 탭이 등반 고도 프로필처럼 표시됩니다.",
-"whatsnew_item2": "네이티브 앱 출시 알림(선택) — 설정 → 네이티브 앱 소식 에서 이메일을 등록하면 iOS/Android 앱 출시 시 알려드립니다.",
-"whatsnew_item3": "버그 수정 및 안정성 개선.",
+"whatsnew_item1": "이제 운동 이미지가 오프라인에서도 완전히 표시됩니다 — 모든 운동 일러스트가 기기에 저장되어 신호가 없는 헬스장에서도 나타납니다.",
+"whatsnew_item2": "버그 수정 및 안정성 개선.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -10458,11 +10458,23 @@ function saveMW(skip){
   processMWQueue();
 }
 function exSlug(name){return name.toLowerCase().replace(/\s+/g,'-');}
-function exImgFallback(img,yt){
-  const a=document.createElement('a');
-  a.className='byt';a.href='https://www.youtube.com/results?search_query='+yt;a.target='_blank';
-  a.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="#fff" fill-opacity=".3"/><path d="M10 9l6 3-6 3V9z" fill="#fff"/></svg>Tutorial';
-  img.replaceWith(a);
+function exImgFallback(img,yt,custom){
+  // Custom exercises have no bundled image by design — link out to a YouTube
+  // search. Built-in exercises DO have an image; if it failed to load (e.g.
+  // offline before it was ever cached) show a neutral placeholder instead of
+  // the YouTube link, which otherwise wrongly appears on built-in exercises.
+  if(custom){
+    const a=document.createElement('a');
+    a.className='byt';a.href='https://www.youtube.com/results?search_query='+yt;a.target='_blank';
+    a.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="#fff" fill-opacity=".3"/><path d="M10 9l6 3-6 3V9z" fill="#fff"/></svg>Tutorial';
+    img.replaceWith(a);
+    return;
+  }
+  const d=document.createElement('div');
+  d.className='ex-img';
+  d.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:140px;color:var(--txt3);text-align:center;padding:16px';
+  d.innerHTML='<i class="ti ti-photo-off" style="font-size:30px" aria-hidden="true"></i><span style="font-size:12px;max-width:220px">'+t('img_unavailable_offline')+'</span>';
+  img.replaceWith(d);
 }
 function renderEx(){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
@@ -10497,7 +10509,7 @@ function renderEx(){
   const tipHtml='<div style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-bulb" aria-hidden="true" style="flex-shrink:0;margin-top:1px;color:var(--accent)"></i><span>'+item.tipText+'</span></div>';
   const noteHtml=exNoteHtml(item,ex);
   const isLast=ST.exi>=ST.sd.length-1;
-  const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\')">';
+  const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\','+(ex.custom?1:0)+')">';
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const sug=fw?suggestWeight(ex,fw.w):null;

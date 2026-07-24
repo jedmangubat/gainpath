@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-07-24
+
 ### Added
 - **`npm run test:units`** — new dev-only Playwright-based unit test harness
   (`scripts/test_units.mjs`) covering `e1rm`, `sessionVolume`, `fmtVol`,
@@ -16,6 +18,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `test-driven-development` skill — verified the harness catches real bugs by
   deliberately breaking the `noPR` check in `recomputePRs`, confirming the
   test failed, then reverting.
+- **All exercise images now work fully offline.** The service worker
+  (`sw.js`) precaches every bundled exercise illustration (all 120 files in
+  `images/exercises/`, ~138 MB) on install, in addition to the app shell.
+  Previously an exercise image was only available offline if the user had
+  already viewed that exercise while online (the fetch handler caches images
+  on-demand); a built-in exercise opened offline before it was ever cached
+  had no image. The precache is best-effort (a single failed image can't
+  abort install) and the on-demand image caching still covers anything not in
+  the list (e.g. a newly added exercise). This is why `sw.js` `CACHE_NAME`
+  was bumped again below (v17 → v18). Verified via a headless-browser check
+  that a fresh install populates the v18 cache with the shell plus all 120
+  exercise images. (2026-07-24)
+
+### Fixed
+- **Built-in exercises no longer fall back to a YouTube "Tutorial" link when
+  their image fails to load.** The exercise-image `onerror` handler
+  (`exImgFallback`) was unconditionally swapping in a red YouTube-search
+  button — behavior only ever intended for *custom* exercises, which have no
+  bundled image by design. A built-in exercise whose image failed to load
+  (most commonly offline, before that image had been cached — see the offline
+  precaching item above) would wrongly show the same YouTube link instead of
+  its illustration. The fallback now branches on `ex.custom`: custom
+  exercises keep the YouTube link, while built-in exercises show a neutral
+  "Image unavailable offline — reconnect to load it." placeholder (localized
+  in en/ja/ko). Verified in a headless browser that a built-in exercise's
+  image error yields the placeholder and a custom exercise's still yields the
+  YouTube link. (2026-07-24)
 
 ### Changed
 - **Deployed the analytics Worker** to `https://gainpath-analytics.jedmangubat.workers.dev`
@@ -26,13 +55,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   was generated and uploaded as a Worker secret (not committed anywhere).
   Verified end-to-end: `/stats` correctly rejects requests without the key,
   and a test beacon posted through `/e` shows up in `/stats` output.
-- **Bumped `sw.js` `CACHE_NAME`** (v16 → v17). It had only been bumped once
-  across the whole v1.10.0 body of work despite three subsequent commits
-  changing `index.html` (the 11-step tutorial, its tooltip-overlap fixes,
-  and the live analytics endpoint above) — meaning anyone whose browser had
-  already picked up v16 would keep being served that earlier, incomplete
-  `index.html` from cache. This bump makes sure the service worker actually
-  fetches the current shell for every change shipped so far.
+- **Bumped `sw.js` `CACHE_NAME`** (v16 → v17, then v17 → v18). The v16 → v17
+  bump: it had only been bumped once across the whole v1.10.0 body of work
+  despite three subsequent commits changing `index.html` (the 11-step
+  tutorial, its tooltip-overlap fixes, and the live analytics endpoint above)
+  — meaning anyone whose browser had already picked up v16 would keep being
+  served that earlier, incomplete `index.html` from cache. The v17 → v18 bump
+  covers the offline exercise-image precaching (see Added) — the install-time
+  cache contents changed, so the name had to change for the new service worker
+  to rebuild the cache. Together these make sure the service worker fetches
+  the current shell and populates the full offline image set for every change
+  shipped so far.
 
 ## [1.10.0] - 2026-07-20
 
