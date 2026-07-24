@@ -13,14 +13,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   for display and body, Space Mono for numerics), replacing the previous
   forest-green + Fraunces serif look. The topographic background texture and the
   tutorial spotlight SVGs were recolored to match. Visual-only — no changes to
-  app behavior, data model, or features; only theme CSS, the `<head>` font
-  links, and the accent/theme-color and share-card canvas color literals in
-  `accentColor()` were touched.
-- Bumped service worker `CACHE_NAME` to `gainpath-v19` so the restyled app shell
-  is picked up on next load.
-- **Note:** the reskin loads its fonts from `fonts.googleapis.com`, which the
-  service worker does not precache; offline, text falls back to the system font
-  stack (`system-ui`) rather than the Kinetic typefaces.
+  app behavior, data model, or features; only theme CSS, the accent/theme-color
+  and share-card canvas color literals in `accentColor()` were touched.
+- **Self-hosted the reskin fonts for full offline support.** The Kinetic
+  typefaces (Archivo, Space Grotesk, Space Mono — latin subset) are now bundled
+  locally under `fonts/` and declared via `@font-face`, instead of being pulled
+  from `fonts.googleapis.com`. The service worker precaches them, so the new
+  design renders identically online and offline with no dependency on Google's
+  servers. Also removed the now-unused Fraunces font link (and its entry in the
+  service worker `CDN_URLS`). Latin-only by design — JA/KO text keeps the system
+  font fallback, as before.
+- Bumped service worker `CACHE_NAME` to `gainpath-v20` so the restyled shell and
+  bundled fonts are picked up on next load.
 
 ## [1.10.1] - 2026-07-24
 
