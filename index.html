@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="images/branding/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/branding/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ECEEE4">
+<meta name="theme-color" content="#0C1512">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GainPath">
@@ -63,7 +63,7 @@ html[data-theme="dark"]{
   --brand-green:#C6F24E;--brand-amber:#C6F24E;
   --brand-forge:#C6F24E;--forge-text:#C6F24E;--accent-ink:#0C1512;
   --brand-gold:#C6F24E;--gold-text:#0C1512;
-  --page-bg:#06100B;
+  --page-bg:#0C1512;
   --shadow-sm:none;
   --shadow-md:none;
   --shadow-lg:none;
@@ -118,14 +118,22 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .bs:hover{background:var(--bg3)}.bs:active{transform:scale(.97)}
 .bg{background:transparent;color:var(--txt2);border:none;font-size:15px;cursor:pointer;padding:8px 12px}
 .byt{display:inline-flex;align-items:center;gap:5px;background:#E24B4A;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
-.sr{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px dashed var(--bdr);flex-wrap:wrap}.sr:last-child{border-bottom:none}
-.sr-grp{display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
-.sr-actions{display:inline-flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
-.sn{width:26px;height:26px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--txt2);flex-shrink:0}
-.sn.d{background:var(--tint-green-1);color:var(--brand-green)}.sn.w{background:var(--tint-amber-1);color:var(--tint-amber-text)}
-.wi{width:62px;padding:6px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;background:var(--bg);color:var(--txt);text-align:center}
-.bw-mode{width:40px;padding:8px 4px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--txt2);cursor:pointer;text-align:center}
-.ri{width:50px;padding:6px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;background:var(--bg);color:var(--txt);text-align:center}
+.sr{display:flex;align-items:center;gap:5px;padding:8px 10px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;transition:opacity .15s}
+.sr.done{opacity:.5}
+.sr.active{background:linear-gradient(100deg,var(--tint-green-1),var(--bg2));border:1.5px solid var(--accent)}
+.sn{width:26px;height:26px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--txt2);flex-shrink:0;font-family:var(--font-display)}
+.sn.on{background:var(--accent);color:var(--accent-ink)}
+.sn.d{background:var(--tint-green-1);color:var(--accent)}
+.sn.w{background:var(--bg3);color:var(--txt3)}
+.sst{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr);color:var(--accent);font-family:var(--font-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sst:active{transform:scale(.92)}.sst.plate{font-size:13px}
+.wi{width:44px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
+.ri{width:30px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
+.sr-u{font-size:11px;color:var(--txt2);margin:0 2px 0 1px}
+.sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 5px}
+.bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:700;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
+.log{margin-left:auto;flex-shrink:0;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:8px 14px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.log:active{transform:scale(.95)}.log.done{background:var(--tint-green-1);color:var(--accent);padding:8px 12px}
 .db{padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--txt);white-space:nowrap;transition:transform .12s,box-shadow .15s}
 .db:active{transform:scale(.95)}
 .db.ok{background:var(--tint-green-2);color:var(--brand-green);border-color:transparent;box-shadow:var(--shadow-sm)}
@@ -164,10 +172,13 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .bn-item.on{color:var(--accent)}
 .app.has-nav .screen.active{padding-bottom:86px}
 @keyframes penline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.streak-hero{background:var(--bg);color:var(--accent-ink);border:1px solid var(--bdr);border-left:4px solid var(--brand-forge);border-radius:var(--radius);padding:16px 24px;margin-bottom:12px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.streak-hero-num{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--brand-forge)}
-.streak-hero-lbl{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;opacity:.85;margin-top:2px}
-.streak-hero-cta{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.streak-hero{background:var(--accent);color:var(--accent-ink);border:none;border-radius:20px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.streak-hero-l{display:flex;flex-direction:column;gap:1px;min-width:0}
+.streak-hero-num{font-family:var(--font-display);font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:.82;color:var(--accent-ink)}
+.streak-hero-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent-ink);opacity:.72}
+.streak-hero-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-align:right;white-space:nowrap}
+.streak-hero-cta{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--accent-ink)}
+.streak-hero-week{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.82}
 .hero-pill{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px}
 .hero-pill-green{background:var(--tint-green-1);border:1px solid var(--tint-green-2)}
 .ail{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:13px}
@@ -183,10 +194,22 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .inp:focus{border-color:var(--accent)}
 .opt-btn{padding:12px 8px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s;width:100%}
 .opt-btn:hover{border-color:var(--accent)}
-.opt-btn.on{border-color:transparent;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.opt-btn.on{border-color:transparent;background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
 .chip-tog{padding:8px 4px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s}
 .chip-tog:hover{border-color:var(--accent)}
-.chip-tog.on{border-color:transparent;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.chip-tog.on{border-color:transparent;background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
+/* Plate calculator — loaded-barbell visual */
+.pc-stage{display:flex;align-items:center;justify-content:center;min-height:150px;background:var(--bg2);border-radius:12px;padding:16px 8px;overflow-x:auto}
+.pc-bar{display:flex;align-items:center;flex:none}
+.pc-sleeve{height:9px;width:30px;flex:none;background:linear-gradient(#c9ccc0,#9aa08e)}
+.pc-grip{height:14px;width:52px;flex:none;border-radius:2px;background:repeating-linear-gradient(90deg,#8a9080,#8a9080 2px,#a7ad9c 2px,#a7ad9c 4px)}
+.pc-collar{height:22px;width:8px;flex:none;margin:0 2px;background:#6b7160;border-radius:2px}
+.pc-disc{flex:none;margin:0 1.5px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;line-height:1;box-shadow:0 2px 4px rgba(0,0,0,.22)}
+.pc-msg{font-size:13px;color:var(--txt2);text-align:center;padding:14px 0}
+.pc-sum{text-align:center;margin-top:16px}
+.pc-sum-lbl{font-family:var(--font-display);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--txt2)}
+.pc-sum-val{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--txt);margin-top:6px;letter-spacing:.02em}
+.pc-sum-sub{font-size:12px;color:var(--txt3);margin-top:5px}
 .chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
 label{font-size:13px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
 h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
@@ -198,7 +221,7 @@ h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;let
 .tut-tooltip{position:absolute;background:var(--bg);border-radius:10px;padding:12px 14px;box-shadow:0 8px 20px rgba(0,0,0,.3);max-width:82%}
 .tut-tooltip-title{font-family:var(--font-display);font-weight:700;font-size:14px;margin-bottom:3px;color:var(--txt)}
 .tut-tooltip-body{font-size:12px;color:var(--txt2);line-height:1.45}
-.tut-step-badge{position:absolute;top:-10px;left:-10px;width:24px;height:24px;border-radius:50%;background:var(--brand-forge);color:#fff;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.tut-step-badge{position:absolute;top:-10px;left:-10px;width:24px;height:24px;border-radius:50%;background:var(--brand-forge);color:var(--accent-ink);font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
 select,textarea{font-size:13px;width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);color:var(--txt);margin-bottom:12px;outline:none;appearance:none;-webkit-appearance:none}
 select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:100px}
@@ -434,17 +457,15 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <button class="bg" style="padding:8px 8px" onclick="openSettings()" aria-label="Settings"><i class="ti ti-settings" style="font-size:20px" aria-hidden="true"></i></button>
   </div>
-  <div class="streak-hero">
-    <div>
+  <div class="streak-hero" id="hm-streak">
+    <div class="streak-hero-l">
+      <div class="streak-hero-lbl" data-i18n="streak_wk_label">Week streak</div>
       <div class="streak-hero-num" id="h-str">0</div>
-      <div class="streak-hero-lbl" data-i18n="streak_wk_label">Wk streak</div>
     </div>
-    <div class="streak-hero-cta"><i class="ti ti-flame" id="h-str-ic" aria-hidden="true"></i> <span id="h-str-cta">Start your streak</span></div>
-  </div>
-  <div class="hero-pill hero-pill-green" style="display:inline-flex;margin-bottom:16px">
-    <i class="ti ti-target-arrow" style="color:var(--brand-green);font-size:16px" aria-hidden="true"></i>
-    <span style="font-size:15px;font-weight:600;color:var(--brand-green)" id="h-week">0/0</span>
-    <span style="font-size:13px;color:var(--brand-green)" data-i18n="this_week_label">this week</span>
+    <div class="streak-hero-r">
+      <div class="streak-hero-cta"><i class="ti ti-flame" id="h-str-ic" aria-hidden="true"></i> <span id="h-str-cta">Start your streak</span></div>
+      <div class="streak-hero-week"><span id="h-week">0/0</span> <span data-i18n="this_week_label">this week</span></div>
+    </div>
   </div>
   <div id="p-wk">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
@@ -675,10 +696,6 @@ textarea{resize:vertical;min-height:100px}
       <button class="toggle" id="stog-rs" onclick="setSettingRestSound()"></button>
     </div>
     <div class="toggle-row">
-      <div><div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="dark_mode_label">Dark mode</div></div>
-      <button class="toggle" id="stog-dm" onclick="setSettingDarkMode()"></button>
-    </div>
-    <div class="toggle-row">
       <div><div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="keep_screen_awake_label">Keep screen awake mid-workout</div><div style="font-size:11px;color:var(--txt2)" data-i18n="keep_screen_awake_sub">Stops your phone locking between sets</div></div>
       <button class="toggle" id="stog-wl" onclick="setSettingWakeLock()"></button>
     </div>
@@ -804,11 +821,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="3.1" y="30.5" width="93.8" height="10.3" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="47.5" width="93.4" height="9.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
-        <rect x="3.1" y="30.5" width="93.8" height="10.3" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="3.3" y="47.5" width="93.4" height="9.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:44%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:62%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
     </div>
   </div>
 
@@ -816,11 +833,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/day-editor.png" alt="GainPath day editor">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="3.1" y="76.3" width="46.9" height="6" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="14.8" width="93.4" height="11.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask2)"/>
-        <rect x="3.1" y="76.3" width="46.9" height="6" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="3.3" y="14.8" width="93.4" height="11.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:42%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:32%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
     </div>
   </div>
 
@@ -828,11 +845,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/program-builder.png" alt="GainPath custom program builder">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="3.1" y="17.5" width="93.8" height="7.2" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="18.4" width="93.4" height="6.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask3)"/>
-        <rect x="3.1" y="17.5" width="93.8" height="7.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="3.3" y="18.4" width="93.4" height="6.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:27%"><div class="tut-step-badge">3</div><div class="tut-tooltip-title" data-i18n="tut3_title">Build your own program</div><div class="tut-tooltip-body" data-i18n="tut3_body">Not locked into the built-in splits — name your program and add your own training days from scratch.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:32%"><div class="tut-step-badge">3</div><div class="tut-tooltip-title" data-i18n="tut3_title">Build your own program</div><div class="tut-tooltip-body" data-i18n="tut3_body">Not locked into the built-in splits — name your program and add your own training days from scratch.</div></div>
     </div>
   </div>
 
@@ -840,11 +857,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/workout.png" alt="GainPath workout logging screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="66.4" y="53.6" width="27.1" height="7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="77.1" y="49.3" width="15.8" height="5.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask4)"/>
-        <rect x="66.4" y="53.6" width="27.1" height="7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="77.1" y="49.3" width="15.8" height="5.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap Mark done, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
     </div>
   </div>
 
@@ -852,11 +869,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/plate-calc.png" alt="GainPath plate calculator">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="7.4" y="40.9" width="85.1" height="12.2" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="7.7" y="41.1" width="84.7" height="19.4" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask5)"/>
-        <rect x="7.4" y="40.9" width="85.1" height="12.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="7.7" y="41.1" width="84.7" height="19.4" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:56%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Calculate your plates</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the plate icon next to any weight to see exactly which plates to load per side.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Calculate your plates</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the plate icon next to any weight to see exactly which plates to load per side.</div></div>
     </div>
   </div>
 
@@ -864,9 +881,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/rest-timer.png" alt="GainPath rest timer">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask6"><rect width="100" height="100" fill="#fff"/><ellipse cx="50" cy="20" rx="20.5" ry="10" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask6"><rect width="100" height="100" fill="#fff"/><ellipse cx="50" cy="19.9" rx="20.1" ry="9.7" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask6)"/>
-        <ellipse cx="50" cy="20" rx="20.5" ry="10" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <ellipse cx="50" cy="19.9" rx="20.1" ry="9.7" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:33%"><div class="tut-step-badge">6</div><div class="tut-tooltip-title" data-i18n="tut6_title">Rest, with tips</div><div class="tut-tooltip-body" data-i18n="tut6_body">The timer counts down automatically between sets, with a form tip and a preview of what's next.</div></div>
     </div>
@@ -876,9 +893,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/progress.png" alt="GainPath Progress tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><rect x="38.4" y="90.5" width="23.5" height="9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><rect x="39.4" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask7)"/>
-        <rect x="38.4" y="90.5" width="23.5" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="39.4" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">7</div><div class="tut-tooltip-title" data-i18n="tut7_title">Track your progress</div><div class="tut-tooltip-body" data-i18n="tut7_body">Tap here anytime to see your strength climb over time.</div></div>
     </div>
@@ -888,9 +905,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/prs.png" alt="GainPath personal records list">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="57.9" y="90.5" width="23.5" height="9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="59" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask8)"/>
-        <rect x="57.9" y="90.5" width="23.5" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="59" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">8</div><div class="tut-tooltip-title" data-i18n="tut8_title">Celebrate your PRs</div><div class="tut-tooltip-body" data-i18n="tut8_body">New PRs are tracked automatically — tap here to see your full list.</div></div>
     </div>
@@ -900,9 +917,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/calendar.png" alt="GainPath training calendar">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="18.8" y="90.5" width="23.5" height="9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="19.8" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask9)"/>
-        <rect x="18.8" y="90.5" width="23.5" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="19.8" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">9</div><div class="tut-tooltip-title" data-i18n="tut9_title">Browse your calendar</div><div class="tut-tooltip-body" data-i18n="tut9_body">Every session, color-coded by type — tap a day to review or edit it.</div></div>
     </div>
@@ -912,11 +929,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/export.png" alt="GainPath Export tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="3.1" y="51.9" width="93.8" height="7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="16.7" width="68.3" height="6.7" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask10)"/>
-        <rect x="3.1" y="51.9" width="93.8" height="7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="3.3" y="16.7" width="68.3" height="6.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:61%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Reports & backups</div><div class="tut-tooltip-body" data-i18n="tut10_body">Generate a monthly PDF report, or back up your data as JSON or CSV — right from the Export tab.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:30%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Reports & backups</div><div class="tut-tooltip-body" data-i18n="tut10_body">Generate a monthly PDF report, or back up your data as JSON or CSV — right from the Export tab.</div></div>
     </div>
   </div>
 
@@ -924,11 +941,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="84.7" y="1.2" width="13.2" height="6.8" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="85.9" y="20.1" width="10.8" height="6.1" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask11)"/>
-        <rect x="84.7" y="1.2" width="13.2" height="6.8" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="85.9" y="20.1" width="10.8" height="6.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="right:5%;top:12%;left:5%"><div class="tut-step-badge">11</div><div class="tut-tooltip-title" data-i18n="tut11_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut11_body">Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch, switch dark mode, and send feedback. No account needed, ever.</div></div>
+      <div class="tut-tooltip" style="right:5%;top:34%;left:5%"><div class="tut-step-badge">11</div><div class="tut-tooltip-title" data-i18n="tut11_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut11_body">Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.</div></div>
     </div>
   </div>
 
@@ -1156,7 +1173,7 @@ textarea{resize:vertical;min-height:100px}
 <div class="bottom-nav" id="bnav">
   <button class="bn-item on" id="bn-wk" onclick="bnav('wk')"><i class="ti ti-barbell" aria-hidden="true"></i><span data-i18n="nav_workouts">Workouts</span></button>
   <button class="bn-item" id="bn-cal" onclick="bnav('cal')"><i class="ti ti-calendar" aria-hidden="true"></i><span data-i18n="nav_calendar">Calendar</span></button>
-  <button class="bn-item" id="bn-ch" onclick="bnav('ch')"><i class="ti ti-mountain" aria-hidden="true"></i><span data-i18n="progress_title">Progress</span></button>
+  <button class="bn-item" id="bn-ch" onclick="bnav('ch')"><i class="ti ti-mountain" aria-hidden="true"></i><span data-i18n="nav_climb">Climb</span></button>
   <button class="bn-item" id="bn-pr" onclick="bnav('pr')"><i class="ti ti-flag" aria-hidden="true"></i><span data-i18n="nav_prs">PRs</span></button>
   <button class="bn-item" id="bn-ex" onclick="bnav('ex')"><i class="ti ti-download" aria-hidden="true"></i><span data-i18n="nav_export">Export</span></button>
 </div>
@@ -1172,7 +1189,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.0.0';
+const APP_VERSION='2.0.1';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -8413,7 +8430,7 @@ en:{
 "exercise_progress_prefix": "Exercise ",
 "exercise_progress_of": " of ",
 "btn_done_check": "Done",
-"btn_mark_done": "Mark done",
+"btn_mark_done": "Log",
 "btn_edit_note": "Edit note",
 "btn_add_note": "Add note",
 "btn_drop_set": "Drop",
@@ -8524,7 +8541,7 @@ en:{
 "tut3_title": "Build your own program",
 "tut3_body": "Not locked into the built-in splits — name your program and add your own training days from scratch.",
 "tut4_title": "Log each set",
-"tut4_body": "Enter the weight and reps, tap Mark done, then rest with the built-in timer. GainPath catches new personal records automatically.",
+"tut4_body": "Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.",
 "tut5_title": "Calculate your plates",
 "tut5_body": "Tap the plate icon next to any weight to see exactly which plates to load per side.",
 "tut6_title": "Rest, with tips",
@@ -8538,12 +8555,12 @@ en:{
 "tut10_title": "Reports & backups",
 "tut10_body": "Generate a monthly PDF report, or back up your data as JSON or CSV — right from the Export tab.",
 "tut11_title": "Make it yours",
-"tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch, switch dark mode, and send feedback. No account needed, ever.",
+"tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "A brand-new look — “Kinetic Athletic”: a brighter lime-green accent, cleaner light and dark themes, and fresh typography, bundled to work fully offline.",
-"whatsnew_item2": "The per-exercise rating is now about your last set: how many reps you had left in the tank. Your answer fine-tunes next session's weight suggestion.",
-"whatsnew_item3": "Weight suggestions and warm-ups now snap to the plates and dumbbells you actually own — set them under Settings → My gym, and you'll never be told to load something you don't have.",
+"whatsnew_item1": "The full Kinetic redesign is here — a bold dark interface with one electric-lime accent, oversized numerals, and a cleaner layout on every screen.",
+"whatsnew_item2": "Logging is faster — each set is a single tap-to-LOG row, with your current set highlighted so you always know where you are.",
+"whatsnew_item3": "The bottom tabs are renamed to match the new look — Train · Days · Climb · PRs · Save.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -8551,10 +8568,11 @@ en:{
 "muscle_balance_title": "Weekly muscle balance",
 "muscle_group_label": "Muscle group",
 "mw_hint": "Weight of the machine itself without any plates. Only asked once — saved permanently.",
-"nav_calendar": "Calendar",
-"nav_export": "Export",
+"nav_calendar": "Days",
+"nav_climb": "Climb",
+"nav_export": "Save",
 "nav_prs": "PRs",
-"nav_workouts": "Workouts",
+"nav_workouts": "Train",
 "next_set_label": "Next set",
 "ob1_name_label": "Your name",
 "ob1_sub": "Tell us about yourself",
@@ -8734,7 +8752,7 @@ ja:{
 "exercise_progress_prefix": "種目 ",
 "exercise_progress_of": " / ",
 "btn_done_check": "完了",
-"btn_mark_done": "完了にする",
+"btn_mark_done": "記録",
 "btn_edit_note": "メモを編集",
 "btn_add_note": "メモを追加",
 "btn_drop_set": "ドロップ",
@@ -8844,7 +8862,7 @@ ja:{
 "tut3_title": "自分だけのプログラムを作成",
 "tut3_body": "既存の分割法に縛られません。プログラム名を付けて、トレーニング日をゼロから追加できます。",
 "tut4_title": "セットを記録",
-"tut4_body": "重量とレップ数を入力して「完了にする」をタップ、その後は内蔵タイマーで休憩。自己ベストは自動で検出されます。",
+"tut4_body": "重量とレップ数を入力して「記録」をタップ、その後は内蔵タイマーで休憩。自己ベストは自動で検出されます。",
 "tut5_title": "プレートを計算",
 "tut5_body": "重量の横にあるプレートアイコンをタップすると、片側に何を載せればいいか正確にわかります。",
 "tut6_title": "休憩とヒント",
@@ -8858,12 +8876,12 @@ ja:{
 "tut10_title": "レポートとバックアップ",
 "tut10_body": "Exportタブから月次PDFレポートの生成や、JSON/CSVでのデータバックアップができます。",
 "tut11_title": "自分好みにカスタマイズ",
-"tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、ダークモード切り替え、フィードバック送信ができます。アカウントは一切不要です。",
+"tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "デザインを一新 ——「Kinetic Athletic」: より鮮やかなライムグリーンのアクセント、洗練されたライト／ダークテーマ、新しいフォント。すべてオフラインでも動作します。",
-"whatsnew_item2": "種目ごとの評価が「最後のセットであと何回できたか」に変わりました。その回答が次回の重量提案を微調整します。",
-"whatsnew_item3": "重量の提案とウォームアップが、実際に持っているプレートとダンベルに合わせて丸められます。設定→マイジムで登録すれば、持っていない重量を指定されることはありません。",
+"whatsnew_item1": "Kineticデザインへ全面刷新 —— 一色のエレクトリックライムを効かせた大胆なダークUI、大きな数字、そして全画面で見やすいレイアウトに。",
+"whatsnew_item2": "記録がより速く —— 各セットは1行になり、ワンタップで「記録」。今のセットがハイライトされ、進捗がひと目でわかります。",
+"whatsnew_item3": "下部タブの名称を新デザインに合わせて変更 —— トレーニング・デイ・クライム・PRs・保存。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -8872,10 +8890,11 @@ ja:{
 "muscle_group_label": "筋肉部位",
 "mw_hint": "プレートを除いたマシン自体の重量です。一度だけ入力すれば、以降は保存された値が使われます。",
 "mw_unit_label": "マシンの基本重量 (<span id=\"mw-unit\">kg</span>)",
-"nav_calendar": "カレンダー",
-"nav_export": "エクスポート",
+"nav_calendar": "デイ",
+"nav_climb": "クライム",
+"nav_export": "保存",
 "nav_prs": "自己記録",
-"nav_workouts": "ワークアウト",
+"nav_workouts": "トレーニング",
 "next_set_label": "次のセット",
 "ob1_name_label": "お名前",
 "ob1_sub": "あなたについて教えてください",
@@ -9055,7 +9074,7 @@ ko:{
 "exercise_progress_prefix": "운동 ",
 "exercise_progress_of": " / ",
 "btn_done_check": "완료",
-"btn_mark_done": "완료 표시",
+"btn_mark_done": "기록",
 "btn_edit_note": "메모 수정",
 "btn_add_note": "메모 추가",
 "btn_drop_set": "드롭 세트",
@@ -9165,7 +9184,7 @@ ko:{
 "tut3_title": "나만의 프로그램 만들기",
 "tut3_body": "기본 분할법에 얽매이지 않아도 됩니다. 프로그램 이름을 정하고 처음부터 나만의 훈련일을 추가해보세요.",
 "tut4_title": "세트 기록하기",
-"tut4_body": "중량과 횟수를 입력하고 완료 표시를 탭한 뒤, 내장 타이머로 휴식하세요. 새로운 개인 기록은 자동으로 감지됩니다.",
+"tut4_body": "중량과 횟수를 입력하고 기록을 탭한 뒤, 내장 타이머로 휴식하세요. 새로운 개인 기록은 자동으로 감지됩니다.",
 "tut5_title": "플레이트 계산하기",
 "tut5_body": "중량 옆의 플레이트 아이콘을 탭하면 한쪽에 정확히 어떤 플레이트를 끼워야 하는지 알 수 있습니다.",
 "tut6_title": "휴식과 팁",
@@ -9179,12 +9198,12 @@ ko:{
 "tut10_title": "리포트와 백업",
 "tut10_body": "Export 탭에서 월간 PDF 리포트를 생성하거나 JSON/CSV로 데이터를 백업할 수 있습니다.",
 "tut11_title": "나만의 설정",
-"tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 다크 모드 전환, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
+"tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "완전히 새로운 디자인 — “Kinetic Athletic”: 더 밝은 라임그린 강조색, 깔끔해진 라이트·다크 테마, 새로운 서체. 모두 오프라인에서도 작동합니다.",
-"whatsnew_item2": "이제 운동별 평가가 마지막 세트 기준입니다: 몇 개를 더 할 수 있었는지 답하면 다음 세션의 무게 제안이 조정됩니다.",
-"whatsnew_item3": "무게 제안과 워밍업이 실제 보유한 원판과 덤벨에 맞춰집니다 — 설정 → 내 체육관에서 등록하면 없는 무게를 제안받지 않습니다.",
+"whatsnew_item1": "Kinetic 디자인으로 전면 개편 — 하나의 일렉트릭 라임 강조색, 큼직한 숫자, 모든 화면의 더 깔끔한 레이아웃을 갖춘 대담한 다크 UI.",
+"whatsnew_item2": "기록이 더 빨라졌습니다 — 각 세트가 한 줄로, 탭 한 번에 “기록”. 현재 세트가 강조 표시됩니다.",
+"whatsnew_item3": "새 디자인에 맞춰 하단 탭 이름을 변경 — 트레이닝 · 데이 · 클라임 · PRs · 저장.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -9193,10 +9212,11 @@ ko:{
 "muscle_group_label": "근육 부위",
 "mw_hint": "플레이트를 제외한 머신 자체의 무게예요. 한 번만 물어보고 영구적으로 저장됩니다.",
 "mw_unit_label": "머신 기본 무게 (<span id=\"mw-unit\">kg</span>)",
-"nav_calendar": "캘린더",
-"nav_export": "내보내기",
+"nav_calendar": "데이",
+"nav_climb": "클라임",
+"nav_export": "저장",
 "nav_prs": "PR",
-"nav_workouts": "운동",
+"nav_workouts": "트레이닝",
 "next_set_label": "다음 세트",
 "ob1_name_label": "이름",
 "ob1_sub": "자신에 대해 알려주세요",
@@ -9473,7 +9493,7 @@ document.addEventListener('visibilitychange',()=>{
   }
 });
 function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet){if(ST.restRated){ST.restRated=false;nextEx();}else askExFeel();}else{ss('wo');renderEx();}}
-function accentColor(){document.documentElement.style.setProperty('--accent',CFG.darkMode?'#C6F24E':'#4F7D16');document.documentElement.style.setProperty('--accent-ink',CFG.darkMode?'#0C1512':'#FFFFFF');const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=CFG.darkMode?'#06100B':'#ECEEE4';}
+function accentColor(){document.documentElement.style.setProperty('--accent','#C6F24E');document.documentElement.style.setProperty('--accent-ink','#0C1512');const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content='#0C1512';}
 
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
 function setUnit(v){
@@ -9880,6 +9900,12 @@ function suggested(){
   return days[(idx+1)%days.length];
 }
 function stab(t){
+  // The Workouts (Train) tab owns the streak card + install banner; the other
+  // tabs are their own full screens (Days / Climb / PRs / Save), so hide that
+  // home chrome when they're active.
+  const home=t==='wk';
+  const hs=gid('hm-streak');if(hs)hs.style.display=home?'flex':'none';
+  const bn=gid('prt-h');if(bn)bn.style.display=home?'':'none';
   ['wk','cal','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
   if(t==='cal')renderCal();if(t==='ch')initChart();if(t==='pr')renderPRs();if(t==='ex')initExport();
 }
@@ -9937,7 +9963,6 @@ function openSettings(){
   [1,2,3].forEach(v=>gid('swu-'+v).classList.toggle('on',CFG.wuSteps===v));
   gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';
   gid('stog-rs').classList.toggle('on',CFG.restSound);
-  gid('stog-dm').classList.toggle('on',CFG.darkMode);
   gid('stog-wl').classList.toggle('on',CFG.wakeLock);
   gid('stog-hs').classList.toggle('on',CFG.healthSync);
   gid('hs-fields').style.display=CFG.healthSync?'block':'none';
@@ -9980,8 +10005,8 @@ function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>
 function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';}
 function setSettingWUSteps(v){CFG.wuSteps=v;[1,2,3].forEach(x=>gid('swu-'+x).classList.toggle('on',x===v));}
 function setSettingRestSound(){CFG.restSound=!CFG.restSound;gid('stog-rs').classList.toggle('on',CFG.restSound);}
-function applyTheme(){document.documentElement.dataset.theme=CFG.darkMode?'dark':'light';accentColor();}
-function setSettingDarkMode(){CFG.darkMode=!CFG.darkMode;gid('stog-dm').classList.toggle('on',CFG.darkMode);applyTheme();}
+function applyTheme(){document.documentElement.dataset.theme='dark';accentColor();}
+function setSettingDarkMode(){/* dark-only: toggle removed */}
 function setSettingWakeLock(){CFG.wakeLock=!CFG.wakeLock;gid('stog-wl').classList.toggle('on',CFG.wakeLock);if(!CFG.wakeLock)releaseWakeLock();}
 function setSettingHealthSync(){CFG.healthSync=!CFG.healthSync;gid('stog-hs').classList.toggle('on',CFG.healthSync);gid('hs-fields').style.display=CFG.healthSync?'block':'none';}
 function toggleHSSteps(){const s=gid('hs-steps');if(s)s.style.display=s.style.display==='none'?'block':'none';}
@@ -10159,7 +10184,7 @@ function renderDayEdit(){
     const grp=editGroupInfo(i);
     const grpLabel=grp&&grp.isFirst?'<div style="font-size:11px;font-weight:600;color:var(--accent);margin:6px 0 -2px 4px">'+(grp.size>2?'Circuit':'Superset')+' — '+grp.size+' exercises, no rest between them</div>':'';
     const linksNext=!!ex.linkNext;
-    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:#fff':'')+'" onclick="toggleLinkNext('+i+')" aria-label="Link with next exercise (superset/circuit)" title="Link with next exercise"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
+    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:var(--accent-ink)':'')+'" onclick="toggleLinkNext('+i+')" aria-label="Link with next exercise (superset/circuit)" title="Link with next exercise"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
     const bwMode=p.w>0?'add':p.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
     const weightField=p.isBW?
       '<div class="de-detail-field"><label>Weight</label><div style="display:flex;gap:4px"><button type="button" class="bw-mode" onclick="cycleDEBWMode('+i+')">'+bwLabel+'</button>'+(bwMode!=='bw'?'<input type="number" min="0" step="0.5" value="'+Math.abs(p.w)+'" onfocus="this.select()" onchange="updDEBWMag('+i+',this.value)">':'')+'</div></div>'
@@ -10496,6 +10521,15 @@ function openPlateCalc(i){
   saveInProgress();
 }
 function closePlateCalc(){ST.plateIdx=null;ss('wo');saveInProgress();}
+// Olympic plate colour-coding: [background, label colour]. kg and lbs racks
+// use different standard colours, so key by unit.
+const PLATE_PAL={
+  kg:{25:['#c9403f','#fff'],20:['#3b6fb0','#fff'],15:['#e0b23a','#1a1a1a'],10:['#3e8e5a','#fff'],5:['#ececec','#1a1a1a'],2.5:['#3a3a3a','#fff'],1.25:['#b8bdc4','#1a1a1a']},
+  lbs:{45:['#3b6fb0','#fff'],35:['#e0b23a','#1a1a1a'],25:['#3e8e5a','#fff'],10:['#ececec','#1a1a1a'],5:['#c9403f','#fff'],2.5:['#3a3a3a','#fff']}
+};
+function plateStyle(d){const p=PLATE_PAL[CFG.unit]||PLATE_PAL.kg;return p[d]||['#6b7160','#fff'];}
+function plateHeight(d){const denoms=PLATES[CFG.unit]||PLATES.kg;const maxD=denoms[0]||25;return Math.round(46+(d/maxD)*74);}
+function plateDiscHTML(d){const st=plateStyle(d);const big=d>=(CFG.unit==='kg'?20:35);const lab=''+d;return '<div class="pc-disc" style="height:'+plateHeight(d)+'px;width:'+(big?21:17)+'px;background:'+st[0]+';color:'+st[1]+';font-size:'+(lab.length>=4?8:10)+'px">'+lab+'</div>';}
 function renderPlateCalc(){
   const item=ST.sd[ST.exi];const ex=item.ex;const s=item.sets[ST.plateIdx];if(!s)return;
   gid('plate-target').textContent=s.w+CFG.unit;
@@ -10507,11 +10541,19 @@ function renderPlateCalc(){
   }
   const barW=parseFloat(barInp.value)||0;
   const perSide=(s.w-barW)/2;
+  const el=gid('plate-result');
+  if(perSide<0){el.innerHTML='<div class="pc-msg">Target is less than the bar / frame weight.</div>';return;}
   const{counts,remaining}=calcPlates(perSide);
-  if(perSide<0){gid('plate-result').innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">Target weight is less than the bar/frame weight.</div>';return;}
-  if(!counts.length){gid('plate-result').innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">No plates needed — bar weight alone covers this.</div>';return;}
-  gid('plate-result').innerHTML=counts.map(c=>'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:15px;color:var(--txt)">'+c.d+CFG.unit+' plate</span><span style="font-size:15px;font-weight:600;color:var(--txt)">× '+c.n+'</span></div>').join('')+
-    (remaining>0?'<div style="font-size:13px;color:var(--txt2);margin-top:8px">'+remaining+CFG.unit+' per side can\'t be made with standard plates.</div>':'');
+  if(!counts.length){el.innerHTML='<div class="pc-msg">Just the bar — no plates needed.</div>';return;}
+  // counts come biggest→smallest; discs biggest first (loaded nearest the collar)
+  const discs=[];counts.forEach(c=>{for(let k=0;k<c.n;k++)discs.push(c.d);});
+  const right=discs.map(plateDiscHTML).join('');
+  const left=discs.slice().reverse().map(plateDiscHTML).join('');
+  const bar='<div class="pc-stage"><div class="pc-bar"><div class="pc-sleeve"></div>'+left+'<div class="pc-collar"></div><div class="pc-grip"></div><div class="pc-collar"></div>'+right+'<div class="pc-sleeve"></div></div></div>';
+  const summary=counts.map(c=>c.d+(c.n>1?' ×'+c.n:'')).join(' + ');
+  el.innerHTML=bar+
+    '<div class="pc-sum"><div class="pc-sum-lbl">Per side</div><div class="pc-sum-val">'+summary+'</div><div class="pc-sum-sub">Bar '+barW+CFG.unit+' · load inside-out</div></div>'+
+    (remaining>0.01?'<div class="pc-msg">'+(Math.round(remaining*100)/100)+CFG.unit+' per side can’t be made with your plates.</div>':'');
 }
 function processMWQueue(){
   if(!ST.mwQueue.length){ST.mwCurrent=null;renderEx();ss('wo');saveInProgress();return;}
@@ -10554,29 +10596,37 @@ function renderEx(){
   gid('wo-pb').style.width=Math.round((ST.exi/ST.sd.length)*100)+'%';
   gid('wo-pl').textContent=t('exercise_progress_prefix')+(ST.exi+1)+t('exercise_progress_of')+ST.sd.length;
   const ssGrp=woGroup(ST.exi);
-  const ssBanner=ssGrp?'<div style="background:var(--accent);color:#fff;border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
+  const ssBanner=ssGrp?'<div style="background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:9px 13px;margin-bottom:10px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  // Plate calculator only makes sense when you load plates on a bar/frame:
+  // barbell lifts and plate-loaded machines (base weight set). Dumbbells,
+  // cables, selectorized (pin-stack) machines and bodyweight don't get it.
+  const showPlate=equipRank(ex)===0||(ex.machine&&mwBase>0);
   const wuCount=sets.filter(s=>s.t==='w').length;let wuSeen=0,workSeen=0;
+  const firstUndone=sets.findIndex(x=>!x.done);
   const sh=sets.map((s,i)=>{
     const isW=s.t==='w';const isD=s.t==='d';const wuLabel=isW?(wuCount>1?'W'+(++wuSeen):'W'):null;if(!isW&&!isD)workSeen++;const dispW=ex.machine&&mwBase>0?+(s.w-mwBase).toFixed(1):s.w;
     const bwMode=s.w>0?'add':s.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
     const stepInc=stepIncrement(ex,Math.max(0,dispW));
-    const wi='<span class="sr-grp">'+(isBW?
+    const active=!s.done&&i===firstUndone;
+    const wctrl=isBW?
       '<button type="button" class="bw-mode" onclick="cycleBWMode('+i+')" aria-label="Bodyweight weight mode">'+bwLabel+'</button>'+
-      (bwMode!=='bw'?'<input class="wi" style="width:46px" type="number" value="'+Math.abs(s.w)+'" step="0.5" min="0" onfocus="this.select()" onchange="updBWMag('+i+',this.value)">':'')
-      :'<button type="button" class="bg" style="padding:8px 8px" onclick="stepWeight('+i+','+(-stepInc)+')" aria-label="Decrease weight by '+stepInc+CFG.unit+'">−</button>'+
-        '<input class="wi" type="number" value="'+Math.max(0,dispW)+'" step="0.5" min="0" onfocus="this.select()" onchange="updSet('+i+',this.value)">'+
-        '<button type="button" class="bg" style="padding:8px 8px" onclick="stepWeight('+i+','+stepInc+')" aria-label="Increase weight by '+stepInc+CFG.unit+'">+</button>'+
-        '<button type="button" class="bg" style="padding:8px 8px" onclick="openPlateCalc('+i+')" aria-label="Plate calculator"><i class="ti ti-stack-2" aria-hidden="true"></i></button>')+'</span>';
-    const sep=ex.holdSecs?'':'<span style="font-size:11px;color:var(--txt2)">'+CFG.unit+'\u00d7</span>';
-    const repPart='<span class="sr-grp">'+sep+(ex.holdSecs?
-      ('<button type="button" class="db" style="min-width:80px" onclick="toggleHold('+i+')"'+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled style="opacity:.4"':'')+'>'+(HOLD_IDX===i?'<i class="ti ti-player-pause" aria-hidden="true"></i> Stop':'<i class="ti ti-player-play" aria-hidden="true"></i> Hold')+'</button>'+
-       '<span id="hold-t-'+i+'" style="font-size:13px;font-weight:600;color:var(--txt);min-width:40px;text-align:center">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
-      :('<input class="ri" type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)"><span style="font-size:11px;color:var(--txt2)">'+t('unit_reps')+'</span>'))+'</span>';
+      (bwMode!=='bw'?'<input class="wi" style="text-align:center;width:40px" type="number" value="'+Math.abs(s.w)+'" step="0.5" min="0" onfocus="this.select()" onchange="updBWMag('+i+',this.value)">':'')
+      :'<button type="button" class="sst" onclick="stepWeight('+i+','+(-stepInc)+')" aria-label="Decrease weight">−</button>'+
+        '<input class="wi" type="number" value="'+Math.max(0,dispW)+'" step="0.5" min="0" onfocus="this.select()" onchange="updSet('+i+',this.value)"><span class="sr-u">'+CFG.unit+'</span>'+
+        '<button type="button" class="sst" onclick="stepWeight('+i+','+stepInc+')" aria-label="Increase weight">+</button>';
+    const rctrl=ex.holdSecs?
+      ('<button type="button" class="log" style="background:var(--bg3);color:var(--accent);margin-left:6px" onclick="toggleHold('+i+')"'+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled':'')+'>'+(HOLD_IDX===i?'Stop':'Hold')+'</button>'+
+       '<span id="hold-t-'+i+'" class="sr-x" style="min-width:36px;text-align:center;color:var(--txt);font-family:var(--font-mono);font-weight:700">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
+      :('<span class="sr-x">×</span><input class="ri" type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)">');
+    const plateBtn=(showPlate&&!isBW)?'<button type="button" class="sst plate" onclick="openPlateCalc('+i+')" aria-label="Plate calculator"><i class="ti ti-stack-2" aria-hidden="true"></i></button>':'';
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
-    const dropBtn=(!isW&&!isD&&!isBW&&!ex.holdSecs&&!s.done)?'<button type="button" class="bg" style="padding:8px 8px;font-size:13px" onclick="addDropSet('+i+')" aria-label="Add drop set">+ '+t('btn_drop_set')+'</button>':'';
-    return '<div class="sr"><div class="sn'+(s.done?' d':(isW?' w':''))+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wi+repPart+'<span class="sr-actions"><button class="db'+(s.done?' ok':'')+'"'+(doneDisabled?' disabled style="opacity:.4"':'')+' onclick="dset('+i+')">'+(s.done?'<i class="ti ti-check" aria-hidden="true"></i> '+t('btn_done_check'):t('btn_mark_done'))+'</button>'+dropBtn+'</span></div>';
+    const snCls=s.done?' d':(active?' on':(isW?' w':''));
+    const logBtn='<button class="log'+(s.done?' done':'')+'"'+(doneDisabled?' disabled':'')+' onclick="dset('+i+')" aria-label="'+(s.done?'Done':'Log set')+'">'+(s.done?'<i class="ti ti-check" aria-hidden="true"></i>':t('btn_mark_done'))+'</button>';
+    return '<div class="sr'+(s.done?' done':(active?' active':''))+'"><div class="sn'+snCls+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wctrl+rctrl+plateBtn+logBtn+'</div>';
   }).join('');
+  const dropTarget=(!isBW&&!ex.holdSecs)?sets.findIndex(x=>!x.done&&x.t==='x'):-1;
+  const dropBtnBottom=dropTarget>=0?'<button class="bs" style="flex-shrink:0" onclick="addDropSet('+dropTarget+')" aria-label="Add drop set"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i> '+t('btn_drop_set')+'</button>':'' ;
   const mwNote=ex.machine&&mwBase>0?'<span class="mw-inp"><i class="ti ti-settings-2" aria-hidden="true"></i> Machine base: '+mwBase+CFG.unit+' (plates only shown)</span>':'';
   if(!item.tipText)item.tipText=tipFor(ex.name);
   const tipHtml='<div style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-bulb" aria-hidden="true" style="flex-shrink:0;margin-top:1px;color:var(--accent)"></i><span>'+item.tipText+'</span></div>';
@@ -10589,7 +10639,7 @@ function renderEx(){
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb={easy:'you had 5+ reps left',good:'you had 3–4 reps left',max:'you hit failure'}[sug.feel]||'time to adjust';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db ok" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">Dismiss</button></div>';}
   }
-  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+exDisplayName(ex.name)+'</div><button type="button" onclick="showExInstructions(\''+ex.name+'\')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sh+sugHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
+  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+exDisplayName(ex.name)+'</div><button type="button" onclick="showExInstructions(\''+ex.name+'\')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sh+sugHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
   if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet&&ex.plannedW===undefined)showFSW(ex);
   saveInProgress();
 }
@@ -10988,7 +11038,7 @@ function drawChart(){
   const pointColor=isWaypoint.map((wp,i)=>i>0&&wp?theme.forge:theme.accent);
   ST.chart=new Chart(canvas,{type:'line',data:{labels:pts.map(p=>p.date),datasets:[{label,data:pts.map(p=>p.w),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&c.dataIndex>0?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:{grid:{display:false},ticks:{color:theme.tick,maxRotation:35,font:{size:10}}}}}});
 }
-function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}el.innerHTML=keys.sort().map(k=>{const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:7px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:3px">Set on '+esc(pr.date)+'</div></div><div style="text-align:right"><div style="font-size:17px;font-weight:800;color:var(--brand-gold)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2)">\u00d7 '+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' \u00b7 ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'')+'</div></div></div>';}).join('');}
+function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}el.innerHTML=keys.sort().map(k=>{const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}).join('');}
 function prHistoryFor(name){
   const meta=EXPOOL[name];const events=[];let best=null;
   ST.history.forEach(h=>{

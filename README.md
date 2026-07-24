@@ -8,14 +8,13 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.0.0
+## ✨ What's new in v2.0.1
 
-A milestone release — a full redesign plus a smarter approach to progression.
+The full **Kinetic** redesign — a bold, dark-only interface built around a single electric-lime accent, oversized numerals, and a cleaner layout on every screen. Same features and your data, a completely rebuilt look.
 
-- **A brand-new look — "Kinetic Athletic."** A brighter lime-green accent, cleaner light/dark palettes, and new Archivo / Space Grotesk / Space Mono typography across every screen, bundled to work fully offline.
-- **Rate your last set, not a vibe.** After each exercise GainPath now asks *"On your last set, how many reps could you still have done?"* — **5+ / 3–4 / 1–2 / 0 (to failure)**. It's a sharper read on how hard the set really was than the old "how did it feel."
-- **Smarter weight suggestions from that answer.** 5+ reps left bumps the weight up a full step, 3–4 nudges it a little, 1–2 holds (you're in the sweet spot), and failing two sessions running suggests a deload. Still a one-tap Apply/Dismiss chip — never an automatic change.
-- **Suggestions match your actual gym.** Weight suggestions, warm-ups, and the starting-weight estimate now round **up to the next plate or dumbbell you actually own** (set them under Settings → My gym) — so you're never told to load a 2.5 kg dumbbell you don't have or a barbell total you can't build.
+- **A whole new look.** Dark-only Kinetic theme across the app, with Archivo display type, Space Mono for numbers, and one high-energy lime accent. (The old light theme and the dark-mode toggle are gone — it's dark by design now.)
+- **Faster logging.** Each set is now a single tap-to-**LOG** row — set number, weight steppers, reps, plate calculator, and LOG all on one line — with your current set highlighted so you always know where you are.
+- **Rebuilt screens.** A compact streak card (a 5-day week fits with no scrolling), a visual color-coded **plate calculator** (a real loaded barbell), flag-motif **PRs**, and bottom tabs renamed **Train · Days · Climb · PRs · Save**.
 
 ---
 

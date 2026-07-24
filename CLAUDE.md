@@ -21,6 +21,18 @@ user-facing and are not a license to call the feature "AI" in copy. Note the app
 is a PWA: user-facing branding also lives in `manifest.json` (`name`) and the
 service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
 
+**Visual identity (as of v2.0.1): "Kinetic" — dark-only.** The app renders a
+single dark theme (near-black moss `#0C1512` base, one electric-lime accent
+`#C6F24E`, Archivo display / Space Grotesk body / Space Mono for numerals).
+There is **no light theme and no dark-mode toggle** — `applyTheme()` and
+`accentColor()` are pinned to dark, and `<html data-theme="dark">` is hard-set,
+so don't reintroduce a light palette or a toggle without an explicit request.
+Semantic tokens: on-surface text is `--txt`/`--txt2`/`--txt3`; text that sits
+**on** the lime accent is `--accent-ink` (never `#fff` on `--accent`/lime, which
+fails contrast in dark). The bottom tabs are **Train · Days · Climb · PRs · Save**
+(keys `nav_workouts`/`nav_calendar`/`nav_climb`/`nav_prs`/`nav_export`); the
+streak card + install banner only show on the Train tab (see `stab()`).
+
 ## Standing workflow rules
 
 - **Every code change must include a corresponding `CHANGELOG.md` entry** under

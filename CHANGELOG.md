@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-07-25
+
+The full **Kinetic** redesign — GainPath is now a dark-only, high-contrast app
+built around a single electric-lime accent, oversized Archivo numerals, and
+Space Mono for data. Same features and data; a completely rebuilt look.
+
+### Changed
+- **Dark-only Kinetic theme across every screen.** Removed the light theme and
+  the light/dark toggle in Settings (the app now renders dark from first paint;
+  `applyTheme()`/`accentColor()` are pinned to the Kinetic palette, base
+  `--page-bg` set to `#0C1512`, `theme-color` meta updated).
+- **Workout logging rebuilt.** Each set is now a single compact row —
+  `set · − · weight · + · × reps · plate · LOG` — with the current set
+  highlighted in lime and a `LOG` button replacing the old two-line
+  "Mark done". Drop sets moved to a bottom action next to "Next exercise".
+- **Home** — compact lime streak-hero card (a full 5-day week fits without
+  scrolling) and the bottom tabs renamed **Train · Days · Climb · PRs · Save**
+  (en/ja/ko). The streak card and install banner now only show on the Train
+  tab, so Days/Climb/PRs/Save read as their own screens.
+- **Plate calculator** — visual, color-coded loaded-barbell diagram (plates to
+  the Olympic standard) instead of a text list; shown only for barbell /
+  plate-loaded exercises.
+- **Personal records** — flag-motif cards with big lime figures.
+- Regenerated all README screenshots and the in-app "What's New" for the new
+  look; bumped `APP_VERSION` to `2.0.1` and service-worker `CACHE_NAME` to
+  `gainpath-v23`.
+
+### Fixed
+- Contrast bugs surfaced by the palette: the home streak card's label/CTA were
+  invisible (white-on-white / dark-on-dark) and selected chips/toggles showed
+  white text on lime — both now use the correct on-surface / on-accent colours.
+
 ## [2.0.0] - 2026-07-24
 
 This is a milestone release: a full visual redesign ("Kinetic Athletic")
