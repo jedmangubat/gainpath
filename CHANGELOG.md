@@ -6,7 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [2.0.1] - 2026-07-25
+### Fixed
+- **README screenshots were showing the "What's New in v2.0.1" bottom sheet
+  stacked on top of every screen.** The v2.0.1 screenshot regen seeded a
+  fresh install (`CFG.lastSeenVersion` unset), so the one-time What's New
+  sheet — and on some screens the "Add to Home Screen" banner too — covered
+  most of the actual UI in `home.png`, `day-editor.png`,
+  `program-builder.png`, `plate-calc.png`, `rest-timer.png`,
+  `exercise-instructions.png`, `dark-mode.png`, `progress.png`,
+  `pdf-report.png`, `backup.png`, and `feedback.png`. Also fixed
+  `pdf-report.png`/`backup.png` being pixel-identical (the export tab was
+  never actually scrolled between the two captures) and updated the
+  README's "Design" section, which still described the pre-Kinetic "Trail"
+  theme and its light/dark toggle.
 
 The full **Kinetic** redesign — GainPath is now a dark-only, high-contrast app
 built around a single electric-lime accent, oversized Archivo numerals, and

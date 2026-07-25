@@ -100,24 +100,18 @@ A language picker (English / 日本語 / 한국어) sits at the top, then a menu
 - If you've switched to another app when the timer ends, GainPath sends a **notification** to pull you back (Android/desktop; iPhone PWAs can't run timers in the background, so there the alarm fires the instant you reopen the app)
 - Per-exercise reps-in-reserve rating after each exercise ("On your last set, how many reps could you still have done?" — 5+ / 3–4 / 1–2 / 0 to failure) — you can tap it right on the last-set rest screen while the timer counts down, or on the dedicated screen after — plus an overall session feel rating before the summary screen
 
-### 🎨 Design & dark mode
+### 🎨 Design
 
-<img src="images/screenshots/dark-mode.png" width="260" alt="The Calendar tab in Trail's dark mode">
+<img src="images/screenshots/dark-mode.png" width="260" alt="The Days (Calendar) tab in GainPath's Kinetic design">
 
-The **"Trail"** look, leaning into the GainPath mountain-path logo. The
-light theme (the default) has a warm, fog-toned background with a subtle
-topographic contour-line pattern, rounded cream cards, a serif display type
-(Fraunces) on headers and numerals in place of the previous monospace
-styling, and the same green-and-amber accent (matching the GainPath logo)
-on primary buttons, the active tab, focus states, and charts. PRs still
-stamp on in a rotated amber-gold style, and the Progress tab's chart reads
-as an elevation profile — every point that set a new best marked with a
-larger amber waypoint dot, like flags along an ascent. Motion follows the
-same idea: quick screen transitions and a streak number that ticks up like
-an odometer (`prefers-reduced-motion` respected throughout). Dark mode
-flips it to a **summit night** — deep moss-navy background, the same
-green-and-amber accent in brighter dark-mode tones — switchable in Settings
-and remembered between sessions.
+The **"Kinetic Athletic"** look — dark-only, built on a near-black moss
+background with a single electric-lime accent, oversized Archivo display
+type on headers, Space Grotesk body text, and Space Mono for numerals.
+There's no light theme and no dark-mode toggle; it's dark by design. Every
+screen leans into bold contrast and big numbers — a compact streak hero,
+flag-motif PR cards, and a Progress chart that ticks upward in lime.
+Motion is quick and purposeful (`prefers-reduced-motion` respected
+throughout), and the bottom tabs read **Train · Days · Climb · PRs · Save**.
 
 ### 📈 Progress tracking
 
