@@ -1189,7 +1189,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.0.1';
+const APP_VERSION='2.0.2';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -5790,7 +5790,7 @@ const EX_TIPS_KO={
   ]
 };
 function tipsFor(name){if(CFG.lang==='ja'&&EX_TIPS_JA[name]&&EX_TIPS_JA[name].length)return EX_TIPS_JA[name];if(CFG.lang==='ko'&&EX_TIPS_KO[name]&&EX_TIPS_KO[name].length)return EX_TIPS_KO[name];return EX_TIPS[name];}
-function tipFor(name){const t=tipsFor(name);return t&&t.length?t[Math.floor(Math.random()*t.length)]:t('tip_fallback');}
+function tipFor(name){const tips=tipsFor(name);return tips&&tips.length?tips[Math.floor(Math.random()*tips.length)]:t('tip_fallback');}
 
 // ═══ EXERCISE INSTRUCTIONS (step-by-step: setup → start → movement) ═══
 const EX_INSTRUCTIONS={
@@ -9705,6 +9705,18 @@ function stepWeight(i,delta){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
   const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
   const dispW=ex.machine&&mwBase>0?+(sets[i].w-mwBase).toFixed(1):sets[i].w;
+  // Dumbbells are a fixed rack, not a continuously-loadable bar/plate stack —
+  // a flat +/- step can land between two owned weights, and pressing the
+  // opposite arrow then jumps by the same flat step from that in-between
+  // value instead of back to the dumbbell you started from. Step to the
+  // actual next/previous owned weight instead, so up-then-down always
+  // round-trips.
+  const owned=equipRank(ex)===1?(CFG.gymDumbbells||[]).slice().sort((a,b)=>a-b):null;
+  if(owned&&owned.length){
+    const next=delta>0?owned.find(d=>d>dispW+1e-6):owned.slice().reverse().find(d=>d<dispW-1e-6);
+    updSet(i,next!==undefined?next:(delta>0?owned[owned.length-1]:owned[0]));
+    return;
+  }
   updSet(i,Math.max(0,Math.round((dispW+delta)*2)/2));
 }
 // Propose next-session weight from the last-set reps-left rating (RIR):

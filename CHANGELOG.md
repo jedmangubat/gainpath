@@ -6,7 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-07-30
+
 ### Fixed
+- **Dumbbell weight +/− could drift off your logged rack, especially when
+  tapping up then down (or vice versa).** `stepWeight()` moved the displayed
+  weight by a flat increment (e.g. 2.5 kg) and rounded to the nearest 0.5,
+  without checking `CFG.gymDumbbells` at all — fine for barbell/plate
+  exercises, where any combination of owned plates is achievable, but a
+  dumbbell rack is a fixed set of discrete weights with uneven gaps. A flat
+  step could land between two owned dumbbells, and the opposite arrow would
+  then step by the same flat amount from that in-between value instead of
+  back to the dumbbell you started from. `stepWeight` now steps to the
+  actual next/previous weight in your "My gym" dumbbell list, so +/− always
+  lands on a dumbbell you own and up-then-down round-trips correctly. Plate
+  exercises are unaffected (unchanged flat-step behavior).
+
+- **`tipFor()` could throw for any exercise with no tips defined for the
+  current language.** It declared a local `const t=tipsFor(name)`, shadowing
+  the global `t()` translation helper, so the fallback branch's
+  `t('tip_fallback')` call tried to invoke `t` as a function while it was
+  actually the (empty/undefined) tips array — a `TypeError` instead of the
+  intended fallback string. Renamed the local variable to `tips` so the
+  global `t()` resolves correctly.
+
 - **README screenshots were showing the "What's New in v2.0.1" bottom sheet
   stacked on top of every screen.** The v2.0.1 screenshot regen seeded a
   fresh install (`CFG.lastSeenVersion` unset), so the one-time What's New
@@ -19,6 +42,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   never actually scrolled between the two captures) and updated the
   README's "Design" section, which still described the pre-Kinetic "Trail"
   theme and its light/dark toggle.
+
+Bumped `APP_VERSION` to `2.0.2` and service-worker `CACHE_NAME` to
+`gainpath-v24`. Bug-fix-only release — no new features, so no README
+"What's new" section for this version.
+
+## [2.0.1] - 2026-07-25
 
 The full **Kinetic** redesign — GainPath is now a dark-only, high-contrast app
 built around a single electric-lime accent, oversized Archivo numerals, and

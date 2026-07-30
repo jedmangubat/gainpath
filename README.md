@@ -8,16 +8,6 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.0.1
-
-The full **Kinetic** redesign — a bold, dark-only interface built around a single electric-lime accent, oversized numerals, and a cleaner layout on every screen. Same features and your data, a completely rebuilt look.
-
-- **A whole new look.** Dark-only Kinetic theme across the app, with Archivo display type, Space Mono for numbers, and one high-energy lime accent. (The old light theme and the dark-mode toggle are gone — it's dark by design now.)
-- **Faster logging.** Each set is now a single tap-to-**LOG** row — set number, weight steppers, reps, plate calculator, and LOG all on one line — with your current set highlighted so you always know where you are.
-- **Rebuilt screens.** A compact streak card (a 5-day week fits with no scrolling), a visual color-coded **plate calculator** (a real loaded barbell), flag-motif **PRs**, and bottom tabs renamed **Train · Days · Climb · PRs · Save**.
-
----
-
 ## Features
 
 ### 🏋️ Training splits
@@ -66,7 +56,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of seven sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync, Native app updates — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Workouts, Calendar, Progress, PRs, and Export are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of seven sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync, Native app updates — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb, PRs, and Save are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
 
 ### ⚖️ Smart weight system
 
@@ -76,7 +66,7 @@ A language picker (English / 日本語 / 한국어) sits at the top, then a menu
 - Suggests your next weight from how many reps you had left on your last set — "5+ reps left" offers a full bump, "3–4 left" a small step, "1–2 left" holds you in the sweet spot, and failing two sessions in a row offers a deload. Always a one-tap suggestion you can apply or dismiss, never an automatic change
 - Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
-- **Plate calculator** — tap the plate icon by any weight to see the per-side breakdown ("20 + 10 + 2.5 per side"), accounting for the bar/machine base weight and your kg/lb plate set
+- **Plate calculator** — tap the plate icon by any weight for a visual, color-coded loaded-barbell diagram (plates to the Olympic standard) showing the per-side breakdown, accounting for the bar/machine base weight and your kg/lb plate set
 - **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, rounding a suggested weight **up to the next dumbbell or plate total you own** even if the rack steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after) — and warm-ups and the starting-weight estimate snap the same way
 - **Deload & overtraining advisor** — if your last three sessions all felt Hard or Too Much, or a tracked lift has stalled for three sessions running, a home banner offers to auto-load your next session's weights at −30%, one tap to apply or dismiss
 - **±weight steppers** beside every weight input during logging — two taps instead of the keyboard for the vast majority of adjustments
@@ -112,6 +102,9 @@ screen leans into bold contrast and big numbers — a compact streak hero,
 flag-motif PR cards, and a Progress chart that ticks upward in lime.
 Motion is quick and purposeful (`prefers-reduced-motion` respected
 throughout), and the bottom tabs read **Train · Days · Climb · PRs · Save**.
+Logging itself got the same rebuild — each set is a single tap-to-**LOG**
+row (set number, weight steppers, reps, plate calculator, and LOG all on one
+line), with the current set highlighted so you always know where you are.
 
 ### 📈 Progress tracking
 
