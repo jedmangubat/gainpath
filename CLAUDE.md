@@ -167,6 +167,18 @@ streak card + install banner only show on the Train tab (see `stab()`).
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
   sessions). Estimated 1RM and volume are shown across the Progress tab, PR list,
   and session summary — keep their definitions single-sourced.
+- **Badges are derived, exactly like PRs.** `ST.badges` (`{id:{dk}}`) is a cache
+  rebuilt by `recomputeBadges()` from `ST.history`/`ST.bw`/`CFG`; it is never
+  persisted. **Every call site of `recomputePRs()` must also call
+  `recomputeBadges()`** — same reasoning as the PR note above. Badge conditions
+  live in the `BADGES` array and are evaluated in one chronological pass, so
+  each badge is stamped with the date it was *first* earned; add a badge by
+  adding an entry there plus a `BDG_GLYPH` drawing and `bdg_<id>_name`/`_cond`
+  strings in all three languages. Badge art is **inline SVG** (`BDG_GLYPH` +
+  `badgeSvg()`), not PNGs in `images/` — the locked state is the `.lock` class
+  on the same drawing, so never author a second "greyed" asset. Weekly/streak
+  conditions must go through `streakEndingAt()`/`weekTarget()` rather than
+  re-deriving what counts as a qualifying week.
 - **Charts over dated data plot time proportionally.** A gap between sessions
   must render as a gap — never one equal-width slot per entry. Any new chart
   reuses `dkDay(dk)` (whole-day index since the epoch) for its `x` values,

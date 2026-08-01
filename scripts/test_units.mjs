@@ -246,6 +246,92 @@ async function main() {
     check('cmpVer: compares numerically, not lexically', cmpVer('2.0.10', '2.0.9'), 1);
     check('cmpVer: missing segments count as 0', cmpVer('2.1', '2.1.0'), 0);
 
+    // ── recomputeBadges — badges are a DERIVED cache, same contract as ST.prs.
+    // Seed a controlled history, recompute, assert on the earned id set.
+    const bSess = (dk, exs) => ({ day: 'push', dayName: 'Push', date: dk, dur: '50m', sets: 1, mk: dk.slice(0, 7), dk, exercises: exs });
+    const bEx = (name, w, r) => ({ name, exFeel: 'good', sets: [{ done: true, t: 'x', w, r }] });
+    const ids = () => Object.keys(ST.badges).sort();
+    CFG.unit = 'kg'; CFG.freq = 5; CFG.restDays = []; CFG.restWeeks = []; ST.bw = [];
+
+    ST.history = [bSess('2026-03-02', [bEx('Flat barbell bench press', 60, 5)])];
+    recomputeBadges();
+    check('badges: one session earns First Rep and First Flag only',
+      ids(), ['first_flag', 'first_rep']);
+    check('badges: earned date is the session that met the condition',
+      ST.badges.first_rep, { dk: '2026-03-02' });
+
+    // Ten Deep must stamp the 10th session's date, not the newest session's —
+    // this is the whole point of replaying history chronologically.
+    ST.history = Array.from({ length: 12 }, (_, i) =>
+      bSess(`2026-03-${String(2 + i).padStart(2, '0')}`, [bEx('Flat barbell bench press', 60, 5)]));
+    recomputeBadges();
+    check('badges: Ten Deep is stamped with the 10th session, not the latest',
+      ST.badges.ten_deep, { dk: '2026-03-11' });
+
+    // Perfect Week: CFG.freq sessions inside one Monday-week.
+    CFG.freq = 3;
+    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-04', [bEx('Barbell row', 50, 5)])];
+    recomputeBadges();
+    check('badges: Perfect Week stays locked below the weekly target',
+      ST.badges.perfect_week, undefined);
+    ST.history.push(bSess('2026-03-06', [bEx('Barbell row', 50, 5)]));
+    recomputeBadges();
+    check('badges: Perfect Week unlocks when CFG.freq is met in one week',
+      ST.badges.perfect_week, { dk: '2026-03-06' });
+
+    // Deleting the qualifying session must revoke it — the derived-cache invariant.
+    ST.history.pop();
+    recomputeBadges();
+    check('badges: removing the qualifying session revokes the badge',
+      ST.badges.perfect_week, undefined);
+
+    // Back on Track: a 14-day gap counts, 13 does not.
+    CFG.freq = 5;
+    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-15', [bEx('Barbell row', 50, 5)])];
+    recomputeBadges();
+    check('badges: a 13-day gap is not Back on Track', ST.badges.back_on_track, undefined);
+    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-16', [bEx('Barbell row', 50, 5)])];
+    recomputeBadges();
+    check('badges: a 14-day gap earns Back on Track', ST.badges.back_on_track, { dk: '2026-03-16' });
+
+    // Ten Tonne threshold follows CFG.unit — 10,000 kg but 22,000 lb.
+    const bigSet = (w, r) => ({ name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'x', w, r }] });
+    ST.history = [bSess('2026-03-02', [bigSet(100, 150)])]; // 15,000 units
+    CFG.unit = 'kg'; recomputeBadges();
+    check('badges: 15,000 units clears the 10,000 kg threshold', !!ST.badges.ten_tonne, true);
+    CFG.unit = 'lbs'; recomputeBadges();
+    check('badges: the same 15,000 does not clear the 22,000 lb threshold', ST.badges.ten_tonne, undefined);
+    CFG.unit = 'kg';
+
+    // Bodyweight badges need a weigh-in, then compare against it.
+    ST.bw = [];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell back squat', 90, 3)])];
+    recomputeBadges();
+    check('badges: Bodyweight Club stays locked with no weigh-in logged',
+      ST.badges.bodyweight_club, undefined);
+    ST.bw = [{ dk: '2026-03-01', date: 'Mar 1, 2026', w: 80, waist: null, arms: null }];
+    recomputeBadges();
+    check('badges: 90kg squat at 80kg body weight earns Bodyweight Club',
+      !!ST.badges.bodyweight_club, true);
+    check('badges: 90kg squat is not yet Double Bodyweight',
+      ST.badges.double_bodyweight, undefined);
+
+    // Warm-ups and noPR exercises must not feed PR-event badges.
+    ST.bw = [];
+    ST.history = [bSess('2026-03-02', [
+      { name: 'Machine-assisted pull-up', exFeel: 'good', sets: [{ done: true, t: 'x', w: 200, r: 5 }] },
+      { name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'w', w: 40, r: 10 }] }
+    ])];
+    recomputeBadges();
+    check('badges: warm-ups and noPR lifts never produce a First Flag',
+      ST.badges.first_flag, undefined);
+
+    // streakEndingAt is the shared definition — asking it about the current
+    // week must agree with streak() itself.
+    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)])];
+    check('streakEndingAt agrees with streak() for the current week',
+      streakEndingAt(weekDayMap(ST.history), dkey(startOfWeek(new Date())), true), streak());
+
     return out;
   });
 

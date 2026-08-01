@@ -6,6 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-08-01
+
+Sixteen achievement badges, earned from the training you've already logged.
+
+### Added
+- **Achievement badges.** A fixed set of sixteen milestones across five themes —
+  showing up (First Rep, Ten Deep, Half Century, Century, Perfect Week), staying
+  with it (Chain of Four, Twelve Weeks, Back on Track), getting stronger (First
+  Flag, Ten Flags, Bodyweight Club, Double Bodyweight), putting in work (Ten
+  Tonne, Million Club) and covering ground (All-Rounder, Twenty-Five Ways). They
+  fill the gap between a single good session and a lifetime PR: the months of
+  showing up that produce neither.
+- **The badge case lives on the PRs tab**, above the all-time PR list — the
+  screen that's already the trophy shelf, one tap from anywhere. Earned badges
+  render in the lime accent; locked ones stay greyed out rather than hidden, so
+  they read as goals. Tapping any badge opens a sheet with its name, exactly what
+  it takes, and either the date earned or the reason it's still locked.
+- **Unlocks appear on the session summary**, one card per badge under the PR
+  stamps — no modal and no confetti takeover, since the summary already
+  celebrates. Newly earned badges are also listed on the shared session card.
+- **Everything already logged counts.** `recomputeBadges()` replays history
+  chronologically, so shipping this unlocks what was already earned, and each
+  badge is stamped with the date its condition was *first* met rather than
+  today's — a badge earned in March reads "Earned Mar 14", not "Earned Aug 1".
+  The first time the case is opened it says so, once.
+- Volume thresholds follow `CFG.unit`: Ten Tonne is 10,000 kg or 22,000 lb and
+  Million Club 1,000,000 kg or 2,200,000 lb. Switching units never revokes a
+  badge already earned. The two bodyweight badges stay locked until at least one
+  weigh-in exists, and say so instead of looking unreachable.
+
+### Changed
+- **Badges are derived, never stored** — the same contract `ST.prs` has.
+  `ST.badges` is rebuilt from `ST.history` / `ST.bw` / `CFG` on load and after
+  any session edit or delete, so correcting a logged session revokes a badge it
+  no longer justifies. Nothing new is written to localStorage, and backup
+  export/import carries badges implicitly with the history they derive from.
+- **`streak()` was refactored, not duplicated.** It could only answer "what is
+  the streak right now", but badges need "what was the streak at *that*
+  session". The walk-back is now `streakEndingAt(weekDays, wk, open)`, called by
+  both — one definition of a qualifying week, including how planned rest weeks
+  bridge a gap, rather than a second copy drifting out of sync.
+- Badge art is inline SVG rather than PNG files: ~6 KB total, crisp at any size,
+  no `EX_IMAGE_URLS` entry in `sw.js` to keep in sync, and the locked state is a
+  CSS class on the same drawing instead of a second set of artwork.
+
+### Testing
+- `scripts/test_units.mjs` covers `recomputeBadges()` the way it already covers
+  `recomputePRs()`: the earned id set for a seeded history, first-met earned
+  dates (the 10th session stamps Ten Deep, not the latest), revocation when the
+  qualifying session is deleted, the `Perfect Week` weekly target, the 13-vs-14
+  day boundary on Back on Track, kg-vs-lb thresholds, bodyweight badges with no
+  weigh-in, warm-ups and `noPR` lifts never producing a PR badge, and
+  `streakEndingAt` agreeing with `streak()` for the current week. 57 assertions
+  passing.
+
+Bumped `APP_VERSION` and `WHATS_NEW_VERSION` to `2.1.0` and service-worker
+`CACHE_NAME` to `gainpath-v26`.
+
 ## [2.0.3] - 2026-08-01
 
 ### Fixed

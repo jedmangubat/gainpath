@@ -8,6 +8,16 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v2.1.0
+
+**Achievement badges.** Sixteen milestones covering the whole arc of training — showing up (First Rep, Ten Deep, Half Century, Century, Perfect Week), staying with it (Chain of Four, Twelve Weeks, and Back on Track for returning after a break), getting stronger (First Flag, Ten Flags, Bodyweight Club, Double Bodyweight), putting in work (Ten Tonne, Million Club), and covering ground (All-Rounder, Twenty-Five Ways).
+
+- **Your case doesn't start empty.** Badges are worked out from the training you've already logged, and each one is stamped with the date you actually earned it — not the day you updated the app.
+- **Find them on the PRs tab**, above your all-time records. Earned badges show in the lime accent; locked ones stay visible in grey so you can see what's next. Tap any badge to see exactly what it takes.
+- **Unlocks land on your session summary** the moment you finish a workout that earns one, and come along when you share the session card.
+
+<img src="images/screenshots/badges.png" width="260" alt="PRs tab — the badge case, with earned badges in lime and locked ones greyed out, above the all-time personal records list">
+
 ## Features
 
 ### 🏋️ Training splits

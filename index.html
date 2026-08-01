@@ -40,6 +40,7 @@
   --accent:#4F7D16;--accent-2:#639A1D;
   --brand-green:#4F7D16;--brand-amber:#4F7D16;
   --brand-forge:#4F7D16;--forge-text:#3B5E10;--accent-ink:#FFFFFF;
+  --lock-fg:#B8BFB2;--lock-line:#DDE0D0;
   --brand-gold:#4F7D16;--gold-text:#3B5E10;
   --page-bg:#E2E5D6;
   --radius:10px;
@@ -63,6 +64,7 @@ html[data-theme="dark"]{
   --brand-green:#C6F24E;--brand-amber:#C6F24E;
   --brand-forge:#C6F24E;--forge-text:#C6F24E;--accent-ink:#0C1512;
   --brand-gold:#C6F24E;--gold-text:#0C1512;
+  --lock-fg:#3E4F46;--lock-line:#293630;
   --page-bg:#0C1512;
   --shadow-sm:none;
   --shadow-md:none;
@@ -179,6 +181,25 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .streak-hero-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-align:right;white-space:nowrap}
 .streak-hero-cta{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--accent-ink)}
 .streak-hero-week{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.82}
+/* ═══ BADGES ═══ One drawing per badge, two states. Earned fills the hexagon
+   with the accent and knocks the glyph out in --accent-ink; .lock empties the
+   fill and drops everything to grey. Never a second set of artwork. */
+.bdg{--fg:var(--accent);--ink:var(--accent-ink);--line:var(--accent);display:block;width:100%;height:auto}
+.bdg.lock{--fg:none;--ink:var(--lock-fg);--line:var(--lock-line)}
+.bdg .hex{fill:var(--fg);stroke:var(--line);stroke-width:2.4;stroke-linejoin:round}
+.bdg .gf{fill:var(--ink)}
+.bdg .gs{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
+.bdg text{font-family:var(--font-mono);font-weight:700;fill:var(--ink);letter-spacing:-.5px}
+.bdg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 8px;margin-bottom:6px}
+.bdg-cell{background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bdg-cell .bdg-wrap{width:100%;max-width:64px}
+.bdg-cell .bdg-nm{font-size:9.5px;line-height:1.25;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--txt2);text-align:center}
+.bdg-cell.locked .bdg-nm{color:var(--lock-fg)}
+.bdg-cell:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+.bdg-unlock{display:flex;align-items:center;gap:12px;border:1.5px solid var(--accent);border-radius:14px;padding:12px 14px;margin-bottom:8px;background:var(--tint-green-1);animation:pr-stamp .18s ease-out}
+.bdg-unlock .bdg-wrap{width:42px;flex-shrink:0}
+.bdg-unlock .u-l{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--forge-text)}
+.bdg-unlock .u-n{font-family:var(--font-display);font-size:14px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-top:2px}
 .hero-pill{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px}
 .hero-pill-green{background:var(--tint-green-1);border:1px solid var(--tint-green-2)}
 .ail{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:13px}
@@ -524,7 +545,13 @@ textarea{resize:vertical;min-height:100px}
     <div id="ch-hist"></div>
   </div>
   <div id="p-pr" style="display:none">
-    <h2 data-i18n="pr_alltime_title">All-time personal records</h2>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px">
+      <h2 style="margin-bottom:0" data-i18n="badges_title">Badges</h2>
+      <span id="bdg-count" style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--txt2)"></span>
+    </div>
+    <div id="bdg-intro" style="display:none;font-size:12px;color:var(--txt2);margin-bottom:10px"></div>
+    <div id="bdg-grid" class="bdg-grid"></div>
+    <h2 style="margin-top:22px" data-i18n="pr_alltime_title">All-time personal records</h2>
     <div id="pr-list"></div>
   </div>
   <div id="p-ex" style="display:none">
@@ -1108,6 +1135,19 @@ textarea{resize:vertical;min-height:100px}
   <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeWhatsNew()" data-i18n="btn_got_it">Got it</button>
 </div>
 
+<!-- BADGE DETAIL -->
+<div id="bdg-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeBadge()"></div>
+<div id="bdg-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="display:flex;justify-content:flex-end"><button class="bg" onclick="closeBadge()" aria-label="Close" data-i18n-aria="aria_close_instructions"><i class="ti ti-x" aria-hidden="true"></i></button></div>
+  <div style="text-align:center;padding:0 8px 4px">
+    <div id="bdg-sheet-art" style="width:88px;margin:0 auto 14px"></div>
+    <div id="bdg-sheet-name" class="tt" style="font-size:19px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"></div>
+    <div id="bdg-sheet-cond" style="font-size:13.5px;color:var(--txt2);margin-top:8px;line-height:1.5"></div>
+    <div id="bdg-sheet-meta" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:14px"></div>
+  </div>
+  <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeBadge()" data-i18n="btn_got_it">Got it</button>
+</div>
+
 <!-- PER-EXERCISE FEEL -->
 <div id="s-exfeel" class="screen">
   <div style="text-align:center;margin-bottom:6px;margin-top:8px">
@@ -1152,6 +1192,7 @@ textarea{resize:vertical;min-height:100px}
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="su-lb"></div>
   </div>
   <div id="su-pr" style="margin-bottom:14px"></div>
+  <div id="su-badges" style="margin-bottom:14px"></div>
   <div id="su-feel-tag" style="margin-bottom:14px"></div>
   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
     <div class="sc c1"><div class="sv" id="su-du"></div><div class="sl" data-i18n="duration_label">Duration</div></div>
@@ -1189,7 +1230,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.0.3';
+const APP_VERSION='2.1.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1216,7 +1257,7 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.0.1';
+const WHATS_NEW_VERSION='2.1.0';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
@@ -8323,10 +8364,10 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   wakeLock:false,
   healthSync:false,healthSyncStartShortcut:'GainPath Start Workout',healthSyncEndShortcut:'GainPath End Workout',
   leadEmail:'',leadSubmitted:false,
-  lastSeenVersion:'0',tutorialSeen:false,
+  lastSeenVersion:'0',tutorialSeen:false,badgesIntroSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,HOLD_TARGET=null,HOLD_ALERTED=false,DE_EXPANDED=null;
 function startHoldTimerInterval(i){
   HOLD_TIMER=setInterval(()=>{
@@ -8361,7 +8402,7 @@ function healthSyncTrigger(phase){
 let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
 const OB_STEPS=9;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();mergeCustomExercises();}catch(e){}}
+function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();mergeCustomExercises();recomputeBadges();}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
 // firstName/lastName on first load so the greeting can address just the first name.
 function migrateName(){
@@ -8572,9 +8613,9 @@ en:{
 "tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "The full Kinetic redesign is here — a bold dark interface with one electric-lime accent, oversized numerals, and a cleaner layout on every screen.",
-"whatsnew_item2": "Logging is faster — each set is a single tap-to-LOG row, with your current set highlighted so you always know where you are.",
-"whatsnew_item3": "The bottom tabs are renamed to match the new look — Train · Days · Climb · PRs · Save.",
+"whatsnew_item1": "Badges are here — sixteen milestones for showing up, staying consistent, getting stronger and putting in the work. Everything you've already logged counts, so your case doesn't start empty.",
+"whatsnew_item2": "Find them on the PRs tab. Earned badges are lime, locked ones stay greyed out, and tapping any badge tells you exactly what it takes.",
+"whatsnew_item3": "Finish a workout that earns one and it lands on your session summary — and comes along when you share the card.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -8647,6 +8688,44 @@ en:{
 "plate_calc_title": "Plate calculator",
 "plates_owned_label": "Plates owned (<span id=\"set-gym-unit1\">kg</span>, per pair)",
 "pr_alltime_title": "All-time personal records",
+"badges_title": "Badges",
+"badges_intro": "Your badge case is open — {n} earned from the training you've already logged.",
+"badge_unlocked": "Badge unlocked",
+"badge_earned_on": "Earned",
+"badge_locked": "Not yet earned",
+"badge_locked_hint_bw": "Log a weigh-in to unlock this",
+"bdg_first_rep_name": "First Rep",
+"bdg_first_rep_cond": "Finish your first workout.",
+"bdg_ten_deep_name": "Ten Deep",
+"bdg_ten_deep_cond": "Log 10 sessions.",
+"bdg_half_century_name": "Half Century",
+"bdg_half_century_cond": "Log 50 sessions.",
+"bdg_century_name": "Century",
+"bdg_century_cond": "Log 100 sessions.",
+"bdg_perfect_week_name": "Perfect Week",
+"bdg_perfect_week_cond": "Hit your full weekly target — every planned day in one week.",
+"bdg_chain_four_name": "Chain of Four",
+"bdg_chain_four_cond": "Keep a four-week streak going.",
+"bdg_twelve_weeks_name": "Twelve Weeks",
+"bdg_twelve_weeks_cond": "Keep a twelve-week streak going — a full training block.",
+"bdg_back_on_track_name": "Back on Track",
+"bdg_back_on_track_cond": "Train again after two weeks or more away. Coming back counts.",
+"bdg_first_flag_name": "First Flag",
+"bdg_first_flag_cond": "Set your first personal record.",
+"bdg_ten_flags_name": "Ten Flags",
+"bdg_ten_flags_cond": "Set 10 personal records across any lifts.",
+"bdg_bodyweight_club_name": "Bodyweight Club",
+"bdg_bodyweight_club_cond": "Squat, bench or deadlift your own body weight for a rep.",
+"bdg_double_bodyweight_name": "Double Bodyweight",
+"bdg_double_bodyweight_cond": "Squat or deadlift twice your body weight.",
+"bdg_ten_tonne_name": "Ten Tonne",
+"bdg_ten_tonne_cond": "Move {v} of total volume in a single session.",
+"bdg_million_club_name": "Million Club",
+"bdg_million_club_cond": "Lift {v} in total, all-time.",
+"bdg_all_rounder_name": "All-Rounder",
+"bdg_all_rounder_cond": "Train chest, back, shoulders, legs and arms inside one week.",
+"bdg_explorer_25_name": "Twenty-Five Ways",
+"bdg_explorer_25_cond": "Log 25 different exercises.",
 "pref_reps_label": "Preferred reps",
 "pref_rest_label": "Rest time",
 "pref_work_sets_label": "Work sets",
@@ -8893,9 +8972,9 @@ ja:{
 "tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "Kineticデザインへ全面刷新 —— 一色のエレクトリックライムを効かせた大胆なダークUI、大きな数字、そして全画面で見やすいレイアウトに。",
-"whatsnew_item2": "記録がより速く —— 各セットは1行になり、ワンタップで「記録」。今のセットがハイライトされ、進捗がひと目でわかります。",
-"whatsnew_item3": "下部タブの名称を新デザインに合わせて変更 —— トレーニング・デイ・クライム・PRs・保存。",
+"whatsnew_item1": "バッジが登場 —— 継続、強化、積み上げた総量など16種類のマイルストーン。これまでの記録もすべて対象なので、最初から空っぽではありません。",
+"whatsnew_item2": "PRsタブで確認できます。獲得したバッジはライム色、未獲得はグレー表示。タップすると獲得条件がわかります。",
+"whatsnew_item3": "ワークアウトでバッジを獲得すると、セッションのまとめ画面に表示され、共有カードにも一緒に載ります。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -8968,6 +9047,44 @@ ja:{
 "plate_calc_title": "プレート計算機",
 "plates_owned_label": "所有プレート (<span id=\"set-gym-unit1\">kg</span>、1組あたり)",
 "pr_alltime_title": "歴代の自己記録",
+"badges_title": "バッジ",
+"badges_intro": "バッジコレクションを開きました — これまでの記録から{n}個を獲得しています。",
+"badge_unlocked": "バッジ獲得",
+"badge_earned_on": "獲得日",
+"badge_locked": "未獲得",
+"badge_locked_hint_bw": "体重を記録すると解除されます",
+"bdg_first_rep_name": "はじめの一歩",
+"bdg_first_rep_cond": "最初のワークアウトを完了する。",
+"bdg_ten_deep_name": "10回達成",
+"bdg_ten_deep_cond": "10セッションを記録する。",
+"bdg_half_century_name": "50回達成",
+"bdg_half_century_cond": "50セッションを記録する。",
+"bdg_century_name": "100回達成",
+"bdg_century_cond": "100セッションを記録する。",
+"bdg_perfect_week_name": "パーフェクトウィーク",
+"bdg_perfect_week_cond": "1週間で予定した日をすべてこなし、週の目標を達成する。",
+"bdg_chain_four_name": "4週連続",
+"bdg_chain_four_cond": "4週間のストリークを継続する。",
+"bdg_twelve_weeks_name": "12週連続",
+"bdg_twelve_weeks_cond": "12週間のストリークを継続する — 1つのトレーニングブロック分。",
+"bdg_back_on_track_name": "再スタート",
+"bdg_back_on_track_cond": "2週間以上空けてから再びトレーニングする。戻ってくることも成果です。",
+"bdg_first_flag_name": "最初の記録",
+"bdg_first_flag_cond": "初めて自己記録を出す。",
+"bdg_ten_flags_name": "記録10個",
+"bdg_ten_flags_cond": "種目を問わず自己記録を10回更新する。",
+"bdg_bodyweight_club_name": "体重クラブ",
+"bdg_bodyweight_club_cond": "スクワット・ベンチプレス・デッドリフトのいずれかで自分の体重を1レップ挙げる。",
+"bdg_double_bodyweight_name": "体重の2倍",
+"bdg_double_bodyweight_cond": "スクワットまたはデッドリフトで体重の2倍を挙げる。",
+"bdg_ten_tonne_name": "10トン",
+"bdg_ten_tonne_cond": "1回のセッションで総ボリューム{v}を動かす。",
+"bdg_million_club_name": "ミリオンクラブ",
+"bdg_million_club_cond": "通算で合計{v}を挙げる。",
+"bdg_all_rounder_name": "オールラウンダー",
+"bdg_all_rounder_cond": "1週間で胸・背中・肩・脚・腕をすべて鍛える。",
+"bdg_explorer_25_name": "25種目",
+"bdg_explorer_25_cond": "25種類の異なるエクササイズを記録する。",
 "pref_reps_label": "希望レップ数",
 "pref_rest_label": "休憩時間",
 "pref_work_sets_label": "本セット数",
@@ -9215,9 +9332,9 @@ ko:{
 "tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "Kinetic 디자인으로 전면 개편 — 하나의 일렉트릭 라임 강조색, 큼직한 숫자, 모든 화면의 더 깔끔한 레이아웃을 갖춘 대담한 다크 UI.",
-"whatsnew_item2": "기록이 더 빨라졌습니다 — 각 세트가 한 줄로, 탭 한 번에 “기록”. 현재 세트가 강조 표시됩니다.",
-"whatsnew_item3": "새 디자인에 맞춰 하단 탭 이름을 변경 — 트레이닝 · 데이 · 클라임 · PRs · 저장.",
+"whatsnew_item1": "배지가 추가되었습니다 — 꾸준함, 성장, 누적 운동량 등 16가지 마일스톤. 지금까지 기록한 운동도 모두 반영되므로 처음부터 비어 있지 않습니다.",
+"whatsnew_item2": "PRs 탭에서 확인하세요. 획득한 배지는 라임색, 미획득 배지는 회색으로 표시되며 탭하면 획득 조건을 알려줍니다.",
+"whatsnew_item3": "운동을 마치고 배지를 획득하면 세션 요약 화면에 표시되고, 공유 카드에도 함께 담깁니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -9290,6 +9407,44 @@ ko:{
 "plate_calc_title": "플레이트 계산기",
 "plates_owned_label": "보유한 플레이트 (<span id=\"set-gym-unit1\">kg</span>, 한 쌍 기준)",
 "pr_alltime_title": "역대 개인 기록",
+"badges_title": "배지",
+"badges_intro": "배지 보관함이 열렸습니다 — 지금까지의 기록으로 {n}개를 획득했습니다.",
+"badge_unlocked": "배지 획득",
+"badge_earned_on": "획득일",
+"badge_locked": "아직 획득하지 않음",
+"badge_locked_hint_bw": "체중을 기록하면 잠금이 해제됩니다",
+"bdg_first_rep_name": "첫 세트",
+"bdg_first_rep_cond": "첫 운동을 완료하세요.",
+"bdg_ten_deep_name": "10회 달성",
+"bdg_ten_deep_cond": "10회 운동을 기록하세요.",
+"bdg_half_century_name": "50회 달성",
+"bdg_half_century_cond": "50회 운동을 기록하세요.",
+"bdg_century_name": "100회 달성",
+"bdg_century_cond": "100회 운동을 기록하세요.",
+"bdg_perfect_week_name": "퍼펙트 위크",
+"bdg_perfect_week_cond": "한 주 동안 계획한 날을 모두 채워 주간 목표를 달성하세요.",
+"bdg_chain_four_name": "4주 연속",
+"bdg_chain_four_cond": "4주 연속 기록을 이어가세요.",
+"bdg_twelve_weeks_name": "12주 연속",
+"bdg_twelve_weeks_cond": "12주 연속 기록을 이어가세요 — 완전한 훈련 사이클입니다.",
+"bdg_back_on_track_name": "다시 시작",
+"bdg_back_on_track_cond": "2주 이상 쉰 뒤 다시 운동하세요. 돌아오는 것도 성과입니다.",
+"bdg_first_flag_name": "첫 기록",
+"bdg_first_flag_cond": "첫 개인 기록을 세우세요.",
+"bdg_ten_flags_name": "기록 10개",
+"bdg_ten_flags_cond": "종목에 상관없이 개인 기록을 10번 경신하세요.",
+"bdg_bodyweight_club_name": "체중 클럽",
+"bdg_bodyweight_club_cond": "스쿼트, 벤치프레스 또는 데드리프트로 자기 체중을 1회 들어 올리세요.",
+"bdg_double_bodyweight_name": "체중의 두 배",
+"bdg_double_bodyweight_cond": "스쿼트 또는 데드리프트로 체중의 두 배를 들어 올리세요.",
+"bdg_ten_tonne_name": "10톤",
+"bdg_ten_tonne_cond": "한 번의 운동에서 총 볼륨 {v}을 들어 올리세요.",
+"bdg_million_club_name": "밀리언 클럽",
+"bdg_million_club_cond": "누적으로 총 {v}을 들어 올리세요.",
+"bdg_all_rounder_name": "올라운더",
+"bdg_all_rounder_cond": "한 주 안에 가슴, 등, 어깨, 하체, 팔을 모두 훈련하세요.",
+"bdg_explorer_25_name": "25가지 운동",
+"bdg_explorer_25_cond": "서로 다른 운동 25가지를 기록하세요.",
 "pref_reps_label": "선호 반복 횟수",
 "pref_rest_label": "휴식 시간",
 "pref_work_sets_label": "본 세트",
@@ -9825,8 +9980,8 @@ function renderSessionEdit(){
   }).join('');
 }
 function updSessionSet(ei,si,field,val){const s=ST.editSessionData.exercises[ei].sets[si];if(field==='w')s.w=parseFloat(val)||0;else s.r=parseInt(val)||0;}
-function saveSessionEdit(){const d=ST.editSessionData;d.sets=d.exercises.reduce((a,ex)=>a+ex.sets.filter(s=>s.done).length,0);ST.history[ST.editSession]=d;recomputePRs();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
-function deleteSession(){if(!confirm('Delete this session permanently? This cannot be undone.'))return;ST.history.splice(ST.editSession,1);recomputePRs();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
+function saveSessionEdit(){const d=ST.editSessionData;d.sets=d.exercises.reduce((a,ex)=>a+ex.sets.filter(s=>s.done).length,0);ST.history[ST.editSession]=d;recomputePRs();recomputeBadges();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
+function deleteSession(){if(!confirm('Delete this session permanently? This cannot be undone.'))return;ST.history.splice(ST.editSession,1);recomputePRs();recomputeBadges();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
 function closeSession(){ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
 
 // ═══ WORKOUT CALENDAR ═══
@@ -9888,19 +10043,23 @@ function sessionsThisWeek(){
 }
 function weekStartDk(dk){return dkey(startOfWeek(new Date(dk+'T00:00:00')));}
 function restDaysInWeek(wk){return(CFG.restDays||[]).filter(dk=>weekStartDk(dk)===wk).length;}
-function streak(){
-  if(!ST.history.length)return 0;
-  function wk(dk){return dkey(startOfWeek(new Date(dk+'T00:00:00')));}
-  const weekDays={};
-  ST.history.forEach(h=>{const w=wk(h.dk);if(!weekDays[w])weekDays[w]=new Set();weekDays[w].add(h.dk);});
+// Weeks a workout was logged in, keyed by Monday-week → Set of day keys.
+function weekDayMap(history){
+  const m={};(history||[]).forEach(h=>{if(!h||!h.dk)return;const w=weekStartDk(h.dk);if(!m[w])m[w]=new Set();m[w].add(h.dk);});
+  return m;
+}
+function weekTarget(wk){return Math.max(1,CFG.freq-restDaysInWeek(wk));}
+// How many consecutive qualifying weeks end at `endWk`, walking backwards.
+// Extracted from streak() so badge history can ask the same question about a
+// PAST week — one definition of "a qualifying week" for both callers. `open`
+// means endWk is still in progress (today's week), which is never counted or
+// broken, only stepped over.
+function streakEndingAt(weekDays,endWk,open){
   const restWeekSet=new Set(CFG.restWeeks||[]);
-  const todayWk=dkey(startOfWeek(new Date()));
-  let cursor=todayWk;
-  // Current week still in progress — don't count or break streak yet (unless it's a marked rest week)
-  if(!restWeekSet.has(cursor)){
+  let cursor=endWk;
+  if(open&&!restWeekSet.has(cursor)){
     const curSet=weekDays[cursor];
-    const curReq=Math.max(1,CFG.freq-restDaysInWeek(cursor));
-    if(!curSet||curSet.size<curReq){const d=new Date(cursor+'T00:00:00');d.setDate(d.getDate()-7);cursor=dkey(d);}
+    if(!curSet||curSet.size<weekTarget(cursor)){const d=new Date(cursor+'T00:00:00');d.setDate(d.getDate()-7);cursor=dkey(d);}
   }
   let n=0;
   for(let guard=0;guard<520;guard++){
@@ -9909,13 +10068,16 @@ function streak(){
     }else{
       const has=weekDays[cursor];
       if(!has)break;
-      const req=Math.max(1,CFG.freq-restDaysInWeek(cursor));
-      if(has.size<req)break;
+      if(has.size<weekTarget(cursor))break;
       n++;
     }
     const d=new Date(cursor+'T00:00:00');d.setDate(d.getDate()-7);cursor=dkey(d);
   }
   return n;
+}
+function streak(){
+  if(!ST.history.length)return 0;
+  return streakEndingAt(weekDayMap(ST.history),dkey(startOfWeek(new Date())),true);
 }
 function addRestDay(dk){if(!CFG.restDays.includes(dk)){CFG.restDays.push(dk);CFG.restDays.sort();saveCFG();}}
 function removeRestDay(dk){CFG.restDays=CFG.restDays.filter(d=>d!==dk);saveCFG();}
@@ -9951,7 +10113,7 @@ function stab(t){
   const hs=gid('hm-streak');if(hs)hs.style.display=home?'flex':'none';
   const bn=gid('prt-h');if(bn)bn.style.display=home?'':'none';
   ['wk','cal','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
-  if(t==='cal')renderCal();if(t==='ch')initChart();if(t==='pr')renderPRs();if(t==='ex')initExport();
+  if(t==='cal')renderCal();if(t==='ch')initChart();if(t==='pr'){renderBadges();renderPRs();}if(t==='ex')initExport();
 }
 function bnav(t){ss('home');stab(t);}
 function goHome(){
@@ -9970,6 +10132,136 @@ function streakMsg(n){
   if(n<=7)return{ic:'ti-shield-check',t:t('streak_msg_4_7')};
   return{ic:'ti-crown',t:n+t('streak_msg_8plus_suffix')};
 }
+
+// ═══ ACHIEVEMENT BADGES ═══
+// Badges are DERIVED, not authoritative — the same rule as ST.prs. ST.badges is
+// a cache of {id:{dk}} rebuilt from ST.history/ST.bw/CFG by recomputeBadges(),
+// so it is never persisted: anything that mutates a logged session must call
+// recomputeBadges() right after recomputePRs(), or an edited-away session can
+// leave a badge standing that was never earned.
+//
+// Art: one hexagon per badge, glyph knocked out in --ink. The locked state is
+// the `lock` class on the same SVG (see .bdg in the stylesheet) — there is no
+// second set of artwork, and no PNGs in images/ to keep in sync with sw.js.
+const BDG_HEX='<polygon class="hex" points="32,2 58,17 58,47 32,62 6,47 6,17"/>';
+function bdgTxt(s,size,y){return'<text x="32" y="'+y+'" text-anchor="middle" font-size="'+size+'">'+s+'</text>';}
+function bdgBar(){return'<rect class="gf" x="15" y="21" width="4.4" height="12" rx="1.5"/><rect class="gf" x="44.6" y="21" width="4.4" height="12" rx="1.5"/><rect class="gf" x="20.5" y="24.6" width="23" height="4.8" rx="1.6"/>';}
+function bdgFlag(x,y,h,pw){return'<rect class="gf" x="'+x+'" y="'+y+'" width="2.8" height="'+h+'" rx="1.3"/><polygon class="gf" points="'+(x+3)+','+(y+.5)+' '+(x+3+pw)+','+(y+5)+' '+(x+3)+','+(y+9.5)+'"/>';}
+const BDG_GLYPH={
+  first_rep:'<rect class="gf" x="16" y="26.5" width="5" height="13" rx="1.6"/><rect class="gf" x="43" y="26.5" width="5" height="13" rx="1.6"/><rect class="gf" x="22" y="30.5" width="20" height="5" rx="1.6"/>',
+  ten_deep:bdgTxt('10',21,40),
+  half_century:bdgTxt('50',21,40),
+  century:bdgTxt('100',17,39),
+  perfect_week:'<polyline class="gs" points="21,33 29,41 44,24" stroke-width="4.6"/>',
+  chain_four:'<rect class="gf" x="19" y="37" width="5" height="8" rx="1.6"/><rect class="gf" x="26" y="32" width="5" height="13" rx="1.6"/><rect class="gf" x="33" y="27" width="5" height="18" rx="1.6"/><rect class="gf" x="40" y="22" width="5" height="23" rx="1.6"/>',
+  twelve_weeks:bdgTxt('12',21,40),
+  back_on_track:'<path class="gs" d="M45 32a13 13 0 1 1-4.2-9.6" stroke-width="3.4"/><polygon class="gf" points="47.5,13 48.5,25.5 36.5,22"/>',
+  first_flag:'<rect class="gf" x="22.5" y="18" width="3.2" height="28" rx="1.4"/><polygon class="gf" points="26.5,19 44,24.5 26.5,30"/>',
+  ten_flags:bdgFlag(15,28,17,9)+bdgFlag(29,20,25,9)+bdgFlag(43,25,20,9),
+  bodyweight_club:bdgBar()+bdgTxt('1×',15,48),
+  double_bodyweight:bdgBar()+bdgTxt('2×',15,48),
+  ten_tonne:'<rect class="gf" x="19" y="39" width="26" height="6" rx="2"/><rect class="gf" x="22" y="30.5" width="20" height="6" rx="2"/><rect class="gf" x="25" y="22" width="14" height="6" rx="2"/>',
+  million_club:bdgTxt('1M',21,40),
+  all_rounder:'<polygon class="gs" points="32,19 43.3,25.5 43.3,38.5 32,45 20.7,38.5 20.7,25.5" stroke-width="2.8"/><g class="gs" stroke-width="2" opacity=".6"><line x1="32" y1="32" x2="32" y2="19"/><line x1="32" y1="32" x2="43.3" y2="25.5"/><line x1="32" y1="32" x2="43.3" y2="38.5"/><line x1="32" y1="32" x2="32" y2="45"/><line x1="32" y1="32" x2="20.7" y2="38.5"/><line x1="32" y1="32" x2="20.7" y2="25.5"/></g><circle class="gf" cx="32" cy="32" r="3"/>',
+  explorer_25:'<g class="gs" stroke-width="3"><line x1="32" y1="26" x2="32" y2="15"/><line x1="38" y1="32" x2="49" y2="32"/><line x1="32" y1="38" x2="32" y2="49"/><line x1="26" y1="32" x2="15" y2="32"/></g><g class="gs" stroke-width="2.2"><line x1="36.2" y1="27.8" x2="40.8" y2="23.2"/><line x1="36.2" y1="36.2" x2="40.8" y2="40.8"/><line x1="27.8" y1="36.2" x2="23.2" y2="40.8"/><line x1="27.8" y1="27.8" x2="23.2" y2="23.2"/></g><circle class="gf" cx="32" cy="32" r="3.4"/>'
+};
+function badgeSvg(id,locked){return'<svg viewBox="0 0 64 64" class="bdg'+(locked?' lock':'')+'" aria-hidden="true">'+BDG_HEX+(BDG_GLYPH[id]||'')+'</svg>';}
+
+// Volume thresholds are stated in kg; a lbs user gets the equivalent in their
+// own unit, since logged weights are already in whatever unit they set.
+function bdgVolT(kg){return CFG.unit==='lbs'?Math.round(kg*2.2):kg;}
+const BDG_BW_LIFTS=['Barbell back squat','Flat barbell bench press','Barbell deadlift'];
+const BDG_DBL_LIFTS=['Barbell back squat','Barbell deadlift'];
+const BDG_ALLROUND=['chest','back','shoulders','quads','hamstrings'];
+// `a` is the accumulator recomputeBadges() carries forward through history.
+const BADGES=[
+  {id:'first_rep',grp:'showing_up',cond:a=>a.n>=1},
+  {id:'ten_deep',grp:'showing_up',cond:a=>a.n>=10},
+  {id:'half_century',grp:'showing_up',cond:a=>a.n>=50},
+  {id:'century',grp:'showing_up',cond:a=>a.n>=100},
+  {id:'perfect_week',grp:'showing_up',cond:a=>a.weekDays[a.wk].size>=weekTarget(a.wk)},
+  {id:'chain_four',grp:'staying',cond:a=>a.streak>=4},
+  {id:'twelve_weeks',grp:'staying',cond:a=>a.streak>=12},
+  {id:'back_on_track',grp:'staying',cond:a=>a.n>=2&&a.gapDays>=14},
+  {id:'first_flag',grp:'stronger',cond:a=>a.prCount>=1},
+  {id:'ten_flags',grp:'stronger',cond:a=>a.prCount>=10},
+  {id:'bodyweight_club',grp:'stronger',needsBW:true,cond:a=>!!a.bw&&BDG_BW_LIFTS.some(n=>a.prs[n]&&a.prs[n].w>=a.bw)},
+  {id:'double_bodyweight',grp:'stronger',needsBW:true,cond:a=>!!a.bw&&BDG_DBL_LIFTS.some(n=>a.prs[n]&&a.prs[n].w>=a.bw*2)},
+  {id:'ten_tonne',grp:'work',vol:10000,cond:a=>a.sessVol>=bdgVolT(10000)},
+  {id:'million_club',grp:'work',vol:1000000,cond:a=>a.vol>=bdgVolT(1000000)},
+  {id:'all_rounder',grp:'ground',cond:a=>{const s=a.mgWeek[a.wk];return!!s&&BDG_ALLROUND.every(m=>s.has(m))&&(s.has('biceps')||s.has('triceps'));}},
+  {id:'explorer_25',grp:'ground',cond:a=>a.exNames.size>=25}
+];
+// One chronological pass. Each badge is stamped with the dk of the session that
+// FIRST met its condition, so backfilled badges carry their real historical
+// date instead of all reading as today.
+function recomputeBadges(){
+  const hist=ST.history.slice().filter(h=>h&&h.dk).sort((a,b)=>a.dk.localeCompare(b.dk));
+  const bw=(ST.bw||[]).slice().sort((a,b)=>a.dk.localeCompare(b.dk));
+  const earned={};
+  const a={n:0,exNames:new Set(),vol:0,weekDays:{},mgWeek:{},prs:{},prCount:0,bw:null,sessVol:0,wk:null,gapDays:0,streak:0};
+  let prevDk=null;
+  hist.forEach(h=>{
+    a.n++;
+    a.wk=weekStartDk(h.dk);
+    a.gapDays=prevDk?dkDay(h.dk)-dkDay(prevDk):0;
+    prevDk=h.dk;
+    if(!a.weekDays[a.wk])a.weekDays[a.wk]=new Set();
+    a.weekDays[a.wk].add(h.dk);
+    if(!a.mgWeek[a.wk])a.mgWeek[a.wk]=new Set();
+    a.sessVol=sessionVolume(h);
+    a.vol+=a.sessVol;
+    (h.exercises||[]).forEach(ex=>{
+      const meta=EXPOOL[ex.name];
+      const allowZero=!!(meta&&meta.holdSecs);
+      const work=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');
+      if(work.length){a.exNames.add(ex.name);if(meta&&meta.mg)a.mgWeek[a.wk].add(meta.mg);}
+      if(meta&&meta.noPR)return;
+      // Same PR rule as recomputePRs(): warm-ups out, zero weight only for
+      // timed holds, ties broken on reps. Each beat is one "PR event".
+      work.filter(s=>s.w!==0||allowZero).forEach(s=>{
+        const cur=a.prs[ex.name];
+        if(!cur||s.w>cur.w||(s.w===cur.w&&s.r>cur.r)){a.prs[ex.name]={w:s.w,r:s.r};a.prCount++;}
+      });
+    });
+    const bwe=bw.filter(e=>e.dk<=h.dk).pop();
+    a.bw=bwe?bwe.w:null;
+    a.streak=streakEndingAt(a.weekDays,a.wk,false);
+    BADGES.forEach(b=>{if(!earned[b.id]&&b.cond(a))earned[b.id]={dk:h.dk};});
+  });
+  ST.badges=earned;
+}
+function badgeCount(){return Object.keys(ST.badges||{}).length;}
+function badgeDate(dk){return new Date(dk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});}
+function renderBadges(){
+  const grid=gid('bdg-grid');if(!grid)return;
+  const earned=ST.badges||{};
+  // Earned first, locked after — but the roster order is otherwise fixed, so
+  // the case looks the same every time you open it.
+  const order=BADGES.slice().sort((x,y)=>(earned[y.id]?1:0)-(earned[x.id]?1:0));
+  grid.innerHTML=order.map(b=>{
+    const got=!!earned[b.id];
+    return'<button class="bdg-cell'+(got?'':' locked')+'" onclick="showBadge('+jsArg(b.id)+')"><span class="bdg-wrap">'+badgeSvg(b.id,!got)+'</span><span class="bdg-nm">'+esc(t('bdg_'+b.id+'_name'))+'</span></button>';
+  }).join('');
+  gid('bdg-count').textContent=badgeCount()+' / '+BADGES.length;
+  // Backfilled badges arrive as a batch on first open, not as workout unlocks —
+  // say so once rather than letting them appear from nowhere.
+  const intro=gid('bdg-intro'),show=!CFG.badgesIntroSeen&&badgeCount()>0;
+  intro.style.display=show?'block':'none';
+  if(show){intro.textContent=t('badges_intro').replace('{n}',badgeCount());CFG.badgesIntroSeen=true;saveCFG();}
+}
+function showBadge(id){
+  const b=BADGES.find(x=>x.id===id);if(!b)return;
+  const got=(ST.badges||{})[id],meta=gid('bdg-sheet-meta');
+  gid('bdg-sheet-art').innerHTML=badgeSvg(id,!got);
+  gid('bdg-sheet-name').textContent=t('bdg_'+id+'_name');
+  // Volume thresholds are stated in the user's own unit, not always in kg.
+  gid('bdg-sheet-cond').textContent=b.vol?t('bdg_'+id+'_cond').replace('{v}',bdgVolT(b.vol).toLocaleString()+' '+CFG.unit):t('bdg_'+id+'_cond');
+  if(got){meta.style.color='var(--accent)';meta.textContent=t('badge_earned_on')+' '+badgeDate(got.dk);}
+  else{meta.style.color='var(--txt3)';meta.textContent=(b.needsBW&&!(ST.bw||[]).length)?t('badge_locked_hint_bw'):t('badge_locked');}
+  gid('bdg-overlay').style.display='block';gid('bdg-sheet').style.display='block';document.body.style.overflow='hidden';
+}
+function closeBadge(){gid('bdg-overlay').style.display='none';gid('bdg-sheet').style.display='none';document.body.style.overflow='';}
 function refreshHome(){
   accentColor();renderHomeBanners();
   tickNum(gid('h-str'),streak());
@@ -10902,13 +11194,20 @@ function buildRec(){
   return{day:ST.day,dayName,date:now.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),dk:dkey(now),mk:mkey(now),dur:fmt(ST.es),sets:done,feel:null,note:null,exercises:ST.sd.map(item=>({name:item.ex.name,exFeel:item.exFeel||null,note:item.userNote||null,sets:item.sets.map(s=>({w:s.w,r:s.r,done:s.done,t:s.t}))}))};
 }
 function submitFeel(feel){
-  const rec=ST.pendingRec;rec.feel=feel;rec.note=(gid('feel-note-inp').value||'').trim()||null;gid('feel-note-inp').value='';ST.history.push(rec);saveData();ST.day=null;clearInProgress();
+  const rec=ST.pendingRec;rec.feel=feel;rec.note=(gid('feel-note-inp').value||'').trim()||null;gid('feel-note-inp').value='';
+  const hadBadges=Object.keys(ST.badges||{});
+  ST.history.push(rec);saveData();ST.day=null;clearInProgress();
+  // Diff the derived badge set around the push — whatever appeared is what this
+  // session earned. Backfill can't leak in here: that happens once, in load().
+  recomputeBadges();
+  const newBadges=BADGES.filter(b=>ST.badges[b.id]&&hadBadges.indexOf(b.id)===-1);
   const newPRs=[];ST.sd.forEach(item=>{item.sets.filter(s=>s.done&&s.t!=='w'&&s.w>0).forEach(s=>{if(chkPR(item.ex.name,s.w,s.r))newPRs.push({name:item.ex.name,w:s.w,r:s.r});});});
   gid('su-lb').textContent=rec.dayName+' \u00b7 '+rec.date;gid('su-du').textContent=rec.dur;gid('su-vol').textContent=fmtVol(sessionVolume(rec),CFG.unit);gid('su-ex').textContent=ST.sd.length;gid('su-se').textContent=rec.sets;
   gid('su-pr').innerHTML=newPRs.length?newPRs.map(p=>'<div class="pr-stamp"><i class="ti ti-star" aria-hidden="true" style="color:var(--brand-gold)"></i> New PR: '+p.name+' \u2014 '+(p.w>0?p.w+CFG.unit:'BW')+' \u00d7 '+p.r+' reps</div>').join(''):'';
+  gid('su-badges').innerHTML=newBadges.map(b=>'<div class="bdg-unlock"><span class="bdg-wrap">'+badgeSvg(b.id,false)+'</span><span><span class="u-l" data-i18n="badge_unlocked">'+esc(t('badge_unlocked'))+'</span><span class="u-n" style="display:block">'+esc(t('bdg_'+b.id+'_name'))+'</span></span></div>').join('');
   const feelColors={easy:'#3C8464',good:'#4A6FA5',hard:'#A5822B',max:'#C05A3E'};const feelLabel={easy:'Too easy \uD83D\uDE0C',good:'Just right \uD83D\uDCAA',hard:'Hard \uD83D\uDD25',max:'Too much \uD83D\uDE35'}[feel];
   gid('su-feel-tag').innerHTML='<div style="background:var(--bg2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:'+feelColors[feel]+'"><i class="ti ti-mood-smile" aria-hidden="true"></i> Session feel: '+feelLabel+'</div>';
-  ST.lastSummary={rec,newPRs};
+  ST.lastSummary={rec,newPRs,newBadges:newBadges.map(b=>t('bdg_'+b.id+'_name'))};
   track('workout_complete');
   ss('sum');
 }
@@ -10939,6 +11238,19 @@ function shareSessionCard(){
       py+=38;
       ctx.fillStyle='#1A1A1A';ctx.font='600 20px -apple-system,sans-serif';
       ctx.fillText(p.name+' — '+(p.w>0?p.w+CFG.unit:'BW')+' × '+p.r,48,py);
+    });
+    py+=14;
+  }
+  // Badges earned in this session, as text — rasterising the SVG onto the
+  // canvas isn't worth it for a line of names.
+  const shareBadges=summary.newBadges||[];
+  if(shareBadges.length){
+    py+=38;
+    ctx.fillStyle='#4F7D16';ctx.font='700 18px -apple-system,sans-serif';ctx.fillText('BADGES UNLOCKED',48,py);
+    shareBadges.slice(0,3).forEach(name=>{
+      py+=38;
+      ctx.fillStyle='#1A1A1A';ctx.font='600 20px -apple-system,sans-serif';
+      ctx.fillText(name,48,py);
     });
   }
   ctx.fillStyle='#8A8578';ctx.font='500 15px -apple-system,sans-serif';ctx.fillText('gainpath — jedmangubat.github.io/gainpath',48,H-32);

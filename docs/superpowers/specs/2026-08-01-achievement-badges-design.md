@@ -29,8 +29,13 @@ Reviewed visually at
 **Badges are derived, not authoritative** — the same rule `CLAUDE.md` already
 states for PRs. `ST.badges` is a cache of `{id: {dk}}` (id → the date key the
 badge was first earned), rebuilt from `ST.history` / `ST.bw` / `CFG` by
-`recomputeBadges()`. It persists to a new `gp_bg` localStorage key in
-`saveData()` and is read back in `load()`.
+`recomputeBadges()` in `load()`.
+
+> **Changed during implementation:** this originally specified a `gp_bg`
+> localStorage key. Dropped — badges are *fully* derived, with no live
+> incremental path like `chkPR()` gives PRs, so persisting them only creates a
+> cache that can go stale and a new key that backup export/import would have to
+> carry. Recomputing is one O(n) pass at startup. Nothing is written to storage.
 
 > **Invariant:** every existing call site of `recomputePRs()` must also call
 > `recomputeBadges()` — `saveSessionEdit()` and `deleteSession()` today. Editing
