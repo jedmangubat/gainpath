@@ -6,6 +6,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-08-01
+
+### Fixed
+- **Progress and body-weight charts spaced every point evenly, so time was
+  compressed out of the picture.** Both charts fed Chart.js a `labels` array of
+  formatted date strings, which selects the default **category** x-scale — one
+  equal-width slot per entry regardless of the dates on them. Two sessions a day
+  apart and two sessions three months apart drew the same distance apart, so the
+  line's slope said nothing about how fast progress actually happened and a long
+  layoff was invisible. Both charts now plot on a `type:'linear'` x-axis keyed on
+  a whole-day index (`dkDay`), with date-formatted ticks (`dayLabel`) and a
+  shared axis config (`timeAxis`) — a six-week gap now renders six times wider
+  than a one-week gap. Tooltips gained an explicit date title, which the category
+  scale used to supply for free. Deliberately no Chart.js time scale: that needs
+  a date-adapter library, and whole-day numbers on a linear scale give the same
+  spacing plus tick marks that land on real day boundaries.
+- **The Progress chart plotted sessions in the order they were saved, not in
+  date order.** `drawChart()` walked `ST.history`, which is only ever appended
+  to — so a back-dated or edited session drew out of sequence, and the
+  "waypoint" flags (running-max markers) followed that wrong order. Points are
+  now collected into a day-keyed map and emitted chronologically. Same fix
+  handles two sessions of one lift on the same day, which previously produced
+  two points sharing an x position: volume now sums within a day, max weight and
+  estimated 1RM take the day's best.
+- **The v2.0.2 update announcement showed off the v2.0.1 redesign.** The in-app
+  What's New sheet fired whenever `CFG.lastSeenVersion !== APP_VERSION` and
+  titled itself with `APP_VERSION`, but `WHATS_NEW_ITEMS` still held the Kinetic
+  redesign copy — so upgrading from 2.0.1 to a bug-fix-only 2.0.2 produced a
+  sheet headed "What's new in v2.0.2" listing a redesign that shipped a version
+  earlier and had already been seen. The sheet is now pinned to a separate
+  `WHATS_NEW_VERSION` constant (the version its items actually describe) and
+  gated on a numeric version comparison (`cmpVer`) rather than string inequality:
+  a release that ships no user-facing news leaves that constant alone and
+  correctly shows no sheet at all, while someone upgrading from further back
+  still sees the news they missed, headed with the right version number.
+
+### Testing
+- `scripts/test_units.mjs` covers the new pure helpers: `dkDay` day spacing
+  (including across a year boundary), `dayLabel` formatting, `timeAxis` tick
+  count/step/range (wide span, narrow span, and the single-point case), and
+  `cmpVer` ordering including the legacy `'0'` default. 42 assertions passing.
+
+Bumped `APP_VERSION` to `2.0.3` and service-worker `CACHE_NAME` to
+`gainpath-v25`. Bug-fix-only release — `WHATS_NEW_VERSION` stays at `2.0.1` and
+there's no README "What's new" section for this version.
+
 ## [2.0.2] - 2026-07-30
 
 ### Fixed

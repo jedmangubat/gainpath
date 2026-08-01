@@ -1189,7 +1189,7 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.0.2';
+const APP_VERSION='2.0.3';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1206,14 +1206,28 @@ function track(event){
 }
 
 // ═══ WHAT'S NEW — a one-time sheet shown to returning users (CFG.setup
-// already true) whose CFG.lastSeenVersion doesn't match APP_VERSION. Not
-// shown to first-time users (they see it all via onboarding + the tutorial)
-// or while a workout is being restored. Every version bump that ships a
-// user-facing feature should update WHATS_NEW_ITEMS alongside the README's
-// "What's new" section — see CLAUDE.md. ═══
+// already true) who haven't yet seen WHATS_NEW_VERSION's news. Not shown to
+// first-time users (they see it all via onboarding + the tutorial) or while a
+// workout is being restored.
+//
+// WHATS_NEW_VERSION is the version WHATS_NEW_ITEMS actually describes — NOT
+// necessarily APP_VERSION. Bump it (and rewrite WHATS_NEW_ITEMS + its i18n
+// strings, mirroring the README's "What's new" section — see CLAUDE.md) only
+// on a release that ships user-facing news. A bug-fix-only release leaves it
+// alone, so upgraders correctly see no sheet at all instead of last version's
+// announcement re-headed with the new number. ═══
+const WHATS_NEW_VERSION='2.0.1';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+// -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
+function cmpVer(a,b){
+  const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
+  for(let i=0;i<Math.max(x.length,y.length);i++){
+    const d=(x[i]||0)-(y[i]||0);if(d)return d<0?-1:1;
+  }
+  return 0;
+}
 function showWhatsNew(){
-  gid('whatsnew-version').textContent=t('whatsnew_heading')+' v'+APP_VERSION;
+  gid('whatsnew-version').textContent=t('whatsnew_heading')+' v'+WHATS_NEW_VERSION;
   gid('whatsnew-list').innerHTML=WHATS_NEW_ITEMS.map(k=>'<li>'+t(k)+'</li>').join('');
   gid('whatsnew-overlay').style.display='block';gid('whatsnew-sheet').style.display='block';
   document.body.style.overflow='hidden';
@@ -9448,6 +9462,24 @@ function restoreInProgress(){
 }
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function mkey(d){return dkey(d).slice(0,7);}
+// ═══ Chart time axis — charts plot time PROPORTIONALLY, not one slot per
+// entry: a 6-week gap between sessions renders six times wider than a 1-week
+// gap. x is a whole-day index since the epoch (day numbers, not ms, so
+// Chart.js's linear ticks land on whole-day boundaries), and Date.UTC keeps
+// the arithmetic free of DST drift — the dk is already a local-date key, so
+// it's only ever used as a calendar date here, never as an instant.
+// Any new chart over dated data should use these rather than passing date
+// strings as Chart.js `labels` (that's the category scale, which spaces
+// points evenly by index and is what this replaced). ═══
+function dkDay(dk){const p=String(dk||'').split('-');return Date.UTC(+p[0],+p[1]-1,+p[2])/864e5;}
+function dayLabel(n,full){return new Date(n*864e5).toLocaleDateString('en-PH',full?{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}:{month:'short',day:'numeric',timeZone:'UTC'});}
+// Shared x-scale config — ~6 evenly spaced date ticks across the data's span.
+function timeAxis(days,tick){
+  let min=days[0],max=days[days.length-1];
+  if(max===min){min-=1;max+=1;}
+  const step=Math.max(1,Math.ceil((max-min)/5));
+  return{type:'linear',offset:true,min,max,grid:{display:false},ticks:{color:tick,maxRotation:35,font:{size:10},stepSize:step,autoSkip:false,callback:v=>dayLabel(v)}};
+}
 function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 // Odometer-style tick for the streak number (Trail motion spec)
 function tickNum(el,to){if(!el)return;const from=parseInt(el.textContent,10);if(isNaN(from)||from===to||window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=to;return;}const t0=performance.now(),dur=600;function step(t){const p=Math.min((t-t0)/dur,1);el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
@@ -11003,7 +11035,8 @@ function renderBWSection(){
   if(!sorted.length){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
   const theme=chartTheme(canvas,140);
-  ST.bwChart=new Chart(canvas,{type:'line',data:{labels:sorted.map(e=>e.date),datasets:[{label:'Body weight ('+CFG.unit+')',data:sorted.map(e=>e.w),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:{grid:{display:false},ticks:{color:theme.tick,maxRotation:35,font:{size:10}}}}}});
+  const bwDays=sorted.map(e=>dkDay(e.dk));
+  ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:sorted.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(bwDays,theme.tick)}}});
   gid('bw-list').innerHTML=sorted.slice().reverse().slice(0,8).map(e=>{
     const extras=[e.waist?'Waist '+e.waist+'cm':null,e.arms?'Arms '+e.arms+'cm':null].filter(Boolean).join(' · ');
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+e.w+CFG.unit+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+e.date+(extras?' · '+extras:'')+'</div></div><button class="bg" onclick="deleteBWLog('+jsArg(e.dk)+')" aria-label="Delete entry"><i class="ti ti-trash" aria-hidden="true"></i></button></div>';
@@ -11027,15 +11060,21 @@ function chartTheme(canvas,h){
 }
 function drawChart(){
   const name=gid('ch-sel').value,metric=(gid('ch-metric')&&gid('ch-metric').value)||'w',empty=gid('ch-empty'),canvas=gid('ch-cv');
-  const pts=[];ST.history.forEach(h=>{
+  // Keyed by day, not pushed per session: ST.history is only ever appended, so
+  // a back-dated/edited session would otherwise plot out of order, and two
+  // sessions of this lift on one day would land on the same x. Volume sums
+  // within a day; max weight / est. 1RM take the day's best.
+  const byDay={};ST.history.forEach(h=>{
     const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;
     const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w'&&s.w>0);if(!ws.length)return;
+    const dk=h.dk||dkey(new Date(h.date));if(!dk)return;
     let y;
     if(metric==='v')y=ws.reduce((a,s)=>a+s.w*s.r,0);
     else if(metric==='e')y=Math.max(...ws.map(s=>e1rm(s.w,s.r)));
     else y=Math.max(...ws.map(s=>s.w));
-    pts.push({date:h.date,w:y});
+    byDay[dk]=byDay[dk]===undefined?y:(metric==='v'?byDay[dk]+y:Math.max(byDay[dk],y));
   });
+  const pts=Object.keys(byDay).sort().map(dk=>({day:dkDay(dk),w:byDay[dk]}));
   if(ST.chart){ST.chart.destroy();ST.chart=null;}
   if(!pts.length){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
@@ -11048,7 +11087,7 @@ function drawChart(){
   const isWaypoint=pts.map(p=>{const wp=p.w>runningMax;if(p.w>runningMax)runningMax=p.w;return wp;});
   const pointRadius=isWaypoint.map((wp,i)=>i===0?5:wp?8:4);
   const pointColor=isWaypoint.map((wp,i)=>i>0&&wp?theme.forge:theme.accent);
-  ST.chart=new Chart(canvas,{type:'line',data:{labels:pts.map(p=>p.date),datasets:[{label,data:pts.map(p=>p.w),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&c.dataIndex>0?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:{grid:{display:false},ticks:{color:theme.tick,maxRotation:35,font:{size:10}}}}}});
+  ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&c.dataIndex>0?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(pts.map(p=>p.day),theme.tick)}}});
 }
 function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}el.innerHTML=keys.sort().map(k=>{const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}).join('');}
 function prHistoryFor(name){
@@ -11232,7 +11271,7 @@ if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){
     refreshHome();ss('home');
-    if(CFG.lastSeenVersion!==APP_VERSION)showWhatsNew();
+    if(cmpVer(CFG.lastSeenVersion,WHATS_NEW_VERSION)<0)showWhatsNew();
   }
 }else{ss('ob');}
 

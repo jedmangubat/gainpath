@@ -95,10 +95,17 @@ streak card + install banner only show on the Train tab (see `stab()`).
 - **In-app "What's New" and the persistent tutorial (added v1.10.0) need the
   same upkeep as the README's "What's new" section — don't let them go
   stale.** `WHATS_NEW_ITEMS` (near the top of `index.html`'s script, next to
-  `APP_VERSION`) drives a one-time bottom-sheet shown to returning users
-  whose `CFG.lastSeenVersion` doesn't match `APP_VERSION`; bump
-  `APP_VERSION` and rewrite `WHATS_NEW_ITEMS` on every version bump that
-  ships a user-facing feature (mirror the README bullets, condensed). The
+  `APP_VERSION`) drives a one-time bottom-sheet shown to returning users.
+  **The sheet is gated on `WHATS_NEW_VERSION`, not `APP_VERSION`** — it's the
+  version `WHATS_NEW_ITEMS` actually describes, and it shows only when
+  `cmpVer(CFG.lastSeenVersion, WHATS_NEW_VERSION) < 0`. On a release that
+  ships user-facing news, bump `WHATS_NEW_VERSION` to the new version and
+  rewrite `WHATS_NEW_ITEMS` + its `whatsnew_item*` strings in all three
+  languages (mirror the README bullets, condensed). On a **bug-fix-only**
+  release, bump `APP_VERSION` alone and leave `WHATS_NEW_VERSION` where it
+  is — upgraders then correctly see no sheet, instead of last version's
+  announcement re-headed with the new number (this shipped broken in v2.0.2;
+  fixed in v2.0.3). The
   tutorial (`#s-tutorial`, `TUT_TOTAL` steps, functions prefixed `tut*`) is
   a spotlight-on-screenshot walkthrough shown once after onboarding
   (skippable) and reachable anytime from Settings → How to use. If a new
@@ -160,6 +167,16 @@ streak card + install banner only show on the Train tab (see `stab()`).
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
   sessions). Estimated 1RM and volume are shown across the Progress tab, PR list,
   and session summary — keep their definitions single-sourced.
+- **Charts over dated data plot time proportionally.** A gap between sessions
+  must render as a gap — never one equal-width slot per entry. Any new chart
+  reuses `dkDay(dk)` (whole-day index since the epoch) for its `x` values,
+  `dayLabel(n, full)` for date text, and `timeAxis(days, tickColor)` for the
+  `scales.x` config. Concretely: pass Chart.js `data:[{x,y}]` and **never** a
+  `labels:` array of date strings — that selects the category scale, which is
+  exactly the uniform-spacing bug fixed in v2.0.3. Chart.js's own `time` scale
+  is deliberately unused; it needs a date-adapter dependency the app doesn't
+  carry. Series must also be sorted chronologically and deduped by day at build
+  time — `ST.history` is append-only, so its order is not date order.
 
 ## Dev tooling (optional, dev-only — `npm install` once to use)
 

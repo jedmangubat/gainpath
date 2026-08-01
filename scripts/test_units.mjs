@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Unit-tests GainPath's pure calculation functions (e1rm, sessionVolume,
-// fmtVol, recomputePRs, chkPR, suggestWeight, roundToGymWeight) against the
+// fmtVol, recomputePRs, chkPR, suggestWeight, roundToGymWeight, dkDay,
+// dayLabel, timeAxis, cmpVer) against the
 // real inline script, by seeding
 // localStorage and loading index.html in a real headless browser — same
 // boot pattern as visual_check.mjs. This exercises the actual production
@@ -204,6 +205,46 @@ async function main() {
     CFG.gymPlates = {};
     check('roundToGymWeight: no inventory configured → pass-through',
       roundToGymWeight(rowEx, 63, 'up'), 63);
+
+    // ── dkDay / dayLabel / timeAxis — the chart time axis. The whole point is
+    // that x is proportional to elapsed days, so a gap is drawn as a gap.
+    check('dkDay: consecutive days are 1 apart',
+      dkDay('2026-01-06') - dkDay('2026-01-05'), 1);
+    check('dkDay: spacing is the real day count, not one slot per entry',
+      dkDay('2026-04-01') - dkDay('2026-01-01'), 90);
+    check('dkDay: spans a year boundary correctly',
+      dkDay('2026-01-01') - dkDay('2025-12-31'), 1);
+    check('dayLabel: round-trips a day number back to its date',
+      dayLabel(dkDay('2026-03-04')), 'Mar 4');
+    check('dayLabel: full form includes the year',
+      dayLabel(dkDay('2026-03-04'), true), 'Mar 4, 2026');
+
+    // timeAxis pins the axis to the data's real span; tick count stays ~6 no
+    // matter how wide that span is, and steps stay whole days.
+    const axisFor = (dks) => {
+      const days = dks.map(dkDay);
+      const ax = timeAxis(days, '#000');
+      const step = ax.ticks.stepSize;
+      return { min: ax.min, max: ax.max, step, ticks: Math.floor((ax.max - ax.min) / step) + 1, whole: step === Math.round(step) };
+    };
+    check('timeAxis: 3-day span → axis spans the data, whole-day steps, ≤6 ticks',
+      axisFor(['2026-01-01', '2026-01-02', '2026-01-04']),
+      { min: dkDay('2026-01-01'), max: dkDay('2026-01-04'), step: 1, ticks: 4, whole: true });
+    check('timeAxis: 2-year span → still ≤6 whole-day ticks',
+      (() => { const a = axisFor(['2024-01-01', '2025-06-01', '2026-01-01']); return { ok: a.ticks <= 6 && a.whole, min: a.min, max: a.max }; })(),
+      { ok: true, min: dkDay('2024-01-01'), max: dkDay('2026-01-01') });
+    check('timeAxis: single point → padded ±1 day instead of a zero-width axis',
+      axisFor(['2026-01-01']),
+      { min: dkDay('2026-01-01') - 1, max: dkDay('2026-01-01') + 1, step: 1, ticks: 3, whole: true });
+
+    // ── cmpVer — gates the What's New sheet. A bug-fix release leaves
+    // WHATS_NEW_VERSION alone, so upgraders must compare as "already seen".
+    check('cmpVer: same version → 0 (sheet stays hidden)', cmpVer('2.0.1', '2.0.1'), 0);
+    check('cmpVer: newer than the news version → 1 (already seen it)', cmpVer('2.0.2', '2.0.1'), 1);
+    check('cmpVer: older than the news version → -1 (show the sheet)', cmpVer('2.0.0', '2.0.1'), -1);
+    check('cmpVer: legacy "0" default is older than anything', cmpVer('0', '2.0.1'), -1);
+    check('cmpVer: compares numerically, not lexically', cmpVer('2.0.10', '2.0.9'), 1);
+    check('cmpVer: missing segments count as 0', cmpVer('2.1', '2.1.0'), 0);
 
     return out;
   });
