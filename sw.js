@@ -1,9 +1,8 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v26';
+const CACHE_NAME = 'gainpath-v27';
 const CDN_URLS = [
-  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   'https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js'
@@ -15,7 +14,12 @@ const SHELL_URLS = [
   // Self-hosted Kinetic Athletic fonts (latin subset) — precached so the
   // reskin renders offline without any fonts.googleapis.com dependency.
   './fonts/archivo-latin-var.woff2', './fonts/space-grotesk-latin-var.woff2',
-  './fonts/space-mono-latin-400.woff2', './fonts/space-mono-latin-700.woff2'
+  './fonts/space-mono-latin-400.woff2', './fonts/space-mono-latin-700.woff2',
+  // Tabler icons, self-hosted for the same reason. The CDN build used to live
+  // in CDN_URLS, but only its stylesheet was ever cached — the font file it
+  // references was not, so offline every icon in the app rendered as an empty
+  // box. A stylesheet and the font it depends on must cache together.
+  './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the

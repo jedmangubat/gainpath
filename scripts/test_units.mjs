@@ -332,6 +332,22 @@ async function main() {
     check('streakEndingAt agrees with streak() for the current week',
       streakEndingAt(weekDayMap(ST.history), dkey(startOfWeek(new Date())), true), streak());
 
+    // Showing the home screen must always render it. Boot only calls
+    // refreshHome() when restoreInProgress() returns false, so a user who
+    // relaunched into a restored day-edit and then tapped a bottom-nav tab
+    // landed on a home screen nothing had ever filled in — an empty Train tab
+    // that survived relaunches, since gp_wip kept sending boot down the
+    // restore path. ss() owns the invariant now, so every route to home
+    // (bnav, closeDayEdit, cancelProgram, boot) is covered by construction.
+    const homeBlank = () => { gid('dbtn-list').innerHTML = ''; gid('h-gr').textContent = ''; };
+    const homeRendered = () => gid('dbtn-list').children.length > 0 && gid('h-gr').textContent !== '';
+    homeBlank();
+    ss('home');
+    check('ss("home") renders the home screen it shows', homeRendered(), true);
+    homeBlank();
+    bnav('wk');
+    check('bnav("wk") renders the Train tab it opens', homeRendered(), true);
+
     return out;
   });
 

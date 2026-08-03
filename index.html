@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GainPath">
 <title>GainPath — Workout Tracker</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" integrity="sha384-PwEnNZvp50/uDLtKrd1s2D4Xe/y+fCVtEigigjik/PgHlDXUF1uJ32m7guk/XWYV" crossorigin="anonymous">
+<link rel="stylesheet" href="fonts/tabler-icons.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
@@ -662,7 +662,7 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setprofile')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-user" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_profile">Profile</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_profile_sub">Name, body weight, height, body fat</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setprefs')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-adjustments" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_prefs">Preferences</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_prefs_sub">Units, reps, rest, split, warm-ups, dark mode</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setequip')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_gym">My gym</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_gym_sub">Plates and dumbbells you actually have</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-dumbbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_machines">Machine base weights</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_machines_sub">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_machines">Machine base weights</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_machines_sub">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_restplan">Planned rest</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_restplan_sub">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
@@ -1151,7 +1151,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- PER-EXERCISE FEEL -->
 <div id="s-exfeel" class="screen">
   <div style="text-align:center;margin-bottom:6px;margin-top:8px">
-    <i class="ti ti-dumbbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
+    <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
     <div style="font-size:17px;font-weight:700;margin-top:8px;color:var(--txt)" id="ef-name"></div>
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="ef-sets"></div>
   </div>
@@ -1225,12 +1225,16 @@ const EMAILJS_SERVICE_ID='gainpath_service';
 const EMAILJS_TEMPLATE_ID='template_hyxqdds';
 const EMAILJS_PUBLIC_KEY='jtnxpkG1PAlGnF4LL';
 
-emailjs.init(EMAILJS_PUBLIC_KEY);
+// Guarded: this is the first statement in the app's only script block, so an
+// unreachable CDN here used to throw before a single function ran — the whole
+// app died on a blank onboarding screen over an optional feedback form. The
+// send path is already inside a try/catch, so it just reports failure instead.
+if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.1.0';
+const APP_VERSION='2.1.1';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -9649,6 +9653,14 @@ function ss(id){
   const showNav=!NO_NAV_SCREENS.has(id);
   gid('bnav').style.display=showNav?'flex':'none';
   document.querySelector('.app').classList.toggle('has-nav',showNav);
+  // Showing home IS rendering it — the invariant lives here rather than in each
+  // caller. Boot only calls refreshHome() when restoreInProgress() returns
+  // false, so a user who relaunched into a restored workout or day-edit had a
+  // home screen nothing had ever filled in; bnav()/closeDayEdit()/
+  // cancelProgram() then switched to it without rendering, showing an empty
+  // Train tab that survived relaunches because gp_wip kept sending boot back
+  // down the restore path. refreshHome() never calls ss(), so this can't recurse.
+  if(id==='home')refreshHome();
 }
 let _actx=null;
 function ensureAudio(){try{if(!_actx)_actx=new (window.AudioContext||window.webkitAudioContext)();if(_actx.state==='suspended')_actx.resume();}catch(e){}}

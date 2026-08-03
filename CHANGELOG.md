@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-08-03
+
+### Fixed
+- **Empty Train tab that survived relaunching the app.** Reopening GainPath
+  with an unfinished workout or day-edit saved (`gp_wip`) sent startup down the
+  restore path, which never rendered the home screen. Tapping a bottom-nav tab
+  from there switched to a Train tab nothing had ever filled in — no greeting,
+  no day buttons, a streak card frozen at the markup's `0` and `0/0` — and it
+  came back on every relaunch, because the saved session kept startup on the
+  restore path. `ss()` now renders home whenever it shows home, so every route
+  in (`bnav`, `closeDayEdit`, `cancelProgram`, startup) is covered rather than
+  each caller having to remember. No JavaScript error was involved, which is
+  why nothing looked wrong in the console.
+- **Every icon rendering as an empty box offline.** The service worker
+  precached the Tabler icon *stylesheet* but not the font file that stylesheet
+  points at, so with no connection the whole app fell back to tofu boxes. The
+  icons are now self-hosted — the same treatment the display fonts already
+  got — as a 65-glyph subset in `fonts/`, which also drops the download from
+  779 KB to 13 KB and removes a third-party dependency from first paint.
+- **Two icons that were blank for everyone, online or offline.** Settings →
+  "Machine base weights" and the machine-weight prompt asked for `ti-dumbbell`,
+  which does not exist in Tabler 2.47.0. Both now use `ti-barbell`.
+- **The whole app dying when a CDN was unreachable.** `emailjs.init()` ran as
+  the first statement of the app's only script block, so a blocked or failed
+  CDN request threw before any function was defined and left users stuck on a
+  dead onboarding screen with no access to their data. It is guarded now; the
+  feedback form already reported send failures on its own.
+
 ## [2.1.0] - 2026-08-01
 
 Sixteen achievement badges, earned from the training you've already logged.

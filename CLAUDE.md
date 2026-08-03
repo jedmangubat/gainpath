@@ -64,6 +64,20 @@ streak card + install banner only show on the Train tab (see `stab()`).
   A built-in exercise whose image fails to load shows a neutral placeholder;
   only `custom:true` exercises fall back to a YouTube-search "Tutorial" link
   (`exImgFallback` branches on `custom`).
+- **Icons are a self-hosted subset — adding one is two steps, not one.**
+  `fonts/tabler-icons.css` + `fonts/tabler-icons-subset.woff2` hold only the
+  ~65 Tabler glyphs the app actually uses, cut from the upstream webfont with
+  `pyftsubset` (see the regeneration note in the CSS header; the upstream GSUB
+  table is malformed, so `--drop-tables+=GSUB,GPOS` is required). Writing a new
+  `ti-*` class in markup is **not** enough — a glyph that isn't in the subset
+  renders as an empty box, silently and only at runtime. Re-subset with the new
+  codepoint, append its rule to the CSS, and bump `CACHE_NAME`. Both files are
+  in `SHELL_URLS`, deliberately: they were on a CDN until v2.1.1, where only
+  the stylesheet was precached and the font it referenced was not, so every
+  icon in the app became a box offline. Verify a new icon actually renders
+  (measure its width with the font loaded) rather than trusting the class name
+  — `ti-dumbbell` shipped blank for months because it doesn't exist in Tabler
+  2.47.0.
 - **Never add an exercise to the `EX` object without its image already in place.**
   When proposing/adding a batch of new exercises, stage them in a dedicated
   image-prompts `.txt` at the repo root (self-contained, paste-ready prompt per
@@ -189,6 +203,25 @@ streak card + install banner only show on the Train tab (see `stab()`).
   is deliberately unused; it needs a date-adapter dependency the app doesn't
   carry. Series must also be sorted chronologically and deduped by day at build
   time — `ST.history` is append-only, so its order is not date order.
+- **`ss(id)` renders the home screen; callers don't.** `ss('home')` calls
+  `refreshHome()` itself, so no navigation path can show an unrendered home.
+  Don't "optimise" that away, and don't go back to making each caller
+  responsible: that was the v2.1.1 bug. Startup only calls `refreshHome()` on
+  the branch where `restoreInProgress()` returns false, so anyone relaunching
+  with a saved `gp_wip` got a home screen nothing had filled in, and `bnav()`
+  /`closeDayEdit()`/`cancelProgram()` all switched to it without rendering —
+  an empty Train tab, no JS error, reproducible across relaunches. The
+  `refreshHome();ss('home')` pairs still scattered around are now redundant
+  but harmless. Any *new* screen that caches rendered state should follow the
+  same shape: render on the way in, from `ss()`.
+- **A third-party CDN must never be able to break the app.** Anything loaded
+  from a CDN (`Chart.js`, `jsPDF`, EmailJS in `<head>`) is used lazily inside
+  the feature that needs it, or guarded at the call site — never dereferenced
+  at the top level of the script block. The whole app is one `<script>`, so a
+  single `ReferenceError` there stops every function from ever being defined
+  and strands the user on a dead onboarding screen (this is what
+  `emailjs.init()` did until v2.1.1). Prefer self-hosting outright, as the
+  display fonts and icons already are.
 
 ## Dev tooling (optional, dev-only — `npm install` once to use)
 
