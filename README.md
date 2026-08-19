@@ -8,13 +8,12 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.2.0
+## ✨ What's new in v2.3.0
 
-**102 new exercises — the library more than doubles, from 119 to 221.** Every one arrives complete: its own illustrated three-panel guide, six form cues for the rest screen, and step-by-step instructions, all in English, Japanese and Korean.
+**Your all-time personal records are now grouped by muscle.** The PRs tab used to be one long alphabetical list — with a couple of hundred exercises to choose from, that got unreadable fast.
 
-- **Far better swaps.** All 102 land in the substitution pool, so when you swap an exercise you get real alternatives that train the same muscle rather than a thin list.
-- **The gaps got filled.** Glutes, calves, abductors and core gained the most, and there are now bodyweight and machine alternatives for most barbell lifts — useful when the rack is taken or you're training at home.
-- **Nothing else changed.** Your program, history, PRs and badges are untouched; there's simply more to choose from.
+- **One section per muscle**, in training order (chest, back, shoulders, arms, then legs and core) rather than A-to-Z. Each header shows how many records you hold for that muscle and your heaviest lift in it, so you can read the whole tab at a glance.
+- **Sections start closed**, so the full list fits on one screen. Tap a muscle to open it and every record underneath appears exactly as before — tap any one for its full timeline.
 
 ## Features
 
@@ -43,6 +42,8 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
 - **Supersets & circuits** — link an exercise with the next one in the editor to pair them (2 linked = superset, 3+ = circuit). During the workout you alternate one set of each back-to-back with no rest, resting once per round. Each exercise still tracks its own feel rating, volume, and PRs
 - **Drop sets** — a "+ Drop" button on any set marks it done and adds a lighter set (70% of the weight) so you can push past failure; it counts toward volume and PRs like any work set
+- **A 221-exercise built-in library.** Every exercise ships complete — an illustrated three-panel guide, six form cues for the rest screen, and step-by-step instructions, all in English, Japanese and Korean. Glutes, calves, abductors and core are covered as thoroughly as the big lifts, and most barbell movements have a bodyweight or machine alternative for when the rack is taken or you're training at home
+- **Substitutions that are actually useful** — the whole library is in the swap pool, so swapping an exercise offers real alternatives that train the same muscle rather than a thin list
 - **Custom exercises** — for a machine or movement not in the built-in database, add your own (name, muscle group, equipment) from the swap/add-exercise picker. No bundled photo is required — the exercise card falls back to a YouTube search link instead. Fully deletable, and everything (PRs, charts, history, suggestions, export/import) picks it up automatically
 
 ### 🧱 Build your own program
@@ -121,7 +122,7 @@ line), with the current set highlighted so you always know where you are.
 - Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
 - Per-exercise session history — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
 - **Notes that remember for you** — jot a note on any exercise mid-workout ("seat position 4", "left shoulder pinch") or on the whole session; next time you land on that exercise, GainPath reminds you what you wrote
-- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best
+- Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best. The all-time list is **grouped by muscle** into collapsible sections, each headed with its record count and your heaviest lift for that muscle
 - **Weekly muscle-group volume balance** — hard sets per muscle group this week, sorted as horizontal bars, with a flag when a mirror-muscle pair (chest/back, quads/hamstrings, biceps/triceps) looks lopsided
 - Total training volume (tonnage) on every session summary and in history
 - **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
@@ -133,7 +134,7 @@ line), with the current set highlighted so you always know where you are.
 - **Shareable session card** — after "Session done!", share a designed summary card (day, duration, volume, PRs) via your phone's share sheet, or long-press to save it
 - **Achievement badges** — sixteen milestones covering showing up (First Rep, Ten Deep, Half Century, Century, Perfect Week), staying with it (Chain of Four, Twelve Weeks, Back on Track), getting stronger (First Flag, Ten Flags, Bodyweight Club, Double Bodyweight), putting in work (Ten Tonne, Million Club), and covering ground (All-Rounder, Twenty-Five Ways). They're worked out from training you've already logged and stamped with the date you actually earned them, so your case doesn't start empty. Find them on the PRs tab above your all-time records — earned in lime, locked in grey, tap any for its condition — and unlocks land on your session summary and shared card
 
-<img src="images/screenshots/badges.png" width="260" alt="PRs tab — the badge case, with earned badges in lime and locked ones greyed out, above the all-time personal records list">
+<img src="images/screenshots/badges.png" width="260" alt="PRs tab — the badge case, with earned badges in lime and locked ones greyed out, above the all-time personal records grouped into collapsible sections by muscle">
 
 ### 📄 Monthly PDF report
 

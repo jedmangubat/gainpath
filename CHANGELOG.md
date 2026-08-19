@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-08-19
+
+### Changed
+- **The all-time personal-record list on the PRs tab is now grouped by muscle
+  part instead of being one flat alphabetical list.** With 221 built-in
+  exercises a well-used account can hold dozens of PRs, and a single A-to-Z
+  run of cards was unreadable — you had to scroll past every chest lift to
+  find a squat. Records are now bucketed by each exercise's `mg` and rendered
+  in `MG_LIST` order (chest → back → shoulders → arms → legs → core), which
+  matches how the rest of the app orders body parts, rather than
+  alphabetically.
+- Each muscle section is a collapsible header showing the number of records
+  held for that muscle and its heaviest lift, and **starts collapsed**, so the
+  whole tab fits on one screen. Opening a section renders exactly the same PR
+  cards as before, with the same tap-through to each record's timeline.
+  Open/closed state lives in `ST.prOpenMG` and survives navigating away and
+  back within a session.
+- Exercises whose muscle group can't be resolved (a deleted custom exercise
+  still referenced by a historical PR) fall into an "Other" section listed
+  after the known groups, so no record can be hidden by the grouping.
+
+### Notes
+- `renderPRs()`'s per-record card markup was extracted unchanged into a new
+  `prCard()` helper; the visual design of an individual PR card is identical
+  to v2.2.0.
+- Uses `ti-chevron-down`/`ti-chevron-up`, both already present in the
+  self-hosted Tabler subset — no re-subsetting was needed. Verified the glyphs
+  actually render (17px measured width) rather than trusting the class names.
+- `CACHE_NAME` bumped to `gainpath-v30` for the changed app shell.
+
 ## [2.2.0] - 2026-08-19
 
 ### Added

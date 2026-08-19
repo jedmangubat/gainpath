@@ -88,6 +88,12 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .tn,.sv,.wi,.ri,.streak-hero-num,#wo-el,#plate-target,input[type=number]{font-family:var(--font-display);font-weight:600;font-variant-numeric:tabular-nums}
 .pr-stamp{display:flex;align-items:center;gap:8px;background:var(--tint-gold-1);border:1.5px solid var(--brand-forge);border-radius:8px;padding:12px 16px;margin-bottom:8px;font-size:13px;font-weight:700;color:var(--forge-text);transform:rotate(-1.5deg);animation:pr-stamp .18s ease-out}
 .card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:16px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+.pr-grp{display:flex;align-items:center;gap:10px;width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:16px;padding:13px 16px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .15s}
+.pr-grp:hover,.pr-grp.on{border-color:var(--accent)}
+.pr-grp-t{font-family:var(--font-display);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;color:var(--txt)}
+.pr-grp-s{font-size:11px;color:var(--txt2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-grp-n{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 9px;flex-shrink:0}
+.pr-grp-body{padding-left:10px;border-left:2px solid var(--bdr);margin:0 0 14px 6px}
 .ex-img{display:block;width:100%;height:auto;border-radius:10px;margin-bottom:12px;background:var(--bg2)}
 .cal-wrap{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow-sm)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -1234,7 +1240,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.2.0';
+const APP_VERSION='2.3.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1261,8 +1267,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.2.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+const WHATS_NEW_VERSION='2.3.0';
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -13078,7 +13084,7 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   lastSeenVersion:'0',tutorialSeen:false,badgesIntroSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,HOLD_TARGET=null,HOLD_ALERTED=false,DE_EXPANDED=null;
 function startHoldTimerInterval(i){
   HOLD_TIMER=setInterval(()=>{
@@ -13324,9 +13330,8 @@ en:{
 "tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "102 new exercises, more than doubling the library to 221. Every one comes with its own illustrated three-panel guide, form cues and step-by-step instructions.",
-"whatsnew_item2": "They're all in the substitution pool, so when you swap an exercise you now get far more options that actually train the same muscle.",
-"whatsnew_item3": "New ground covered too — glutes, calves, abductors and core got the biggest additions, including bodyweight and machine alternatives for when the gym is busy.",
+"whatsnew_item1": "Your all-time personal records are now grouped by muscle instead of one long alphabetical list. Each section shows how many records you hold there and your heaviest lift for that muscle.",
+"whatsnew_item2": "Tap a muscle to open it and see every record underneath. Sections start closed, so the whole PRs tab fits on one screen again.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13399,6 +13404,7 @@ en:{
 "plate_calc_title": "Plate calculator",
 "plates_owned_label": "Plates owned (<span id=\"set-gym-unit1\">kg</span>, per pair)",
 "pr_alltime_title": "All-time personal records",
+"pr_group_top": "Best:",
 "badges_title": "Badges",
 "badges_intro": "Your badge case is open — {n} earned from the training you've already logged.",
 "badge_unlocked": "Badge unlocked",
@@ -13683,9 +13689,8 @@ ja:{
 "tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "102種目の新エクササイズを追加し、ライブラリは221種目に倍増しました。すべてに3コマのイラスト解説、フォームのコツ、手順が付いています。",
-"whatsnew_item2": "いずれも種目変更の候補に入るので、入れ替えるときに同じ筋肉を鍛えられる選択肢が大幅に増えました。",
-"whatsnew_item3": "対象部位も拡充 —— 特にお尻・ふくらはぎ・股関節・体幹が充実し、ジムが混雑しているときの自重・マシン代替種目も加わりました。",
+"whatsnew_item1": "歴代の自己記録が、長いアルファベット順の一覧ではなく部位ごとにまとまりました。各セクションには記録数とその部位の最高重量が表示されます。",
+"whatsnew_item2": "部位をタップすると、その中のすべての記録が開きます。初期状態は閉じているので、自己記録タブが再び1画面に収まります。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -13758,6 +13763,7 @@ ja:{
 "plate_calc_title": "プレート計算機",
 "plates_owned_label": "所有プレート (<span id=\"set-gym-unit1\">kg</span>、1組あたり)",
 "pr_alltime_title": "歴代の自己記録",
+"pr_group_top": "最高:",
 "badges_title": "バッジ",
 "badges_intro": "バッジコレクションを開きました — これまでの記録から{n}個を獲得しています。",
 "badge_unlocked": "バッジ獲得",
@@ -14043,9 +14049,8 @@ ko:{
 "tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "새로운 운동 102가지를 추가해 라이브러리가 221가지로 두 배 넘게 늘었습니다. 모두 3컷 일러스트 가이드와 자세 팁, 단계별 설명이 함께 제공됩니다.",
-"whatsnew_item2": "전부 대체 운동 목록에 포함되어, 운동을 교체할 때 같은 근육을 쓰는 선택지가 훨씬 많아졌습니다.",
-"whatsnew_item3": "부위도 넓어졌습니다 — 특히 엉덩이·종아리·고관절·코어가 크게 보강되었고, 헬스장이 붐빌 때 쓸 맨몸·머신 대체 운동도 추가했습니다.",
+"whatsnew_item1": "역대 개인 기록이 긴 알파벳순 목록 대신 부위별로 묶였습니다. 각 섹션에 보유한 기록 수와 그 부위의 최고 중량이 표시됩니다.",
+"whatsnew_item2": "부위를 누르면 그 안의 모든 기록이 펼쳐집니다. 기본은 접힌 상태라 개인 기록 탭이 다시 한 화면에 들어옵니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14118,6 +14123,7 @@ ko:{
 "plate_calc_title": "플레이트 계산기",
 "plates_owned_label": "보유한 플레이트 (<span id=\"set-gym-unit1\">kg</span>, 한 쌍 기준)",
 "pr_alltime_title": "역대 개인 기록",
+"pr_group_top": "최고:",
 "badges_title": "배지",
 "badges_intro": "배지 보관함이 열렸습니다 — 지금까지의 기록으로 {n}개를 획득했습니다.",
 "badge_unlocked": "배지 획득",
@@ -16120,7 +16126,9 @@ function drawChart(){
   const pointColor=isWaypoint.map((wp,i)=>i>0&&wp?theme.forge:theme.accent);
   ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&c.dataIndex>0?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(pts.map(p=>p.day),theme.tick)}}});
 }
-function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}el.innerHTML=keys.sort().map(k=>{const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}).join('');}
+function prCard(k){const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}
+function togglePRGroup(mg){ST.prOpenMG[mg]=!ST.prOpenMG[mg];renderPRs();}
+function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}const grp={};keys.sort().forEach(k=>{const ex=EXPOOL[k];const mg=(ex&&ex.mg)||'other';(grp[mg]=grp[mg]||[]).push(k);});const order=MG_LIST.filter(mg=>grp[mg]).concat(Object.keys(grp).filter(mg=>MG_LIST.indexOf(mg)<0).sort());el.innerHTML=order.map(mg=>{const list=grp[mg],open=!!ST.prOpenMG[mg];const top=list.reduce((a,b)=>{const x=ST.prs[a],y=ST.prs[b];return(y.w>x.w||(y.w===x.w&&y.r>x.r))?b:a;});const tex=EXPOOL[top],tw=(tex&&tex.note==='bodyweight')?bwWeightLabel(ST.prs[top].w):ST.prs[top].w+CFG.unit;return'<div class="pr-grp'+(open?' on':'')+'" onclick="togglePRGroup('+jsArg(mg)+')" role="button" tabindex="0" aria-expanded="'+open+'">'+'<div style="min-width:0;flex:1"><div class="pr-grp-t">'+esc(humanizeMG(mg))+'</div>'+'<div class="pr-grp-s">'+t('pr_group_top')+' '+esc(top)+' · '+tw+'</div></div>'+'<span class="pr-grp-n">'+list.length+'</span>'+'<i class="ti ti-chevron-'+(open?'up':'down')+'" aria-hidden="true" style="color:var(--txt2);font-size:17px;flex-shrink:0"></i></div>'+(open?'<div class="pr-grp-body">'+list.map(prCard).join('')+'</div>':'');}).join('');}
 function prHistoryFor(name){
   const meta=EXPOOL[name];const events=[];let best=null;
   ST.history.forEach(h=>{
