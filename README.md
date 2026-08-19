@@ -10,10 +10,13 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ## ✨ What's new in v2.3.0
 
-**Your all-time personal records are now grouped by muscle.** The PRs tab used to be one long alphabetical list — with a couple of hundred exercises to choose from, that got unreadable fast.
+**A tidy-up pass over every tab.** The PRs tab had become one unreadable A-to-Z list, the Progress tab had grown to about four phone screens, and two other tabs were half empty — so the space got redistributed.
 
-- **One section per muscle**, in training order (chest, back, shoulders, arms, then legs and core) rather than A-to-Z. Each header shows how many records you hold for that muscle and your heaviest lift in it, so you can read the whole tab at a glance.
-- **Sections start closed**, so the full list fits on one screen. Tap a muscle to open it and every record underneath appears exactly as before — tap any one for its full timeline.
+- **All-time personal records are grouped by muscle.** One section per muscle in training order (chest, back, shoulders, arms, then legs and core), each header showing how many records you hold there and your heaviest lift in it. Sections start closed, so the whole tab fits on one screen; tap a muscle to open it and every record appears exactly as before.
+- **Progress is one view at a time — Strength, Balance or Body.** Three panels stacked end to end became a three-way switch at the top. The tab is now well under half the length it was, and it remembers which view you were last in.
+- **Session history moved to the Days tab**, where the rest of your logged sessions already live. Pick an exercise to see every session you've logged for it.
+- **"Show all" on the long lists.** Session history and the weigh-in log show the 8 most recent with a button for the rest. Older weigh-ins used to be unreachable entirely — the list simply stopped at 8.
+- **The Save tab is now Settings → Reports & backup.** Monthly PDF reports and export/import are unchanged, just moved; the bottom bar is four tabs instead of five.
 
 ## Features
 
@@ -119,14 +122,15 @@ line), with the current set highlighted so you always know where you are.
 
 <img src="images/screenshots/progress.png" width="260" alt="Progress tab — estimated-1RM chart for a bellwether lift, plus the body-weight trend">
 
+- The Progress tab is a three-way switch — **Strength**, **Balance** and **Body** — showing one at a time rather than stacking them
 - Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
-- Per-exercise session history — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt
+- Per-exercise session history (on the Days tab) — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt; the 8 most recent show by default with a **Show all** button for the rest
 - **Notes that remember for you** — jot a note on any exercise mid-workout ("seat position 4", "left shoulder pinch") or on the whole session; next time you land on that exercise, GainPath reminds you what you wrote
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best. The all-time list is **grouped by muscle** into collapsible sections, each headed with its record count and your heaviest lift for that muscle
 - **Weekly muscle-group volume balance** — hard sets per muscle group this week, sorted as horizontal bars, with a flag when a mirror-muscle pair (chest/back, quads/hamstrings, biceps/triceps) looks lopsided
 - Total training volume (tonnage) on every session summary and in history
-- **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, right in the Progress tab
-- **Workout calendar = session browser** — its own Calendar tab with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals
+- **Body weight & measurements** — log weigh-ins (with optional waist/arms) and see your weight trend on a chart, under Progress → Body
+- **Workout calendar = session browser** — its own Days tab with training days color-coded by workout type; tap a colored day to list every session logged that day (duration, volume, sets, feel) and open any of them, browse past months with the arrows, and see monthly totals. Per-exercise session history lives on the same tab
 - **A streak that survives real life** — mark a single day or a whole week as planned rest (sick, traveling, deloading) in Settings, and your weekly streak pauses instead of resetting to zero
 - Streak counter — consecutive weeks hitting your training frequency, plus a weekly goal ("3/5 this week")
 - **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
@@ -138,7 +142,7 @@ line), with the current set highlighted so you always know where you are.
 
 ### 📄 Monthly PDF report
 
-<img src="images/screenshots/pdf-report.png" width="260" alt="Export tab — pick a month and generate a PDF training report">
+<img src="images/screenshots/pdf-report.png" width="260" alt="Settings → Reports &amp; backup — pick a month and generate a PDF training report">
 
 - Color-coded training calendar
 - Session stats (total sessions, sets, new PRs, streak)
@@ -237,7 +241,7 @@ either way, the substitution pool isn't gendered.
 
 The app will appear on your home screen and open full-screen like a native app. Your workout data is saved in Safari's local storage.
 
-> **Tip:** Export a backup regularly from the Export tab to protect your data.
+> **Tip:** Export a backup regularly from Settings → Reports & backup to protect your data.
 
 ---
 

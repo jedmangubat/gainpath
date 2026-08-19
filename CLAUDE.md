@@ -29,9 +29,17 @@ There is **no light theme and no dark-mode toggle** — `applyTheme()` and
 so don't reintroduce a light palette or a toggle without an explicit request.
 Semantic tokens: on-surface text is `--txt`/`--txt2`/`--txt3`; text that sits
 **on** the lime accent is `--accent-ink` (never `#fff` on `--accent`/lime, which
-fails contrast in dark). The bottom tabs are **Train · Days · Climb · PRs · Save**
-(keys `nav_workouts`/`nav_calendar`/`nav_climb`/`nav_prs`/`nav_export`); the
+fails contrast in dark). The bottom tabs are **Train · Days · Climb · PRs**
+(keys `nav_workouts`/`nav_calendar`/`nav_climb`/`nav_prs`); the
 streak card + install banner only show on the Train tab (see `stab()`).
+As of v2.3.0 there is **no Save/Export tab** — the monthly PDF report and
+backup/restore live in Settings → Reports & backup (`s-setdata`, opened by
+`openDataSettings()`), so don't reintroduce a fifth tab for them. The Climb
+tab is a three-way segment (Strength / Balance / Body, `chSeg()` +
+`renderChSeg()`) that renders **only the visible segment** — a Chart.js
+canvas measured inside a `display:none` parent comes out 0px wide, so any
+new segment must draw on the way in, never all at once up front. Per-exercise
+session history lives on the **Days** tab, not Climb.
 
 ## Coding discipline
 
@@ -168,7 +176,11 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   (2) screens fade in via a CSS animation on `.screen.active` — take the
   screenshot only after both the page has settled and a short
   (~300ms+) wait past any screen transition, or the capture shows a
-  half-rendered/washed-out frame.
+  half-rendered/washed-out frame. A third: the install banner is dismissed by
+  `gp_a2hs_dismissed === 'true'` — seeding any other value (`'1'`) leaves the
+  banner in the shot and shifts every element below it, which silently
+  invalidates spotlight coordinates measured from that capture. Seed
+  `gp_last_export` too, or the backup nudge takes the banner's place.
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only

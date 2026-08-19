@@ -503,9 +503,19 @@ textarea{resize:vertical;min-height:100px}
     <h2 data-i18n="cal_title">Workout calendar</h2>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="cal_hint">Tap a colored day to see and edit its sessions — browse any month with the arrows.</div>
     <div id="h-cal"></div>
+    <h2 style="margin-top:22px" data-i18n="session_history_title">Session history</h2>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="hist_hint">Pick an exercise to see every session you have logged for it.</div>
+    <select id="ch-hist-sel" onchange="pickExHistory(this.value)"></select>
+    <div id="ch-hist"></div>
   </div>
   <div id="p-ch" style="display:none">
     <h2 data-i18n="progress_title">Progress</h2>
+    <div class="g3" style="margin-bottom:14px">
+      <button class="opt-btn" id="chseg-strength" onclick="chSeg('strength')" data-i18n="ch_seg_strength">Strength</button>
+      <button class="opt-btn" id="chseg-balance" onclick="chSeg('balance')" data-i18n="ch_seg_balance">Balance</button>
+      <button class="opt-btn" id="chseg-body" onclick="chSeg('body')" data-i18n="ch_seg_body">Body</button>
+    </div>
+    <div id="ch-seg-strength">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="progress_hint">Tracked via one bellwether lift per body part — log it during a workout to see progress here.</div>
     <select id="ch-sel" onchange="drawChart()"></select>
     <select id="ch-metric" onchange="drawChart()">
@@ -517,14 +527,16 @@ textarea{resize:vertical;min-height:100px}
       <canvas id="ch-cv" height="180"></canvas>
       <div id="ch-empty" style="text-align:center;padding:2rem 1rem;font-size:13px;color:var(--txt2);display:none" data-i18n="chart_empty">No data yet — finish a session first</div>
     </div>
-    <h2 style="margin-top:18px" data-i18n="muscle_balance_title">Weekly muscle balance</h2>
+    </div>
+    <div id="ch-seg-balance" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <button class="cal-nav" onclick="mgWeekNav(-1)" aria-label="Previous week"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
       <div style="font-size:13px;color:var(--txt2)" id="mg-week-lbl"></div>
       <button class="cal-nav" id="mg-week-next" onclick="mgWeekNav(1)" aria-label="Next week"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
     </div>
     <div class="card" id="mg-balance"></div>
-    <h2 style="margin-top:18px" data-i18n="bodyweight_title">Body weight</h2>
+    </div>
+    <div id="ch-seg-body" style="display:none">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div><div style="font-size:13px;color:var(--txt2)" data-i18n="latest_label">Latest</div><div style="font-size:20px;font-weight:700;color:var(--txt)" id="bw-latest">—</div></div>
@@ -546,9 +558,7 @@ textarea{resize:vertical;min-height:100px}
         </div>
       </div>
     </div>
-    <h2 style="margin-top:18px" data-i18n="session_history_title">Session history</h2>
-    <select id="ch-hist-sel" onchange="renderExHistory(this.value)"></select>
-    <div id="ch-hist"></div>
+    </div>
   </div>
   <div id="p-pr" style="display:none">
     <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px">
@@ -559,26 +569,6 @@ textarea{resize:vertical;min-height:100px}
     <div id="bdg-grid" class="bdg-grid"></div>
     <h2 style="margin-top:22px" data-i18n="pr_alltime_title">All-time personal records</h2>
     <div id="pr-list"></div>
-  </div>
-  <div id="p-ex" style="display:none">
-    <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <select id="ex-mo" style="margin-bottom:0;flex:1"></select>
-      <select id="ex-yr" style="margin-bottom:0;width:90px"></select>
-    </div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="genPDF()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="btn_generate_pdf">Generate PDF</span></button>
-    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
-      <h2 data-i18n="backup_restore_title">Backup &amp; restore</h2>
-      <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="backup_restore_sub">Keep your data safe or move to another device</div>
-      <div style="display:flex;gap:8px">
-        <button class="bp" style="flex:1;font-size:13px;justify-content:center" onclick="exportData()"><i class="ti ti-database-export" aria-hidden="true"></i> <span data-i18n="btn_export">Export</span></button>
-        <button class="bs" style="flex:1;font-size:13px" onclick="gid('import-file').click()"><i class="ti ti-database-import" aria-hidden="true"></i> <span data-i18n="btn_import">Import</span></button>
-      </div>
-      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
-      <button class="bs" style="width:100%;font-size:13px;margin-top:8px" onclick="exportCSV()"><i class="ti ti-table" aria-hidden="true"></i> <span data-i18n="btn_export_csv">Export CSV (all sets)</span></button>
-    </div>
-    <div id="ex-st" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
   </div>
 </div>
 
@@ -670,6 +660,7 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setequip')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_gym">My gym</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_gym_sub">Plates and dumbbells you actually have</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_machines">Machine base weights</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_machines_sub">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_restplan">Planned rest</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_restplan_sub">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="openDataSettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-download" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_data">Reports &amp; backup</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_data_sub">Monthly PDF report, export and import your data</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
@@ -842,6 +833,33 @@ textarea{resize:vertical;min-height:100px}
   </div>
 </div>
 
+
+<!-- SETTINGS: DATA & REPORTS -->
+<div id="s-setdata" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="ss('settings')"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_data">Reports &amp; backup</div>
+  </div>
+    <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <select id="ex-mo" style="margin-bottom:0;flex:1"></select>
+      <select id="ex-yr" style="margin-bottom:0;width:90px"></select>
+    </div>
+    <button class="bp" style="width:100%;justify-content:center" onclick="genPDF()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="btn_generate_pdf">Generate PDF</span></button>
+    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
+      <h2 data-i18n="backup_restore_title">Backup &amp; restore</h2>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="backup_restore_sub">Keep your data safe or move to another device</div>
+      <div style="display:flex;gap:8px">
+        <button class="bp" style="flex:1;font-size:13px;justify-content:center" onclick="exportData()"><i class="ti ti-database-export" aria-hidden="true"></i> <span data-i18n="btn_export">Export</span></button>
+        <button class="bs" style="flex:1;font-size:13px" onclick="gid('import-file').click()"><i class="ti ti-database-import" aria-hidden="true"></i> <span data-i18n="btn_import">Import</span></button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+      <button class="bs" style="width:100%;font-size:13px;margin-top:8px" onclick="exportCSV()"><i class="ti ti-table" aria-hidden="true"></i> <span data-i18n="btn_export_csv">Export CSV (all sets)</span></button>
+    </div>
+    <div id="ex-st" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
+</div>
+
 <!-- TUTORIAL -->
 <div id="s-tutorial" class="screen" ontouchstart="tutTouchStart(event)" ontouchend="tutTouchEnd(event)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -854,9 +872,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="47.5" width="93.4" height="9.2" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="4.1" y="29.7" width="91.8" height="7.6" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
-        <rect x="3.3" y="47.5" width="93.4" height="9.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="4.1" y="29.7" width="91.8" height="7.6" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:62%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
     </div>
@@ -926,9 +944,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/progress.png" alt="GainPath Progress tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><rect x="39.4" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><rect x="50" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask7)"/>
-        <rect x="39.4" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="50" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">7</div><div class="tut-tooltip-title" data-i18n="tut7_title">Track your progress</div><div class="tut-tooltip-body" data-i18n="tut7_body">Tap here anytime to see your strength climb over time.</div></div>
     </div>
@@ -938,9 +956,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/prs.png" alt="GainPath personal records list">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="59" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="74.5" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask8)"/>
-        <rect x="59" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="74.5" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">8</div><div class="tut-tooltip-title" data-i18n="tut8_title">Celebrate your PRs</div><div class="tut-tooltip-body" data-i18n="tut8_body">New PRs are tracked automatically — tap here to see your full list.</div></div>
     </div>
@@ -950,9 +968,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/calendar.png" alt="GainPath training calendar">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="19.8" y="91.1" width="21.2" height="8.7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="25.5" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask9)"/>
-        <rect x="19.8" y="91.1" width="21.2" height="8.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="25.5" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">9</div><div class="tut-tooltip-title" data-i18n="tut9_title">Browse your calendar</div><div class="tut-tooltip-body" data-i18n="tut9_body">Every session, color-coded by type — tap a day to review or edit it.</div></div>
     </div>
@@ -962,11 +980,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/export.png" alt="GainPath Export tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="16.7" width="68.3" height="6.7" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="4.1" y="62.9" width="91.8" height="7.8" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask10)"/>
-        <rect x="3.3" y="16.7" width="68.3" height="6.7" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="4.1" y="62.9" width="91.8" height="7.8" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:30%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Reports & backups</div><div class="tut-tooltip-body" data-i18n="tut10_body">Generate a monthly PDF report, or back up your data as JSON or CSV — right from the Export tab.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:30%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Reports & backups</div><div class="tut-tooltip-body" data-i18n="tut10_body">Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports &amp; backup.</div></div>
     </div>
   </div>
 
@@ -974,9 +992,9 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="85.9" y="20.1" width="10.8" height="6.1" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="86.7" y="2.4" width="9.2" height="4.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask11)"/>
-        <rect x="85.9" y="20.1" width="10.8" height="6.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="86.7" y="2.4" width="9.2" height="4.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
       <div class="tut-tooltip" style="right:5%;top:34%;left:5%"><div class="tut-step-badge">11</div><div class="tut-tooltip-title" data-i18n="tut11_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut11_body">Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.</div></div>
     </div>
@@ -1222,7 +1240,6 @@ textarea{resize:vertical;min-height:100px}
   <button class="bn-item" id="bn-cal" onclick="bnav('cal')"><i class="ti ti-calendar" aria-hidden="true"></i><span data-i18n="nav_calendar">Calendar</span></button>
   <button class="bn-item" id="bn-ch" onclick="bnav('ch')"><i class="ti ti-mountain" aria-hidden="true"></i><span data-i18n="nav_climb">Climb</span></button>
   <button class="bn-item" id="bn-pr" onclick="bnav('pr')"><i class="ti ti-flag" aria-hidden="true"></i><span data-i18n="nav_prs">PRs</span></button>
-  <button class="bn-item" id="bn-ex" onclick="bnav('ex')"><i class="ti ti-download" aria-hidden="true"></i><span data-i18n="nav_export">Export</span></button>
 </div>
 
 </div>
@@ -1268,7 +1285,7 @@ function track(event){
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
 const WHATS_NEW_VERSION='2.3.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -13084,7 +13101,7 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   lastSeenVersion:'0',tutorialSeen:false,badgesIntroSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},chSeg:'strength',histAll:false,bwAll:false,editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,HOLD_TARGET=null,HOLD_ALERTED=false,DE_EXPANDED=null;
 function startHoldTimerInterval(i){
   HOLD_TIMER=setInterval(()=>{
@@ -13303,6 +13320,8 @@ en:{
 "btn_notify_undo": "Use a different email",
 "menu_tutorial": "How to use",
 "menu_tutorial_sub": "Revisit the quick walkthrough",
+"menu_data": "Reports & backup",
+"menu_data_sub": "Monthly PDF report, export and import your data",
 "tut_title": "How GainPath works",
 "btn_next": "Next",
 "btn_get_started": "Get started",
@@ -13325,13 +13344,14 @@ en:{
 "tut9_title": "Browse your calendar",
 "tut9_body": "Every session, color-coded by type — tap a day to review or edit it.",
 "tut10_title": "Reports & backups",
-"tut10_body": "Generate a monthly PDF report, or back up your data as JSON or CSV — right from the Export tab.",
+"tut10_body": "Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports & backup.",
 "tut11_title": "Make it yours",
 "tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Your all-time personal records are now grouped by muscle instead of one long alphabetical list. Each section shows how many records you hold there and your heaviest lift for that muscle.",
-"whatsnew_item2": "Tap a muscle to open it and see every record underneath. Sections start closed, so the whole PRs tab fits on one screen again.",
+"whatsnew_item1": "Your all-time personal records are now grouped by muscle instead of one long alphabetical list. Each section shows how many records you hold there and your heaviest lift, and starts closed so the whole tab fits on one screen.",
+"whatsnew_item2": "The Progress tab is one view at a time — Strength, Balance or Body — instead of three panels stacked end to end, and session history moved to the Days tab where the rest of your logged sessions live.",
+"whatsnew_item3": "The Save tab moved into Settings → Reports & backup, so the bottom bar is four tabs instead of five. Monthly PDF reports and export/import work exactly as before.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13341,7 +13361,6 @@ en:{
 "mw_hint": "Weight of the machine itself without any plates. Only asked once — saved permanently.",
 "nav_calendar": "Days",
 "nav_climb": "Climb",
-"nav_export": "Save",
 "nav_prs": "PRs",
 "nav_workouts": "Train",
 "next_set_label": "Next set",
@@ -13458,6 +13477,12 @@ en:{
 "session_done_title": "Session done!",
 "session_edit_hint": "Fix a mis-logged weight or reps, or delete the session. PRs recalculate automatically.",
 "session_history_title": "Session history",
+"hist_hint": "Pick an exercise to see every session you have logged for it.",
+"ch_seg_strength": "Strength",
+"ch_seg_balance": "Balance",
+"ch_seg_body": "Body",
+"show_all": "Show all {n}",
+"show_less": "Show less",
 "session_note_label": "Session note",
 "sets_done_label": "Sets done",
 "setstyle_pyramid": "Pyramid sets",
@@ -13662,6 +13687,8 @@ ja:{
 "btn_notify_undo": "別のメールアドレスを使う",
 "menu_tutorial": "使い方",
 "menu_tutorial_sub": "簡単な使い方ガイドをもう一度見る",
+"menu_data": "レポートとバックアップ",
+"menu_data_sub": "月次PDFレポート、データの書き出しと読み込み",
 "tut_title": "GainPathの使い方",
 "btn_next": "次へ",
 "btn_get_started": "はじめる",
@@ -13684,13 +13711,14 @@ ja:{
 "tut9_title": "カレンダーを見る",
 "tut9_body": "全セッションを種目別に色分け表示。日付をタップして確認・編集。",
 "tut10_title": "レポートとバックアップ",
-"tut10_body": "Exportタブから月次PDFレポートの生成や、JSON/CSVでのデータバックアップができます。",
+"tut10_body": "設定 → レポートとバックアップから、月次PDFレポートの生成やJSON/CSVでのデータバックアップができます。",
 "tut11_title": "自分好みにカスタマイズ",
 "tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "歴代の自己記録が、長いアルファベット順の一覧ではなく部位ごとにまとまりました。各セクションには記録数とその部位の最高重量が表示されます。",
-"whatsnew_item2": "部位をタップすると、その中のすべての記録が開きます。初期状態は閉じているので、自己記録タブが再び1画面に収まります。",
+"whatsnew_item1": "歴代の自己記録が部位ごとにまとまりました。各セクションに記録数と最高重量が表示され、初期状態は閉じているのでタブ全体が1画面に収まります。",
+"whatsnew_item2": "進捗タブは「筋力・バランス・身体」の切り替え式になり、3つを縦に並べる表示をやめました。セッション履歴は、記録済みセッションがある「日々」タブに移動しています。",
+"whatsnew_item3": "「保存」タブは設定 → レポートとバックアップに移り、下部タブは5つから4つになりました。月次PDFレポートと書き出し・読み込みの機能は従来どおりです。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -13701,7 +13729,6 @@ ja:{
 "mw_unit_label": "マシンの基本重量 (<span id=\"mw-unit\">kg</span>)",
 "nav_calendar": "デイ",
 "nav_climb": "クライム",
-"nav_export": "保存",
 "nav_prs": "自己記録",
 "nav_workouts": "トレーニング",
 "next_set_label": "次のセット",
@@ -13818,6 +13845,12 @@ ja:{
 "session_done_title": "セッション完了!",
 "session_edit_hint": "間違って記録した重量やレップ数を修正、またはセッションを削除できます。自己記録は自動的に再計算されます。",
 "session_history_title": "セッション履歴",
+"hist_hint": "種目を選ぶと、その種目で記録した全セッションが表示されます。",
+"ch_seg_strength": "筋力",
+"ch_seg_balance": "バランス",
+"ch_seg_body": "身体",
+"show_all": "全{n}件を表示",
+"show_less": "表示を減らす",
 "session_note_label": "セッションメモ",
 "sets_done_label": "完了セット数",
 "setstyle_pyramid": "ピラミッドセット",
@@ -14022,6 +14055,8 @@ ko:{
 "btn_notify_undo": "다른 이메일 사용하기",
 "menu_tutorial": "사용 방법",
 "menu_tutorial_sub": "간단한 사용법 안내 다시 보기",
+"menu_data": "리포트와 백업",
+"menu_data_sub": "월간 PDF 리포트, 데이터 내보내기·불러오기",
 "tut_title": "GainPath 사용 방법",
 "btn_next": "다음",
 "btn_get_started": "시작하기",
@@ -14044,13 +14079,14 @@ ko:{
 "tut9_title": "캘린더 둘러보기",
 "tut9_body": "모든 세션이 종류별로 색상 구분됩니다. 날짜를 탭해 확인·수정하세요.",
 "tut10_title": "리포트와 백업",
-"tut10_body": "Export 탭에서 월간 PDF 리포트를 생성하거나 JSON/CSV로 데이터를 백업할 수 있습니다.",
+"tut10_body": "설정 → 리포트와 백업에서 월간 PDF 리포트를 생성하거나 JSON/CSV로 데이터를 백업할 수 있습니다.",
 "tut11_title": "나만의 설정",
 "tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "역대 개인 기록이 긴 알파벳순 목록 대신 부위별로 묶였습니다. 각 섹션에 보유한 기록 수와 그 부위의 최고 중량이 표시됩니다.",
-"whatsnew_item2": "부위를 누르면 그 안의 모든 기록이 펼쳐집니다. 기본은 접힌 상태라 개인 기록 탭이 다시 한 화면에 들어옵니다.",
+"whatsnew_item1": "역대 개인 기록이 부위별로 묶였습니다. 각 섹션에 보유 기록 수와 최고 중량이 표시되고 기본은 접힌 상태라 탭 전체가 한 화면에 들어옵니다.",
+"whatsnew_item2": "진행 탭은 근력·밸런스·신체를 한 번에 하나씩 보여주는 방식으로 바뀌었고, 세션 기록은 기록된 세션이 모여 있는 날짜 탭으로 옮겼습니다.",
+"whatsnew_item3": "저장 탭은 설정 → 리포트와 백업으로 옮겨져 하단 탭이 5개에서 4개가 되었습니다. 월간 PDF 리포트와 내보내기·불러오기는 그대로입니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14061,7 +14097,6 @@ ko:{
 "mw_unit_label": "머신 기본 무게 (<span id=\"mw-unit\">kg</span>)",
 "nav_calendar": "데이",
 "nav_climb": "클라임",
-"nav_export": "저장",
 "nav_prs": "PR",
 "nav_workouts": "트레이닝",
 "next_set_label": "다음 세트",
@@ -14178,6 +14213,12 @@ ko:{
 "session_done_title": "세션 완료!",
 "session_edit_hint": "잘못 기록된 무게나 반복 횟수를 수정하거나 세션을 삭제하세요. PR은 자동으로 다시 계산됩니다.",
 "session_history_title": "세션 기록",
+"hist_hint": "운동을 선택하면 그 운동으로 기록한 모든 세션이 표시됩니다.",
+"ch_seg_strength": "근력",
+"ch_seg_balance": "밸런스",
+"ch_seg_body": "신체",
+"show_all": "전체 {n}개 보기",
+"show_less": "간략히 보기",
 "session_note_label": "세션 메모",
 "sets_done_label": "완료한 세트",
 "setstyle_pyramid": "피라미드 세트",
@@ -14676,7 +14717,8 @@ function renderExHistory(name){
   const meta=EXPOOL[name];const isBW=!!(meta&&meta.note==='bodyweight');const isHold=!!(meta&&meta.holdSecs);
   const hist=exHistory(name);
   if(!hist.length){el.innerHTML='<div style="text-align:center;padding:1.4rem 1rem;font-size:13px;color:var(--txt2)">No sessions logged yet</div>';return;}
-  el.innerHTML=hist.slice().reverse().map(s=>{
+  const CAP=8,ordered=hist.slice().reverse(),shown=ST.histAll?ordered:ordered.slice(0,CAP);
+  el.innerHTML=shown.map(s=>{
     const setStr=s.sets.map(st=>isHold?fmt(st.r)+' held':isBW?bwWeightLabel(st.w)+(st.r?' × '+st.r:''):st.w+CFG.unit+'×'+st.r).join(' · ');
     const vol=isBW||isHold?0:s.sets.reduce((a,st)=>a+(st.w>0?st.w*st.r:0),0);
     const best=isBW||isHold?0:Math.max(0,...s.sets.map(st=>e1rm(st.w,st.r)));
@@ -14686,7 +14728,15 @@ function renderExHistory(name){
       (vol>0?'<div style="font-size:11px;color:var(--txt3);margin-top:3px">Volume '+fmtVol(vol,CFG.unit)+' · Est. 1RM '+best+CFG.unit+'</div>':'')+
       (s.note?'<div style="font-size:11px;color:var(--txt3);margin-top:3px;display:flex;gap:4px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i>'+esc(s.note)+'</div>':'')+
     '</div>';
-  }).join('');
+  }).join('')+moreBtn(ordered.length,CAP,ST.histAll,'toggleHistAll()');
+}
+// Long-lived accounts make these lists unbounded — an exercise trained weekly
+// for a year is 50+ cards. Show the most recent 8 and let the rest be asked
+// for, rather than truncating silently (the weigh-in list used to just stop
+// at 8 with no way to reach anything older).
+function moreBtn(total,cap,open,fn){
+  if(total<=cap)return'';
+  return'<button class="bs" style="width:100%;font-size:13px;margin-top:4px" onclick="'+fn+'">'+(open?t('show_less'):t('show_all').replace('{n}',total))+'</button>';
 }
 function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=rec.date+' · '+rec.dur;renderSessionEdit();ss('session');}
 function renderSessionEdit(){
@@ -14832,13 +14882,13 @@ function suggested(){
 }
 function stab(t){
   // The Workouts (Train) tab owns the streak card + install banner; the other
-  // tabs are their own full screens (Days / Climb / PRs / Save), so hide that
+  // tabs are their own full screens (Days / Climb / PRs), so hide that
   // home chrome when they're active.
   const home=t==='wk';
   const hs=gid('hm-streak');if(hs)hs.style.display=home?'flex':'none';
   const bn=gid('prt-h');if(bn)bn.style.display=home?'':'none';
-  ['wk','cal','ch','pr','ex'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
-  if(t==='cal')renderCal();if(t==='ch')initChart();if(t==='pr'){renderBadges();renderPRs();}if(t==='ex')initExport();
+  ['wk','cal','ch','pr'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
+  if(t==='cal'){renderCal();initExHistory();}if(t==='ch')initChart();if(t==='pr'){renderBadges();renderPRs();}
 }
 function bnav(t){ss('home');stab(t);}
 function goHome(){
@@ -15994,11 +16044,29 @@ function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array
 const PR_KEY_LIFTS={chest:'Flat barbell bench press',back:'Barbell row',quads:'Barbell back squat',shoulders:'Barbell overhead press'};
 function initChart(){
   const sel=gid('ch-sel');if(!sel.options.length)Object.keys(PR_KEY_LIFTS).forEach(mg=>{const o=document.createElement('option');o.value=PR_KEY_LIFTS[mg];o.textContent=humanizeMG(mg)+' — '+PR_KEY_LIFTS[mg];sel.appendChild(o);});
-  const histSel=gid('ch-hist-sel');if(!histSel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;histSel.appendChild(o);});
-  drawChart();renderExHistory(histSel.value);renderBWSection();
   if(!ST.mgWeek)ST.mgWeek=dkey(startOfWeek(new Date()));
-  renderMGBalance();
+  renderChSeg();
 }
+// The Progress tab is one segment at a time — three stacked panels ran about
+// four phone screens deep. Only the visible segment renders: a Chart.js canvas
+// sized inside a display:none parent comes out 0px wide, so each segment draws
+// on the way in rather than all three up front.
+function chSeg(n){ST.chSeg=n;renderChSeg();}
+function renderChSeg(){
+  const n=ST.chSeg||'strength';
+  ['strength','balance','body'].forEach(x=>{gid('ch-seg-'+x).style.display=x===n?'block':'none';gid('chseg-'+x).classList.toggle('on',x===n);});
+  if(n==='strength')drawChart();else if(n==='balance')renderMGBalance();else renderBWSection();
+}
+// Session history lives on the Days tab now — it browses logged sessions, which
+// is what that tab is for, and it left the Progress tab carrying four screens.
+function initExHistory(){
+  const histSel=gid('ch-hist-sel');if(!histSel)return;
+  if(!histSel.options.length)allExNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;histSel.appendChild(o);});
+  renderExHistory(histSel.value);
+}
+function pickExHistory(name){ST.histAll=false;renderExHistory(name);}
+function toggleHistAll(){ST.histAll=!ST.histAll;renderExHistory(gid('ch-hist-sel').value);}
+function toggleBwAll(){ST.bwAll=!ST.bwAll;renderBWSection();}
 const MIRROR_PAIRS=[['chest','back'],['quads','hamstrings'],['biceps','triceps']];
 function weeklyMGVolume(weekStartDk){
   const start=new Date(weekStartDk+'T00:00:00');const end=new Date(start);end.setDate(end.getDate()+7);
@@ -16074,10 +16142,11 @@ function renderBWSection(){
   const theme=chartTheme(canvas,140);
   const bwDays=sorted.map(e=>dkDay(e.dk));
   ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:sorted.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(bwDays,theme.tick)}}});
-  gid('bw-list').innerHTML=sorted.slice().reverse().slice(0,8).map(e=>{
+  const BWCAP=8,bwOrdered=sorted.slice().reverse(),bwShown=ST.bwAll?bwOrdered:bwOrdered.slice(0,BWCAP);
+  gid('bw-list').innerHTML=bwShown.map(e=>{
     const extras=[e.waist?'Waist '+e.waist+'cm':null,e.arms?'Arms '+e.arms+'cm':null].filter(Boolean).join(' · ');
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+e.w+CFG.unit+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+e.date+(extras?' · '+extras:'')+'</div></div><button class="bg" onclick="deleteBWLog('+jsArg(e.dk)+')" aria-label="Delete entry"><i class="ti ti-trash" aria-hidden="true"></i></button></div>';
-  }).join('');
+  }).join('')+moreBtn(bwOrdered.length,BWCAP,ST.bwAll,'toggleBwAll()');
 }
 function deleteBWLog(dk){
   if(!confirm('Delete this weigh-in entry?'))return;
@@ -16148,6 +16217,7 @@ function showPRHistory(name){
   gid('exinfo-list').innerHTML=events.length?events.slice().reverse().map(e=>'<li style="font-size:15px;color:var(--txt);line-height:1.6;margin-bottom:2px">'+esc(e.date)+' \u2014 '+(isBW?bwWeightLabel(e.w):isHold?fmt(e.r)+' held':e.w+CFG.unit+' \u00d7 '+e.r)+'</li>').join(''):'<li style="font-size:13px;color:var(--txt2)">No PR history yet.</li>';
   gid('exinfo-overlay').style.display='block';gid('exinfo-sheet').style.display='block';document.body.style.overflow='hidden';
 }
+function openDataSettings(){initExport();ss('setdata');}
 function initExport(){const ms=gid('ex-mo'),ys=gid('ex-yr');if(ms.options.length)return;MN.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i+1).padStart(2,'0');o.textContent=m;ms.appendChild(o);});const now=new Date();ms.value=String(now.getMonth()+1).padStart(2,'0');for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o);}}
 function hRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 async function genPDF(){

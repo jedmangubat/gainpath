@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [2.3.0] - 2026-08-19
+## [2.3.0] - 2026-08-20
 
 ### Changed
 - **The all-time personal-record list on the PRs tab is now grouped by muscle
@@ -26,6 +26,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Exercises whose muscle group can't be resolved (a deleted custom exercise
   still referenced by a historical PR) fall into an "Other" section listed
   after the known groups, so no record can be hidden by the grouping.
+
+- **The Progress (Climb) tab is one segment at a time — Strength, Balance or
+  Body — instead of three panels stacked end to end.** Measured with 68 logged
+  sessions it ran 3,251px, roughly four phone screens; it is now 1,342px. Only
+  the visible segment renders, because a Chart.js canvas sized inside a
+  `display:none` parent comes out 0px wide, so each segment draws on the way in
+  rather than all three up front. The chosen segment persists for the session.
+- **Session history moved from the Progress tab to the Days tab.** It browses
+  logged sessions, which is what the Days tab is for, and it was the single
+  biggest contributor to the Progress tab's length while the Days tab was half
+  empty below the calendar.
+- **Session history and the body-weight log now show the most recent 8 with a
+  "Show all" button.** Both grow without bound — an exercise trained weekly for
+  a year is 50+ cards. The weigh-in list was already cut off at 8 but had no way
+  to reach anything older, so older entries were simply unreachable; that is
+  fixed rather than merely capped.
+- **The Save tab is gone; the monthly PDF report and backup/restore now live in
+  Settings → Reports & backup.** Five controls did not justify a whole nav slot.
+  The bottom bar is now four tabs — Train · Days · Climb · PRs — and the
+  orphaned `nav_export` string was removed. The Settings row sits directly under
+  Planned rest so it stays above the fold.
+- Tutorial step 10 now points at Settings → Reports & backup instead of the
+  Export tab, and its screenshot plus every other tutorial and README screenshot
+  showing the bottom bar, the Progress tab, the Days tab or the PR list was
+  regenerated. Spotlight rectangles were re-measured from
+  `getBoundingClientRect()` rather than adjusted by eye.
+- Screenshot captures now dismiss the install banner with the value the app
+  actually checks for (`gp_a2hs_dismissed === 'true'`, not `'1'`), so the
+  regenerated shots no longer carry a banner that shifted every coordinate.
 
 ### Notes
 - `renderPRs()`'s per-record card markup was extracted unchanged into a new
