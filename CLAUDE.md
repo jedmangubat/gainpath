@@ -33,6 +33,15 @@ fails contrast in dark). The bottom tabs are **Train · Days · Climb · PRs · 
 (keys `nav_workouts`/`nav_calendar`/`nav_climb`/`nav_prs`/`nav_export`); the
 streak card + install banner only show on the Train tab (see `stab()`).
 
+## Coding discipline
+
+Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on common LLM coding pitfalls). These are general defaults, not GainPath-specific — merge with everything else in this file.
+
+- **Think before coding.** State assumptions explicitly. If multiple interpretations exist, name them rather than silently picking one. Stop and ask when something's unclear instead of guessing.
+- **Simplicity first.** Minimum code for the actual request — no speculative config/flexibility, no abstractions for single-use code, no error handling for scenarios that can't happen (single-file app, no framework, no build step).
+- **Surgical changes.** Touch only what the task requires. Don't refactor or restyle adjacent code while fixing something else; match the existing dense inline-script style even where you'd write it differently. Remove imports/variables your own change orphaned; leave pre-existing dead code alone unless asked.
+- **Goal-driven execution.** Turn a task into a verifiable check before starting — "fix the bug" → reproduce it (ideally as a `test:units` case), then fix and re-run. State a brief step→verify plan for multi-step work.
+
 ## Standing workflow rules
 
 - **Every code change must include a corresponding `CHANGELOG.md` entry** under
@@ -78,6 +87,23 @@ streak card + install banner only show on the Train tab (see `stab()`).
   (measure its width with the font loaded) rather than trusting the class name
   — `ti-dumbbell` shipped blank for months because it doesn't exist in Tabler
   2.47.0.
+- **Exercise images are generated through the Gemini image API, not a chat UI
+  (switched 2026-08-19).** `scripts/gen_exercise_image.py <slug> <brief-file>
+  [refs...]` calls `gemini-3-pro-image` and writes an exact 1774x887 PNG into
+  the gitignored `scripts/.gen/`, appending every call to
+  `scripts/.gen/spend.tsv`. It is a **paid** API (~$0.14/image) billed to the
+  prepaid Gemini key shared with the `YouTube Shorts` project
+  (`secrets/gemini-api-key.txt` there; override with `GEMINI_API_KEY_FILE`) —
+  so it spends real money and that pool is shared, ask before batch runs.
+  Two things make it beat pasting briefs into free ChatGPT, which was rejecting
+  ~6 of 7: **approved images are passed as reference inputs**, which is what
+  finally held the locked character/skin-tone/wardrobe that drifted constantly
+  before, and the 2K output is centre-cropped to 2:1 so the canvas is never
+  letterboxed. What it does *not* fix is pose and joint geometry — that still
+  needs the same per-image human review, so write corrective notes as explicit
+  geometry ("the shin drops downward so the shoe sits lower than the knee")
+  rather than naming the exercise. Keep appending to the batch's spend ledger
+  in the image-prompts `.txt`.
 - **Never add an exercise to the `EX` object without its image already in place.**
   When proposing/adding a batch of new exercises, stage them in a dedicated
   image-prompts `.txt` at the repo root (self-contained, paste-ready prompt per

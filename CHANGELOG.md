@@ -6,6 +6,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-08-19
+
+### Added
+- **102 new exercises, taking the built-in library from 119 to 221.** Each one
+  ships complete rather than as a bare name: an illustrated three-panel image in
+  `images/exercises/`, six `EX_TIPS` form cues, and five `EX_INSTRUCTIONS`
+  steps, all three of those in English, Japanese and Korean (a total of 612 new
+  localized string arrays). All 102 go into the `sub` pool, so they surface
+  wherever an exercise can be swapped or added, and they inherit PR tracking,
+  charts, volume, suggestions and export/import with no extra wiring. Biggest
+  gains by muscle group: chest, back and quads for barbell/dumbbell/machine
+  variety, and glutes, calves, abductors and core, which were thin before.
+  The one new assistance movement, `Machine-assisted dip`, carries `noPR:true`
+  so PR logic skips it — a lower logged weight there means more assistance, not
+  a better lift (matching the existing `Machine-assisted pull-up`).
+- `scripts/gen_exercise_image.py` — generates exercise tutorial images through
+  the Gemini image API instead of pasting briefs into a chat UI. Passes
+  already-approved images from `images/exercises/` as reference inputs so the
+  locked mascot and flat-vector style stop drifting between generations, and
+  crops the 2K output to the library's exact 1774x887 canvas. Logs per-call
+  token usage and estimated cost to `scripts/.gen/spend.tsv`. Dev-only and
+  paid (~$0.14/image); nothing in `index.html` depends on it.
+
+### Changed
+- `sw.js` precaches all 221 exercise images (`EX_IMAGE_URLS`, up from 120) and
+  `CACHE_NAME` moves to `gainpath-v29`, so the new illustrations are available
+  offline-first rather than only after being viewed online. Also drops
+  `bench-dumbbell-press.png` from the precache — a stray file with no matching
+  exercise, superseded by `bench-dumbbell-chest-press.png`.
+- `WHATS_NEW_VERSION` moves to 2.2.0 with rewritten `WHATS_NEW_ITEMS` copy in
+  all three languages, so upgraders see the exercise-library news rather than
+  v2.1.0's badge announcement.
+
+### Notes
+- Four exercises planned for this batch were **dropped rather than shipped**
+  because no acceptable reference image could be produced for them: Fire
+  hydrants, Landmine twist, Dumbbell Russian twist and Dead bug. Each failed
+  repeated generation attempts on the same class of defect — exact joint
+  geometry (a knee held at 90 degrees through hip abduction, a bar seated in a
+  landmine sleeve, contralateral limb pairing). Per the project rule that no
+  exercise enters `EX` without its image already in place, they are absent from
+  the `EX` object entirely; the batch shipped 102 of a planned 106.
+
 ## [2.1.1] - 2026-08-03
 
 ### Fixed

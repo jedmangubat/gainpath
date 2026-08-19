@@ -8,15 +8,13 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.1.0
+## ✨ What's new in v2.2.0
 
-**Achievement badges.** Sixteen milestones covering the whole arc of training — showing up (First Rep, Ten Deep, Half Century, Century, Perfect Week), staying with it (Chain of Four, Twelve Weeks, and Back on Track for returning after a break), getting stronger (First Flag, Ten Flags, Bodyweight Club, Double Bodyweight), putting in work (Ten Tonne, Million Club), and covering ground (All-Rounder, Twenty-Five Ways).
+**102 new exercises — the library more than doubles, from 119 to 221.** Every one arrives complete: its own illustrated three-panel guide, six form cues for the rest screen, and step-by-step instructions, all in English, Japanese and Korean.
 
-- **Your case doesn't start empty.** Badges are worked out from the training you've already logged, and each one is stamped with the date you actually earned it — not the day you updated the app.
-- **Find them on the PRs tab**, above your all-time records. Earned badges show in the lime accent; locked ones stay visible in grey so you can see what's next. Tap any badge to see exactly what it takes.
-- **Unlocks land on your session summary** the moment you finish a workout that earns one, and come along when you share the session card.
-
-<img src="images/screenshots/badges.png" width="260" alt="PRs tab — the badge case, with earned badges in lime and locked ones greyed out, above the all-time personal records list">
+- **Far better swaps.** All 102 land in the substitution pool, so when you swap an exercise you get real alternatives that train the same muscle rather than a thin list.
+- **The gaps got filled.** Glutes, calves, abductors and core gained the most, and there are now bodyweight and machine alternatives for most barbell lifts — useful when the rack is taken or you're training at home.
+- **Nothing else changed.** Your program, history, PRs and badges are untouched; there's simply more to choose from.
 
 ## Features
 
@@ -133,6 +131,9 @@ line), with the current set highlighted so you always know where you are.
 - **Repeat last workout** — one tap on the home screen re-runs your most recent day with weights and reps prefilled
 - Tap into any past session from the calendar to **edit a mis-logged weight/reps or delete it**; PRs recalculate automatically
 - **Shareable session card** — after "Session done!", share a designed summary card (day, duration, volume, PRs) via your phone's share sheet, or long-press to save it
+- **Achievement badges** — sixteen milestones covering showing up (First Rep, Ten Deep, Half Century, Century, Perfect Week), staying with it (Chain of Four, Twelve Weeks, Back on Track), getting stronger (First Flag, Ten Flags, Bodyweight Club, Double Bodyweight), putting in work (Ten Tonne, Million Club), and covering ground (All-Rounder, Twenty-Five Ways). They're worked out from training you've already logged and stamped with the date you actually earned them, so your case doesn't start empty. Find them on the PRs tab above your all-time records — earned in lime, locked in grey, tap any for its condition — and unlocks land on your session summary and shared card
+
+<img src="images/screenshots/badges.png" width="260" alt="PRs tab — the badge case, with earned badges in lime and locked ones greyed out, above the all-time personal records list">
 
 ### 📄 Monthly PDF report
 
