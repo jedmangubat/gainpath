@@ -348,6 +348,46 @@ async function main() {
     bnav('wk');
     check('bnav("wk") renders the Train tab it opens', homeRendered(), true);
 
+    // addWorkSet / delSet — mid-workout set count changes must never rewrite
+    // logged work (the PR cache is derived from it) and must always leave at
+    // least one work set for the lift to be loggable at all.
+    startDay('push');
+    ST.exi = ST.sd.findIndex(it => equipRank(it.ex) === 0);
+    const cur = () => ST.sd[ST.exi].sets;
+    const workN = () => cur().filter(s => s.t !== 'w').length;
+    const wuN = () => cur().filter(s => s.t === 'w').length;
+    ss('wo'); renderEx();
+
+    const beforeAdd = cur().length;
+    const lastWork = cur().filter(s => s.t !== 'w').slice(-1)[0];
+    const clonedFrom = { w: lastWork.w, r: lastWork.r };
+    addWorkSet();
+    check('addWorkSet appends one set', cur().length, beforeAdd + 1);
+    check('addWorkSet clones the last work set weight/reps',
+      { w: cur().slice(-1)[0].w, r: cur().slice(-1)[0].r }, clonedFrom);
+    check('addWorkSet adds a work set, not a warm-up', cur().slice(-1)[0].t, 'x');
+
+    // A logged set is not removable — delSet must refuse it outright.
+    const firstWork = cur().findIndex(s => s.t !== 'w');
+    cur()[firstWork].done = true;
+    const nBefore = cur().length;
+    delSet(firstWork);
+    check('delSet refuses to remove a logged set', cur().length, nBefore);
+    cur()[firstWork].done = false;
+
+    // Warm-ups are removable while un-logged.
+    const wuBefore = wuN();
+    delSet(cur().findIndex(s => s.t === 'w'));
+    check('delSet removes an un-logged warm-up set', wuN(), wuBefore - 1);
+
+    // Deleting work sets must stop at one, not empty the exercise.
+    for (let g = 0; g < 20 && workN() > 0; g++) {
+      const before = cur().length;
+      delSet(cur().findIndex(s => s.t !== 'w'));
+      if (cur().length === before) break;
+    }
+    check('delSet always leaves at least one work set', workN(), 1);
+
     return out;
   });
 

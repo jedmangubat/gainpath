@@ -5,7 +5,8 @@
   "scripts": {
     "visual-check": "node scripts/visual_check.mjs",
     "lint": "node scripts/lint_html.mjs",
-    "test:units": "node scripts/test_units.mjs"
+    "test:units": "node scripts/test_units.mjs",
+    "capture:tutorial": "node scripts/capture_tutorial.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

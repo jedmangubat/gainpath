@@ -8,15 +8,12 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.3.0
+## ✨ What's new in v2.4.0
 
-**A tidy-up pass over every tab.** The PRs tab had become one unreadable A-to-Z list, the Progress tab had grown to about four phone screens, and two other tabs were half empty — so the space got redistributed.
-
-- **All-time personal records are grouped by muscle.** One section per muscle in training order (chest, back, shoulders, arms, then legs and core), each header showing how many records you hold there and your heaviest lift in it. Sections start closed, so the whole tab fits on one screen; tap a muscle to open it and every record appears exactly as before.
-- **Progress is one view at a time — Strength, Balance or Body.** Three panels stacked end to end became a three-way switch at the top. The tab is now well under half the length it was, and it remembers which view you were last in.
-- **Session history moved to the Days tab**, where the rest of your logged sessions already live. Pick an exercise to see every session you've logged for it.
-- **"Show all" on the long lists.** Session history and the weigh-in log show the 8 most recent with a button for the rest. Older weigh-ins used to be unreachable entirely — the list simply stopped at 8.
-- **The Save tab is now Settings → Reports & backup.** Monthly PDF reports and export/import are unchanged, just moved; the bottom bar is four tabs instead of five.
+- **Add or drop a set mid-workout.** The set count is no longer fixed when the workout starts. Tap the bin on any set you haven't logged yet to drop it, or **Add set** to tack another one on — as often as you like, in the middle of an exercise. Sets you've already logged can't be removed by accident, and an exercise always keeps at least one work set.
+- **Setup asks about your gym.** Onboarding now has a step for the plates and dumbbells you actually own, so GainPath only ever suggests weights you can really load. It's optional — skip it and it assumes a fully stocked gym. Already set up? A one-time prompt on the Train tab points you at Settings → My gym.
+- **The walkthrough was rebuilt.** Settings → How to use has fresh screenshots of every screen, highlights that actually point at the button being described, and a new step for adding and dropping sets.
+- Set rows now fit on one line on phone-sized screens, and long weights like `137.5` are no longer cut off.
 
 ## Features
 
@@ -44,6 +41,7 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Everything above is also available **mid-workout**, scoped to whatever's left in the session (plus the exercise you're currently on, if you haven't done its first set yet), via the reorder icon on the workout screen
 - Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
 - **Supersets & circuits** — link an exercise with the next one in the editor to pair them (2 linked = superset, 3+ = circuit). During the workout you alternate one set of each back-to-back with no rest, resting once per round. Each exercise still tracks its own feel rating, volume, and PRs
+- **Add or remove sets mid-workout** — every set you haven't logged yet has a bin icon to drop it, and an **Add set** button appends another work set at the last one's weight and reps. Logged sets are protected, and an exercise always keeps at least one work set
 - **Drop sets** — a "+ Drop" button on any set marks it done and adds a lighter set (70% of the weight) so you can push past failure; it counts toward volume and PRs like any work set
 - **A 221-exercise built-in library.** Every exercise ships complete — an illustrated three-panel guide, six form cues for the rest screen, and step-by-step instructions, all in English, Japanese and Korean. Glutes, calves, abductors and core are covered as thoroughly as the big lifts, and most barbell movements have a bodyweight or machine alternative for when the rack is taken or you're training at home
 - **Substitutions that are actually useful** — the whole library is in the swap pool, so swapping an exercise offers real alternatives that train the same muscle rather than a thin list
@@ -64,11 +62,12 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Experience level and fitness goal
 - Training frequency → app suggests the right split (beginners are pointed to the one-muscle-group-per-day Bro Split — the simplest to learn)
 - Preferred reps, sets, rest time, warm-up set preferences
+- **Your gym** — tap the plates and dumbbells you actually own, so every weight the app proposes is one you can load (optional; skip it and it assumes a fully stocked gym). Changeable later under Settings → My gym
 - Starting weight method — estimate from your stats, or manual entry
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of seven sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Apple Watch sync, Native app updates — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb, PRs, and Save are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
 
 ### ⚖️ Smart weight system
 

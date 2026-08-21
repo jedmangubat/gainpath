@@ -4,3 +4,4 @@
 node_modules/
 scripts/.visual-check/
 scripts/.gen/
+scripts/.tutorial-coords.json

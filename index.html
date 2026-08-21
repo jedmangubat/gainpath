@@ -126,22 +126,37 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .bs:hover{background:var(--bg3)}.bs:active{transform:scale(.97)}
 .bg{background:transparent;color:var(--txt2);border:none;font-size:15px;cursor:pointer;padding:8px 12px}
 .byt{display:inline-flex;align-items:center;gap:5px;background:#E24B4A;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
-.sr{display:flex;align-items:center;gap:5px;padding:8px 10px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;transition:opacity .15s}
+.sr{display:flex;align-items:center;gap:4px;padding:8px 8px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;transition:opacity .15s}
 .sr.done{opacity:.5}
 .sr.active{background:linear-gradient(100deg,var(--tint-green-1),var(--bg2));border:1.5px solid var(--accent)}
-.sn{width:26px;height:26px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--txt2);flex-shrink:0;font-family:var(--font-display)}
+.sn{width:24px;height:24px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--txt2);flex-shrink:0;font-family:var(--font-display)}
 .sn.on{background:var(--accent);color:var(--accent-ink)}
 .sn.d{background:var(--tint-green-1);color:var(--accent)}
 .sn.w{background:var(--bg3);color:var(--txt3)}
-.sst{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr);color:var(--accent);font-family:var(--font-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sst{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr);color:var(--accent);font-family:var(--font-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .sst:active{transform:scale(.92)}.sst.plate{font-size:13px}
-.wi{width:44px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
-.ri{width:30px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
+.sdel{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sdel:active{transform:scale(.92)}.sdel.hide{visibility:hidden;pointer-events:none}
+.addset{width:100%;margin:2px 0 12px;padding:9px 12px;border:1px dashed var(--bdr);border-radius:12px;background:transparent;color:var(--txt2);font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.addset:active{transform:scale(.99)}.addset:hover{border-color:var(--accent);color:var(--accent)}
+.wi{flex:1 1 44px;min-width:44px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
+.ri{width:34px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
 .sr-u{font-size:11px;color:var(--txt2);margin:0 2px 0 1px}
 .sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 5px}
 .bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:700;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
-.log{margin-left:auto;flex-shrink:0;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:8px 14px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.log{flex-shrink:0;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:8px 12px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+/* .wi is the row's flexible element, so it absorbs the slack and leaves .log
+   flush right. Bodyweight rows in "BW" mode render no weight input at all,
+   so there they need the old auto margin to stay right-aligned. */
+.sr:not(:has(.wi)) .log{margin-left:auto}
 .log:active{transform:scale(.95)}.log.done{background:var(--tint-green-1);color:var(--accent);padding:8px 12px}
+/* Narrow phones: the plate-loaded set row carries ten controls, which overflow
+   below ~400px. Tighten every element so the row stays on one line. */
+@media(max-width:400px){.sr{gap:3px;padding:8px 4px}.sn{width:21px;height:21px;font-size:11px}.sst{width:26px;height:26px;font-size:15px}.sst.plate{font-size:12px}.sdel{width:26px;height:26px}.wi{flex-basis:40px;min-width:40px;font-size:14px}.ri{width:31px;font-size:14px}.sr-u{display:none}.sr-x{margin:0 0 0 2px}.log{padding:8px 7px}.log.done{padding:8px 7px}}
+/* Sub-340px (iPhone SE 1st gen and similar): even compacted the controls
+   don't fit, so the plate calculator goes too — a clipped, unreachable
+   button is worse than an absent one. */
+@media(max-width:340px){.sst.plate{display:none}.sn{width:20px;height:20px}.sst{width:25px;height:25px}.wi{font-size:13px}.log{padding:8px 6px}.log.done{padding:8px 6px}}
 .db{padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--txt);white-space:nowrap;transition:transform .12s,box-shadow .15s}
 .db:active{transform:scale(.95)}
 .db.ok{background:var(--tint-green-2);color:var(--brand-green);border-color:transparent;box-shadow:var(--shadow-sm)}
@@ -435,6 +450,17 @@ textarea{resize:vertical;min-height:100px}
   </div>
 
   <div class="ob-step" id="ob-8">
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="obgym_title">Your gym</div>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="obgym_sub">Optional — tap what you actually have and GainPath will only ever suggest weights you can really load. Skip it and it assumes a fully stocked gym.</div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="obgym_plates_label">Plates owned (<span id="ob-gym-unit1">kg</span>, per pair)</div>
+    <div id="ob-plate-inv" class="chip-grid" style="margin-bottom:14px"></div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="obgym_db_label">Dumbbells owned (<span id="ob-gym-unit2">kg</span>, per hand)</div>
+    <div id="ob-db-inv" class="chip-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:0"></div>
+    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obNext(8)" data-i18n="btn_continue">Continue</button>
+    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(8)" data-i18n="btn_back">Back</button>
+  </div>
+
+  <div class="ob-step" id="ob-9">
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob8_title">Last workout</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob8_sub">How long ago was your last workout?</div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
@@ -445,11 +471,11 @@ textarea{resize:vertical;min-height:100px}
       <button class="opt-btn" id="last-1month" onclick="setLast('1month')" data-i18n="last_1month">1+ month ago</button>
       <button class="opt-btn" id="last-never" onclick="setLast('never')" data-i18n="last_never">Never / just starting</button>
     </div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(8)">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(8)" data-i18n="btn_back">Back</button>
+    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(9)">Continue</button>
+    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(9)" data-i18n="btn_back">Back</button>
   </div>
 
-  <div class="ob-step" id="ob-9">
+  <div class="ob-step" id="ob-10">
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob9_title">Starting weights</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob9_sub">How should GainPath determine your starting weights?</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
@@ -467,7 +493,7 @@ textarea{resize:vertical;min-height:100px}
       <div id="ob-summary" style="font-size:13px;color:var(--txt2);line-height:2.2"></div>
     </div>
     <button class="bp" style="width:100%;justify-content:center" onclick="obFinish()" data-i18n="btn_start_training">Start training 🚀</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(9)" data-i18n="btn_back">Back</button>
+    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(10)" data-i18n="btn_back">Back</button>
   </div>
 </div>
 
@@ -872,11 +898,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="4.1" y="29.7" width="91.8" height="7.6" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="39.9" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
-        <rect x="4.1" y="29.7" width="91.8" height="7.6" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="39.9" width="94.9" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:62%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:50.9%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
     </div>
   </div>
 
@@ -884,11 +910,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/day-editor.png" alt="GainPath day editor">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="14.8" width="93.4" height="11.2" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="14.2" width="94.9" height="20.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask2)"/>
-        <rect x="3.3" y="14.8" width="93.4" height="11.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="14.2" width="94.9" height="20.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:32%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:37.1%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
     </div>
   </div>
 
@@ -896,11 +922,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/program-builder.png" alt="GainPath custom program builder">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="3.3" y="18.4" width="93.4" height="6.9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="29.1" width="94.9" height="7.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask3)"/>
-        <rect x="3.3" y="18.4" width="93.4" height="6.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="29.1" width="94.9" height="7.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:32%"><div class="tut-step-badge">3</div><div class="tut-tooltip-title" data-i18n="tut3_title">Build your own program</div><div class="tut-tooltip-body" data-i18n="tut3_body">Not locked into the built-in splits — name your program and add your own training days from scratch.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:38.3%"><div class="tut-step-badge">3</div><div class="tut-tooltip-title" data-i18n="tut3_title">Build your own program</div><div class="tut-tooltip-body" data-i18n="tut3_body">Not locked into the built-in splits — name your program and add your own training days from scratch.</div></div>
     </div>
   </div>
 
@@ -908,95 +934,107 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/workout.png" alt="GainPath workout logging screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="77.1" y="49.3" width="15.8" height="5.2" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="70.7" y="30.9" width="13.7" height="5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask4)"/>
-        <rect x="77.1" y="49.3" width="15.8" height="5.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="70.7" y="30.9" width="13.7" height="5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:37.9%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-5">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/plate-calc.png" alt="GainPath plate calculator">
+      <img src="images/tutorial/workout.png" alt="GainPath set list showing the add and remove set controls">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="7.7" y="41.1" width="84.7" height="19.4" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="69.5" width="86.2" height="10.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask5)"/>
-        <rect x="7.7" y="41.1" width="84.7" height="19.4" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="6.9" y="69.5" width="86.2" height="10.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:64%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Calculate your plates</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the plate icon next to any weight to see exactly which plates to load per side.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:38.1%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Add or drop a set</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the bin on any set you haven't logged yet to drop it, or Add set to tack one on.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-6">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/rest-timer.png" alt="GainPath rest timer">
+      <img src="images/tutorial/plate-calc.png" alt="GainPath plate calculator">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask6"><rect width="100" height="100" fill="#fff"/><ellipse cx="50" cy="19.9" rx="20.1" ry="9.7" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask6"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="41.9" width="86.2" height="29.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask6)"/>
-        <ellipse cx="50" cy="19.9" rx="20.1" ry="9.7" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="6.9" y="41.9" width="86.2" height="29.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:33%"><div class="tut-step-badge">6</div><div class="tut-tooltip-title" data-i18n="tut6_title">Rest, with tips</div><div class="tut-tooltip-body" data-i18n="tut6_body">The timer counts down automatically between sets, with a form tip and a preview of what's next.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:10.5%"><div class="tut-step-badge">6</div><div class="tut-tooltip-title" data-i18n="tut6_title">Calculate your plates</div><div class="tut-tooltip-body" data-i18n="tut6_body">Tap the plate icon next to any weight to see exactly which plates to load per side.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-7">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/progress.png" alt="GainPath Progress tab">
+      <img src="images/tutorial/rest-timer.png" alt="GainPath rest timer">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><rect x="50" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><ellipse cx="50.0" cy="20.6" rx="20.8" ry="9.6" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask7)"/>
-        <rect x="50" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <ellipse cx="50.0" cy="20.6" rx="20.8" ry="9.6" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">7</div><div class="tut-tooltip-title" data-i18n="tut7_title">Track your progress</div><div class="tut-tooltip-body" data-i18n="tut7_body">Tap here anytime to see your strength climb over time.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:32.2%"><div class="tut-step-badge">7</div><div class="tut-tooltip-title" data-i18n="tut7_title">Rest, with tips</div><div class="tut-tooltip-body" data-i18n="tut7_body">The timer counts down automatically between sets, with a form tip and a preview of what's next.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-8">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/prs.png" alt="GainPath personal records list">
+      <img src="images/tutorial/climb.png" alt="GainPath Climb tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="74.5" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="48.5" y="91.2" width="27.6" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask8)"/>
-        <rect x="74.5" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="48.5" y="91.2" width="27.6" height="8.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">8</div><div class="tut-tooltip-title" data-i18n="tut8_title">Celebrate your PRs</div><div class="tut-tooltip-body" data-i18n="tut8_body">New PRs are tracked automatically — tap here to see your full list.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:64.4%"><div class="tut-step-badge">8</div><div class="tut-tooltip-title" data-i18n="tut8_title">Track your progress</div><div class="tut-tooltip-body" data-i18n="tut8_body">Tap here anytime to see your strength climb over time.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-9">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/calendar.png" alt="GainPath training calendar">
+      <img src="images/tutorial/prs.png" alt="GainPath personal records list">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="25.5" y="91.9" width="24.5" height="7.1" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="72.9" y="91.2" width="27.1" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask9)"/>
-        <rect x="25.5" y="91.9" width="24.5" height="7.1" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="72.9" y="91.2" width="27.1" height="8.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:60%"><div class="tut-step-badge">9</div><div class="tut-tooltip-title" data-i18n="tut9_title">Browse your calendar</div><div class="tut-tooltip-body" data-i18n="tut9_body">Every session, color-coded by type — tap a day to review or edit it.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:64.4%"><div class="tut-step-badge">9</div><div class="tut-tooltip-title" data-i18n="tut9_title">Celebrate your PRs</div><div class="tut-tooltip-body" data-i18n="tut9_body">New PRs are tracked automatically — tap here to see your full list.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-10">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/export.png" alt="GainPath Export tab">
+      <img src="images/tutorial/calendar.png" alt="GainPath training history">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="4.1" y="62.9" width="91.8" height="7.8" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="24" y="91.2" width="27.6" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask10)"/>
-        <rect x="4.1" y="62.9" width="91.8" height="7.8" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="24" y="91.2" width="27.6" height="8.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:30%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Reports & backups</div><div class="tut-tooltip-body" data-i18n="tut10_body">Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports &amp; backup.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:60.4%"><div class="tut-step-badge">10</div><div class="tut-tooltip-title" data-i18n="tut10_title">Browse your calendar</div><div class="tut-tooltip-body" data-i18n="tut10_body">Every session, color-coded by type — tap a day to review or edit it.</div></div>
     </div>
   </div>
 
   <div class="ob-step" id="tut-11">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/home.png" alt="GainPath home screen">
+      <img src="images/tutorial/reports.png" alt="GainPath reports and backup screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="86.7" y="2.4" width="9.2" height="4.5" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="24.5" width="94.9" height="6.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask11)"/>
-        <rect x="86.7" y="2.4" width="9.2" height="4.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="24.5" width="94.9" height="6.5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="right:5%;top:34%;left:5%"><div class="tut-step-badge">11</div><div class="tut-tooltip-title" data-i18n="tut11_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut11_body">Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:33.0%"><div class="tut-step-badge">11</div><div class="tut-tooltip-title" data-i18n="tut11_title">Reports &amp; backups</div><div class="tut-tooltip-body" data-i18n="tut11_body">Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports &amp; backup.</div></div>
+    </div>
+  </div>
+
+  <div class="ob-step" id="tut-12">
+    <div class="tut-ss-wrap">
+      <img src="images/tutorial/settings.png" alt="GainPath settings screen">
+      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+        <defs><mask id="tutmask12"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="36.6" width="94.9" height="9.2" rx="3" fill="#000"/></mask></defs>
+        <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask12)"/>
+        <rect x="2.6" y="36.6" width="94.9" height="9.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+      </svg>
+      <div class="tut-tooltip" style="left:5%;top:47.8%"><div class="tut-step-badge">12</div><div class="tut-tooltip-title" data-i18n="tut12_title">Make it yours</div><div class="tut-tooltip-body" data-i18n="tut12_body">Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.</div></div>
     </div>
   </div>
 
@@ -1257,7 +1295,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.3.0';
+const APP_VERSION='2.4.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1284,7 +1322,7 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.3.0';
+const WHATS_NEW_VERSION='2.4.0';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
@@ -13093,7 +13131,7 @@ function closeExInfo(){gid('exinfo-overlay').style.display='none';gid('exinfo-sh
 
 // ═══ STATE ═══
 let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},customProgram:null,restSound:true,darkMode:false,wuSteps:1,setStyle:'straight',
-  customExercises:[],gymPlates:{},dumbbellInc:null,dumbbellMax:null,
+  customExercises:[],gymPlates:{},dumbbellInc:null,dumbbellMax:null,gymNudgeDismissed:false,
   restDays:[],restWeeks:[],
   wakeLock:false,
   healthSync:false,healthSyncStartShortcut:'GainPath Start Workout',healthSyncEndShortcut:'GainPath End Workout',
@@ -13133,8 +13171,8 @@ function healthSyncTrigger(phase){
   if(!name)return;
   try{location.href='shortcuts://run-shortcut?name='+encodeURIComponent(name);}catch(e){}
 }
-let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',step:1};
-const OB_STEPS=9;
+let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',gymPlates:{},gymDumbbells:[],step:1};
+const OB_STEPS=10;
 
 function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();mergeCustomExercises();recomputeBadges();}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
@@ -13223,6 +13261,7 @@ en:{
 "btn_edit_note": "Edit note",
 "btn_add_note": "Add note",
 "btn_drop_set": "Drop",
+"btn_add_set": "Add set",
 "unit_sets_suffix": " sets",
 "btn_finish_workout": "Finish workout",
 "btn_next_exercise": "Next exercise",
@@ -13333,25 +13372,27 @@ en:{
 "tut3_body": "Not locked into the built-in splits — name your program and add your own training days from scratch.",
 "tut4_title": "Log each set",
 "tut4_body": "Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.",
-"tut5_title": "Calculate your plates",
-"tut5_body": "Tap the plate icon next to any weight to see exactly which plates to load per side.",
-"tut6_title": "Rest, with tips",
-"tut6_body": "The timer counts down automatically between sets, with a form tip and a preview of what's next.",
-"tut7_title": "Track your progress",
-"tut7_body": "Tap here anytime to see your strength climb over time.",
-"tut8_title": "Celebrate your PRs",
-"tut8_body": "New PRs are tracked automatically — tap here to see your full list.",
-"tut9_title": "Browse your calendar",
-"tut9_body": "Every session, color-coded by type — tap a day to review or edit it.",
-"tut10_title": "Reports & backups",
-"tut10_body": "Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports & backup.",
-"tut11_title": "Make it yours",
-"tut11_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
+"tut5_title": "Add or drop a set",
+"tut5_body": "Tap the bin on any set you haven't logged yet to drop it, or Add set to tack one on.",
+"tut6_title": "Calculate your plates",
+"tut6_body": "Tap the plate icon next to any weight to see exactly which plates to load per side.",
+"tut7_title": "Rest, with tips",
+"tut7_body": "The timer counts down automatically between sets, with a form tip and a preview of what's next.",
+"tut8_title": "Track your progress",
+"tut8_body": "Tap here anytime to see your strength climb over time.",
+"tut9_title": "Celebrate your PRs",
+"tut9_body": "New PRs are tracked automatically — tap here to see your full list.",
+"tut10_title": "Browse your calendar",
+"tut10_body": "Every session, color-coded by type — tap a day to review or edit it.",
+"tut11_title": "Reports & backups",
+"tut11_body": "Generate a monthly PDF report, or back up your data as JSON or CSV — under Settings → Reports & backup.",
+"tut12_title": "Make it yours",
+"tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Your all-time personal records are now grouped by muscle instead of one long alphabetical list. Each section shows how many records you hold there and your heaviest lift, and starts closed so the whole tab fits on one screen.",
-"whatsnew_item2": "The Progress tab is one view at a time — Strength, Balance or Body — instead of three panels stacked end to end, and session history moved to the Days tab where the rest of your logged sessions live.",
-"whatsnew_item3": "The Save tab moved into Settings → Reports & backup, so the bottom bar is four tabs instead of five. Monthly PDF reports and export/import work exactly as before.",
+"whatsnew_item1": "Sets are no longer fixed once a workout starts. Tap the bin on any set you haven't logged yet to drop it, or Add set to tack another one on — as often as you like, mid-exercise.",
+"whatsnew_item2": "Setup now asks which plates and dumbbells you actually have, so GainPath only ever suggests weights you can really load. Already set up? A one-time prompt on the Train tab points you at Settings → My gym.",
+"whatsnew_item3": "The walkthrough under Settings → How to use was rebuilt from scratch: fresh screenshots of every screen, highlights that actually point at the button being described, and a new step for adding and dropping sets.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13397,6 +13438,10 @@ en:{
 "ob7_title": "Session preferences",
 "ob7_wureps_label": "Warm-up set reps",
 "ob8_sub": "How long ago was your last workout?",
+"obgym_title": "Your gym",
+"obgym_sub": "Optional \u2014 tap what you actually have and GainPath will only ever suggest weights you can really load. Skip it and it assumes a fully stocked gym.",
+"obgym_plates_label": "Plates owned (<span id=\"ob-gym-unit1\">kg</span>, per pair)",
+"obgym_db_label": "Dumbbells owned (<span id=\"ob-gym-unit2\">kg</span>, per hand)",
 "ob8_title": "Last workout",
 "ob9_sub": "How should GainPath determine your starting weights?",
 "ob9_summary_title": "Your setup summary",
@@ -13591,6 +13636,7 @@ ja:{
 "btn_edit_note": "メモを編集",
 "btn_add_note": "メモを追加",
 "btn_drop_set": "ドロップ",
+"btn_add_set": "セットを追加",
 "unit_sets_suffix": "セット",
 "btn_finish_workout": "ワークアウト終了",
 "btn_next_exercise": "次の種目",
@@ -13700,25 +13746,27 @@ ja:{
 "tut3_body": "既存の分割法に縛られません。プログラム名を付けて、トレーニング日をゼロから追加できます。",
 "tut4_title": "セットを記録",
 "tut4_body": "重量とレップ数を入力して「記録」をタップ、その後は内蔵タイマーで休憩。自己ベストは自動で検出されます。",
-"tut5_title": "プレートを計算",
-"tut5_body": "重量の横にあるプレートアイコンをタップすると、片側に何を載せればいいか正確にわかります。",
-"tut6_title": "休憩とヒント",
-"tut6_body": "セット間は自動でタイマーが作動し、フォームのヒントと次のセットのプレビューも表示されます。",
-"tut7_title": "進捗を確認",
-"tut7_body": "ここをタップすればいつでも筋力の推移を確認できます。",
-"tut8_title": "自己ベストを記録",
-"tut8_body": "自己ベストは自動で記録されます。ここをタップして一覧を確認。",
-"tut9_title": "カレンダーを見る",
-"tut9_body": "全セッションを種目別に色分け表示。日付をタップして確認・編集。",
-"tut10_title": "レポートとバックアップ",
-"tut10_body": "設定 → レポートとバックアップから、月次PDFレポートの生成やJSON/CSVでのデータバックアップができます。",
-"tut11_title": "自分好みにカスタマイズ",
-"tut11_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
+"tut5_title": "セットの追加・削除",
+"tut5_body": "まだ記録していないセットはゴミ箱アイコンで削除、「セットを追加」で追加できます。",
+"tut6_title": "プレートを計算",
+"tut6_body": "重量の横にあるプレートアイコンをタップすると、片側に何を載せればいいか正確にわかります。",
+"tut7_title": "休憩とヒント",
+"tut7_body": "セット間は自動でタイマーが作動し、フォームのヒントと次のセットのプレビューも表示されます。",
+"tut8_title": "進捗を確認",
+"tut8_body": "ここをタップすればいつでも筋力の推移を確認できます。",
+"tut9_title": "自己ベストを記録",
+"tut9_body": "自己ベストは自動で記録されます。ここをタップして一覧を確認。",
+"tut10_title": "カレンダーを見る",
+"tut10_body": "全セッションを種目別に色分け表示。日付をタップして確認・編集。",
+"tut11_title": "レポートとバックアップ",
+"tut11_body": "設定 → レポートとバックアップから、月次PDFレポートの生成やJSON/CSVでのデータバックアップができます。",
+"tut12_title": "自分好みにカスタマイズ",
+"tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "歴代の自己記録が部位ごとにまとまりました。各セクションに記録数と最高重量が表示され、初期状態は閉じているのでタブ全体が1画面に収まります。",
-"whatsnew_item2": "進捗タブは「筋力・バランス・身体」の切り替え式になり、3つを縦に並べる表示をやめました。セッション履歴は、記録済みセッションがある「日々」タブに移動しています。",
-"whatsnew_item3": "「保存」タブは設定 → レポートとバックアップに移り、下部タブは5つから4つになりました。月次PDFレポートと書き出し・読み込みの機能は従来どおりです。",
+"whatsnew_item1": "ワークアウト開始後もセット数を変更できるようになりました。まだ記録していないセットはゴミ箱アイコンで削除、「セットを追加」で追加でき、種目の途中でも何度でも変更できます。",
+"whatsnew_item2": "初期設定で実際に持っているプレートとダンベルを尋ねるようになり、実際に組める重量だけが提案されます。設定済みの方には、「トレーニング」タブに設定 → マイジムへの案内が一度だけ表示されます。",
+"whatsnew_item3": "設定 →「使い方」のチュートリアルを作り直しました。全画面のスクリーンショットを撮り直し、説明している場所を正しく指すハイライトに修正し、セットの追加・削除の手順を追加しています。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -13764,6 +13812,10 @@ ja:{
 "ob7_title": "セッション設定",
 "ob7_wureps_label": "ウォームアップセットのレップ数",
 "ob8_sub": "最後にトレーニングしたのはいつですか?",
+"obgym_title": "あなたのジム",
+"obgym_sub": "任意 \u2014 実際に持っているものをタップすると、GainPath は実際に組める重量だけを提案します。スキップした場合は、設備の揃ったジムを想定します。",
+"obgym_plates_label": "所有プレート (<span id=\"ob-gym-unit1\">kg</span>、1組あたり)",
+"obgym_db_label": "所有ダンベル (<span id=\"ob-gym-unit2\">kg</span>、片手分)",
 "ob8_title": "前回のワークアウト",
 "ob9_sub": "GainPathはどのように初期重量を決めればいいですか?",
 "ob9_summary_title": "設定内容のまとめ",
@@ -13959,6 +14011,7 @@ ko:{
 "btn_edit_note": "메모 수정",
 "btn_add_note": "메모 추가",
 "btn_drop_set": "드롭 세트",
+"btn_add_set": "세트 추가",
 "unit_sets_suffix": "세트",
 "btn_finish_workout": "운동 종료",
 "btn_next_exercise": "다음 운동",
@@ -14068,25 +14121,27 @@ ko:{
 "tut3_body": "기본 분할법에 얽매이지 않아도 됩니다. 프로그램 이름을 정하고 처음부터 나만의 훈련일을 추가해보세요.",
 "tut4_title": "세트 기록하기",
 "tut4_body": "중량과 횟수를 입력하고 기록을 탭한 뒤, 내장 타이머로 휴식하세요. 새로운 개인 기록은 자동으로 감지됩니다.",
-"tut5_title": "플레이트 계산하기",
-"tut5_body": "중량 옆의 플레이트 아이콘을 탭하면 한쪽에 정확히 어떤 플레이트를 끼워야 하는지 알 수 있습니다.",
-"tut6_title": "휴식과 팁",
-"tut6_body": "세트 사이에는 자동으로 타이머가 작동하며, 자세 팁과 다음 세트 미리보기도 함께 표시됩니다.",
-"tut7_title": "진행 상황 확인",
-"tut7_body": "여기를 탭하면 언제든 근력 변화를 확인할 수 있습니다.",
-"tut8_title": "PR 축하하기",
-"tut8_body": "개인 기록은 자동으로 기록됩니다. 여기를 탭해 전체 목록을 확인하세요.",
-"tut9_title": "캘린더 둘러보기",
-"tut9_body": "모든 세션이 종류별로 색상 구분됩니다. 날짜를 탭해 확인·수정하세요.",
-"tut10_title": "리포트와 백업",
-"tut10_body": "설정 → 리포트와 백업에서 월간 PDF 리포트를 생성하거나 JSON/CSV로 데이터를 백업할 수 있습니다.",
-"tut11_title": "나만의 설정",
-"tut11_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
+"tut5_title": "세트 추가 및 삭제",
+"tut5_body": "아직 기록하지 않은 세트는 휴지통 아이콘으로 지우고, '세트 추가'로 더할 수 있어요.",
+"tut6_title": "플레이트 계산하기",
+"tut6_body": "중량 옆의 플레이트 아이콘을 탭하면 한쪽에 정확히 어떤 플레이트를 끼워야 하는지 알 수 있습니다.",
+"tut7_title": "휴식과 팁",
+"tut7_body": "세트 사이에는 자동으로 타이머가 작동하며, 자세 팁과 다음 세트 미리보기도 함께 표시됩니다.",
+"tut8_title": "진행 상황 확인",
+"tut8_body": "여기를 탭하면 언제든 근력 변화를 확인할 수 있습니다.",
+"tut9_title": "PR 축하하기",
+"tut9_body": "개인 기록은 자동으로 기록됩니다. 여기를 탭해 전체 목록을 확인하세요.",
+"tut10_title": "캘린더 둘러보기",
+"tut10_body": "모든 세션이 종류별로 색상 구분됩니다. 날짜를 탭해 확인·수정하세요.",
+"tut11_title": "리포트와 백업",
+"tut11_body": "설정 → 리포트와 백업에서 월간 PDF 리포트를 생성하거나 JSON/CSV로 데이터를 백업할 수 있습니다.",
+"tut12_title": "나만의 설정",
+"tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "역대 개인 기록이 부위별로 묶였습니다. 각 섹션에 보유 기록 수와 최고 중량이 표시되고 기본은 접힌 상태라 탭 전체가 한 화면에 들어옵니다.",
-"whatsnew_item2": "진행 탭은 근력·밸런스·신체를 한 번에 하나씩 보여주는 방식으로 바뀌었고, 세션 기록은 기록된 세션이 모여 있는 날짜 탭으로 옮겼습니다.",
-"whatsnew_item3": "저장 탭은 설정 → 리포트와 백업으로 옮겨져 하단 탭이 5개에서 4개가 되었습니다. 월간 PDF 리포트와 내보내기·불러오기는 그대로입니다.",
+"whatsnew_item1": "운동을 시작한 뒤에도 세트 수를 바꿀 수 있습니다. 아직 기록하지 않은 세트는 휴지통 아이콘으로 지우고, '세트 추가'로 더할 수 있어요. 운동 도중에도 몇 번이든 가능합니다.",
+"whatsnew_item2": "초기 설정에서 실제로 보유한 플레이트와 덤벨을 묻고, 실제로 들 수 있는 무게만 추천합니다. 이미 설정을 마친 분께는 '훈련' 탭에서 설정 → 내 헬스장으로 안내하는 알림이 한 번 표시됩니다.",
+"whatsnew_item3": "설정 → '사용법'의 walkthrough를 새로 만들었습니다. 모든 화면의 스크린샷을 다시 찍고, 설명하는 버튼을 정확히 가리키도록 하이라이트를 고쳤으며, 세트 추가·삭제 단계를 새로 넣었습니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14132,6 +14187,10 @@ ko:{
 "ob7_title": "세션 환경설정",
 "ob7_wureps_label": "워밍업 세트 반복 횟수",
 "ob8_sub": "마지막 운동이 언제였나요?",
+"obgym_title": "내 헬스장",
+"obgym_sub": "선택 사항 \u2014 실제로 보유한 것을 선택하면 GainPath가 실제로 들 수 있는 무게만 추천합니다. 건너뛰면 모든 장비가 갖춰진 헬스장으로 가정합니다.",
+"obgym_plates_label": "보유 플레이트 (<span id=\"ob-gym-unit1\">kg</span>, 한 쌍당)",
+"obgym_db_label": "보유 덤벨 (<span id=\"ob-gym-unit2\">kg</span>, 한 손당)",
 "ob8_title": "마지막 운동",
 "ob9_sub": "GainPath가 시작 무게를 어떻게 정하면 될까요?",
 "ob9_summary_title": "설정 요약",
@@ -14511,8 +14570,9 @@ function obNext(step){
   if(step===4){if(!OB.exp){alert('Please select your experience level');return;}if(!OB.goal){alert('Please select a fitness goal');return;}}
   if(step===5){if(!OB.freq){alert('Please select how many days per week you plan to train');return;}}
   if(step===6){if(!OB.split){alert('Please select a training split');return;}}
-  if(step===8){if(!OB.last){alert('Please select when you last worked out');return;}}
-  if(step===9){if(!OB.sw){alert('Please choose how starting weights should be set');return;}}
+  if(step===8){collectObGym();}
+  if(step===9){if(!OB.last){alert('Please select when you last worked out');return;}}
+  if(step===10){if(!OB.sw){alert('Please choose how starting weights should be set');return;}}
   gid('ob-'+step).classList.remove('active');
   OB.step=step+1;
   gid('ob-'+OB.step).classList.add('active');
@@ -14526,7 +14586,26 @@ function obNext(step){
       :'Based on '+OB.freq+' days/week, we suggest: '+sugName;
     renderSplitOpts('split-opts',OB.split,null);
   }
-  if(OB.step===9){updateObSummary();}
+  if(OB.step===8){renderObGym();}
+  if(OB.step===10){updateObSummary();}
+}
+// The gym step reuses the same PLATES/DUMBBELLS denominations as Settings →
+// My gym, but with its own element ids — the shared i18n strings embed the
+// unit <span> by id, so reusing them here would duplicate ids in the DOM.
+function renderObGym(){
+  ['ob-gym-unit1','ob-gym-unit2'].forEach(id=>{const el=gid(id);if(el)el.textContent=OB.unit;});
+  const denoms=PLATES[OB.unit]||PLATES.kg;
+  gid('ob-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(OB.gymPlates[d]?' on':'')+'" id="ob-plate-'+d+'" onclick="this.classList.toggle(\'on\')">'+d+OB.unit+'</button>').join('');
+  const dbList=DUMBBELLS[OB.unit]||DUMBBELLS.kg;
+  const owned=new Set(OB.gymDumbbells||[]);
+  gid('ob-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="ob-db-'+dbId(w)+'" onclick="this.classList.toggle(\'on\')">'+w+'</button>').join('');
+}
+function collectObGym(){
+  const denoms=PLATES[OB.unit]||PLATES.kg;const plates={};
+  denoms.forEach(d=>{const el=gid('ob-plate-'+d);if(el&&el.classList.contains('on'))plates[d]=1;});
+  OB.gymPlates=plates;
+  const dbList=DUMBBELLS[OB.unit]||DUMBBELLS.kg;
+  OB.gymDumbbells=dbList.filter(w=>{const el=gid('ob-db-'+dbId(w));return el&&el.classList.contains('on');});
 }
 function obBack(step){gid('ob-'+step).classList.remove('active');OB.step=step-1;gid('ob-'+OB.step).classList.add('active');obDots();}
 function updateObSummary(){
@@ -14534,11 +14613,17 @@ function updateObSummary(){
   const goalMap={definition:'Muscle definition',strength:'Strength',general:'General fitness'};
   const expMap={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
   const lastMap={'today':'Today','1-2days':'1-2 days ago','3-7days':'3-7 days ago','1-2weeks':'1-2 weeks ago','1month':'1+ month ago','never':'Never / just starting'};
-  gid('ob-summary').innerHTML='👤 <strong>'+(OB.firstName+' '+OB.lastName).trim()+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'Estimated':'Manual entry');
+  gid('ob-summary').innerHTML='👤 <strong>'+(OB.firstName+' '+OB.lastName).trim()+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'Estimated':'Manual entry')+'<br>🏋️ Gym: '+obGearLabel();
+}
+function obGearLabel(){
+  const nP=Object.keys(OB.gymPlates||{}).length,nD=(OB.gymDumbbells||[]).length;
+  if(!nP&&!nD)return'Not set \u2014 assumes a full gym';
+  const bits=[];if(nP)bits.push(nP+' plate size'+(nP===1?'':'s'));if(nD)bits.push(nD+' dumbbell'+(nD===1?'':'s'));
+  return bits.join(' \u00b7 ');
 }
 function obFinish(){
   if(!OB.sw){alert('Please select a starting weight method');return;}
-  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,setup:true,lastSeenVersion:APP_VERSION});
+  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,gymPlates:OB.gymPlates,gymDumbbells:OB.gymDumbbells,setup:true,lastSeenVersion:APP_VERSION});
   saveCFG();accentColor();refreshHome();
   showTutorial(true);
 }
@@ -14547,7 +14632,7 @@ function obFinish(){
 // once after onboarding (skippable) and reachable anytime from Settings.
 // Whenever a future feature needs a "how to use it" explanation, add a step
 // here (bump TUT_TOTAL, add a #tut-N .ob-step) rather than leaving it stale. ═══
-const TUT_TOTAL=11;
+const TUT_TOTAL=12;
 let TUT={step:1,fromOnboarding:false};
 function tutDots(){
   const el=gid('tut-dots');el.innerHTML='';
@@ -15714,6 +15799,7 @@ function renderEx(){
   // cables, selectorized (pin-stack) machines and bodyweight don't get it.
   const showPlate=equipRank(ex)===0||(ex.machine&&mwBase>0);
   const wuCount=sets.filter(s=>s.t==='w').length;let wuSeen=0,workSeen=0;
+  const workCount=sets.length-wuCount;
   const firstUndone=sets.findIndex(x=>!x.done);
   const sh=sets.map((s,i)=>{
     const isW=s.t==='w';const isD=s.t==='d';const wuLabel=isW?(wuCount>1?'W'+(++wuSeen):'W'):null;if(!isW&&!isD)workSeen++;const dispW=ex.machine&&mwBase>0?+(s.w-mwBase).toFixed(1):s.w;
@@ -15734,8 +15820,14 @@ function renderEx(){
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
     const snCls=s.done?' d':(active?' on':(isW?' w':''));
     const logBtn='<button class="log'+(s.done?' done':'')+'"'+(doneDisabled?' disabled':'')+' onclick="dset('+i+')" aria-label="'+(s.done?'Done':'Log set')+'">'+(s.done?'<i class="ti ti-check" aria-hidden="true"></i>':t('btn_mark_done'))+'</button>';
-    return '<div class="sr'+(s.done?' done':(active?' active':''))+'"><div class="sn'+snCls+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wctrl+rctrl+plateBtn+logBtn+'</div>';
+    // Removable while un-logged; a lift must keep at least one work set, so the
+    // last one loses its button. Rows that can't be removed still render the
+    // button as a hidden placeholder, or the Log column would go ragged.
+    const canDel=!s.done&&(isW||workCount>1)&&HOLD_IDX===null;
+    const delBtn='<button type="button" class="sdel'+(canDel?'':' hide')+'"'+(canDel?'':' tabindex="-1" aria-hidden="true"')+' onclick="delSet('+i+')" aria-label="Remove set"><i class="ti ti-trash" aria-hidden="true"></i></button>';
+    return '<div class="sr'+(s.done?' done':(active?' active':''))+'"><div class="sn'+snCls+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wctrl+rctrl+plateBtn+logBtn+delBtn+'</div>';
   }).join('');
+  const addSetHtml='<button type="button" class="addset" onclick="addWorkSet()"><i class="ti ti-plus" aria-hidden="true"></i> '+t('btn_add_set')+'</button>';
   const dropTarget=(!isBW&&!ex.holdSecs)?sets.findIndex(x=>!x.done&&x.t==='x'):-1;
   const dropBtnBottom=dropTarget>=0?'<button class="bs" style="flex-shrink:0" onclick="addDropSet('+dropTarget+')" aria-label="Add drop set"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i> '+t('btn_drop_set')+'</button>':'' ;
   const mwNote=ex.machine&&mwBase>0?'<span class="mw-inp"><i class="ti ti-settings-2" aria-hidden="true"></i> Machine base: '+mwBase+CFG.unit+' (plates only shown)</span>':'';
@@ -15750,7 +15842,7 @@ function renderEx(){
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb={easy:'you had 5+ reps left',good:'you had 3–4 reps left',max:'you hit failure'}[sug.feel]||'time to adjust';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db ok" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">Dismiss</button></div>';}
   }
-  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+exDisplayName(ex.name)+'</div><button type="button" onclick="showExInstructions(\''+ex.name+'\')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sh+sugHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
+  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+exDisplayName(ex.name)+'</div><button type="button" onclick="showExInstructions(\''+ex.name+'\')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+ex.note+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sh+addSetHtml+sugHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
   if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet&&ex.plannedW===undefined)showFSW(ex);
   saveInProgress();
 }
@@ -15885,6 +15977,27 @@ function addDropSet(i){
   if(s.t!=='w'&&chkPR(ex.name,s.w,s.r,ex.holdSecs))showPR(ex.name,s.w,s.r,isBW,ex.holdSecs);
   const dropW=Math.max(0,Math.round(s.w*0.7*2)/2);
   sets.splice(i+1,0,{t:'d',w:dropW,r:s.r,done:false});
+  renderEx();saveInProgress();
+}
+// Mid-workout set count changes. A new set clones the last work set (pyramid
+// exercises continue their ramp, snapped to loadable gym weight); removal is
+// only offered on un-logged sets, so logged work — and the PRs derived from
+// it — is never silently rewritten. At least one work set always remains.
+function addWorkSet(){
+  const item=ST.sd[ST.exi];const sets=item.sets;const ex=item.ex;
+  const work=sets.filter(x=>x.t!=='w');const last=work[work.length-1];
+  let w=last?last.w:(ex.baseW||0);
+  const r=last?last.r:(ex.holdSecs?0:(CFG.prefReps||10));
+  if(isPyramidEx(ex)&&last)w=roundToGymWeight(ex,Math.max(0,Math.round((last.w+weightIncrement(ex))*2)/2),'up');
+  sets.push({t:'x',w,r,done:false});
+  renderEx();saveInProgress();
+}
+function delSet(i){
+  const sets=ST.sd[ST.exi].sets;const s=sets[i];
+  if(!s||s.done)return;
+  if(s.t!=='w'&&sets.filter(x=>x.t!=='w').length<=1)return;
+  if(HOLD_IDX!==null)return;
+  sets.splice(i,1);
   renderEx();saveInProgress();
 }
 const FEEL_OPTS=[
@@ -16312,8 +16425,22 @@ function renderHomeBanners(){
     el.innerHTML='<div class="prt" style="background:var(--tint-amber-1);border:1px solid var(--tint-amber-2);color:var(--tint-amber-text);display:flex;align-items:center;justify-content:space-between;gap:10px"><div style="display:flex;align-items:center;gap:8px;font-size:13px"><i class="ti ti-battery-1" aria-hidden="true" style="font-size:16px;flex-shrink:0"></i>Feeling beat up lately? A deload week (-30% weights) can help you recover.</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="bp" style="padding:8px 12px;font-size:13px" onclick="applyDeload()">Deload next session</button><button class="bg" style="padding:8px 4px;font-size:13px;color:var(--tint-amber-text)" onclick="dismissDeload()"><i class="ti ti-x" aria-hidden="true"></i></button></div></div>';
     return;
   }
+  if(checkGymNudge()){
+    el.innerHTML='<div class="prt" style="background:var(--tint-green-1);border:1px solid var(--tint-green-2);color:var(--brand-green);display:flex;align-items:center;justify-content:space-between;gap:10px"><div style="display:flex;align-items:center;gap:8px;font-size:13px"><i class="ti ti-barbell" aria-hidden="true" style="font-size:16px;flex-shrink:0"></i>Tell GainPath which plates and dumbbells you have, and it will only suggest weights you can actually load.</div><div style="display:flex;gap:6px;flex-shrink:0"><button class="bp" style="padding:8px 12px;font-size:13px" onclick="openGymSettings()">Set up</button><button class="bg" style="padding:8px 4px;font-size:13px;color:var(--brand-green)" onclick="dismissGymNudge()"><i class="ti ti-x" aria-hidden="true"></i></button></div></div>';
+    return;
+  }
   el.innerHTML='';
 }
+// Existing users never saw the onboarding gym step, so nudge the ones with no
+// inventory at all. Opens the full settings screen first: the gym sub-screen's
+// back button runs collectSettingsFields(), which reads every settings input,
+// so jumping straight to it would blank the fields openSettings() populates.
+function checkGymNudge(){
+  if(!CFG.setup||CFG.gymNudgeDismissed)return false;
+  return !gymHasPlateInventory()&&!(CFG.gymDumbbells||[]).length;
+}
+function openGymSettings(){openSettings();ss('setequip');}
+function dismissGymNudge(){CFG.gymNudgeDismissed=true;saveCFG();renderHomeBanners();}
 function checkDeload(){
   if(CFG.deloadActive)return false;
   if(ST.history.length-CFG.deloadDismissedAtLen<3)return false;

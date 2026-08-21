@@ -6,6 +6,83 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-08-21
+
+### Added
+- **Sets can be added and removed mid-workout.** Until now the set count was
+  fixed the moment `buildSets()` ran, from `ex.plannedSets || CFG.prefSets`;
+  the only mid-exercise change available was "Drop", which appends a lighter
+  drop set. Every un-logged set row now carries a delete button, and an
+  **Add set** button under the list appends a work set cloning the last one's
+  weight and reps (pyramid exercises continue their ramp by
+  `weightIncrement()`, snapped through `roundToGymWeight()` like every other
+  proposed weight).
+- Removal is deliberately refused on **logged** sets — `ST.prs` is derived from
+  logged work, so silently dropping a completed set would strand a PR — and a
+  lift always keeps **at least one work set**, so it can never become
+  unloggable. Un-logged warm-ups are removable. Rows that can't be removed
+  render the button as a hidden placeholder so the Log column stays aligned.
+- **Onboarding now asks which plates and dumbbells you own** (new step 8 of 10,
+  between Session preferences and Starting weights). It reuses the same
+  denominations as Settings → My gym and is optional — leaving everything off
+  keeps the existing "unrestricted, standard-gym" assumption. Previously this
+  inventory existed only in Settings, so a new user's first session was
+  snapped by `roundToGymWeight()` against an empty inventory (a no-op) until
+  they happened to find that screen.
+- The gym step's i18n keys are its own (`obgym_*`) rather than the shared
+  Settings strings, because those strings embed the unit `<span>` **by id** —
+  reusing them would have put duplicate ids in the DOM.
+- **Existing users get a one-time Train-tab nudge** pointing at Settings →
+  My gym when both inventories are empty, since they never saw the new step.
+  It sits lowest in `renderHomeBanners()`'s priority chain (install → backup →
+  deload → gym) and is dismissed via `CFG.gymNudgeDismissed`. Its "Set up"
+  button routes through `openSettings()` first: the gym screen's back button
+  runs `collectSettingsFields()`, which reads every settings input, so
+  arriving directly would have blanked the fields `openSettings()` populates.
+- A twelfth tutorial step covering adding and dropping sets.
+
+### Changed
+- **The tutorial was rebuilt.** Half its screenshots (day editor, plate
+  calculator, program builder, rest timer, workout) predated the v2.x visual
+  refresh, the rest had been regenerated without re-measuring the spotlight
+  rectangles, and one step reused the home screenshot rather than showing its
+  own screen. The worst offender was the "Reports & backups" step: its
+  screenshot is the Settings menu, but its highlight sat at 62.9–70.7% —
+  around Apple Watch sync — while the row it describes is at 24.5–31.0%. The
+  bottom-nav highlights were each off by a percent or two in the same way.
+  All twelve screenshots are recaptured and every spotlight coordinate is now
+  **measured from the same live DOM the screenshot is taken from**, by the new
+  `scripts/capture_tutorial.mjs`, so the two can't drift apart again. Tooltip
+  positions are likewise computed from measured tooltip heights so none covers
+  the control it describes.
+
+### Fixed
+- **Set rows no longer overflow the card on phone-sized screens.** A
+  plate-loaded row carries up to ten controls, and at 390px it already
+  overflowed by 3px, at 375px by 18px, and at 320px by 73px — clipping the Log
+  button off the right edge. The row is now tightened below 400px, drops the
+  redundant unit label there (the unit is shown throughout the rest of the
+  app), and drops the plate-calculator button below 340px, where a clipped
+  unreachable button is worse than an absent one.
+- **The weight input no longer clips long values.** `.wi` was a fixed 44px, so
+  a 3-digit decimal weight such as `137.5` was cut off at *every* width,
+  including desktop. It is now elastic (`flex:1 1 44px`), absorbing the row's
+  spare space — which `.log`'s `margin-left:auto` previously swallowed. Values
+  up to five characters render in full at 360px and above; at 320px a
+  five-character weight still clips by ~2px.
+- README: the Settings section still described five bottom tabs including
+  Save, and undercounted the settings menu.
+
+### Dev
+- `npm run visual-check` now gates the set-row layout (no overflow, no clipped
+  input, all rows one line, add/delete controls present) at 360/375/390/430px,
+  the onboarding gym step, the gym nudge, and tutorial integrity (step count,
+  no broken or reused screenshots, no tooltip covering its own spotlight).
+- `npm run test:units` covers `addWorkSet`/`delSet`, including the logged-set
+  and last-work-set guards.
+- New `scripts/capture_tutorial.mjs` regenerates the tutorial screenshots and
+  their spotlight coordinates together.
+
 ## [2.3.0] - 2026-08-20
 
 ### Changed

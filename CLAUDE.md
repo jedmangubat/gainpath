@@ -156,15 +156,27 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   fixed in v2.0.3). The
   tutorial (`#s-tutorial`, `TUT_TOTAL` steps, functions prefixed `tut*`) is
   a spotlight-on-screenshot walkthrough shown once after onboarding
-  (skippable) and reachable anytime from Settings → How to use. If a new
+  (skippable) and reachable anytime from Settings → How to use.
+  **Never regenerate a tutorial screenshot without re-measuring its spotlight**
+  — the highlight rectangles are percentages of the screenshot, so a fresh
+  capture leaves them pointing at whatever used to be in that spot. This
+  already happened once (v2.4.0 rebuilt all twelve steps: half the screenshots
+  predated the v2.x refresh, and the Reports & backup step highlighted a row
+  ~38 percentage points below the one its tooltip described).
+  `npm run capture:tutorial` (`scripts/capture_tutorial.mjs`) is the only
+  supported way to do it: it drives the real app to each screen, screenshots
+  at exactly 390x844 (`.tut-ss-wrap` is `aspect-ratio:390/844` with
+  `object-fit:cover`, so any other ratio crops and shifts every coordinate),
+  and measures the target element's rect from the same DOM in the same pass.
+  Add a step by adding an entry to its `STEPS` array, then regenerating. If a new
   feature needs a "how to use it" explanation (not just a changelog bullet),
   add a step to the tutorial rather than leaving it frozen at whatever it
-  covered when first built — bump `TUT_TOTAL`, add a `#tut-N` `.ob-step`
-  following the existing screenshot+spotlight+tooltip pattern, and capture
-  its reference screenshot into `images/tutorial/` the same way (dedicated
-  Playwright capture with the "Add to Home Screen" banner dismissed via
-  `gp_a2hs_dismissed`, using `getBoundingClientRect()` percentages for the
-  spotlight/tooltip coordinates — see the v1.10.0 commit for the pattern).
+  covered when first built — bump `TUT_TOTAL` and add the step to
+  `capture_tutorial.mjs`'s `STEPS` array rather than hand-writing coordinates.
+  The capture seeds a dismissed "Add to Home Screen" banner
+  (`gp_a2hs_dismissed`) and a recent `gp_last_export`; without both, the
+  banner or the backup nudge shifts every element below it and silently
+  invalidates the coordinates measured from that capture.
 - **README screenshots go stale — regenerate them when the UI changes
   visually.** The images under `images/screenshots/` are real captures of the
   app, referenced by `README.md`. A visual-only change (redesign, restyled
@@ -181,6 +193,19 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   banner in the shot and shifts every element below it, which silently
   invalidates spotlight coordinates measured from that capture. Seed
   `gp_last_export` too, or the backup nudge takes the banner's place.
+- **The workout set row is width-constrained — treat it as a budget.** A
+  plate-loaded, un-logged row carries ten controls (set number, −, weight, unit,
+  +, ×, reps, plate calculator, Log, delete) and only just fits a 360px phone.
+  It is `display:flex` with `nowrap`, so it never wraps — it silently overflows
+  the card and clips the right-hand controls instead, which is how it shipped
+  broken on every phone under ~400px until v2.4.0. Two media queries carry the
+  budget: ≤400px tightens everything and hides the redundant unit label, ≤340px
+  additionally hides the plate calculator. `.wi` is deliberately elastic
+  (`flex:1 1 44px`) so long values like `137.5` get the row's spare space —
+  don't give it back a fixed width, and don't restore `margin-left:auto` on
+  `.log`, which used to swallow that slack. **Adding anything to this row means
+  re-running `npm run visual-check`**, which fails on overflow, on a clipped
+  input value, and on rows that aren't all one line.
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only
@@ -283,6 +308,10 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   canvas color to transparent and re-flattening onto an opaque brand background
   for the alpha-intolerant `apple-touch-icon`. Requires Pillow
   (`pip3 install -r scripts/requirements.txt`).
+- **`npm run capture:tutorial`** — regenerates every tutorial screenshot in
+  `images/tutorial/` **and** its spotlight coordinates in one pass, then prints
+  the measured boxes. See the tutorial note above for why the two must never be
+  regenerated separately.
 - **`npm run test:units`** — unit-tests GainPath's pure calculation functions
   (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`) against the real
   inline script, using the same Playwright boot pattern as `visual-check`
