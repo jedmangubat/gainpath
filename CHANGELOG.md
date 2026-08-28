@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-08-28
+
+### Fixed
+- **Bottom nav no longer floats mid-content on iOS.** `.bottom-nav` is
+  `position:fixed` over a plain document-scrolling layout with no compositing
+  hint, which is the standard trigger for WebKit's fixed-element-detaches-
+  during-momentum-scroll bug. Not scoped to any one screen — it could happen
+  on any screen tall enough to scroll (the long "choose a body part" list just
+  made it easy to reproduce). Fixed by promoting `.bottom-nav` to its own GPU
+  layer with a `translateZ(0)` transform hint.
+- **Switching tabs mid-workout no longer ends the workout.** The bottom nav
+  was hidden for the entire duration of a workout (`wo`/`rest` were in
+  `NO_NAV_SCREENS`), so the only way off those screens was the back arrow,
+  which calls `goHome()` — and `goHome()` treats leaving those screens as
+  explicitly ending the workout (confirm dialog + `clearInProgress()`). The
+  nav now stays visible during `wo`/`rest`; tapping Days/Climb/PRs just
+  switches screens without touching `ST`/`gp_wip`, so the workout (and its
+  elapsed timer) keeps running underneath exactly as it already does across a
+  manual pause. Tapping Train again while a workout is active returns to the
+  live workout screen (resuming mid-rest into the rest screen if that's where
+  the countdown still is) instead of the dashboard — there's nothing useful to
+  show on the dashboard while a workout is in progress. The explicit "End
+  workout" confirm on the back arrow is unchanged and is now clearly a
+  separate action from navigating away. The short modal-like sub-screens
+  (`mw`/`fsw`/`exfeel`/`plate`/`feel`/`sum`) still hide the nav, unchanged.
+
 ## [2.4.0] - 2026-08-21
 
 ### Added

@@ -358,6 +358,18 @@ async function main() {
     const wuN = () => cur().filter(s => s.t === 'w').length;
     ss('wo'); renderEx();
 
+    // Switching tabs mid-workout must leave the workout running — the only
+    // way off s-wo used to be goHome(), which explicitly ends the workout.
+    // bnav() to another tab must not touch ST.day/gp_wip, and bnav('wk')
+    // must route back into the live workout rather than the dashboard.
+    bnav('cal');
+    check('bnav("cal") mid-workout leaves the workout running', ST.day, 'push');
+    bnav('wk');
+    check('bnav("wk") mid-workout returns to the workout screen, not home',
+      gid('s-wo').classList.contains('active'), true);
+    check('bnav("wk") mid-workout re-highlights the Train tab',
+      gid('bn-wk').classList.contains('on'), true);
+
     const beforeAdd = cur().length;
     const lastWork = cur().filter(s => s.t !== 'w').slice(-1)[0];
     const clonedFrom = { w: lastWork.w, r: lastWork.r };

@@ -189,7 +189,7 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 html[data-theme="dark"] .sc.c3::before{background:linear-gradient(160deg,#16233a,transparent)}
 html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35,transparent)}
 .sv{font-size:24px;font-weight:700;color:var(--txt);position:relative;font-variant-numeric:tabular-nums}.sl{font-size:13px;color:var(--txt2);margin-top:3px;position:relative}
-.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:var(--bg);border-top:1px solid var(--bdr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:50}
+.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateZ(0);width:100%;max-width:480px;display:flex;background:var(--bg);border-top:1px solid var(--bdr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:50}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:none;background:transparent;color:var(--txt2);cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;transition:color .15s}
 .bn-item i{font-size:26px}
 .bn-item.on{color:var(--accent)}
@@ -1295,7 +1295,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.4.0';
+const APP_VERSION='2.4.1';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -14460,12 +14460,17 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 // JS-escape backslash/quote, then HTML-escape so quotes can't end the attribute.
 function jsArg(s){return esc("'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'");}
 function gid(id){return document.getElementById(id);}
-const NO_NAV_SCREENS=new Set(['ob','wo','rest','mw','plate','fsw','exfeel','feel','sum']);
+const NO_NAV_SCREENS=new Set(['ob','mw','plate','fsw','exfeel','feel','sum']);
 function ss(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));gid('s-'+id).classList.add('active');
   const showNav=!NO_NAV_SCREENS.has(id);
   gid('bnav').style.display=showNav?'flex':'none';
   document.querySelector('.app').classList.toggle('has-nav',showNav);
+  // wo/rest are the Train tab's own screens (reachable while navigating away
+  // mid-workout via bnav('wk'), or pulled back into automatically when a rest
+  // timer ends), so the nav highlight must track them the same way stab('wk')
+  // would — every other tab is its own home panel and goes through stab().
+  if(id==='wo'||id==='rest')['wk','cal','ch','pr'].forEach(x=>gid('bn-'+x).classList.toggle('on',x==='wk'));
   // Showing home IS rendering it — the invariant lives here rather than in each
   // caller. Boot only calls refreshHome() when restoreInProgress() returns
   // false, so a user who relaunched into a restored workout or day-edit had a
@@ -14975,7 +14980,7 @@ function stab(t){
   ['wk','cal','ch','pr'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
   if(t==='cal'){renderCal();initExHistory();}if(t==='ch')initChart();if(t==='pr'){renderBadges();renderPRs();}
 }
-function bnav(t){ss('home');stab(t);}
+function bnav(t){if(t==='wk'&&ST.day){ss(ST.restEnd?'rest':'wo');return;}ss('home');stab(t);}
 function goHome(){
   const activeEl=document.querySelector('.screen.active');
   const midWorkout=activeEl&&['s-wo','s-rest','s-mw','s-fsw','s-exfeel'].includes(activeEl.id);

@@ -8,13 +8,6 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.4.0
-
-- **Add or drop a set mid-workout.** The set count is no longer fixed when the workout starts. Tap the bin on any set you haven't logged yet to drop it, or **Add set** to tack another one on — as often as you like, in the middle of an exercise. Sets you've already logged can't be removed by accident, and an exercise always keeps at least one work set.
-- **Setup asks about your gym.** Onboarding now has a step for the plates and dumbbells you actually own, so GainPath only ever suggests weights you can really load. It's optional — skip it and it assumes a fully stocked gym. Already set up? A one-time prompt on the Train tab points you at Settings → My gym.
-- **The walkthrough was rebuilt.** Settings → How to use has fresh screenshots of every screen, highlights that actually point at the button being described, and a new step for adding and dropping sets.
-- Set rows now fit on one line on phone-sized screens, and long weights like `137.5` are no longer cut off.
-
 ## Features
 
 ### 🏋️ Training splits
@@ -67,7 +60,9 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
+
+The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen, reachable any time and shown once automatically after setup.
 
 ### ⚖️ Smart weight system
 
