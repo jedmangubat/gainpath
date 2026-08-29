@@ -76,6 +76,13 @@ html[data-theme="dark"]{
   --topo-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='140'%3E%3Cpath d='M-10 24 Q45 4 110 24 T230 24' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3Cpath d='M-10 74 Q45 54 110 74 T230 74' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3Cpath d='M-10 118 Q45 98 110 118 T230 118' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent}
+/* Elastic overscroll ("rubber-band") bounce past the top/bottom of the page
+   is what triggers iOS WebKit's fixed-position compositing glitch where
+   .bottom-nav visually detaches into a floating, rounded, shadowed layer
+   instead of staying flush with the viewport edge (v2.4.1's translateZ(0)
+   GPU hint reduced but did not eliminate this). Disabling the bounce removes
+   the trigger condition entirely. */
+html,body{overscroll-behavior-y:none}
 body{background:var(--page-bg);min-height:100vh;display:flex;justify-content:center;padding:0}
 .app{background:var(--paper);background-image:var(--topo-bg);background-repeat:repeat;width:100%;max-width:480px;min-height:100vh;padding:20px 16px;position:relative}
 .screen{display:none}.screen.active{display:block;animation:screen-in .16s ease-out}
@@ -193,7 +200,12 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:none;background:transparent;color:var(--txt2);cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;transition:color .15s}
 .bn-item i{font-size:26px}
 .bn-item.on{color:var(--accent)}
-.app.has-nav .screen.active{padding-bottom:86px}
+/* Must match .bottom-nav's own reserved height, safe-area inset included —
+   .bottom-nav's bottom padding already adds env(safe-area-inset-bottom), so a
+   bare 86px under-reserves by that inset on any notch/Dynamic-Island iPhone,
+   letting the nav's own safe-area padding cover the last ~34px of content
+   (e.g. the rest screen's "Next set" card) instead of sitting past it. */
+.app.has-nav .screen.active{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
 @keyframes penline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .streak-hero{background:var(--accent);color:var(--accent-ink);border:none;border-radius:20px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .streak-hero-l{display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -1295,7 +1307,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.4.1';
+const APP_VERSION='2.4.2';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');

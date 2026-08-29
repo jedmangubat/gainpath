@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.4.2] - 2026-08-29
+
+### Fixed
+- **Bottom nav still floated mid-content on iOS after v2.4.1's fix.** The
+  `translateZ(0)` GPU-layer hint reduced but didn't eliminate the WebKit
+  fixed-element-detaches-during-scroll bug — the nav could still render as a
+  detached, rounded, shadowed layer instead of staying flush with the
+  viewport edge. The actual trigger is elastic overscroll ("rubber-band")
+  bounce past the top/bottom of the page, which is what puts a
+  `position:fixed` + `transform` element into this bad compositing state in
+  the first place; `overscroll-behavior-y:none` on `html`/`body` removes the
+  bounce entirely instead of trying to out-hint the layer WebKit builds once
+  it happens.
+- **Bottom nav blocked the bottom of the screen during an active workout.**
+  `.app.has-nav .screen.active` reserved a hardcoded `86px` of bottom padding
+  for the nav, but `.bottom-nav`'s own bottom padding adds
+  `env(safe-area-inset-bottom)` on top of that — on any notch/Dynamic-Island
+  iPhone (safe-area-inset-bottom ~34px), the nav is taller than the space
+  reserved for it, so its own safe-area padding covers the last ~34px of
+  screen content instead of sitting past it. Most visible on the rest
+  screen's "Next set"/"Up next" card, which sat right at that reserved edge.
+  Fixed by including `env(safe-area-inset-bottom)` in the reserved padding so
+  it always matches the nav's real height.
+
 ## [2.4.1] - 2026-08-28
 
 ### Fixed
