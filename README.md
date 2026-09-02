@@ -8,6 +8,11 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v2.5.0
+
+- **More rep targets to choose from.** Preferred reps now offers **6, 8, 10, 12 and 15** — plus a **Custom** option where you type any rep number you like. It's the same set of choices during first-time setup and later under Settings → Preferences, backed by the same saved value.
+- Bug fixes — most notably, the reps and weights you change on a day's screen before tapping **Start workout** now actually carry into the session.
+
 ## Features
 
 ### 🏋️ Training splits
@@ -54,7 +59,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 - Strength baseline — recent weights on key lifts (hack squat, chest press, lat pulldown, overhead press)
 - Experience level and fitness goal
 - Training frequency → app suggests the right split (beginners are pointed to the one-muscle-group-per-day Bro Split — the simplest to learn)
-- Preferred reps, sets, rest time, warm-up set preferences
+- Preferred reps (6, 8, 10, 12, 15, or a custom number you type), sets, rest time, warm-up set preferences
 - **Your gym** — tap the plates and dumbbells you actually own, so every weight the app proposes is one you can load (optional; skip it and it assumes a fully stocked gym). Changeable later under Settings → My gym
 - Starting weight method — estimate from your stats, or manual entry
 
@@ -70,7 +75,7 @@ The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen
 
 - Estimates starting weights from your body stats, experience level, and strength baseline
 - Suggests your next weight from how many reps you had left on your last set — "5+ reps left" offers a full bump, "3–4 left" a small step, "1–2 left" holds you in the sweet spot, and failing two sessions in a row offers a deload. Always a one-tap suggestion you can apply or dismiss, never an automatic change
-- Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over
+- Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over — and a rep target you set on the day's screen before starting overrides that carry-over
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - **Plate calculator** — tap the plate icon by any weight for a visual, color-coded loaded-barbell diagram (plates to the Olympic standard) showing the per-side breakdown, accounting for the bar/machine base weight and your kg/lb plate set
 - **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, rounding a suggested weight **up to the next dumbbell or plate total you own** even if the rack steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after) — and warm-ups and the starting-weight estimate snap the same way

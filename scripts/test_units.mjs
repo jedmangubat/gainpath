@@ -400,6 +400,108 @@ async function main() {
     }
     check('delSet always leaves at least one work set', workN(), 1);
 
+    // ── Pre-start day edit: what you change on a day's screen must be what the
+    // workout starts with. Two separate defects made this fail, both only for a
+    // user who already had history for the exercise:
+    //   1. buildSets() ranked getSavedReps() above ex.plannedR, so last
+    //      session's reps overwrote the rep target just typed;
+    //   2. every field committed on change (= on blur) called renderDayEdit(),
+    //      which rebuilt #de-list — tearing out the input the user was tapping
+    //      into, so the second field edited on a row was silently discarded.
+    const pullNames = getDayExercises('pull', 'male').map(e => e.name);
+    ST.history = [{
+      day: 'pull', dayName: 'Pull', date: '2026-08-26', dur: '50m', sets: 3, mk: '2026-08', dk: '2026-08-26',
+      exercises: pullNames.map(n => ({ name: n, exFeel: 'hard', sets: [{ done: true, t: 'x', w: 40, r: 9 }] }))
+    }];
+    CFG.prefReps = 10; CFG.prefSets = 3;
+
+    openDayEdit('pull');
+    check('day edit shows the reps the workout will actually use, not the default',
+      plannedFor(ST.editList[0]).r, 9);
+
+    // The regression itself: committing one field must leave the row's other
+    // inputs — the very element the next tap is landing on — alive in the DOM.
+    toggleDEExpand(0);
+    const deInputs = () => document.querySelectorAll('#de-list .de-detail .de-detail-field input');
+    const weightBefore = deInputs()[2];
+    updPlannedEx(0, 'r', '5');
+    check('committing one day-edit field does not destroy the row\'s other inputs',
+      deInputs()[2] === weightBefore && document.contains(weightBefore), true);
+    updPlannedEx(0, 'w', '60');
+    check('both fields edited on one row are recorded',
+      { r: ST.editList[0].plannedR, w: ST.editList[0].plannedW }, { r: 5, w: 60 });
+    // Derived text must still track the edit even though nothing re-rendered.
+    updPlannedEx(0, 'sets', '4');
+    check('the row summary still follows a changed set count without a re-render',
+      gid('de-sub-0').textContent.indexOf('4 sets') >= 0, true);
+
+    commitDayEdit();
+    const planned = ST.sd[0].sets.filter(s => s.t !== 'w');
+    check('starting the workout uses the reps typed before Start, not last session\'s',
+      planned.map(s => s.r), [5, 5, 5, 5]);
+    check('starting the workout uses the weight typed before Start',
+      planned.map(s => s.w), [60, 60, 60, 60]);
+    check('the planned set count is honoured too', planned.length, 4);
+    // An exercise the user did not touch still inherits last session's reps.
+    check('an untouched exercise still carries last session\'s reps forward',
+      ST.sd[1].sets.filter(s => s.t !== 'w').map(s => s.r), [9, 9, 9]);
+
+    // saveMW() rebuilds a machine exercise's sets once its base weight is
+    // known — it must not discard a weight planned before the workout started.
+    ST.history = []; ST.mw = {};
+    openDayEdit('legs');
+    const hackIdx = ST.editList.findIndex(e => e.name === 'Hack squat');
+    updPlannedEx(hackIdx, 'w', '120');
+    commitDayEdit();
+    ST.mwCurrent = 'Hack squat'; gid('mw-inp').value = '0'; saveMW(true);
+    check('the machine base-weight prompt keeps the weight planned before Start',
+      ST.sd.find(it => it.ex.name === 'Hack squat').sets.filter(s => s.t !== 'w').map(s => s.w),
+      [120, 120, 120]);
+
+    // ── Preferred reps: five presets plus a free-typed custom number, offered
+    // identically in onboarding ('reps' → OB.reps) and Settings ('sreps' →
+    // CFG.prefReps). "Custom" is derived from the stored number alone, so it
+    // has to come back correctly after a reload with nothing extra persisted.
+    check('the rep presets are 6/8/10/12/15', REP_PRESETS, [6, 8, 10, 12, 15]);
+    check('onboarding and Settings offer exactly the same rep options',
+      ['reps', 'sreps'].map(p => REP_PRESETS.every(v => !!gid(p + '-' + v)) && !!gid(p + '-custom')),
+      [true, true]);
+    const srepsState = () => ({
+      v: CFG.prefReps,
+      on: REP_PRESETS.filter(x => gid('sreps-' + x).classList.contains('on')),
+      custom: gid('sreps-custom').classList.contains('on')
+    });
+    setSettingReps(6);
+    check('settings: picking 6 stores it and lights only that chip',
+      srepsState(), { v: 6, on: [6], custom: false });
+    setSettingReps(15);
+    check('settings: picking 15 stores it and lights only that chip',
+      srepsState(), { v: 15, on: [15], custom: false });
+    openRepsCustom('sreps'); gid('sreps-custom-inp').value = '21'; commitRepsCustom('sreps');
+    check('settings: a typed custom value is stored and lights Custom, no preset',
+      srepsState(), { v: 21, on: [], custom: true });
+    // The reload path: openSettings() re-derives everything from CFG.prefReps.
+    openSettings();
+    check('settings: a custom value comes back after reopening, derived from CFG alone',
+      { v: gid('sreps-custom-inp').value, custom: gid('sreps-custom').classList.contains('on'), shown: gid('sreps-custom-wrap').style.display },
+      { v: '21', custom: true, shown: 'block' });
+    gid('sreps-custom-inp').value = '12'; commitRepsCustom('sreps');
+    check('settings: typing a preset number into Custom selects that preset chip instead',
+      srepsState(), { v: 12, on: [12], custom: false });
+    // Onboarding drives the same handlers against OB.reps.
+    setReps(6);
+    check('onboarding: picking 6 stores it in OB', OB.reps, 6);
+    openRepsCustom('reps'); gid('reps-custom-inp').value = '21'; commitRepsCustom('reps');
+    check('onboarding: a custom value is stored and lights Custom',
+      { v: OB.reps, custom: gid('reps-custom').classList.contains('on') }, { v: 21, custom: true });
+    check('the Custom chip and its placeholder are translated in every language',
+      ['en', 'ja', 'ko'].map(l => !!(STRINGS[l] && STRINGS[l].pref_reps_custom && STRINGS[l].ph_custom_reps)),
+      [true, true, true]);
+    // A custom rep target has to reach the workout like any preset does.
+    CFG.prefReps = 21; ST.history = [];
+    check('a custom preferred-reps value is what a fresh exercise is built with',
+      buildSets({ name: 'Barbell row', mg: 'back', baseW: 40 }, 40).map(s => s.r), [21, 21, 21]);
+
     return out;
   });
 
