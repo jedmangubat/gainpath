@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [2.5.0] - 2026-09-04
+## [2.6.0] - 2026-09-04
 
 ### Changed
 - **Redesigned mid-workout exercise management.** The back button on the
@@ -28,6 +28,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     be lost. This can't be undone.") instead of the plain browser `confirm()`
     dialog the app used previously, so it can't be dismissed by reflexively
     tapping through a native OK/Cancel prompt.
+
+## [2.5.0] - 2026-09-02
+
+### Added
+- **Preferred reps now offers 6, 8, 10, 12, 15 and a Custom option.** The
+  picker was fixed at 8/10/12, which excluded both strength (≤6) and
+  higher-rep hypertrophy/endurance (15+) work — and there was no way to
+  express anything else at all. "Custom" opens a number field that accepts
+  any target from 1 to 50. The onboarding picker (`OB.reps`) and the
+  Settings → Preferences picker (`CFG.prefReps`) now share one implementation
+  (`REP_PRESETS`, `renderRepOpts`, `setRepsPreset`, `openRepsCustom`,
+  `updRepsCustom`, `commitRepsCustom`) so the two can't offer different
+  choices or drift apart, and both write the same stored value. Only that
+  number is persisted: "Custom" is the highlighted chip whenever the stored
+  value isn't one of the presets, so a custom target comes back correctly
+  after a reload with no extra flag to keep in sync. New `pref_reps_custom`
+  and `ph_custom_reps` strings in English, Japanese and Korean.
+
+### Fixed
+- **Reps and weights edited before a workout started were thrown away.** The
+  owner-reported symptom — "I modified the reps and weight of multiple
+  exercises on the pull day screen, but nothing followed when I pressed
+  Start" — turned out to be two independent defects, both of which only bite
+  a user who already has history for the exercise:
+  - `buildSets()` computed its rep target as
+    `getSavedReps(name) || ex.plannedR || CFG.prefReps`, ranking last
+    session's carried-over reps *above* the rep target the user had just
+    typed on the day-edit screen. Any exercise with a previous session
+    therefore silently ignored the new value. The explicit plan now comes
+    first (`ex.plannedR || getSavedReps(name) || CFG.prefReps`), and
+    `plannedFor()` — which draws that screen — was given the same precedence,
+    so the number shown before starting is the number the workout builds
+    with. An exercise the user doesn't touch still carries last session's
+    reps forward exactly as before.
+  - Every field on the day-edit screen commits on `change`, which fires on
+    **blur** — i.e. on the very tap that moves the user into the next input.
+    `updPlannedEx()` responded by calling `renderDayEdit()`, which rebuilds
+    `#de-list` wholesale, so that tap's target was ripped out of the DOM
+    mid-gesture and whatever was typed into it went nowhere. In practice the
+    *second* field edited on any row was always discarded (reps then weight →
+    weight lost; weight then reps → reps lost), and focus fell back to
+    `<body>`. `updPlannedEx()` now updates state and patches only the derived
+    text (`refreshDERow()` — the row's "N sets" summary and the pyramid rep
+    preview, hence the new `de-sub-*`/`de-pyr-*` ids), leaving the inputs
+    standing. `updDEBWMag()` gets the same treatment, still redrawing on the
+    one case that genuinely changes the row's shape (a magnitude of 0 flips
+    the mode to BW and removes the input).
+- **The machine base-weight prompt discarded a planned weight too.**
+  `saveMW()` rebuilds a plate-loaded machine's sets once its tare weight is
+  known, but sourced the weight as `getSavedWeight() || getAIEstimatedWeight()`,
+  ignoring `ex.plannedW`. On a legs day, answering the machine prompt at the
+  start of a session wiped the weight typed moments earlier on the day-edit
+  screen. It now uses the same precedence `startDay()` does.
+
+### Tests
+- `npm run test:units` gains 20 cases covering the above: that committing one
+  day-edit field leaves the row's other inputs alive in the DOM, that both
+  fields edited on a row are recorded, that the typed reps/weight/set count
+  are what the workout starts with while an untouched exercise still inherits
+  last session's reps, that `saveMW()` preserves a planned weight, and that
+  the rep picker offers identical options in both places, stores presets and
+  custom values correctly, recovers a custom value from `CFG.prefReps` alone
+  after reopening Settings, and feeds a custom target through to `buildSets()`.
 
 ## [2.4.2] - 2026-08-29
 

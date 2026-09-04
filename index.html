@@ -422,10 +422,16 @@ textarea{resize:vertical;min-height:100px}
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob7_title">Session preferences</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob7_sub">Customise how your sessions run</div>
     <label data-i18n="ob7_reps_label">Preferred reps per work set</label>
-    <div class="g3" style="margin-bottom:14px">
+    <div class="g3" style="margin-bottom:8px">
+      <button class="opt-btn" id="reps-6" onclick="setReps(6)">6 <span data-i18n="unit_reps">reps</span></button>
       <button class="opt-btn" id="reps-8" onclick="setReps(8)">8 <span data-i18n="unit_reps">reps</span></button>
       <button class="opt-btn on" id="reps-10" onclick="setReps(10)">10 <span data-i18n="unit_reps">reps</span></button>
       <button class="opt-btn" id="reps-12" onclick="setReps(12)">12 <span data-i18n="unit_reps">reps</span></button>
+      <button class="opt-btn" id="reps-15" onclick="setReps(15)">15 <span data-i18n="unit_reps">reps</span></button>
+      <button class="opt-btn" id="reps-custom" onclick="openRepsCustom('reps')" data-i18n="pref_reps_custom">Custom</button>
+    </div>
+    <div id="reps-custom-wrap" style="display:none;margin-bottom:14px">
+      <input class="inp" style="margin-bottom:0" id="reps-custom-inp" type="number" min="1" max="50" placeholder="e.g. 20" data-i18n-ph="ph_custom_reps" oninput="updRepsCustom('reps',this.value)" onchange="commitRepsCustom('reps')">
     </div>
     <label data-i18n="ob7_sets_label">Work sets per exercise</label>
     <div class="g3" style="margin-bottom:14px">
@@ -758,7 +764,8 @@ textarea{resize:vertical;min-height:100px}
     <label data-i18n="ob2_unit_label">Weight unit</label>
     <div class="g2"><button class="opt-btn" id="sunit-kg" onclick="setSettingUnit('kg')">kg</button><button class="opt-btn" id="sunit-lbs" onclick="setSettingUnit('lbs')">lbs</button></div>
     <label data-i18n="pref_reps_label">Preferred reps</label>
-    <div class="g3"><button class="opt-btn" id="sreps-8" onclick="setSettingReps(8)">8</button><button class="opt-btn" id="sreps-10" onclick="setSettingReps(10)">10</button><button class="opt-btn" id="sreps-12" onclick="setSettingReps(12)">12</button></div>
+    <div class="g3" style="margin-bottom:8px"><button class="opt-btn" id="sreps-6" onclick="setSettingReps(6)">6</button><button class="opt-btn" id="sreps-8" onclick="setSettingReps(8)">8</button><button class="opt-btn" id="sreps-10" onclick="setSettingReps(10)">10</button><button class="opt-btn" id="sreps-12" onclick="setSettingReps(12)">12</button><button class="opt-btn" id="sreps-15" onclick="setSettingReps(15)">15</button><button class="opt-btn" id="sreps-custom" onclick="openRepsCustom('sreps')" data-i18n="pref_reps_custom">Custom</button></div>
+    <div id="sreps-custom-wrap" style="display:none;margin-bottom:12px"><input class="inp" style="margin-bottom:0" id="sreps-custom-inp" type="number" min="1" max="50" placeholder="e.g. 20" data-i18n-ph="ph_custom_reps" oninput="updRepsCustom('sreps',this.value)" onchange="commitRepsCustom('sreps')"></div>
     <label data-i18n="pref_rest_label">Rest time</label>
     <div class="g3"><button class="opt-btn" id="srest-60" onclick="setSettingRest(60)">60s</button><button class="opt-btn" id="srest-90" onclick="setSettingRest(90)">90s</button><button class="opt-btn" id="srest-120" onclick="setSettingRest(120)">2 min</button></div>
     <label data-i18n="pref_work_sets_label">Work sets</label>
@@ -1330,7 +1337,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.5.0';
+const APP_VERSION='2.6.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1357,7 +1364,7 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.5.0';
+const WHATS_NEW_VERSION='2.6.0';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
@@ -13491,6 +13498,7 @@ en:{
 "ph_bf_example": "e.g. 18",
 "ph_brief_description": "Brief description",
 "ph_bw_example": "e.g. 75",
+"ph_custom_reps": "e.g. 20",
 "ph_describe_feedback": "Describe your bug, idea, or feedback in detail...",
 "ph_ex_name_example": "e.g. Nautilus chest press",
 "ph_ht_example": "e.g. 175",
@@ -13542,6 +13550,7 @@ en:{
 "bdg_all_rounder_cond": "Train chest, back, shoulders, legs and arms inside one week.",
 "bdg_explorer_25_name": "Twenty-Five Ways",
 "bdg_explorer_25_cond": "Log 25 different exercises.",
+"pref_reps_custom": "Custom",
 "pref_reps_label": "Preferred reps",
 "pref_rest_label": "Rest time",
 "pref_work_sets_label": "Work sets",
@@ -13872,6 +13881,7 @@ ja:{
 "ph_bf_example": "例: 18",
 "ph_brief_description": "簡単な説明",
 "ph_bw_example": "例: 75",
+"ph_custom_reps": "例: 20",
 "ph_describe_feedback": "不具合、アイデア、ご意見を詳しく教えてください...",
 "ph_ex_name_example": "例: ノーチラスチェストプレス",
 "ph_ht_example": "例: 175",
@@ -13923,6 +13933,7 @@ ja:{
 "bdg_all_rounder_cond": "1週間で胸・背中・肩・脚・腕をすべて鍛える。",
 "bdg_explorer_25_name": "25種目",
 "bdg_explorer_25_cond": "25種類の異なるエクササイズを記録する。",
+"pref_reps_custom": "カスタム",
 "pref_reps_label": "希望レップ数",
 "pref_rest_label": "休憩時間",
 "pref_work_sets_label": "本セット数",
@@ -14254,6 +14265,7 @@ ko:{
 "ph_bf_example": "예: 18",
 "ph_brief_description": "간단한 설명",
 "ph_bw_example": "예: 75",
+"ph_custom_reps": "예: 20",
 "ph_describe_feedback": "버그, 아이디어, 또는 피드백을 자세히 설명해주세요...",
 "ph_ex_name_example": "예: 노틸러스 체스트 프레스",
 "ph_ht_example": "예: 175",
@@ -14305,6 +14317,7 @@ ko:{
 "bdg_all_rounder_cond": "한 주 안에 가슴, 등, 어깨, 하체, 팔을 모두 훈련하세요.",
 "bdg_explorer_25_name": "25가지 운동",
 "bdg_explorer_25_cond": "서로 다른 운동 25가지를 기록하세요.",
+"pref_reps_custom": "직접 입력",
 "pref_reps_label": "선호 반복 횟수",
 "pref_rest_label": "휴식 시간",
 "pref_work_sets_label": "본 세트",
@@ -14586,7 +14599,34 @@ function setFreq(v){
   sugEl.innerHTML='<strong style="color:var(--txt)">Suggested:</strong> '+(OB.exp==='beginner'?'Bro Split — simplest for beginners':(suggestions[v]||'Choose any split'));
   OB.split=OB.exp==='beginner'?'bro':(SPLIT_FREQ[v]||'pplul');
 }
-function setReps(v){OB.reps=v;[8,10,12].forEach(x=>gid('reps-'+x).classList.toggle('on',x===v));}
+// ── Preferred reps: five presets plus a free-typed custom number, offered
+// identically in onboarding (prefix 'reps', backed by OB.reps) and in Settings
+// ('sreps', backed by CFG.prefReps) — one set of handlers so the two screens
+// can't drift apart. Only the number is ever stored: "Custom" is the selected
+// chip whenever that number isn't one of the presets, so the highlighting is
+// derived and a custom value comes back correctly after a reload with no extra
+// flag to keep in sync. REPS_CUSTOM_OPEN is transient UI only: it holds the
+// field open from the tap on Custom until the value is committed, at which
+// point the stored number decides the highlighting again.
+const REP_PRESETS=[6,8,10,12,15];
+const REPS_CUSTOM_OPEN={};
+function repsVal(p){return p==='sreps'?CFG.prefReps:OB.reps;}
+function setRepsVal(p,v){if(p==='sreps')CFG.prefReps=v;else OB.reps=v;}
+function renderRepOpts(p){
+  const v=repsVal(p),custom=REPS_CUSTOM_OPEN[p]||REP_PRESETS.indexOf(v)<0;
+  REP_PRESETS.forEach(x=>gid(p+'-'+x).classList.toggle('on',!custom&&x===v));
+  gid(p+'-custom').classList.toggle('on',custom);
+  gid(p+'-custom-wrap').style.display=custom?'block':'none';
+  const inp=gid(p+'-custom-inp');if(document.activeElement!==inp)inp.value=custom?v:'';
+}
+function setRepsPreset(p,v){REPS_CUSTOM_OPEN[p]=false;setRepsVal(p,v);renderRepOpts(p);}
+function openRepsCustom(p){REPS_CUSTOM_OPEN[p]=true;renderRepOpts(p);gid(p+'-custom-inp').focus();}
+function updRepsCustom(p,v){const n=parseInt(v);if(n>0)setRepsVal(p,Math.min(50,n));}
+function commitRepsCustom(p){
+  setRepsVal(p,Math.max(1,Math.min(50,parseInt(gid(p+'-custom-inp').value)||repsVal(p))));
+  REPS_CUSTOM_OPEN[p]=false;renderRepOpts(p);
+}
+function setReps(v){setRepsPreset('reps',v);}
 function setRest(v){OB.rest=v;[60,90,120].forEach(x=>gid('rest-'+x).classList.toggle('on',x===v));}
 function setSets(v){OB.sets=v;[2,3,4].forEach(x=>gid('sets-'+x).classList.toggle('on',x===v));}
 function setSetStyle(v){OB.setStyle=v;['straight','pyramid'].forEach(x=>gid('setstyle-'+x).classList.toggle('on',x===v));gid('setstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';}
@@ -14736,7 +14776,10 @@ function addWarmupFlags(exercises){
 const WU_RAMPS={1:[0.5],2:[0.4,0.65],3:[0.4,0.6,0.8]};
 function buildSets(ex,savedW){
   const sets=[];const baseW=savedW!==undefined?savedW:ex.baseW;
-  const nSets=ex.plannedSets||CFG.prefSets;const reps=getSavedReps(ex.name)||ex.plannedR||CFG.prefReps;
+  // plannedR first: it is an explicit choice the user just made on the day-edit
+  // screen, so it must outrank the reps carried over from last session. With it
+  // second, every exercise with any history ignored the reps you had just typed.
+  const nSets=ex.plannedSets||CFG.prefSets;const reps=ex.plannedR||getSavedReps(ex.name)||CFG.prefReps;
   if(CFG.warmup&&ex.doWU&&baseW>0){
     const ramp=WU_RAMPS[CFG.wuSteps]||WU_RAMPS[1];
     ramp.forEach(pct=>{let wuW=Math.round(baseW*pct*2)/2;const snapped=roundToGymWeight(ex,wuW,'up');if(snapped<baseW)wuW=snapped;sets.push({t:'w',w:wuW,r:CFG.wuReps,done:false});});
@@ -15206,7 +15249,7 @@ function openSettings(){
   gid('set-fname').value=CFG.firstName;gid('set-lname').value=CFG.lastName;gid('set-bw').value=CFG.bw;gid('set-ht').value=CFG.ht;gid('set-bf').value=CFG.bf||'';
   gid('set-unit-lbl').textContent=CFG.unit;
   ['kg','lbs'].forEach(v=>gid('sunit-'+v).classList.toggle('on',CFG.unit===v));
-  [8,10,12].forEach(v=>gid('sreps-'+v).classList.toggle('on',CFG.prefReps===v));
+  REPS_CUSTOM_OPEN.sreps=false;renderRepOpts('sreps');
   [60,90,120].forEach(v=>gid('srest-'+v).classList.toggle('on',CFG.prefRest===v));
   [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
   ['straight','pyramid'].forEach(v=>gid('sstyle-'+v).classList.toggle('on',CFG.setStyle===v));
@@ -15250,7 +15293,7 @@ function renderMWSettings(){
 function updMWSetting(name,val){ST.mw[name]=Math.max(0,parseFloat(val)||0);saveData();}
 function removeMWSetting(name){delete ST.mw[name];saveData();renderMWSettings();}
 function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;}
-function setSettingReps(v){CFG.prefReps=v;[8,10,12].forEach(x=>gid('sreps-'+x).classList.toggle('on',x===v));}
+function setSettingReps(v){setRepsPreset('sreps',v);}
 function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));}
 function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));}
 function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';}
@@ -15457,7 +15500,9 @@ function plannedFor(ex){
   const saved=getSavedWeight(ex.name,isBW);
   const fallback=isBW?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW);
   const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:fallback);
-  const r=ex.plannedR||CFG.prefReps;
+  // Same precedence as buildSets(), or the day-edit screen shows a rep target
+  // the workout is not going to use.
+  const r=ex.plannedR||getSavedReps(ex.name)||CFG.prefReps;
   const sets=ex.plannedSets||CFG.prefSets;
   return{w,r,sets,isBW};
 }
@@ -15495,7 +15540,7 @@ function renderDayEdit(){
     const detail=expanded?
       '<div class="de-detail">'+
         '<div class="de-detail-field"><label>Sets</label><input type="number" min="1" max="8" value="'+p.sets+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'sets\',this.value)"></div>'+
-        (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>Reps (pyramid)</label><div style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>Reps</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
+        (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>Reps (pyramid)</label><div id="de-pyr-'+i+'" style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>Reps</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
         weightField+
       '</div>':'';
     const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:#fff;margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
@@ -15503,7 +15548,7 @@ function renderDayEdit(){
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
         (ST.editMid?'':'<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>')+
-        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+ex.name+'</div><div style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+ex.name+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
         linkBtn+
         '<button class="bg" onclick="openSwap('+i+')" aria-label="Swap exercise"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
         '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="Delete exercise"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
@@ -15512,12 +15557,22 @@ function renderDayEdit(){
   }).join('');
   saveInProgress();
 }
+// These fields commit on change — i.e. on blur, which is the very tap that
+// moves the user into the NEXT field. Re-rendering the whole list here tore
+// that input out of the DOM mid-tap, so the second value typed in a row was
+// silently dropped (and the keyboard lost its field). Patch only the derived
+// text and leave the inputs standing.
+function refreshDERow(i){
+  const ex=ST.editList[i];const p=plannedFor(ex);
+  const sub=gid('de-sub-'+i);if(sub)sub.textContent=humanizeMG(ex.mg)+' · '+p.sets+' sets';
+  const pyr=gid('de-pyr-'+i);if(pyr)pyr.textContent=pyramidReps(p.sets).join(' → ');
+}
 function updPlannedEx(i,field,value){
   const cur={...ST.editList[i]};
   if(field==='w')cur.plannedW=parseFloat(value)||0;
   if(field==='r')cur.plannedR=Math.max(1,parseInt(value)||CFG.prefReps);
   if(field==='sets')cur.plannedSets=Math.max(1,parseInt(value)||CFG.prefSets);
-  ST.editList[i]=cur;renderDayEdit();
+  ST.editList[i]=cur;refreshDERow(i);saveInProgress();
 }
 function cycleDEBWMode(i){
   const ex=ST.editList[i];const curW=ex.plannedW!==undefined?ex.plannedW:plannedFor(ex).w;
@@ -15529,7 +15584,10 @@ function cycleDEBWMode(i){
 function updDEBWMag(i,v){
   const ex=ST.editList[i];const curW=ex.plannedW!==undefined?ex.plannedW:plannedFor(ex).w;
   const mag=Math.abs(parseFloat(v)||0);const sign=curW<0?-1:1;
-  ST.editList[i]={...ex,plannedW:sign*mag};renderDayEdit();
+  ST.editList[i]={...ex,plannedW:sign*mag};
+  // Same blur race as updPlannedEx — only a drop to 0 changes the row's shape
+  // (mode flips to BW and the input goes away), so only that redraws.
+  if(mag===0)renderDayEdit();else saveInProgress();
 }
 function deleteExFromEdit(i){
   if(ST.editList.length<=1){alert('A workout needs at least one exercise.');return;}
@@ -15871,7 +15929,9 @@ function saveMW(skip){
   const val=skip?0:(parseFloat(gid('mw-inp').value)||0);
   if(ST.mwCurrent){ST.mw[ST.mwCurrent]=val;saveData();
     const idx=ST.sd.findIndex(s=>s.ex.name===ST.mwCurrent);
-    if(idx>=0){const ex=ST.sd[idx].ex;const baseW=getSavedWeight(ex.name)||getAIEstimatedWeight(ex);ST.sd[idx].sets=buildSets(ex,baseW);}
+    // Rebuilding the sets must not throw away a weight the user planned on the
+    // day-edit screen — same precedence startDay() uses.
+    if(idx>=0){const ex=ST.sd[idx].ex;const baseW=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name)||getAIEstimatedWeight(ex));ST.sd[idx].sets=buildSets(ex,baseW);}
   }
   processMWQueue();
 }
@@ -16609,7 +16669,7 @@ async function sendFeedback(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
 }
 
-load();applyTheme();applyLang();OB.step=1;obDots();
+load();applyTheme();applyLang();OB.step=1;obDots();renderRepOpts('reps');
 if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){
