@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-09-04
+
+### Changed
+- **Redesigned mid-workout exercise management.** The back button on the
+  workout screen no longer ends the workout — it opens the "remaining
+  exercises" screen (previously reached via a separate reorder icon, which is
+  now removed). On that screen:
+  - **Drag-to-reorder and the tap-to-expand sets/reps/weight editor are gone
+    mid-workout.** Tapping an exercise now opens a "Jump to this exercise
+    now?" popup with "Do it now" / "Go back" — confirming moves it to the
+    front of the remaining queue and returns straight to the workout screen
+    on it, which covers the same need reordering used to (pick what's next)
+    in one tap instead of a drag. Swipe-right-to-swap and swipe-left-to-delete
+    are unchanged. The pre-workout day editor and the custom-program builder
+    (the same shared screen in its other two modes) are untouched — both
+    still drag-reorder and tap-to-expand exactly as before.
+  - **The top-left button is now a red X that cancels the workout**, in place
+    of the old back arrow. Tapping it opens a new warning sheet ("Cancel this
+    workout? All progress from this session — every set you've logged — will
+    be lost. This can't be undone.") instead of the plain browser `confirm()`
+    dialog the app used previously, so it can't be dismissed by reflexively
+    tapping through a native OK/Cancel prompt.
+
 ## [2.4.2] - 2026-08-29
 
 ### Fixed

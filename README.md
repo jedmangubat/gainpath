@@ -8,6 +8,11 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v2.5.0
+
+- **The mid-workout back button now opens an exercise picker.** Instead of jumping straight home, the back arrow on the workout screen opens a screen listing everything left in the session. Tap any exercise for a "Jump to this exercise now?" prompt — confirm and it moves to the front of the queue immediately, no dragging required. Swap and delete still work the same way (icons or swipe).
+- **Canceling a workout is now a deliberate, clearly-labeled action.** On that same screen, a red X in the top-left opens a warning sheet explaining that all progress from the session will be lost before you can confirm.
+
 ## Features
 
 ### 🏋️ Training splits
@@ -31,7 +36,7 @@ Picking a day no longer locks you into a fixed exercise list — tap a day to op
 - Tap into an exercise to set its planned sets, reps, and weight before you start
 - Bodyweight exercises (push-ups, pull-ups, dips, plank) support an optional added weight (vest/belt) or assisted weight (band/machine) modifier instead of a flat "BW" label
 - Plank gets its own hold-duration stopwatch in place of a reps counter, with PRs tracked for longer holds
-- Everything above is also available **mid-workout**, scoped to whatever's left in the session (plus the exercise you're currently on, if you haven't done its first set yet), via the reorder icon on the workout screen
+- Swap, delete, and add are also available **mid-workout**, scoped to whatever's left in the session (plus the exercise you're currently on, if you haven't done its first set yet) — the back button on the workout screen opens this same editor. There's no drag-to-reorder here: tap any exercise for a "Jump to this exercise now?" prompt that moves it to the front of the queue instead. A red X in the top-left cancels the workout, with a warning sheet confirming first
 - Confirms before advancing past an exercise with sets still left undone, in case "Next exercise" or "Finish workout" gets tapped by mistake
 - **Supersets & circuits** — link an exercise with the next one in the editor to pair them (2 linked = superset, 3+ = circuit). During the workout you alternate one set of each back-to-back with no rest, resting once per round. Each exercise still tracks its own feel rating, volume, and PRs
 - **Add or remove sets mid-workout** — every set you haven't logged yet has a bin icon to drop it, and an **Add set** button appends another work set at the last one's weight and reps. Logged sets are protected, and an exercise always keeps at least one work set

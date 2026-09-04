@@ -613,16 +613,40 @@ textarea{resize:vertical;min-height:100px}
 <!-- DAY EDIT -->
 <div id="s-dayedit" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="closeDayEdit()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" id="de-back-btn" onclick="deBack()" aria-label="Back"><i class="ti ti-arrow-left" id="de-back-icon" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="de-tit"></div>
   </div>
-  <div style="font-size:13px;color:var(--txt2);margin-bottom:12px"><i class="ti ti-hand-grab" aria-hidden="true"></i> <span data-i18n="de_hint">Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</span></div>
+  <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="de-hint-wrap"><i class="ti ti-hand-grab" aria-hidden="true"></i> <span id="de-hint">Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</span></div>
   <div id="de-list"></div>
   <div style="display:flex;gap:8px;margin-bottom:14px">
     <button class="bg" style="flex:1" onclick="openAddEx()"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="btn_add_exercise">Add exercise</span></button>
     <button class="bg" id="de-reset-btn" style="flex:1" onclick="resetDayEdit()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> <span data-i18n="btn_reset_default">Reset to default</span></button>
   </div>
   <button class="bp" id="de-commit-btn" style="width:100%;justify-content:center" onclick="commitDayEdit()"><span data-i18n="btn_start_workout">Start workout</span> <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+</div>
+
+<!-- CANCEL WORKOUT CONFIRMATION -->
+<div id="cancelwo-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeCancelWorkoutSheet()"></div>
+<div id="cancelwo-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="text-align:center;margin-bottom:18px">
+    <i class="ti ti-alert-triangle" style="font-size:32px;color:#E24B4A" aria-hidden="true"></i>
+    <div class="tt" style="font-size:19px;font-weight:800;margin-top:10px;color:var(--txt)" data-i18n="wo_cancel_title">Cancel this workout?</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:8px;line-height:1.5" data-i18n="wo_cancel_body">All progress from this session — every set you've logged — will be lost. This can't be undone.</div>
+  </div>
+  <button class="bp" style="width:100%;justify-content:center;background:#E24B4A;color:#fff" onclick="doCancelWorkout()" data-i18n="wo_cancel_confirm_btn">Cancel workout</button>
+  <button class="bs" style="width:100%;justify-content:center;margin-top:10px" onclick="closeCancelWorkoutSheet()" data-i18n="wo_cancel_keep_btn">Keep training</button>
+</div>
+
+<!-- DO EXERCISE NOW -->
+<div id="exnow-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeExNowSheet()"></div>
+<div id="exnow-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="text-align:center;margin-bottom:18px">
+    <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
+    <div id="exnow-name" style="font-size:17px;font-weight:700;margin-top:10px;color:var(--txt)"></div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:6px" data-i18n="wo_jump_title">Jump to this exercise now?</div>
+  </div>
+  <button class="bp" style="width:100%;justify-content:center" onclick="doExNow()" data-i18n="wo_jump_do_btn">Do it now</button>
+  <button class="bs" style="width:100%;justify-content:center;margin-top:10px" onclick="closeExNowSheet()" data-i18n="wo_jump_back_btn">Go back</button>
 </div>
 
 <!-- CUSTOM PROGRAM BUILDER -->
@@ -1094,12 +1118,11 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-wo" class="screen">
   <div id="prt-w"></div>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-    <button class="bg" onclick="goHome()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Manage exercises"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="flex:1">
       <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="wo-tit"></div>
       <div style="font-size:13px;color:var(--txt2)" id="wo-pl"></div>
     </div>
-    <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Reorder remaining exercises"><i class="ti ti-arrows-down-up" style="font-size:16px" aria-hidden="true"></i></button>
     <div style="font-size:13px;color:var(--txt2);background:var(--bg2);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" style="background:none;border:none;padding:8px;margin:-8px;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
   </div>
   <div class="pbw"><div class="pb" id="wo-pb" style="width:0%"></div></div>
@@ -1307,7 +1330,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.4.2';
+const APP_VERSION='2.5.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1334,8 +1357,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.4.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+const WHATS_NEW_VERSION='2.5.0';
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -13251,6 +13274,7 @@ en:{
 "dark_mode_label": "Dark mode",
 "date_label": "Date",
 "de_hint": "Drag to reorder · tap to edit sets/reps/weight · swipe right to swap · swipe left to delete",
+"de_hint_mid": "Tap an exercise to jump to it now · swipe right to swap · swipe left to delete",
 "dumbbells_owned_label": "Dumbbells owned (<span id=\"set-gym-unit2\">kg</span>, per hand)",
 "duration_label": "Duration",
 "ef_question": "On your last set, how many reps could you still have done?",
@@ -13402,9 +13426,8 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Sets are no longer fixed once a workout starts. Tap the bin on any set you haven't logged yet to drop it, or Add set to tack another one on — as often as you like, mid-exercise.",
-"whatsnew_item2": "Setup now asks which plates and dumbbells you actually have, so GainPath only ever suggests weights you can really load. Already set up? A one-time prompt on the Train tab points you at Settings → My gym.",
-"whatsnew_item3": "The walkthrough under Settings → How to use was rebuilt from scratch: fresh screenshots of every screen, highlights that actually point at the button being described, and a new step for adding and dropping sets.",
+"whatsnew_item1": "The back button on the workout screen now opens an exercise picker for what's left in the session. Tap any exercise for a \"Jump to this exercise now?\" prompt — confirm and it moves to the front of the queue immediately, no dragging required.",
+"whatsnew_item2": "Canceling a workout is now a deliberate action: a red X on that same screen opens a warning sheet explaining that all progress will be lost, so it can't happen by accident.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13573,6 +13596,13 @@ en:{
 "warmup_sets_label": "Warm-up sets",
 "warmup_sets_sub": "First exercise per muscle group",
 "weight_label": "Weight (<span id=\"bw-unit\">kg</span>)",
+"wo_cancel_title": "Cancel this workout?",
+"wo_cancel_body": "All progress from this session — every set you've logged — will be lost. This can't be undone.",
+"wo_cancel_confirm_btn": "Cancel workout",
+"wo_cancel_keep_btn": "Keep training",
+"wo_jump_title": "Jump to this exercise now?",
+"wo_jump_do_btn": "Do it now",
+"wo_jump_back_btn": "Go back",
 "your_custom_ex_title": "Your custom exercises",
 "your_email_label": "Your email"
 },
@@ -13626,6 +13656,7 @@ ja:{
 "dark_mode_label": "ダークモード",
 "date_label": "日付",
 "de_hint": "ドラッグで並べ替え・タップでセット/レップ/重量を編集・右スワイプで種目を入れ替え・左スワイプで削除",
+"de_hint_mid": "タップして今すぐその種目へ移動・右スワイプで種目を入れ替え・左スワイプで削除",
 "dumbbells_owned_label": "所有ダンベル (<span id=\"set-gym-unit2\">kg</span>、片手分)",
 "duration_label": "所要時間",
 "ef_question": "最後のセットで、あと何回できましたか?",
@@ -13776,9 +13807,8 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "ワークアウト開始後もセット数を変更できるようになりました。まだ記録していないセットはゴミ箱アイコンで削除、「セットを追加」で追加でき、種目の途中でも何度でも変更できます。",
-"whatsnew_item2": "初期設定で実際に持っているプレートとダンベルを尋ねるようになり、実際に組める重量だけが提案されます。設定済みの方には、「トレーニング」タブに設定 → マイジムへの案内が一度だけ表示されます。",
-"whatsnew_item3": "設定 →「使い方」のチュートリアルを作り直しました。全画面のスクリーンショットを撮り直し、説明している場所を正しく指すハイライトに修正し、セットの追加・削除の手順を追加しています。",
+"whatsnew_item1": "ワークアウト画面の戻るボタンをタップすると、残りの種目を選べる画面が開くようになりました。種目をタップすると「今すぐこの種目へ移動しますか?」と表示され、確認するとすぐにその種目が次になります。並べ替えは不要です。",
+"whatsnew_item2": "ワークアウトのキャンセルは意図的な操作になりました。同じ画面の赤いXをタップすると、進捗がすべて失われることを説明する警告シートが表示されるので、誤ってキャンセルすることがありません。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -13948,6 +13978,13 @@ ja:{
 "warmup_sets_label": "ウォームアップセット",
 "warmup_sets_sub": "各筋肉部位の最初の種目",
 "weight_label": "重量 (<span id=\"bw-unit\">kg</span>)",
+"wo_cancel_title": "このワークアウトをキャンセルしますか?",
+"wo_cancel_body": "このセッションの記録 — ログしたセットすべて — が失われます。この操作は取り消せません。",
+"wo_cancel_confirm_btn": "ワークアウトをキャンセル",
+"wo_cancel_keep_btn": "トレーニングを続ける",
+"wo_jump_title": "今すぐこの種目へ移動しますか?",
+"wo_jump_do_btn": "今すぐ行う",
+"wo_jump_back_btn": "戻る",
 "your_custom_ex_title": "あなたのカスタム種目",
 "your_email_label": "メールアドレス"
 },
@@ -14001,6 +14038,7 @@ ko:{
 "dark_mode_label": "다크 모드",
 "date_label": "날짜",
 "de_hint": "드래그하여 순서 변경 · 탭하여 세트/반복 횟수/무게 수정 · 오른쪽으로 스와이프하여 교체 · 왼쪽으로 스와이프하여 삭제",
+"de_hint_mid": "탭하여 지금 바로 그 운동으로 이동 · 오른쪽으로 스와이프하여 교체 · 왼쪽으로 스와이프하여 삭제",
 "dumbbells_owned_label": "보유한 덤벨 (<span id=\"set-gym-unit2\">kg</span>, 한 손 기준)",
 "duration_label": "소요 시간",
 "ef_question": "마지막 세트에서 몇 개 더 할 수 있었나요?",
@@ -14151,9 +14189,8 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "운동을 시작한 뒤에도 세트 수를 바꿀 수 있습니다. 아직 기록하지 않은 세트는 휴지통 아이콘으로 지우고, '세트 추가'로 더할 수 있어요. 운동 도중에도 몇 번이든 가능합니다.",
-"whatsnew_item2": "초기 설정에서 실제로 보유한 플레이트와 덤벨을 묻고, 실제로 들 수 있는 무게만 추천합니다. 이미 설정을 마친 분께는 '훈련' 탭에서 설정 → 내 헬스장으로 안내하는 알림이 한 번 표시됩니다.",
-"whatsnew_item3": "설정 → '사용법'의 walkthrough를 새로 만들었습니다. 모든 화면의 스크린샷을 다시 찍고, 설명하는 버튼을 정확히 가리키도록 하이라이트를 고쳤으며, 세트 추가·삭제 단계를 새로 넣었습니다.",
+"whatsnew_item1": "운동 화면의 뒤로 버튼을 누르면 이제 남은 운동을 선택할 수 있는 화면이 열립니다. 운동을 탭하면 '지금 바로 이 운동으로 이동할까요?'라고 물어보고, 확인하면 바로 다음 순서가 됩니다. 순서를 직접 바꿀 필요가 없습니다.",
+"whatsnew_item2": "운동 취소는 이제 신중한 동작이 되었습니다. 같은 화면의 빨간 X를 누르면 모든 진행 상황이 사라진다는 경고 시트가 표시되어, 실수로 취소되는 일이 없습니다.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14323,6 +14360,13 @@ ko:{
 "warmup_sets_label": "워밍업 세트",
 "warmup_sets_sub": "근육 부위별 첫 번째 운동",
 "weight_label": "무게 (<span id=\"bw-unit\">kg</span>)",
+"wo_cancel_title": "이 운동을 취소할까요?",
+"wo_cancel_body": "이 세션의 모든 진행 상황 — 기록한 모든 세트 — 이 사라집니다. 이 작업은 되돌릴 수 없습니다.",
+"wo_cancel_confirm_btn": "운동 취소",
+"wo_cancel_keep_btn": "계속 운동하기",
+"wo_jump_title": "지금 바로 이 운동으로 이동할까요?",
+"wo_jump_do_btn": "지금 하기",
+"wo_jump_back_btn": "돌아가기",
 "your_custom_ex_title": "내 커스텀 운동",
 "your_email_label": "이메일"
 }
@@ -14412,6 +14456,7 @@ function restoreInProgress(){
     DE_EXPANDED=wip.deExpanded!==undefined?wip.deExpanded:null;
     gid('de-tit').textContent=ST.editMid?(getDayName(ST.editDay)+' — remaining exercises'):getDayName(ST.editDay);
     gid('de-commit-btn').innerHTML=ST.editMid?'Save & continue <i class="ti ti-check" aria-hidden="true"></i>':'Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    applyDeEditModeUI();
   }
   if(wip.holdIdx!==undefined&&wip.holdIdx!==null&&wip.holdStart){
     HOLD_IDX=wip.holdIdx;HOLD_START=wip.holdStart;HOLD_TARGET=wip.holdTarget!==undefined?wip.holdTarget:null;HOLD_ALERTED=wip.holdAlerted||false;
@@ -14994,12 +15039,6 @@ function stab(t){
 }
 function bnav(t){if(t==='wk'&&ST.day){ss(ST.restEnd?'rest':'wo');return;}ss('home');stab(t);}
 function goHome(){
-  const activeEl=document.querySelector('.screen.active');
-  const midWorkout=activeEl&&['s-wo','s-rest','s-mw','s-fsw','s-exfeel'].includes(activeEl.id);
-  if(midWorkout){
-    if(!confirm('End this workout? Your progress on this session will be lost.'))return;
-    ST.day=null;clearInProgress();releaseWakeLock();healthSyncTrigger('end');
-  }
   clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;ST.paused=false;refreshHome();ss('home');
 }
 function streakMsg(n){
@@ -15300,6 +15339,7 @@ function openProgDayEdit(i){
   DE_EXPANDED=null;gid('de-tit').textContent=day.name;
   gid('de-reset-btn').style.display='none';
   gid('de-commit-btn').innerHTML='Save day <i class="ti ti-check" aria-hidden="true"></i>';
+  applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }
 function saveProgram(){
@@ -15317,11 +15357,29 @@ function deleteProgram(){
   saveCFG();ST.progDraft=null;refreshHome();ss('home');
 }
 // ═══ DAY EDIT (reorder / delete / swap / tap-to-edit sets-reps-weight) ═══
+// Mid-workout mode (ST.editMid) is a restricted variant of this same screen:
+// no drag-reorder, no inline sets/reps/weight editor — a tap opens the
+// do-now/go-back popup instead (see openExNowSheet), since jumping an
+// exercise to the front of the queue makes manual reordering unnecessary.
+// The top-left button swaps from back-arrow to a destructive cancel-workout
+// X. applyDeEditModeUI() drives that swap; call it whenever ST.editMid changes.
+function applyDeEditModeUI(){
+  const btn=gid('de-back-btn'),icon=gid('de-back-icon'),hint=gid('de-hint');
+  if(ST.editMid){
+    icon.className='ti ti-x';btn.style.color='#E24B4A';btn.setAttribute('aria-label','Cancel workout');
+    hint.textContent=t('de_hint_mid');
+  }else{
+    icon.className='ti ti-arrow-left';btn.style.color='';btn.setAttribute('aria-label','Back');
+    hint.textContent=t('de_hint');
+  }
+}
+function deBack(){if(ST.editMid){openCancelWorkoutSheet();return;}closeDayEdit();}
 function openDayEdit(k){
   ST.editDay=k;ST.editMid=false;ST.editProg=false;ST.editList=getEffectiveDayExercises(k).slice();
   DE_EXPANDED=null;gid('de-tit').textContent=getDayName(k);
   gid('de-reset-btn').style.display=isCustomDay(k)?'none':'';
   gid('de-commit-btn').innerHTML='Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }
 function openMidWorkoutEdit(){
@@ -15331,9 +15389,41 @@ function openMidWorkoutEdit(){
   ST.editList=(ST.editIncludeCurrent?ST.sd.slice(ST.exi):ST.sd.slice(ST.exi+1)).map(item=>item.ex);
   gid('de-tit').textContent=getDayName(ST.day)+' — remaining exercises';
   gid('de-commit-btn').innerHTML='Save & continue <i class="ti ti-check" aria-hidden="true"></i>';
+  applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }
-function clearEditState(){ST.editDay=null;ST.editList=[];ST.editMid=false;ST.editIncludeCurrent=false;ST.swapIdx=null;ST.swapPart=null;ST.swapSearch='';DE_EXPANDED=null;}
+function openCancelWorkoutSheet(){
+  gid('cancelwo-overlay').style.display='block';gid('cancelwo-sheet').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeCancelWorkoutSheet(){
+  gid('cancelwo-overlay').style.display='none';gid('cancelwo-sheet').style.display='none';
+  document.body.style.overflow='';
+}
+function doCancelWorkout(){
+  closeCancelWorkoutSheet();
+  ST.day=null;clearEditState();clearInProgress();releaseWakeLock();healthSyncTrigger('end');
+  clearInterval(ST.rt);clearInterval(ST.et);ST.rt=null;ST.et=null;ST.paused=false;
+  refreshHome();ss('home');
+}
+function openExNowSheet(i){
+  ST.exNowIdx=i;
+  gid('exnow-name').textContent=ST.editList[i].name;
+  gid('exnow-overlay').style.display='block';gid('exnow-sheet').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeExNowSheet(){
+  ST.exNowIdx=null;
+  gid('exnow-overlay').style.display='none';gid('exnow-sheet').style.display='none';
+  document.body.style.overflow='';
+}
+function doExNow(){
+  const i=ST.exNowIdx;closeExNowSheet();
+  if(i==null||!ST.editList[i])return;
+  const item=ST.editList.splice(i,1)[0];ST.editList.unshift(item);
+  commitDayEdit();
+}
+function clearEditState(){ST.editDay=null;ST.editList=[];ST.editMid=false;ST.editIncludeCurrent=false;ST.swapIdx=null;ST.swapPart=null;ST.swapSearch='';ST.exNowIdx=null;DE_EXPANDED=null;}
 function closeDayEdit(){
   if(ST.editProg){ST.editProg=false;ST.editDay=null;ST.editList=[];DE_EXPANDED=null;gid('de-reset-btn').style.display='';renderProgramBuilder();ss('prog');return;}
   const wasMid=ST.editMid;
@@ -15412,7 +15502,7 @@ function renderDayEdit(){
     return grpLabel+'<div class="de-row-wrap'+(grp?' de-grp'+(grp.isFirst?' de-grp-first':'')+(grp.isLast?' de-grp-last':''):'')+'">'+
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
-        '<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>'+
+        (ST.editMid?'':'<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>')+
         '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+ex.name+'</div><div style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
         linkBtn+
         '<button class="bg" onclick="openSwap('+i+')" aria-label="Swap exercise"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
@@ -15536,7 +15626,7 @@ function rowSwipeStart(e,i){
   };
   const up=()=>{
     document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);
-    if(!moved){toggleDEExpand(i);return;}
+    if(!moved){if(ST.editMid)openExNowSheet(i);else toggleDEExpand(i);return;}
     row.style.transition='transform .2s';row.style.transform='translateX(0)';
     if(dx>80)openSwap(i);else if(dx<-80)deleteExFromEdit(i);
     setTimeout(()=>{row.style.transition='';},220);
