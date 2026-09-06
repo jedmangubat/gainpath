@@ -12,6 +12,11 @@
 // exercises, only counting zero weight for holdSecs exercises), and chkPR()
 // must apply the exact same rules during live-session PR detection.
 //
+// Also covers day-edit persistence (weight/rep/set overrides must survive
+// closing the screen without starting, and Settings changes must save on
+// every field, not just the sub-screen's back-arrow tap) — both were lost
+// silently before v2.7.0.
+//
 // Usage: npm run test:units
 
 import { chromium } from 'playwright';
@@ -458,6 +463,40 @@ async function main() {
       ST.sd.find(it => it.ex.name === 'Hack squat').sets.filter(s => s.t !== 'w').map(s => s.w),
       [120, 120, 120]);
 
+    // ── A Settings rep-target change must immediately apply to exercises
+    // that already have history, not just brand-new ones. Before the fix,
+    // buildSets() ranked getSavedReps() (last actual logged reps) above
+    // CFG.prefReps unconditionally, so changing e.g. 8→6 in Settings had no
+    // visible effect on anything you'd already done — only future first-time
+    // exercises picked it up.
+    ST.history = [{
+      day: 'push', dayName: 'Push', date: '2026-08-20', dur: '40m', sets: 3, mk: '2026-08', dk: '2026-08-20',
+      exercises: [{ name: 'Bench press', exFeel: 'right', sets: [{ done: true, t: 'x', w: 60, r: 8 }] }]
+    }];
+    CFG.prefReps = 8; CFG.prefRepsChangedAt = null;
+    check('unchanged: an exercise with history still carries its logged reps forward',
+      getSavedReps('Bench press'), 8);
+    CFG.prefRepsChangedAt = '2026-09-01'; // simulate setSettingReps(6) run on this date
+    CFG.prefReps = 6;
+    check('a Settings rep change overrides even an exercise already logged before the change',
+      getSavedReps('Bench press'), undefined);
+    check('...so buildSets() falls through to the new preference',
+      buildSets({ name: 'Bench press', mg: 'chest', baseW: 60 }, 60).map(s => s.r), [6, 6, 6]);
+    // Logging a session AFTER the Settings change resumes normal carry-over.
+    ST.history.push({
+      day: 'push', dayName: 'Push', date: '2026-09-05', dur: '40m', sets: 3, mk: '2026-09', dk: '2026-09-05',
+      exercises: [{ name: 'Bench press', exFeel: 'right', sets: [{ done: true, t: 'x', w: 65, r: 10 }] }]
+    });
+    check('a session logged after the Settings change resumes normal carry-over',
+      getSavedReps('Bench press'), 10);
+    // setSettingReps/commitRepsCustom must actually stamp the date.
+    ST.history = []; CFG.prefRepsChangedAt = null;
+    setSettingReps(12);
+    check('setSettingReps stamps prefRepsChangedAt', typeof CFG.prefRepsChangedAt, 'string');
+    CFG.prefRepsChangedAt = null;
+    openRepsCustom('sreps'); gid('sreps-custom-inp').value = '9'; commitRepsCustom('sreps');
+    check('commitRepsCustom stamps prefRepsChangedAt too', typeof CFG.prefRepsChangedAt, 'string');
+
     // ── Preferred reps: five presets plus a free-typed custom number, offered
     // identically in onboarding ('reps' → OB.reps) and Settings ('sreps' →
     // CFG.prefReps). "Custom" is derived from the stored number alone, so it
@@ -501,6 +540,54 @@ async function main() {
     CFG.prefReps = 21; ST.history = [];
     check('a custom preferred-reps value is what a fresh exercise is built with',
       buildSets({ name: 'Barbell row', mg: 'back', baseW: 40 }, 40).map(s => s.r), [21, 21, 21]);
+
+    // ── Day-edit weight/rep/set overrides must survive backing out without
+    // starting the workout ("save it for the day"), not just an immediate
+    // Start. Before the fix, closeDayEdit()'s non-mid branch only persisted
+    // exercise selection/order to CFG.customDays — plannedW/plannedR/
+    // plannedSets lived solely on the throwaway ST.editList and vanished the
+    // moment clearEditState() ran, so the numbers reverted to defaults even
+    // seconds later.
+    ST.history = []; CFG.customDays = {}; CFG.dayLinks = {}; CFG.dayPlan = {};
+    openDayEdit('push');
+    const pushFirst = ST.editList[0].name;
+    updPlannedEx(0, 'w', '77'); updPlannedEx(0, 'r', '7'); updPlannedEx(0, 'sets', '5');
+    closeDayEdit(); // back/close, NOT "Start workout"
+    openDayEdit('push'); // simulating the user returning later
+    const remembered = plannedFor(ST.editList[0]);
+    check('weight/rep/set overrides survive closing the day-edit screen without starting',
+      { name: ST.editList[0].name, w: remembered.w, r: remembered.r, sets: remembered.sets },
+      { name: pushFirst, w: 77, r: 7, sets: 5 });
+    // The remembered plan must also apply when actually starting that day.
+    commitDayEdit();
+    check('the remembered plan is what the workout actually starts with',
+      ST.sd[0].sets.filter(s => s.t !== 'w').map(s => ({ w: s.w, r: s.r })),
+      Array(5).fill({ w: 77, r: 7 }));
+    // Resetting the day must clear the remembered plan, not just the order.
+    openDayEdit('push'); resetDayEdit(); commitDayEdit();
+    check('resetting the day edit screen clears a previously remembered plan',
+      CFG.dayPlan.push, undefined);
+
+    // ── Settings must autosave on every change, not only when the user taps
+    // the sub-screen's back arrow. An iOS PWA backgrounded or killed between
+    // changing a preference and tapping back (routine: swipe home, phone
+    // call, app switch) reverted the change on relaunch, because only
+    // closeSettingsSection() -> collectSettingsFields() called saveCFG().
+    const savedPrefReps = () => JSON.parse(localStorage.getItem('gp_cfg')).prefReps;
+    setSettingReps(12);
+    check('picking a Settings rep preset saves immediately, not on back-arrow tap',
+      savedPrefReps(), 12);
+    openRepsCustom('sreps'); gid('sreps-custom-inp').value = '17'; commitRepsCustom('sreps');
+    check('a typed custom Settings value saves immediately too',
+      savedPrefReps(), 17);
+    const savedGymPlates = () => JSON.parse(localStorage.getItem('gp_cfg')).gymPlates;
+    CFG.gymPlates = {}; renderGymSettings();
+    toggleSettingPlate(20);
+    check('tapping a "my gym" plate chip saves immediately (feeds roundToGymWeight)',
+      savedGymPlates(), { 20: 1 });
+    toggleSettingPlate(20);
+    check('tapping an on plate chip again removes it and saves immediately',
+      savedGymPlates(), {});
 
     return out;
   });

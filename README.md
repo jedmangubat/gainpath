@@ -8,11 +8,6 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.6.0
-
-- **The mid-workout back button now opens an exercise picker.** Instead of jumping straight home, the back arrow on the workout screen opens a screen listing everything left in the session. Tap any exercise for a "Jump to this exercise now?" prompt — confirm and it moves to the front of the queue immediately, no dragging required. Swap and delete still work the same way (icons or swipe).
-- **Canceling a workout is now a deliberate, clearly-labeled action.** On that same screen, a red X in the top-left opens a warning sheet explaining that all progress from the session will be lost before you can confirm.
-
 ## Features
 
 ### 🏋️ Training splits
@@ -65,7 +60,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving automatically when you back out, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
 
 The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen, reachable any time and shown once automatically after setup.
 
@@ -75,7 +70,7 @@ The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen
 
 - Estimates starting weights from your body stats, experience level, and strength baseline
 - Suggests your next weight from how many reps you had left on your last set — "5+ reps left" offers a full bump, "3–4 left" a small step, "1–2 left" holds you in the sweet spot, and failing two sessions in a row offers a deload. Always a one-tap suggestion you can apply or dismiss, never an automatic change
-- Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over — and a rep target you set on the day's screen before starting overrides that carry-over
+- Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over — a rep target you set on the day's screen before starting overrides that carry-over, and so does changing your preferred reps in Settings (it immediately applies again even to exercises you've already logged, until you log a different rep count in a real workout)
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
 - **Plate calculator** — tap the plate icon by any weight for a visual, color-coded loaded-barbell diagram (plates to the Olympic standard) showing the per-side breakdown, accounting for the bar/machine base weight and your kg/lb plate set
 - **Your own gym, modeled exactly** — a "My gym" section in Settings where you tap the plates and dumbbells you actually have (not how many of each, just which ones — real gyms rarely run out of a plate size). The plate calculator and weight suggestions then only ever propose combinations you can really load, rounding a suggested weight **up to the next dumbbell or plate total you own** even if the rack steps unevenly (e.g. 1kg jumps up to 10kg, then 2.5kg jumps after) — and warm-ups and the starting-weight estimate snap the same way

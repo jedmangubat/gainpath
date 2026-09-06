@@ -6,6 +6,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-09-06
+
+### Fixed
+- **Settings changes are now saved the instant you make them, not only when
+  you tap the sub-screen's back arrow.** Every preference (reps target, rest
+  timer, sets, warm-up, set style, rest sound, wake lock, health sync, and
+  "My gym" plate/dumbbell inventory) previously only updated the in-memory
+  config; `saveCFG()` ran solely from `closeSettingsSection()` on the
+  explicit back tap. If the PWA was backgrounded or killed before that tap —
+  routine on iOS: swipe to Home, take a call, switch apps — the change
+  silently reverted on relaunch, with no error shown. This is the same class
+  of bug fixed for the workout screen in v2.4.1, just never applied to
+  Settings. "My gym" plate/dumbbell chips get the same fix even though they
+  weren't backed by a `setSetting*` function at all — they only toggled a
+  CSS class and were read from the DOM by `collectSettingsFields()` on exit
+  — because they're what `roundToGymWeight()` uses to decide what weight a
+  workout can actually propose.
+- **Weight/rep/set numbers typed on the day-edit screen now persist as that
+  day's plan, not just for an immediate "Start workout."** They already
+  carried correctly into a workout you started right away, but backing out
+  of day-edit without starting ("save it for the day") discarded them
+  entirely — `closeDayEdit()` only ever persisted the exercise
+  selection/order to `CFG.customDays`, never the per-exercise
+  `plannedW`/`plannedR`/`plannedSets`, which lived solely on the throwaway
+  `ST.editList` and vanished the moment the screen closed. A new
+  `CFG.dayPlan` map (alongside `customDays`/`dayLinks`, same
+  "sticks until you change it again" contract, cleared by Reset) now
+  remembers those overrides per day/exercise; `getEffectiveDayExercises()`
+  applies them wherever a day's exercise list is built.
+- **Changing your preferred reps in Settings now applies even to exercises
+  you've already logged before.** `buildSets()` ranked `getSavedReps()` (the
+  rep count from your actual last session) above `CFG.prefReps`
+  unconditionally, so a Settings change only ever affected an exercise you'd
+  never done — for anything with history it had no visible effect at all,
+  which is what most exercises have most of the time. `CFG.prefRepsChangedAt`
+  now stamps the date of the Settings change; `getSavedReps()` ignores any
+  logged session on or before that date, so the new preference wins
+  immediately. Logging a session after the change resumes normal carry-over
+  from then on, same as before.
+- **Switching kg/lbs in Settings → Preferences no longer leaves "My gym"
+  showing the wrong unit's plates.** `setSettingUnit()` updated `CFG.unit`
+  but never re-ran `renderGymSettings()`, whose chip ids are keyed by each
+  unit's own denominations (kg and lbs aren't just relabeled numbers) —
+  found by the new randomized simulator below toggling unit and "My gym" in
+  the same run, which crashed reaching for a chip id that no longer existed
+  for the new unit.
+
+### Added
+- **`npm run simulate`** (`scripts/simulate.mjs`) — a seeded, randomized
+  fuzzer that repeatedly drives real Settings and day-edit interactions
+  (through the actual window-scope functions, in both Chromium and WebKit)
+  in random order and combinations, including simulated app-kill-and-relaunch
+  mid-session, and checks two invariants: every Settings change is reflected
+  in `localStorage` the instant it's made, and whatever a day-edit session
+  ends with (Start / Save-without-starting / Reset) is exactly what
+  re-opening that day or relaunching the app shows afterward. Built in
+  response to the three bugs above; already caught the "My gym" unit-switch
+  bug during development. A failing run prints its seed so it can be
+  replayed exactly (`SEED=<n> npm run simulate`).
+
 ## [2.6.0] - 2026-09-04
 
 ### Changed

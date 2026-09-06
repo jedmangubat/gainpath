@@ -1337,7 +1337,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.0';
+const APP_VERSION='2.6.1';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1767,12 +1767,18 @@ function isCustomDay(dayId){return typeof dayId==='string'&&dayId.indexOf('cd_')
 function getEffectiveDayExercises(dayId){
   const custom=CFG.customDays[dayId];
   const links=CFG.dayLinks[dayId];
+  const plan=(CFG.dayPlan||{})[dayId];
   let list;
   if(isCustomDay(dayId)){list=(custom||[]).filter(n=>EXPOOL[n]).map(n=>EXPOOL[n]);}
   else if(custom&&custom.length&&custom.every(n=>EXPOOL[n])){list=custom.map(n=>EXPOOL[n]);}
   else list=getDayExercises(dayId,CFG.sex);
-  if(links&&links.length){return list.map((ex,i)=>links[i]?{...ex,linkNext:true}:ex);}
-  return list;
+  return list.map((ex,i)=>{
+    let out=ex;
+    if(links&&links.length&&links[i])out={...out,linkNext:true};
+    const p=plan&&plan[ex.name];
+    if(p)out={...out,plannedW:p.w,plannedR:p.r,plannedSets:p.sets};
+    return out;
+  });
 }
 
 const DAY_NAMES_JA={
@@ -13172,7 +13178,7 @@ function showExInstructions(name){const steps=instructionsFor(name);gid('exinfo-
 function closeExInfo(){gid('exinfo-overlay').style.display='none';gid('exinfo-sheet').style.display='none';document.body.style.overflow='';}
 
 // ═══ STATE ═══
-let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},customProgram:null,restSound:true,darkMode:false,wuSteps:1,setStyle:'straight',
+let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:null,unit:'kg',exp:'intermediate',goal:'definition',split:'pplul',freq:5,lastWorkout:'',warmup:true,wuReps:12,prefReps:10,prefRepsChangedAt:null,prefRest:90,prefSets:3,startingWeights:'ai',keyLifts:{},setup:false,customDays:{},dayLinks:{},dayPlan:{},customProgram:null,restSound:true,darkMode:false,wuSteps:1,setStyle:'straight',
   customExercises:[],gymPlates:{},dumbbellInc:null,dumbbellMax:null,gymNudgeDismissed:false,
   restDays:[],restWeeks:[],
   wakeLock:false,
@@ -14625,6 +14631,7 @@ function updRepsCustom(p,v){const n=parseInt(v);if(n>0)setRepsVal(p,Math.min(50,
 function commitRepsCustom(p){
   setRepsVal(p,Math.max(1,Math.min(50,parseInt(gid(p+'-custom-inp').value)||repsVal(p))));
   REPS_CUSTOM_OPEN[p]=false;renderRepOpts(p);
+  if(p==='sreps'){CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
 }
 function setReps(v){setRepsPreset('reps',v);}
 function setRest(v){OB.rest=v;[60,90,120].forEach(x=>gid('rest-'+x).classList.toggle('on',x===v));}
@@ -14795,10 +14802,21 @@ function buildSets(ex,savedW){
 // Reps set during a workout carry over: the first completed work set of the
 // last session becomes the default rep target next time (timed holds excluded —
 // their r is seconds held, and pyramid style keeps its computed scheme).
+// A Settings rep-target change (CFG.prefRepsChangedAt, stamped by
+// setSettingReps/commitRepsCustom) immediately overrides that carry-over
+// again — otherwise changing the preference had no visible effect on any
+// exercise you'd already logged, only ones you'd never done. Once you log a
+// session after that change, its actual reps resume carrying over as normal.
+// Day-granularity only (dk, not a precise timestamp): changing the
+// preference and logging a different rep count for the same exercise later
+// the same calendar day is the one edge case this can't distinguish.
 function getSavedReps(exName){
   const meta=EXPOOL[exName];if(meta&&meta.holdSecs)return undefined;
-  const last=lastSessionEx(exName);
-  if(!last)return undefined;
+  const hist=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
+  if(!hist.length)return undefined;
+  const session=hist[hist.length-1];
+  if(CFG.prefRepsChangedAt&&session.dk&&session.dk<=CFG.prefRepsChangedAt)return undefined;
+  const last=session.exercises.find(e=>e.name===exName);
   const ws=(last.sets||[]).filter(s=>s.done&&s.t!=='w'&&s.r>0);
   return ws.length?ws[0].r:undefined;
 }
@@ -15279,10 +15297,27 @@ function dbId(w){return String(w).replace('.','_');}
 function renderGymSettings(){
   ['set-gym-unit1','set-gym-unit2'].forEach(id=>{const el=gid(id);if(el)el.textContent=CFG.unit;});
   const denoms=PLATES[CFG.unit]||PLATES.kg;
-  gid('set-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(CFG.gymPlates[d]?' on':'')+'" id="set-plate-'+d+'" onclick="this.classList.toggle(\'on\')">'+d+CFG.unit+'</button>').join('');
+  gid('set-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(CFG.gymPlates[d]?' on':'')+'" id="set-plate-'+d+'" onclick="toggleSettingPlate('+d+')">'+d+CFG.unit+'</button>').join('');
   const dbList=DUMBBELLS[CFG.unit]||DUMBBELLS.kg;
   const owned=new Set(CFG.gymDumbbells||[]);
-  gid('set-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="set-db-'+dbId(w)+'" onclick="this.classList.toggle(\'on\')">'+w+'</button>').join('');
+  gid('set-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="set-db-'+dbId(w)+'" onclick="toggleSettingDB('+w+')">'+w+'</button>').join('');
+}
+// My-gym chips write straight to CFG.gymPlates/gymDumbbells and save
+// immediately, same reasoning as the setSetting* handlers above — these are
+// exactly what roundToGymWeight() reads to decide what a workout can propose,
+// so of everything in Settings this is the one most directly "doesn't apply
+// to the workouts" if lost to backgrounding before the back-arrow is tapped.
+function toggleSettingPlate(d){
+  const on=gid('set-plate-'+d).classList.toggle('on');
+  if(on)CFG.gymPlates[d]=1;else delete CFG.gymPlates[d];
+  saveCFG();
+}
+function toggleSettingDB(w){
+  const on=gid('set-db-'+dbId(w)).classList.toggle('on');
+  const owned=new Set(CFG.gymDumbbells||[]);
+  if(on)owned.add(w);else owned.delete(w);
+  CFG.gymDumbbells=(DUMBBELLS[CFG.unit]||DUMBBELLS.kg).filter(x=>owned.has(x));
+  saveCFG();
 }
 function renderMWSettings(){
   const el=gid('set-mw-list');if(!el)return;
@@ -15292,18 +15327,29 @@ function renderMWSettings(){
 }
 function updMWSetting(name,val){ST.mw[name]=Math.max(0,parseFloat(val)||0);saveData();}
 function removeMWSetting(name){delete ST.mw[name];saveData();renderMWSettings();}
-function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;}
-function setSettingReps(v){setRepsPreset('sreps',v);}
-function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));}
-function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));}
-function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';}
-function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';}
-function setSettingWUSteps(v){CFG.wuSteps=v;[1,2,3].forEach(x=>gid('swu-'+x).classList.toggle('on',x===v));}
-function setSettingRestSound(){CFG.restSound=!CFG.restSound;gid('stog-rs').classList.toggle('on',CFG.restSound);}
+// Every setSetting* handler below saves immediately (not just on the settings
+// screen's back-arrow via collectSettingsFields) because a Settings change is
+// otherwise only in-memory until that explicit tap: an iOS PWA backgrounded
+// or killed before the user taps back (swipe home, phone call, app switch —
+// all normal mid-edit) silently reverts the change on relaunch. Same failure
+// mode as the workout-state loss fixed in v2.4.1, just never applied here.
+// renderGymSettings() must re-run here: its plate/dumbbell chip ids are keyed
+// by the unit's own denominations (kg vs lbs sets are different numbers, not
+// just re-labeled), so switching units without it left "My gym" showing the
+// old unit's chips — found by scripts/simulate.mjs toggling unit and My-gym
+// in the same run, which crashed on a plate id that no longer existed.
+function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;renderGymSettings();saveCFG();}
+function setSettingReps(v){setRepsPreset('sreps',v);CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
+function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));saveCFG();}
+function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));saveCFG();}
+function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';saveCFG();}
+function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';saveCFG();}
+function setSettingWUSteps(v){CFG.wuSteps=v;[1,2,3].forEach(x=>gid('swu-'+x).classList.toggle('on',x===v));saveCFG();}
+function setSettingRestSound(){CFG.restSound=!CFG.restSound;gid('stog-rs').classList.toggle('on',CFG.restSound);saveCFG();}
 function applyTheme(){document.documentElement.dataset.theme='dark';accentColor();}
 function setSettingDarkMode(){/* dark-only: toggle removed */}
-function setSettingWakeLock(){CFG.wakeLock=!CFG.wakeLock;gid('stog-wl').classList.toggle('on',CFG.wakeLock);if(!CFG.wakeLock)releaseWakeLock();}
-function setSettingHealthSync(){CFG.healthSync=!CFG.healthSync;gid('stog-hs').classList.toggle('on',CFG.healthSync);gid('hs-fields').style.display=CFG.healthSync?'block':'none';}
+function setSettingWakeLock(){CFG.wakeLock=!CFG.wakeLock;gid('stog-wl').classList.toggle('on',CFG.wakeLock);if(!CFG.wakeLock)releaseWakeLock();saveCFG();}
+function setSettingHealthSync(){CFG.healthSync=!CFG.healthSync;gid('stog-hs').classList.toggle('on',CFG.healthSync);gid('hs-fields').style.display=CFG.healthSync?'block':'none';saveCFG();}
 function toggleHSSteps(){const s=gid('hs-steps');if(s)s.style.display=s.style.display==='none'?'block':'none';}
 function isValidLeadEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 async function submitLeadEmail(){
@@ -15484,13 +15530,13 @@ function closeDayEdit(){
     const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
     const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
     if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
-    saveDayLinks(ST.editDay,fullRaw);saveCFG();
+    saveDayLinks(ST.editDay,fullRaw);saveDayPlan(ST.editDay,fullRaw);saveCFG();
   }else if(!wasMid&&ST.editDay&&ST.editList.length){
     const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
     const cur=ST.editList.map(e=>e.name);
     const changed=def.length!==cur.length||def.some((n,i)=>n!==cur[i]);
     if(changed)CFG.customDays[ST.editDay]=cur;else delete CFG.customDays[ST.editDay];
-    saveDayLinks(ST.editDay,ST.editList);saveCFG();
+    saveDayLinks(ST.editDay,ST.editList);saveDayPlan(ST.editDay,ST.editList);saveCFG();
   }
   clearEditState();
   if(wasMid){ss('wo');saveInProgress();}else{ss('home');if(!ST.day)clearInProgress();}
@@ -15608,11 +15654,23 @@ function saveDayLinks(dayId,exObjs){
   const links=exObjs.map((ex,i)=>i<exObjs.length-1&&!!ex.linkNext);
   if(links.some(Boolean))CFG.dayLinks[dayId]=links;else delete CFG.dayLinks[dayId];
 }
+// Weight/rep/set numbers typed on the day-edit screen become that day's
+// remembered plan going forward — same "stick until explicitly changed"
+// contract as customDays/dayLinks above, not a one-time value that only
+// applies if the user hits Start in the same sitting.
+function saveDayPlan(dayId,exObjs){
+  const plan={};
+  exObjs.forEach(ex=>{
+    if(ex.plannedW===undefined&&ex.plannedR===undefined&&ex.plannedSets===undefined)return;
+    plan[ex.name]={w:ex.plannedW,r:ex.plannedR,sets:ex.plannedSets};
+  });
+  if(Object.keys(plan).length)CFG.dayPlan[dayId]=plan;else delete CFG.dayPlan[dayId];
+}
 function commitDayEdit(){
   if(ST.editProg){
     const id=ST.editDay,names=ST.editList.map(e=>e.name);
     if(names.length)CFG.customDays[id]=names;else delete CFG.customDays[id];
-    saveDayLinks(id,ST.editList);saveCFG();
+    saveDayLinks(id,ST.editList);saveDayPlan(id,ST.editList);saveCFG();
     ST.editProg=false;ST.editDay=null;ST.editList=[];DE_EXPANDED=null;
     gid('de-reset-btn').style.display='';
     renderProgramBuilder();ss('prog');return;
@@ -15631,14 +15689,14 @@ function commitDayEdit(){
     const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
     const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
     if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
-    saveDayLinks(ST.editDay,fullRaw);
+    saveDayLinks(ST.editDay,fullRaw);saveDayPlan(ST.editDay,fullRaw);
     saveCFG();clearEditState();ss('wo');renderEx();return;
   }
   const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
   const cur=ST.editList.map(e=>e.name);
   const changed=def.length!==cur.length||def.some((n,i)=>n!==cur[i]);
   if(changed)CFG.customDays[ST.editDay]=cur;else delete CFG.customDays[ST.editDay];
-  saveDayLinks(ST.editDay,ST.editList);
+  saveDayLinks(ST.editDay,ST.editList);saveDayPlan(ST.editDay,ST.editList);
   const day=ST.editDay,list=ST.editList;saveCFG();clearEditState();startDay(day,list);
 }
 function rowDragStart(e,i){

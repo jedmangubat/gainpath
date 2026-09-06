@@ -322,6 +322,23 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   excluded, zero weight only counting for `holdSecs` exercises, and
   `chkPR`/`recomputePRs` staying in sync. Add a case here whenever one of
   those functions changes.
+- **`npm run simulate`** (`scripts/simulate.mjs`) — a seeded, randomized
+  fuzzer, not a fixed test: it repeatedly drives real Settings and day-edit
+  interactions (through the actual window-scope functions, same boot pattern
+  as `test:units`, across both Chromium and WebKit) in random order and
+  combination — including simulated app-kill-and-relaunch mid-session via
+  `page.reload()` — and checks two persistence invariants rather than a fixed
+  set of scenarios: every Settings change must be reflected in `localStorage`
+  the instant it's made, and whatever a day-edit session ends with (Start /
+  Save-without-starting / Reset) must be exactly what re-opening that day or
+  relaunching the app shows afterward. It exists because both invariants had
+  shipped broken and undetected until a user actually hit them on a real
+  device — `test:units` guards specific known scenarios, this is for finding
+  ones nobody thought to write a scenario for. A failing run prints its seed
+  so it can be replayed exactly (`SEED=<n> npm run simulate`); add a new
+  action to `dayEditCycle`/`settingsCycle` whenever a new Settings control or
+  day-edit field is added, so the fuzzer's combination space grows with the
+  app's actual surface area instead of drifting behind it.
 
 ## Claude Code plugins
 
