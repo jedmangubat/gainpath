@@ -6,6 +6,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **`npm run ios-chaos`** (`scripts/ios_chaos.mjs`) — `chaos`'s Gremlins horde
+  driven against real Simulator Safari via the same Appium/XCUITest
+  scaffolding as `ios-verify`, instead of desktop Chromium/WebKit. The horde
+  itself runs at native in-page speed regardless of engine (only one
+  WebDriver round-trip to start it and await completion), so this trades
+  volume for the real rendering/hit-testing engine desktop WebKit can't
+  exercise. `COUNT` defaults to 2000 (matching `chaos`'s desktop default),
+  verified clean at both count=100 and count=2000 (zero failures, no hang)
+  — see the CLAUDE.md dev-tooling note for the native permission-dialog risk
+  this still carries structurally, even though it didn't occur.
+
+## [2.6.2] - 2026-09-09
+
+### Fixed
+- **Black bar below the bottom nav on notch/Dynamic-Island iPhones (iPhone 15
+  and newer), still visible after v2.4.1/v2.4.2's nav fixes.** The
+  `<meta name="viewport">` tag never included `viewport-fit=cover` — absent
+  it, iOS resolves every `env(safe-area-inset-*)` to `0px` and confines the
+  page to the "safe" rectangle instead of extending it to the true screen
+  edges, regardless of any CSS written against those variables. `.bottom-nav`
+  and `.app.has-nav .screen.active` were already correctly written against
+  `env(safe-area-inset-bottom)` (added in v2.4.2) — that math was silently a
+  no-op on real hardware the whole time, and the home-indicator strip below
+  the nav was unpainted OS canvas, not app content. Fixed by adding
+  `viewport-fit=cover` to the viewport meta; no other change needed since the
+  safe-area CSS was already in place waiting for it. The status bar area is
+  unaffected — `apple-mobile-web-app-status-bar-style="default"` reserves
+  that space independently of `viewport-fit`. Not verifiable with the
+  existing Playwright test scripts (`env(safe-area-inset-*)` only reports
+  non-zero on real iOS hardware/Simulator, never desktop WebKit) — confirmed
+  instead from [WebKit's own documentation](https://webkit.org/blog/7929/designing-websites-for-iphone-x/)
+  and needs a real-device check to close out.
+
+### Added
+- **`npm run chaos`** (`scripts/chaos.mjs`) — blind monkey/chaos testing via
+  [Gremlins.js](https://github.com/marmelab/gremlins.js), complementary to
+  `npm run simulate`. Where `simulate` is semantic (it calls real
+  window-scope functions in random order, so it only ever catches the two
+  invariants it was written to check), `chaos` clicks, taps, fills forms,
+  and scrolls at random DOM coordinates regardless of what's there, across
+  six seeded starting screens (home, day-edit, active workout, Settings, and
+  the mid-workout organize/cancel sheets from the v2.5.0-v2.6.0 redesign) in
+  both Chromium and WebKit — the class of bug neither invariant check would
+  think to look for, at thousands of actions per second. A run is clean if
+  nothing throws; failures print the seed for exact replay
+  (`SEED=<n> npm run chaos`).
+- **`npm run ios-verify`** (`scripts/ios_verify.mjs`) — drives actual iOS
+  Simulator Safari via Appium's XCUITest driver, for the one thing
+  `chaos`/`simulate` structurally can't do: `env(safe-area-inset-*)` only
+  ever resolves non-zero on real iOS hardware/Simulator, never desktop
+  WebKit, so this is the only automated way to see the effect of the
+  `viewport-fit=cover` fix above. Loads the app past onboarding and screenshots
+  it. Real hardware-accurate rendering; needs Xcode + a booted Simulator, and
+  is noticeably heavier than the other two scripts — treat it as a
+  deliberate, occasional check, not routine tooling.
+
 ## [2.6.1] - 2026-09-06
 
 ### Fixed

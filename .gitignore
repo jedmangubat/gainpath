@@ -5,3 +5,5 @@ node_modules/
 scripts/.visual-check/
 scripts/.gen/
 scripts/.tutorial-coords.json
+scripts/.ios-verify/
+scripts/.ios-chaos/

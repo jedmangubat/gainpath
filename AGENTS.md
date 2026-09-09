@@ -208,7 +208,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   input value, and on rows that aren't all one line.
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
-  this CLAUDE.md to reflect it. Don't update it for one-off task details — only
+  this AGENTS.md to reflect it. Don't update it for one-off task details — only
   for conventions meant to persist across future sessions.
 
 ## Data model & app conventions
@@ -422,7 +422,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   same-named filter in `chaos`) would sit in front of the WebDriver session
   with no dismiss logic here, and could hang the run.
 
-## Claude Code plugins
+## Codex plugins
 
 - **`superpowers` (obra/superpowers, via the official marketplace) is
   installed** — a general-purpose agent-methodology plugin (TDD, systematic
@@ -433,9 +433,9 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   report rather than ad hoc troubleshooting).
 - **Deliberately not adopted:** turning GainPath's recurring procedures
   (batch exercise adds, README screenshot regen, the version/tag/release
-  flow) into `.claude/skills/` files. Superpowers' own `writing-skills` skill
+  flow) into `.Codex/skills/` files. Superpowers' own `writing-skills` skill
   states project-specific conventions belong in the project's instructions
-  file, not in a skill — which is exactly what this CLAUDE.md already is. It
+  file, not in a skill — which is exactly what this AGENTS.md already is. It
   also requires a full pressure-tested RED-GREEN-REFACTOR cycle with
   subagents before any new skill ships, which isn't worth the overhead for
   internal-only documentation. Don't re-propose converting these sections

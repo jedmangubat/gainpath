@@ -1,0 +1,80 @@
+GainPath — rest-timer sound fix plan (not yet implemented)
+Saved 2026-09-06
+
+Bug report: after backgrounding GainPath for a while (e.g. switching to
+watch a video) and returning, the rest timer's alert is silent. Confirmed
+symptom: the "Rest over — back to work!" notification banner DOES appear,
+but makes no sound.
+
+Root cause hypothesis (from code review, not yet reproduced/verified):
+Browsers auto-suspend the Web Audio AudioContext (`_actx`) when a tab/PWA
+is backgrounded, to save power. GainPath already handles the "timer
+finished while hidden" case correctly — the `visibilitychange` listener
+(index.html:14582) checks wall-clock time against `ST.restEnd` and, if
+the rest already ended, fires `finalRestAlert(true)` (index.html:14569),
+which beeps 3x, vibrates, and calls `notifyRestDone(true)` for the system
+notification. But it never resumes `_actx` before beeping — `beep()`
+(index.html:14561) just plays against whatever state the context is in,
+so if it's suspended, the oscillator is scheduled but produces no audible
+sound. The notification shows because that's a separate channel
+(service worker -> OS), whose sound is controlled by OS-level per-app
+notification settings that GainPath can't set from JS — so it isn't a
+reliable sole sound source, matching what was observed.
+
+Proposed fix (small, surgical — index.html only):
+1. In the `visibilitychange` handler (index.html:14582), call
+   `ensureAudio()` (resumes `_actx` if suspended) *before*
+   `finalRestAlert(true)` fires. Currently nothing resumes the context on
+   return at all.
+2. Belt-and-suspenders: some browsers only honor `AudioContext.resume()`
+   inside a direct user gesture, not a `visibilitychange` event. Attach a
+   one-shot `pointerdown`/`touchstart` listener while a rest is active
+   (added when rest starts, removed on rest end) that also calls
+   `ensureAudio()` — guarantees the context is resumed by the very next
+   tap, so at minimum the *next* countdown's beeps are audible even if
+   this one's catch-up beep was missed.
+3. Leave the notification path as-is — already documented as a
+   best-effort/secondary channel in the existing code comment.
+
+Scope: a few lines near index.html:14560 (ensureAudio/beep) and
+index.html:14582 (visibilitychange handler). No new files, no build step,
+consistent with the single-file/no-build constraint in CLAUDE.md.
+
+Testing approach (when implemented): assert `_actx.state === 'running'`
+after the fix fires, via the existing Playwright boot pattern (seed
+localStorage, drive real window-scope functions) used by
+scripts/test_units.mjs — a reasonable proxy for "would actually play"
+since headless testing can't confirm audible output directly.
+
+---
+
+Separate, resolved question (2026-09-06): whether to package GainPath as
+a native-feeling app distributed via a link, vs staying purely
+browser-based.
+
+Decision: stay browser-based (PWA). No native wrapper.
+
+iOS does not have an APK-sideloading equivalent for general distribution.
+Options considered:
+- PWA "Add to Home Screen" (what GainPath already does) — install via a
+  plain URL in Safari, no developer account, no review, works globally.
+  This is the closest thing to "download through a link." Tradeoff:
+  bound by WebKit's background/notification limits (see the rest-timer
+  bug above, and backlog item 1 in feature-backlog-review.txt).
+- TestFlight — needs a paid Apple Developer account, a real native/wrapped
+  build, and Apple's (lighter) beta review; testers install the TestFlight
+  app then the build via a link; builds expire after 90 days. Overkill for
+  a personal-use app.
+- Ad Hoc / Enterprise distribution — paid developer account, UDID limits
+  or company-internal-only terms; Apple actively revokes enterprise certs
+  used for public distribution.
+- EU alternative marketplaces / web distribution (DMA, iOS 17.4+) — real
+  sideloading, but EU-region devices only and still requires a paid
+  Apple Developer Program membership + notarization. Not applicable here.
+
+Conclusion: no iOS equivalent of "install an APK from a link" exists
+outside the EU DMA carve-out, and that carve-out isn't worth the
+developer-account overhead for this app. Sticking with the PWA install
+flow already built (matches feature-backlog-review.txt item 1's framing:
+a native wrapper is the only thing that actually lifts this ceiling, and
+that stays a deliberately-unpicked backlog item for now).

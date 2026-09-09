@@ -7,11 +7,18 @@
     "lint": "node scripts/lint_html.mjs",
     "test:units": "node scripts/test_units.mjs",
     "capture:tutorial": "node scripts/capture_tutorial.mjs",
-    "simulate": "node scripts/simulate.mjs"
+    "simulate": "node scripts/simulate.mjs",
+    "chaos": "node scripts/chaos.mjs",
+    "ios-verify": "node scripts/ios_verify.mjs",
+    "ios-chaos": "node scripts/ios_chaos.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "appium": "^3.7.0",
+    "appium-xcuitest-driver": "^12.11.1",
     "eslint": "^10.5.0",
-    "playwright": "^1.61.0"
+    "gremlins.js": "^2.2.0",
+    "playwright": "^1.61.0",
+    "webdriverio": "^9.31.7"
   }
 }
