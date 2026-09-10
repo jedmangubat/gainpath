@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-09-10
+
+### Fixed
+- **Rest-timer alert was silent after backgrounding the app** (e.g. switching
+  to watch a video mid-rest, then returning). The "Rest over — back to work!"
+  banner appeared, but the beeps didn't play. Root cause: browsers
+  auto-suspend the Web Audio `AudioContext` when a tab/PWA is backgrounded to
+  save power. The `visibilitychange` handler already correctly detected a
+  rest that finished while hidden and fired the catch-up alert, but never
+  resumed the suspended context first, so the beeps were scheduled against
+  dead audio. Fixed by calling `ensureAudio()` before `finalRestAlert()` in
+  that handler. Also added a belt-and-suspenders `armRestAudioKick()`: some
+  browsers only honor `AudioContext.resume()` inside a direct user gesture,
+  not a `visibilitychange` event, so a one-shot tap/touch listener is now
+  armed for the duration of a rest and resumes audio on the very next
+  interaction, guaranteeing at minimum the *next* countdown's beeps are
+  audible even if the catch-up beep was itself blocked.
+
 ### Added
 - **`npm run ios-chaos`** (`scripts/ios_chaos.mjs`) — `chaos`'s Gremlins horde
   driven against real Simulator Safari via the same Appium/XCUITest

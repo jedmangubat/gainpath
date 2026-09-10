@@ -1337,7 +1337,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.2';
+const APP_VERSION='2.6.3';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -14558,6 +14558,13 @@ function ss(id){
 }
 let _actx=null;
 function ensureAudio(){try{if(!_actx)_actx=new (window.AudioContext||window.webkitAudioContext)();if(_actx.state==='suspended')_actx.resume();}catch(e){}}
+// Some browsers only honor AudioContext.resume() inside a direct user
+// gesture, not a visibilitychange event — armed while a rest is active so
+// the very next tap also resumes audio, in case the visibilitychange
+// catch-up beep in the handler below was itself blocked.
+function _restAudioKick(){ensureAudio();disarmRestAudioKick();}
+function armRestAudioKick(){document.addEventListener('pointerdown',_restAudioKick);document.addEventListener('touchstart',_restAudioKick);}
+function disarmRestAudioKick(){document.removeEventListener('pointerdown',_restAudioKick);document.removeEventListener('touchstart',_restAudioKick);}
 function beep(freq,dur){if(!CFG.restSound||!_actx)return;try{const osc=_actx.createOscillator();const gain=_actx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(0.0001,_actx.currentTime);gain.gain.exponentialRampToValueAtTime(0.85,_actx.currentTime+0.01);gain.gain.exponentialRampToValueAtTime(0.0001,_actx.currentTime+dur);osc.connect(gain);gain.connect(_actx.destination);osc.start();osc.stop(_actx.currentTime+dur);}catch(e){}}
 function vib(pattern){if(CFG.restSound&&navigator.vibrate){try{navigator.vibrate(pattern);}catch(e){}}}
 function startEtInterval(){clearInterval(ST.et);ST.et=setInterval(()=>{ST.es=Math.floor((Date.now()-ST.t0)/1000);const el=gid('wo-el');if(el)el.textContent=fmt(ST.es);},1000);}
@@ -14582,10 +14589,10 @@ function notifyRestDone(missed){
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&ST.restEnd&&ST.rt){
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();
-    if(ST.rs<=0){clearInterval(ST.rt);finalRestAlert(true);endRest();}
+    if(ST.rs<=0){clearInterval(ST.rt);ensureAudio();finalRestAlert(true);endRest();}
   }
 });
-function endRest(){const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet){if(ST.restRated){ST.restRated=false;nextEx();}else askExFeel();}else{ss('wo');renderEx();}}
+function endRest(){disarmRestAudioKick();const isLastSet=ST.restInfo&&ST.restInfo.isLastSet;const ssReturn=ST.restInfo?ST.restInfo.ssReturn:null;ST.restEnd=null;ST.restInfo=null;saveInProgress();if(ssReturn!=null){goToExercise(ssReturn);return;}if(isLastSet){if(ST.restRated){ST.restRated=false;nextEx();}else askExFeel();}else{ss('wo');renderEx();}}
 function accentColor(){document.documentElement.style.setProperty('--accent','#C6F24E');document.documentElement.style.setProperty('--accent-ink','#0C1512');const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content='#0C1512';}
 
 function setSex(v){OB.sex=v;['male','female'].forEach(x=>gid('sex-'+x[0]).classList.toggle('on',x===v));}
@@ -16277,7 +16284,7 @@ function startRest(ex,si,done,next,ssReturn){
   }
   ST.rNxHtml=gid('r-nx').innerHTML;
   ST.rFbHtml=gid('r-fb').innerHTML;
-  ss('rest');ensureAudio();startRestCountdown();
+  ss('rest');ensureAudio();armRestAudioKick();startRestCountdown();
   saveInProgress();
 }
 function updT(){const el=gid('t-dsp');if(el)el.textContent=ST.rs;const c=gid('t-cir');if(!c)return;const pct=ST.restTotal>0?Math.max(0,Math.min(100,Math.round(ST.rs/ST.restTotal*100))):0;c.style.setProperty('--ring-pct',pct+'%');c.style.setProperty('--ring-color',ST.rs<=10?'var(--accent)':'var(--brand-amber)');}

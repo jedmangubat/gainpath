@@ -589,6 +589,43 @@ async function main() {
     check('tapping an on plate chip again removes it and saves immediately',
       savedGymPlates(), {});
 
+    // ── Rest-timer audio must survive backgrounding. Browsers auto-suspend
+    // the Web Audio AudioContext when the tab/PWA is hidden; returning to
+    // a rest that already finished must resume it (ensureAudio()) before
+    // firing the missed-rest alert, not just play blindly into a suspended
+    // context. See rest-timer-sound-fix-plan.txt for the original report.
+    ST.restEnd = Date.now() - 5000; ST.rt = setInterval(() => {}, 1000);
+    const restCallOrder = [];
+    const origEnsureAudio = ensureAudio, origFinalRestAlert = finalRestAlert, origEndRest = endRest;
+    window.ensureAudio = (...a) => { restCallOrder.push('ensureAudio'); return origEnsureAudio(...a); };
+    window.finalRestAlert = (...a) => { restCallOrder.push('finalRestAlert'); };
+    window.endRest = (...a) => { restCallOrder.push('endRest'); };
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    delete document.hidden;
+    window.ensureAudio = origEnsureAudio; window.finalRestAlert = origFinalRestAlert; window.endRest = origEndRest;
+    check('returning to a finished rest resumes audio before the alert fires',
+      restCallOrder, ['ensureAudio', 'finalRestAlert', 'endRest']);
+
+    // armRestAudioKick/disarmRestAudioKick: belt-and-suspenders for browsers
+    // that only honor AudioContext.resume() inside a direct user gesture —
+    // the very next tap after a rest starts must also resume audio, in case
+    // the visibilitychange catch-up above was itself blocked. One-shot, and
+    // must not still be armed once the rest that armed it has ended.
+    armRestAudioKick();
+    let kickCalls = 0;
+    window.ensureAudio = () => { kickCalls++; };
+    document.dispatchEvent(new Event('pointerdown'));
+    check('the next tap after rest starts also resumes audio', kickCalls, 1);
+    document.dispatchEvent(new Event('touchstart'));
+    check('the one-shot listener does not fire a second time', kickCalls, 1);
+
+    armRestAudioKick(); disarmRestAudioKick();
+    kickCalls = 0;
+    document.dispatchEvent(new Event('pointerdown'));
+    check('disarming on rest end removes the listener before it can fire', kickCalls, 0);
+    window.ensureAudio = origEnsureAudio;
+
     return out;
   });
 
