@@ -168,6 +168,11 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   at exactly 390x844 (`.tut-ss-wrap` is `aspect-ratio:390/844` with
   `object-fit:cover`, so any other ratio crops and shifts every coordinate),
   and measures the target element's rect from the same DOM in the same pass.
+  The wrap must get that ratio from an explicit **width** (height derived by
+  `aspect-ratio`) — never from `max-height`: WebKit, the only engine on iPhone,
+  doesn't carry a max-height across the ratio, so until v2.6.4 it cropped every
+  screenshot and drifted every spotlight 4–7 points while Chromium looked
+  fine. `visual-check` gates this in WebKit.
   Add a step by adding an entry to its `STEPS` array, then regenerating. If a new
   feature needs a "how to use it" explanation (not just a changelog bullet),
   add a step to the tutorial rather than leaving it frozen at whatever it

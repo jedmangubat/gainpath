@@ -270,7 +270,7 @@ h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;let
 .ob-progress{display:flex;gap:4px;margin-bottom:24px}
 .ob-dot{height:4px;border-radius:8px;background:var(--bdr);flex:1;transition:background .3s}
 .ob-dot.on{background:var(--accent)}
-.tut-ss-wrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--bdr);box-shadow:0 8px 24px rgba(36,59,54,.18);max-height:54vh;max-width:100%;aspect-ratio:390/844;margin:0 auto}
+.tut-ss-wrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--bdr);box-shadow:0 8px 24px rgba(36,59,54,.18);width:min(100%,calc(54vh * 390 / 844));width:min(100%,calc(54dvh * 390 / 844));aspect-ratio:390/844;margin:0 auto}
 .tut-ss-wrap img{width:100%;height:100%;display:block;object-fit:cover}
 .tut-tooltip{position:absolute;background:var(--bg);border-radius:10px;padding:12px 14px;box-shadow:0 8px 20px rgba(0,0,0,.3);max-width:82%}
 .tut-tooltip-title{font-family:var(--font-display);font-weight:700;font-size:14px;margin-bottom:3px;color:var(--txt)}
@@ -1337,7 +1337,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.3';
+const APP_VERSION='2.6.4';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');

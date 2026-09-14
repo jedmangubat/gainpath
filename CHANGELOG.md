@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.6.4] - 2026-09-14
+
+### Fixed
+- **Tutorial spotlights pointed at the wrong thing on iPhone.** Each tutorial
+  step's highlight is an SVG stretched to `.tut-ss-wrap`
+  (`preserveAspectRatio="none"`) over an `object-fit:cover` screenshot, so the
+  two only line up when the wrap is exactly 390:844. The wrap got that ratio
+  from `aspect-ratio` plus `max-height:54vh`, and WebKit — the only engine on
+  iPhone — doesn't carry a max-height across the ratio to the width: the wrap
+  stayed full-width (358x456 on a 390x844 phone), the screenshot was cropped,
+  and every spotlight drifted 4–7 points off its target (step 1 highlighted
+  the gap between two day cards). Chromium does carry it, which is why desktop
+  checks never saw it. The wrap now sets its width explicitly
+  (`min(100%, 54dvh × 390/844)`, with a `vh` fallback) and lets `aspect-ratio`
+  derive the height, which both engines agree on. Found while checking layouts
+  for the iPhone 18 Pro and the iPhone Duo's short 466x678 / 890x626
+  viewports, where the crop was worst (only ~35% of the screenshot visible).
+
+### Changed
+- **`npm run visual-check` now also runs the tutorial in WebKit** at 390x844
+  and at the iPhone Duo's folded (466x678) and unfolded (890x626) viewports,
+  failing if any step's screenshot isn't 390:844 or runs off-screen.
+
 ## [2.6.3] - 2026-09-10
 
 ### Fixed

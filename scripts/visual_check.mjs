@@ -6,7 +6,7 @@
 //
 // Usage: npm run visual-check
 
-import { chromium } from 'playwright';
+import { chromium, webkit } from 'playwright';
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { mkdir } from 'fs/promises';
@@ -220,6 +220,34 @@ async function main() {
   tut.overlaps.forEach((o) => issues.push(o));
 
   await browser.close();
+
+  // The spotlight SVG stretches to .tut-ss-wrap (preserveAspectRatio="none")
+  // while the screenshot is object-fit:cover, so the two only line up when the
+  // wrap is exactly 390:844. WebKit — the only engine on iPhone — ignored the
+  // aspect-ratio under max-height and cropped the screenshot, drifting every
+  // spotlight 4–7 points, while Chromium rendered it correctly. Hence WebKit,
+  // at a regular iPhone plus the iPhone Duo's short folded/unfolded viewports.
+  const wk = await webkit.launch();
+  for (const [w, h] of [[390, 844], [466, 678], [890, 626]]) {
+    const ctx = await wk.newContext({ viewport: { width: w, height: h }, serviceWorkers: 'block' });
+    const p = await ctx.newPage();
+    await p.goto(`http://localhost:${PORT}/index.html`);
+    await p.waitForSelector('#s-ob.active');
+    const bad = await p.evaluate(() => {
+      showTutorial(false);
+      const out = [];
+      for (let i = 1; i <= TUT_TOTAL; i++) {
+        TUT.step = i; renderTutStep();
+        const r = document.querySelector(`#tut-${i} .tut-ss-wrap`).getBoundingClientRect();
+        if (Math.abs(r.width / r.height - 390 / 844) > 0.01) out.push(`step ${i} ${Math.round(r.width)}x${Math.round(r.height)}`);
+        if (r.bottom > innerHeight) out.push(`step ${i} screenshot runs off-screen`);
+      }
+      return out;
+    });
+    if (bad.length) issues.push(`WebKit ${w}x${h}: tutorial screenshot is not 390:844, spotlights drift — ${bad.slice(0, 3).join('; ')}`);
+    await ctx.close();
+  }
+  await wk.close();
   server.close();
 
   if (issues.length) {
