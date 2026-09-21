@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **`scripts/fb_post.py` (2026-09-22) — dev tooling for posting to the GainPath
+  Fitness Facebook Page.** Subcommands `check`, `post`, `get` and `delete`,
+  pinned to Graph API v26.0, supporting text, link and photo posts and
+  scheduling (10 minutes to 75 days ahead). Every write is a dry run that
+  prints exactly what would be sent unless `--yes` is passed, so the
+  draft-then-approve rule for public posts is enforced by the tool rather than
+  by memory. After a post it re-fetches what Facebook stored. It reads the
+  system-user token from `secrets/` and never prints it; it shells out to
+  `curl` (token on stdin, not in argv) because the python.org Python on this
+  machine has no CA bundle and fails TLS verification. Used to schedule the
+  first Page post. Nothing here touches `index.html`, `sw.js` or anything the
+  app ships, so there is no version bump and no `CACHE_NAME` change.
+
+### Changed
+- `.gitignore` now ignores `secrets/`, where the Facebook token lives.
+- `CLAUDE.md` documents `fb_post.py` and the token-handling rules, and records
+  the v2.6.5 convention that mid-workout edits are session-only (that note was
+  written during v2.6.5 but never committed).
+
 ## [2.6.5] - 2026-09-21
 
 ### Fixed

@@ -7,3 +7,4 @@ scripts/.gen/
 scripts/.tutorial-coords.json
 scripts/.ios-verify/
 scripts/.ios-chaos/
+secrets/

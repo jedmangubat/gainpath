@@ -218,6 +218,20 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
 
 ## Data model & app conventions
 
+- **Mid-workout edits are session-only; pre-start organizing persists (v2.6.5).**
+  `openDayEdit()` → `closeDayEdit()`/`commitDayEdit()` (before Start) writes
+  `CFG.customDays`/`dayLinks`/`dayPlan` — that is the day the user organized.
+  `openMidWorkoutEdit()` (do-now reorder, swap, delete, set changes after Start)
+  must only rebuild `ST.sd`; its branches in `commitDayEdit()` and
+  `closeDayEdit()` deliberately do **not** touch those three CFG objects, or a
+  one-off change today permanently overwrites the saved day (the bug fixed in
+  v2.6.5). `renderEx()` → `saveInProgress()` already persists the session, so a
+  mid-workout relaunch keeps the new order. `test:units` guards this; don't
+  re-add a save to the mid branches.
+- **`secrets/` is gitignored — put credentials there, never anywhere tracked.**
+  It holds local-only tokens (e.g. the Facebook Page posting token used by
+  marketing scripts). Never print, echo or commit its contents; check existence
+  and size only.
 - **PRs are derived, not authoritative.** `ST.prs` is a cache rebuilt from
   `ST.history` by `recomputePRs()`. Any code that mutates a logged session's sets
   or removes a session (the session editor, delete, future history tooling) MUST
@@ -426,6 +440,21 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   gesture-eligible, unlike desktop WebKit which silently no-ops it — see the
   same-named filter in `chaos`) would sit in front of the WebDriver session
   with no dismiss logic here, and could hang the run.
+- **`scripts/fb_post.py`** — posts to the GainPath Fitness Facebook Page via
+  Graph v26.0 (`check` / `post` / `get` / `delete`). **Every write is a dry
+  run unless `--yes` is passed**, which is how the draft-then-approve rule is
+  enforced: show the user the dry run, get an explicit yes for that specific
+  post, then re-run with `--yes`. It reads `secrets/facebook_system_user_token.txt`
+  and never prints it. It shells out to `curl` (token via `curl -K -` on stdin)
+  because the python.org Python here has no CA bundle — don't "fix" that by
+  disabling TLS verification. Photo posts return the *photo* id; the feed post
+  is `<page-id>_<photo-id>`, and the API can't pin, so pinning is a Page-UI step.
+  `secrets/save.sh` saves a copied token from the clipboard (validates its
+  shape, prints only a length) — run it in the same step as clicking Copy,
+  never ask the user to copy a command while a token is on the clipboard.
+  It is local-only like the rest of `secrets/` (gitignored, so a fresh clone
+  won't have it — recreate it: validate `pbpaste` against `[A-Za-z0-9_-]{100,400}`,
+  write it to `facebook_system_user_token.txt`, `pbcopy < /dev/null`).
 
 ## Claude Code plugins
 
