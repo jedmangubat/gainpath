@@ -1337,7 +1337,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.4';
+const APP_VERSION='2.6.5';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -15533,11 +15533,8 @@ function closeDayEdit(){
       return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
     });
     ST.sd=kept.concat(newRemaining);
-    const fullNames=ST.sd.map(item=>item.ex.name);
-    const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
-    const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
-    if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
-    saveDayLinks(ST.editDay,fullRaw);saveDayPlan(ST.editDay,fullRaw);saveCFG();
+    // Session-only: a mid-workout reorder/swap/delete must not touch the day the
+    // user organized before Start (customDays/dayLinks/dayPlan stay as they were).
   }else if(!wasMid&&ST.editDay&&ST.editList.length){
     const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
     const cur=ST.editList.map(e=>e.name);
@@ -15692,12 +15689,8 @@ function commitDayEdit(){
       return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
     });
     ST.sd=kept.concat(newRemaining);
-    const fullNames=ST.sd.map(item=>item.ex.name);
-    const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
-    const changed=def.length!==fullNames.length||def.some((n,i)=>n!==fullNames[i]);
-    if(changed)CFG.customDays[ST.editDay]=fullNames;else delete CFG.customDays[ST.editDay];
-    saveDayLinks(ST.editDay,fullRaw);saveDayPlan(ST.editDay,fullRaw);
-    saveCFG();clearEditState();ss('wo');renderEx();return;
+    // Session-only — see closeDayEdit(); renderEx() persists the session via saveInProgress().
+    clearEditState();ss('wo');renderEx();return;
   }
   const def=getDayExercises(ST.editDay,CFG.sex).map(e=>e.name);
   const cur=ST.editList.map(e=>e.name);

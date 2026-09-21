@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.6.5] - 2026-09-21
+
+### Fixed
+- **Picking a different exercise mid-workout no longer rewrites the day you
+  organized.** Before pressing Start, arranging a day (reorder, swap, delete,
+  planned sets/reps/weight) is meant to stick, and it still does. But once the
+  workout was running, going back to do another exercise first (or swapping or
+  deleting one) ran through that same save path, so a one-off change for
+  today's session permanently replaced the saved day. Mid-workout edits now
+  change only the running session: `commitDayEdit()` and `closeDayEdit()` no
+  longer write `customDays`/`dayLinks`/`dayPlan` in their mid-workout branches.
+  The session itself is unaffected, since `renderEx()` already saves it to the
+  in-progress snapshot, so relaunching the app mid-workout still restores the
+  new order.
+
+### Changed
+- `npm run test:units` covers this: it organizes a day, starts it, does a
+  mid-workout reorder and a delete, and asserts the saved day (in `CFG` and in
+  `localStorage`) is untouched while the running session and its snapshot
+  reflect the change.
+
 ## [2.6.4] - 2026-09-14
 
 ### Fixed

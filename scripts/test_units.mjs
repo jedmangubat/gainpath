@@ -568,6 +568,45 @@ async function main() {
     check('resetting the day edit screen clears a previously remembered plan',
       CFG.dayPlan.push, undefined);
 
+    // ── Mid-workout edits are session-only. The organized day (set before
+    // pressing Start) must survive "go back and do another exercise first":
+    // openMidWorkoutEdit() -> doExNow()/delete used to run the same
+    // customDays/dayLinks/dayPlan persistence as the pre-start screen, so a
+    // one-off reorder permanently replaced the day the user had arranged.
+    ST.history = []; CFG.customDays = {}; CFG.dayLinks = {}; CFG.dayPlan = {};
+    openDayEdit('push');
+    ST.editList.reverse(); // the organized day
+    const organizedNames = ST.editList.map(e => e.name);
+    updPlannedEx(0, 'w', '77');
+    commitDayEdit(); // Start workout
+    const cfgDayState = () => JSON.stringify({ c: CFG.customDays, l: CFG.dayLinks, p: CFG.dayPlan });
+    const storedDayState = () => { const c = JSON.parse(localStorage.getItem('gp_cfg')); return JSON.stringify({ c: c.customDays, l: c.dayLinks, p: c.dayPlan }); };
+    const organizedState = cfgDayState();
+    check('pre-start organizing still persists the day', organizedState.indexOf(organizedNames[0]) >= 0, true);
+
+    openMidWorkoutEdit();
+    openExNowSheet(ST.editList.length - 1); doExNow(); // "do this one first"
+    check('mid-workout do-now reorders the running session',
+      ST.sd[0].ex.name, organizedNames[organizedNames.length - 1]);
+    check('mid-workout do-now does not overwrite the organized day in CFG',
+      cfgDayState(), organizedState);
+    check('mid-workout do-now does not overwrite the organized day in localStorage',
+      storedDayState(), organizedState);
+    check('the session order is what a relaunch would restore',
+      JSON.parse(localStorage.getItem('gp_wip')).sd.map(it => it.ex.name), ST.sd.map(it => it.ex.name));
+    check('reopening the day still shows the organized order',
+      getEffectiveDayExercises('push').map(e => e.name), organizedNames);
+
+    // The closeDayEdit() mid path (leaving the screen without "Save & continue").
+    const sessionLen = ST.sd.length;
+    openMidWorkoutEdit(); deleteExFromEdit(0); closeDayEdit();
+    check('mid-workout delete shortens the running session', ST.sd.length, sessionLen - 1);
+    check('mid-workout delete does not overwrite the organized day',
+      cfgDayState(), organizedState);
+    check('reopening the day still shows every organized exercise',
+      getEffectiveDayExercises('push').map(e => e.name), organizedNames);
+    doCancelWorkout();
+
     // ── Settings must autosave on every change, not only when the user taps
     // the sub-screen's back arrow. An iOS PWA backgrounded or killed between
     // changing a preference and tapping back (routine: swipe home, phone
