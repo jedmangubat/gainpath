@@ -665,6 +665,44 @@ async function main() {
     check('disarming on rest end removes the listener before it can fire', kickCalls, 0);
     window.ensureAudio = origEnsureAudio;
 
+    // Plate calculator bar/frame weight: must follow the exercise being
+    // calculated, not whatever a previous exercise left in the input. A
+    // machine with a saved base weight (Hack squat, 38.5kg) must not inherit
+    // the 20kg Olympic-bar default from an earlier barbell exercise.
+    const plateBarFor = (ex, w) => {
+      ST.sd = [{ ex, sets: [{ w, r: 10, t: 'n', done: false }] }];
+      ST.exi = 0;
+      openPlateCalc(0);
+      const v = gid('plate-bar-inp').value;
+      closePlateCalc();
+      return v;
+    };
+    ST.mw = { 'Hack squat': 38.5 };
+    check('plate calc: barbell exercise defaults to the 20kg bar',
+      plateBarFor({ name: 'Barbell bench press' }, 80), '20');
+    check('plate calc: machine after a barbell uses its saved base weight, not 20',
+      plateBarFor({ name: 'Hack squat', machine: true }, 111), '38.5');
+    check('plate calc: barbell after a machine goes back to the 20kg bar',
+      plateBarFor({ name: 'Barbell bench press' }, 80), '20');
+
+    // Exercises on the same physical machine share one saved base weight.
+    check('mwKey: Smith machine exercises share one key',
+      [mwKey('Smith machine squat'), mwKey('Smith machine bench press'), mwKey('Smith machine Romanian deadlift')],
+      ['Smith machine', 'Smith machine', 'Smith machine']);
+    check('mwKey: Hack squat and Hack squat calf raise share one key',
+      [mwKey('Hack squat'), mwKey('Hack squat calf raise')], ['Hack squat', 'Hack squat']);
+    check('mwKey: other machines stay per-exercise',
+      [mwKey('Leg extension'), mwKey('Machine hip thrust'), mwKey('Plate-loaded standing calf raise')],
+      ['Leg extension', 'Machine hip thrust', 'Plate-loaded standing calf raise']);
+    ST.mw = { 'Smith machine squat': 20, 'Smith machine shrug': 15, 'Hack squat calf raise': 38.5, 'Leg extension': 5 };
+    migrateMW();
+    check('migrateMW folds per-exercise entries into the shared key (first value wins), leaves others',
+      Object.fromEntries(Object.entries(ST.mw).sort()), { 'Hack squat': 38.5, 'Leg extension': 5, 'Smith machine': 20 });
+    ST.mw = { 'Smith machine': 22, 'Smith machine squat': 20 };
+    migrateMW();
+    check('migrateMW never overwrites an existing shared value', ST.mw, { 'Smith machine': 22 });
+    ST.mw = {};
+
     return out;
   });
 

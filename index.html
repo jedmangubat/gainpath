@@ -732,6 +732,7 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setabout')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-list-details" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_about">About</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_about_sub">Version and what's new</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()" data-i18n="btn_reset_app">Reset app</button>
 </div>
@@ -846,6 +847,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px">GainPath is a web app and can't write to Health directly — but it can trigger a Shortcut you build once, which starts/ends a "Traditional Strength Training" workout on your Watch automatically, so you never touch the Watch by hand. Calories still come from the Watch's own sensors.</div>
+    <div style="font-size:13px;color:var(--tint-amber-text);background:var(--tint-amber-1);border-radius:10px;padding:10px 12px;margin-bottom:10px;line-height:1.5"><strong>Known issue on iOS 27:</strong> Apple tightened when the "Start Workout"/"End Workout" actions are allowed to run, and shortcuts triggered this way (rather than opened manually) can now fail silently or show "This action could not be run with the current user interface." We don't have a confirmed fix yet — if you hit this, please use the <a href="#" onclick="closeSettingsSection();ss('feedback');return false;" style="color:var(--accent);font-weight:600" data-i18n="link_feedback_form">feedback form</a> to tell us what you're seeing.</div>
     <div class="toggle-row">
       <div><div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="sync_watch_label">Sync workouts to Apple Watch</div></div>
       <button class="toggle" id="stog-hs" onclick="setSettingHealthSync()"></button>
@@ -876,6 +878,25 @@ textarea{resize:vertical;min-height:100px}
       • Start a workout in GainPath — within a couple seconds, your Watch should show a "Traditional Strength Training" workout starting on its own (you may see a one-time iOS permission prompt the very first time; allow it).<br>
       • If nothing happens: open Shortcuts, tap the shortcut, and run it manually once — iOS sometimes needs that first manual run before it'll trust an automated one.
     </div>
+  </div>
+</div>
+
+<!-- SETTINGS: ABOUT -->
+<div id="s-setabout" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_about">About</div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="about_version_label">Version installed</div>
+      <div id="about-version" style="font-size:15px;color:var(--txt2);font-family:'Space Mono',monospace"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="about_dev_hint">See what changed in the latest release, or follow ongoing development on GitHub.</div>
+    <button type="button" class="bs" style="width:100%;margin-bottom:8px" onclick="showWhatsNew()"><i class="ti ti-sparkles" aria-hidden="true"></i> <span data-i18n="btn_whats_new">What's new</span></button>
+    <button type="button" class="bs" style="width:100%" onclick="window.open('https://github.com/jedmangubat/gainpath/blob/main/CHANGELOG.md','_blank','noopener')"><i class="ti ti-link" aria-hidden="true"></i> <span data-i18n="btn_full_changelog">Full changelog on GitHub</span></button>
   </div>
 </div>
 
@@ -1337,7 +1358,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.5';
+const APP_VERSION='2.6.6';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1364,8 +1385,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.6.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
+const WHATS_NEW_VERSION='2.6.6';
+const WHATS_NEW_ITEMS=['whatsnew_item1'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -1398,6 +1419,9 @@ const SPLIT_FREQ={2:'ul',3:'fb',4:'ul',5:'pplul',6:'bro'};
 const DC={push:'#29506D',pull:'#2F6B4F',legs:'#946F17','legs-a':'#946F17','legs-b':'#6B4A87',upper:'#4A5688','lower-a':'#946F17','lower-b':'#6B4A87',lower:'#6B4A87',chest:'#8C3A5E',back:'#2F6B4F',shoulders:'#29506D',arms:'#A24A2E',fullbody:'#29506D'};
 const DI={push:'ti-trending-up',pull:'ti-arrows-down-up',legs:'ti-run','legs-a':'ti-run','legs-b':'ti-run',upper:'ti-body-scan','lower-a':'ti-run','lower-b':'ti-run',lower:'ti-run',chest:'ti-heart',back:'ti-arrow-back-up',shoulders:'ti-antenna',arms:'ti-hand-grab',fullbody:'ti-player-play'};
 const MACHINE_EX=['Hack squat','Plate-loaded standing calf raise'];
+// Exercises on the same physical machine share one saved base weight.
+function mwKey(name){return /^Smith machine /.test(name)?'Smith machine':/^Hack squat( calf raise)?$/.test(name)?'Hack squat':name;}
+function migrateMW(){let ch=false;Object.keys(ST.mw).forEach(k=>{const g=mwKey(k);if(g!==k){if(ST.mw[g]===undefined)ST.mw[g]=ST.mw[k];delete ST.mw[k];ch=true;}});if(ch)saveData();}
 
 // ═══ EXERCISE DATABASE ═══
 const EX={
@@ -13222,7 +13246,7 @@ function healthSyncTrigger(phase){
 let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',gymPlates:{},gymDumbbells:[],step:1};
 const OB_STEPS=10;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();mergeCustomExercises();recomputeBadges();}catch(e){}}
+function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();mergeCustomExercises();recomputeBadges();}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
 // firstName/lastName on first load so the greeting can address just the first name.
 function migrateName(){
@@ -13385,6 +13409,13 @@ en:{
 "machine_base_weight_title": "Machine base weight",
 "mw_unit_label": "Machine base weight (<span id=\"mw-unit\">kg</span>)",
 "machines_hint": "The weight of each machine's frame, added to the plates you load to get the total. You're asked once, the first time you use a machine — fix it here if you got it wrong.",
+"menu_about": "About",
+"menu_about_sub": "Version and what's new",
+"about_version_label": "Version installed",
+"about_dev_hint": "See what changed in the latest release, or follow ongoing development on GitHub.",
+"btn_whats_new": "What's new",
+"btn_full_changelog": "Full changelog on GitHub",
+"link_feedback_form": "feedback form",
 "menu_gym": "My gym",
 "menu_gym_sub": "Plates and dumbbells you actually have",
 "menu_machines": "Machine base weights",
@@ -13439,8 +13470,7 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "The back button on the workout screen now opens an exercise picker for what's left in the session. Tap any exercise for a \"Jump to this exercise now?\" prompt — confirm and it moves to the front of the queue immediately, no dragging required.",
-"whatsnew_item2": "Canceling a workout is now a deliberate action: a red X on that same screen opens a warning sheet explaining that all progress will be lost, so it can't happen by accident.",
+"whatsnew_item1": "Settings → About now shows the app version you have installed, with a \"What's new\" button to reopen this sheet and a link to the full changelog on GitHub.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13768,6 +13798,13 @@ ja:{
 "log_weight_btn": "体重を記録",
 "machine_base_weight_title": "マシンの基本重量",
 "machines_hint": "各マシンのフレーム重量です。ここにロードするプレートと合わせて総重量になります。マシンを初めて使うときに一度だけ聞かれます — 間違えた場合はここで修正できます。",
+"menu_about": "アプリ情報",
+"menu_about_sub": "バージョンと最新情報",
+"about_version_label": "インストール済みバージョン",
+"about_dev_hint": "最新リリースの変更点を確認したり、GitHubで開発の進捗をフォローできます。",
+"btn_whats_new": "アップデート情報",
+"btn_full_changelog": "GitHubで変更履歴を見る",
+"link_feedback_form": "フィードバックフォーム",
 "menu_gym": "マイジム",
 "menu_gym_sub": "実際に持っているプレートとダンベル",
 "menu_machines": "マシンの基本重量",
@@ -13822,8 +13859,7 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "ワークアウト画面の戻るボタンをタップすると、残りの種目を選べる画面が開くようになりました。種目をタップすると「今すぐこの種目へ移動しますか?」と表示され、確認するとすぐにその種目が次になります。並べ替えは不要です。",
-"whatsnew_item2": "ワークアウトのキャンセルは意図的な操作になりました。同じ画面の赤いXをタップすると、進捗がすべて失われることを説明する警告シートが表示されるので、誤ってキャンセルすることがありません。",
+"whatsnew_item1": "設定 → アプリ情報で、インストール済みのバージョンを確認できるようになりました。「アップデート情報」ボタンでこのシートをもう一度開いたり、GitHubで変更履歴の全文を見たりできます。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -14152,6 +14188,13 @@ ko:{
 "log_weight_btn": "체중 기록",
 "machine_base_weight_title": "머신 기본 무게",
 "machines_hint": "각 머신 프레임 자체의 무게로, 여기에 로딩한 플레이트를 더해 총 무게가 됩니다. 해당 머신을 처음 사용할 때 한 번만 물어보며, 잘못 입력했다면 여기서 수정할 수 있어요.",
+"menu_about": "정보",
+"menu_about_sub": "버전 및 새로운 소식",
+"about_version_label": "설치된 버전",
+"about_dev_hint": "최신 릴리스에서 변경된 내용을 확인하거나 GitHub에서 개발 진행 상황을 확인하세요.",
+"btn_whats_new": "업데이트 소식",
+"btn_full_changelog": "GitHub에서 전체 변경 이력 보기",
+"link_feedback_form": "피드백 양식",
 "menu_gym": "내 헬스장",
 "menu_gym_sub": "실제로 보유한 플레이트와 덤벨",
 "menu_machines": "머신 기본 무게",
@@ -14206,8 +14249,7 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "운동 화면의 뒤로 버튼을 누르면 이제 남은 운동을 선택할 수 있는 화면이 열립니다. 운동을 탭하면 '지금 바로 이 운동으로 이동할까요?'라고 물어보고, 확인하면 바로 다음 순서가 됩니다. 순서를 직접 바꿀 필요가 없습니다.",
-"whatsnew_item2": "운동 취소는 이제 신중한 동작이 되었습니다. 같은 화면의 빨간 X를 누르면 모든 진행 상황이 사라진다는 경고 시트가 표시되어, 실수로 취소되는 일이 없습니다.",
+"whatsnew_item1": "설정 → 정보에서 설치된 앱 버전을 확인할 수 있습니다. '업데이트 소식' 버튼으로 이 시트를 다시 열거나 GitHub에서 전체 변경 이력을 볼 수 있어요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14871,7 +14913,7 @@ function stepIncrement(ex,curW){
 }
 function stepWeight(i,delta){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
-  const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const dispW=ex.machine&&mwBase>0?+(sets[i].w-mwBase).toFixed(1):sets[i].w;
   // Dumbbells are a fixed rack, not a continuously-loadable bar/plate stack —
   // a flat +/- step can land between two owned weights, and pressing the
@@ -15292,6 +15334,7 @@ function openSettings(){
   gid('notify-form').style.display=CFG.leadSubmitted?'none':'block';
   gid('notify-done').style.display=CFG.leadSubmitted?'block':'none';
   gid('notify-status').textContent='';
+  gid('about-version').textContent='v'+APP_VERSION;
   renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
   const spbtn=gid('set-prog-btn');
   spbtn.innerHTML=CFG.customProgram?'<i class="ti ti-pencil" aria-hidden="true"></i> Edit "'+esc(CFG.customProgram.name)+'"':'<i class="ti ti-layout-grid-add" aria-hidden="true"></i> Build a custom program';
@@ -15858,7 +15901,7 @@ function startDay(k,exList){
     return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
   });
   if(deload){CFG.deloadActive=false;saveCFG();}
-  ST.mwQueue=exWithWU.filter(ex=>ex.machine&&ST.mw[ex.name]===undefined).map(ex=>ex.name);
+  ST.mwQueue=[...new Set(exWithWU.filter(ex=>ex.machine&&ST.mw[mwKey(ex.name)]===undefined).map(ex=>mwKey(ex.name)))];
   ST.feelQueue=[];ST.feelTarget=null;ST.ssGroupEnd=null;ST.restRated=false;ST.noteEditIdx=null;
   ST.es=0;ST.t0=Date.now();ST.paused=false;startEtInterval();updWoPauseBtn();
   if(CFG.restSound&&'Notification' in window&&Notification.permission==='default'){try{Notification.requestPermission();}catch(e){}}
@@ -15908,7 +15951,7 @@ function roundToGymWeight(ex,w,dir){
     return owned.reduce((best,d)=>Math.abs(d-w)<Math.abs(best-w)?d:best,owned[0]);
   }
   if(!gymHasPlateInventory())return w;
-  const base=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:(CFG.unit==='kg'?20:45);
+  const base=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:(CFG.unit==='kg'?20:45);
   const targetPerSide=(w-base)/2;
   if(targetPerSide<=0)return w;
   const loadable=t=>calcPlates(t).remaining<=0.01; // calcPlates clamps neg→0
@@ -15936,6 +15979,7 @@ function roundToGymWeight(ex,w,dir){
 }
 function openPlateCalc(i){
   ST.plateIdx=i;
+  gid('plate-bar-inp').value='';
   ss('plate');renderPlateCalc();
   saveInProgress();
 }
@@ -15955,7 +15999,7 @@ function renderPlateCalc(){
   gid('plate-unit').textContent=CFG.unit;
   const barInp=gid('plate-bar-inp');
   if(barInp.value===''){
-    const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:null;
+    const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:null;
     barInp.value=mwBase!==null?mwBase:(CFG.unit==='kg'?20:45);
   }
   const barW=parseFloat(barInp.value)||0;
@@ -15985,11 +16029,10 @@ function renderMWScreen(){
 }
 function saveMW(skip){
   const val=skip?0:(parseFloat(gid('mw-inp').value)||0);
-  if(ST.mwCurrent){ST.mw[ST.mwCurrent]=val;saveData();
-    const idx=ST.sd.findIndex(s=>s.ex.name===ST.mwCurrent);
+  if(ST.mwCurrent){ST.mwCurrent=mwKey(ST.mwCurrent);ST.mw[ST.mwCurrent]=val;saveData();
     // Rebuilding the sets must not throw away a weight the user planned on the
     // day-edit screen — same precedence startDay() uses.
-    if(idx>=0){const ex=ST.sd[idx].ex;const baseW=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name)||getAIEstimatedWeight(ex));ST.sd[idx].sets=buildSets(ex,baseW);}
+    ST.sd.forEach((it,idx)=>{if(mwKey(it.ex.name)!==ST.mwCurrent)return;const ex=it.ex;const baseW=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name)||getAIEstimatedWeight(ex));ST.sd[idx].sets=buildSets(ex,baseW);});
   }
   processMWQueue();
 }
@@ -16018,7 +16061,7 @@ function renderEx(){
   gid('wo-pl').textContent=t('exercise_progress_prefix')+(ST.exi+1)+t('exercise_progress_of')+ST.sd.length;
   const ssGrp=woGroup(ST.exi);
   const ssBanner=ssGrp?'<div style="background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:9px 13px;margin-bottom:10px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
-  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   // Plate calculator only makes sense when you load plates on a bar/frame:
   // barbell lifts and plate-loaded machines (base weight set). Dumbbells,
   // cables, selectorized (pin-stack) machines and bodyweight don't get it.
@@ -16099,7 +16142,7 @@ function showFSW(ex){
 function saveFSW(){const w=parseFloat(gid('fsw-inp').value)||0;if(w>0){ST.sd[ST.exi].sets=buildSets(ST.sd[ST.exi].ex,w);ST.sd[ST.exi].wSet=true;}ss('wo');renderEx();}
 function updSet(i,v){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
-  const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const w=mwBase>0?(parseFloat(v)||0)+mwBase:(parseFloat(v)||0);
   const t=sets[i].t;sets[i].w=w;
   if(isPyramidEx(ex)&&t==='x'){
@@ -16232,7 +16275,7 @@ const FEEL_OPTS=[
   {k:'max',icon:'😵',label:'0 — to failure',color:'#C05A3E',sub:'Nothing left'}
 ];
 function setPrepLabel(ex,s){
-  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const dispW=isBW?bwWeightLabel(s.w):mwBase>0?(+(s.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':s.w+CFG.unit;
   return (ex.holdSecs?'Hold':s.r+' reps')+' @ '+dispW;
 }
@@ -16249,11 +16292,11 @@ function startRest(ex,si,done,next,ssReturn){
   gid('r-sl').textContent=ssRound?'Superset round done \u2014 rest before the next round':isLastSet?'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before next exercise':'Set '+(done.t==='w'?'W':si+1)+' done \u2014 rest before set '+(next.t==='w'?'W':si+2);
   ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;ST.restTotal=ST.rs;updT();
   ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet,ssReturn:ssReturn!=null?ssReturn:null};
-  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const nextItem=ssRound?ST.sd[ssReturn]:(ST.exi<ST.sd.length-1?ST.sd[ST.exi+1]:null);
   if(ssRound){
     gid('r-nx-h').textContent='Next round';
-    const nx=ST.sd[ssReturn].ex;const nxBW=nx.note==='bodyweight';const nxMw=nx.machine&&ST.mw[nx.name]!==undefined?ST.mw[nx.name]:0;
+    const nx=ST.sd[ssReturn].ex;const nxBW=nx.note==='bodyweight';const nxMw=nx.machine&&ST.mw[mwKey(nx.name)]!==undefined?ST.mw[mwKey(nx.name)]:0;
     const dispW=nxBW?bwWeightLabel(next.w):nxMw>0?(+(next.w-nxMw).toFixed(1))+CFG.unit+' plates (+'+nxMw+CFG.unit+' machine)':next.w+CFG.unit;
     const repLbl=nx.holdSecs?'Hold':next.r+' reps';
     gid('r-nx').innerHTML='<span style="color:var(--txt2)">Back to:</span> <strong>'+nx.name+'</strong> \u2014 '+repLbl+' @ '+dispW;
@@ -16291,7 +16334,7 @@ function askExFeel(target){
   const item=ST.sd[P];const ex=item.ex;
   if(manual&&item.sets.some(s=>!s.done)&&!confirm('You still have sets left on '+ex.name+'. Continue anyway?')){ST.feelTarget=null;return;}
   const sets=item.sets.filter(s=>s.done&&s.t!=='w');
-  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[ex.name]!==undefined?ST.mw[ex.name]:0;
+  const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const setsStr=sets.map((s,i)=>{const dispW=isBW?'BW':mwBase>0?(+(s.w-mwBase).toFixed(1))+'+'+mwBase+'='+s.w+CFG.unit:s.w+CFG.unit;return 'Set '+(i+1)+': '+dispW+' \u00d7 '+s.r;}).join(' \u00b7 ')||'No work sets logged';
   gid('ef-name').textContent=ex.name;gid('ef-sets').textContent=setsStr;ss('exfeel');saveInProgress();
 }
@@ -16630,7 +16673,7 @@ function importData(input){const file=input.files[0];if(!file)return;const reade
   if(data.cfg&&(typeof data.cfg!=='object'||Array.isArray(data.cfg)))throw new Error('bad cfg');
   if(data.cfg)CFG=Object.assign(CFG,data.cfg);
   if(data.history)ST.history=data.history.filter(h=>h&&typeof h==='object'&&!Array.isArray(h));
-  if(data.prs)ST.prs=data.prs;if(data.mw)ST.mw=data.mw;
+  if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
   if(data.bw)ST.bw=data.bw.filter(e=>e&&typeof e==='object'&&!Array.isArray(e));
   syncProgramMeta();migrateDkTz();mergeCustomExercises();saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
 function isStandalone(){return navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}

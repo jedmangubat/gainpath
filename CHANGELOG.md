@@ -26,6 +26,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the v2.6.5 convention that mid-workout edits are session-only (that note was
   written during v2.6.5 but never committed).
 
+## [2.6.6] - 2026-09-22
+
+### Fixed
+- **Plate calculator used the wrong bar/frame weight on machines (2026-09-24).**
+  The bar/frame field is meant to default to the machine's saved base weight
+  (e.g. Hack squat at 38.5kg) or 20kg/45lb for a barbell, but it was only reset
+  when restoring an in-progress workout. Whatever value an earlier exercise left
+  in it carried over, so after a barbell lift a machine showed the 20kg Olympic
+  bar and the per-side plates were computed against the wrong base. It now
+  resets every time the calculator opens. Covered by new `test:units` cases.
+- **Exercises on the same machine now share one base weight (2026-09-24).**
+  Base weight was saved per exercise name, so the Smith machine lifts (nine of
+  them) and Hack squat / Hack squat calf raise each asked for the same
+  machine's weight separately, and could disagree. They now share one entry
+  ("Smith machine", "Hack squat"): you're asked once, and Settings lists one row
+  per machine. Existing per-exercise values are folded into the shared entry on
+  load and on backup restore (the first value found wins; an existing shared
+  value is never overwritten). Other machines stay per-exercise.
+
+### Added
+- **Settings → About** — a tenth Settings section showing the app version
+  you actually have installed (`APP_VERSION`), plus a "What's new" button
+  that reopens the same sheet returning users see automatically, and a link
+  to the full `CHANGELOG.md` on GitHub. Requested because the auto-shown
+  "What's new" sheet only ever appears once per release and there was no way
+  to check the current version or recent history on demand.
+
+### Changed
+- **Apple Watch sync's setup walkthrough now flags a known iOS 27 issue.**
+  Apple appears to have tightened when the "Start Workout"/"End Workout"
+  Shortcuts actions are allowed to run — community reports describe
+  shortcuts triggered via URL/automation (rather than opened and run
+  manually) now failing with "This action could not be run with the current
+  user interface," which matches how `healthSyncTrigger()` invokes them
+  (`shortcuts://run-shortcut?name=...`). Investigated a possible fix
+  ("Continue Shortcut in App," Apple's own documented action for forcing
+  Shortcuts to the foreground before a UI-dependent action runs) but left it
+  out of the instructions: it wasn't findable in the standard action picker
+  when tested, so it may be scoped to widget-editing contexts rather than
+  generally available, and we don't want to send users chasing an action
+  they can't find. The in-app note now just flags the issue and links to the
+  feedback form so real device reports can inform an actual fix. README's
+  Apple Watch sync section gets the same one-line caveat.
+
 ## [2.6.5] - 2026-09-21
 
 ### Fixed

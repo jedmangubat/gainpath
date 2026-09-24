@@ -8,6 +8,11 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
+## ✨ What's new in v2.6.6
+
+- **Settings → About** shows the app version you have installed, with a "What's new" button and a link to the full changelog on GitHub, so you can check what's changed without waiting for the auto-shown update sheet.
+- Apple Watch sync's setup walkthrough now flags a known iOS 27 issue (the Start/End Workout Shortcuts actions can silently stop running), with a link to the feedback form so reports can inform a real fix.
+
 ## Features
 
 ### 🏋️ Training splits
@@ -60,7 +65,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of nine sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, and How to use — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of ten sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, How to use, and About — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
 
 The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen, reachable any time and shown once automatically after setup.
 
@@ -155,7 +160,7 @@ line), with the current set highlighted so you always know where you are.
 
 ### ⌚ Apple Watch sync
 
-GainPath is a pure web app with no HealthKit access, so this works by triggering a Shortcut you build once (named in Settings, with a detailed in-app setup walkthrough): a Settings toggle makes starting or finishing a workout in GainPath automatically start or end a "Traditional Strength Training" workout on a paired Apple Watch, so you never touch the Watch by hand. Heart rate and calories still come from the Watch's own sensors.
+GainPath is a pure web app with no HealthKit access, so this works by triggering a Shortcut you build once (named in Settings, with a detailed in-app setup walkthrough): a Settings toggle makes starting or finishing a workout in GainPath automatically start or end a "Traditional Strength Training" workout on a paired Apple Watch, so you never touch the Watch by hand. Heart rate and calories still come from the Watch's own sensors. **Known issue:** as of iOS 27, Apple's tightened restrictions on when the Start/End Workout Shortcuts actions can run mean this can silently stop working — no confirmed fix yet; the in-app instructions link to the feedback form for reports.
 
 ### 💬 Feedback
 
