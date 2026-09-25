@@ -796,6 +796,34 @@ async function main() {
     check('cable sync: cable lifts never get a sync chip (ballpark only)', syncSuggest(cableCurl, 10, 10), null);
     check('cable sync: fallback still used with no related data', cableCurlFallback > 0, true);
 
+    // Upper-body bodyweight moves count as sources: load = share of body
+    // weight (at that session's date) + added weight, or − assistance.
+    const pulldown = EXPOOL['Lat pulldown'], goblet = EXPOOL['Goblet squat'];
+    ST.history = [];
+    const gobletFallback = getAIEstimatedWeight(goblet);
+    ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80;
+    ST.history = [sess(lift('Push-ups', 0, 15, 'good'))];
+    const pu80 = getAIEstimatedWeight(dbPress);
+    check('bodyweight sync: 15 push-ups at 80kg body weight → first DB press 15–25kg, from Push-ups',
+      pu80 >= 15 && pu80 <= 25 && liftEstimate(dbPress, 10).src === 'Push-ups', true);
+    ST.bw = [{ dk: '2026-01-01', w: 110 }];
+    check('bodyweight sync: a heavier lifter doing the same push-ups gets a heavier estimate', getAIEstimatedWeight(dbPress) > pu80, true);
+    ST.bw = [{ dk: '2026-01-01', w: 80 }];
+    ST.history = [sess(lift('Pull-ups', 0, 8, 'hard'))];
+    const pull = getAIEstimatedWeight(pulldown);
+    check('bodyweight sync: 8 pull-ups at 80kg → lat pulldown estimated from them (≥45kg)', pull >= 45 && liftEstimate(pulldown, 10).src === 'Pull-ups', true);
+    ST.history = [sess(lift('Pull-ups', 10, 8, 'hard'))];
+    check('bodyweight sync: added weight on pull-ups raises the estimate', getAIEstimatedWeight(pulldown) > pull, true);
+    ST.history = [sess(lift('Machine-assisted pull-up', 30, 8, 'hard'))];
+    check('bodyweight sync: assisted pull-ups subtract the assistance', getAIEstimatedWeight(pulldown) < pull, true);
+    ST.history = [{ dk: '2026-03-01', date: 'd', exercises: [lift('Push-ups', 0, 15, 'good')] }];
+    ST.bw = [{ dk: '2026-01-01', w: 60 }, { dk: '2026-06-01', w: 110 }];
+    const atDate = liftStrength('Push-ups').e;
+    ST.bw = [{ dk: '2026-01-01', w: 60 }];
+    check('bodyweight sync: uses the weigh-in at the session date, not today\'s', Math.abs(liftStrength('Push-ups').e - atDate) < 1e-9, true);
+    ST.history = [sess(lift('Bodyweight squat', 0, 20, 'easy'))];
+    check('bodyweight sync: lower-body bodyweight moves don\'t feed barbell/dumbbell estimates', getAIEstimatedWeight(goblet), gobletFallback);
+
     // ── Body weight: one source of truth — the latest weigh-in by date.
     ST.bw = []; CFG.bw = 75;
     check('curBW: no weigh-ins → profile value', curBW(), 75);

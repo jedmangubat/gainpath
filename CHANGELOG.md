@@ -57,7 +57,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   inflate it), and cable lifts never get a sync chip. The onboarding lat
   pulldown now seeds cable pulls only, not dumbbell rows. Plate-loaded
   machines and bodyweight moves stay excluded and keep the old estimate; the
-  per-muscle-group baseline mapping now applies only to them. Design notes:
+  per-muscle-group baseline mapping now applies only to them.
+- **Bodyweight moves count toward weighted estimates, scaled by your body
+  weight.** Push-ups, dips, pull-ups, chin-ups, inverted rows and pike
+  push-ups (plus the machine-assisted pull-up and dip) are now sources.
+  - The load is the share of body weight moved, plus added weight or minus
+    assistance, using the weigh-in from that session's date (`bwAt()`).
+  - Shares: push-up ≈64% (≈70% feet-elevated), dips/pull-ups ≈95%, inverted
+    row ≈60%, pike push-up ≈70%.
+  - Confidence is ×0.85.
+
+  So 20 push-ups suggest a heavier first dumbbell press for a 90 kg lifter
+  than for a 70 kg one, and 8 pull-ups now estimate a first lat pulldown.
+  Lower-body bodyweight moves are deliberately not sources, since the body
+  moves in the barbell squat too. Only a logged weighted lift retires the
+  onboarding baseline, not push-ups. Design notes:
   `docs/superpowers/plans/2026-09-25-lift-sync.md`.
 - **Sync chip for lifts logged far below their relatives** (`syncSuggest()`).
   It appears when a lift's own e1RM is under 75% of what related lifts imply.

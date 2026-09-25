@@ -14994,7 +14994,19 @@ const LIFT_REL={
   'Cable lateral raise':['raise',.8,'c',1],'Cable front raise':['raise',.9,'c',1],'Cable Y-raise':['raise',.5,'c',1],'Cable reverse fly':['raise',.9,'c',1],'Cross-cable reverse fly':['raise',.9,'c',1],
   'Cable bicep curl':['curl',.9,'c',1],'Cable rope hammer curl':['curl',.85,'c',1],'Cable spider curl':['curl',.7,'c',1],
   'Triceps pushdown':['tri_ext',1.1,'c',1],'Cable rope tricep extension':['tri_ext',.9,'c',1],'Overhead cable tricep extension':['tri_ext',.9,'c',1],'Cable tricep kickback':['tri_ext',.25,'c',1],
-  'Cable shrug':['shrug',.8,'c'],'Cable pull-through':['hinge',.25,'c']
+  'Cable shrug':['shrug',.8,'c'],'Cable pull-through':['hinge',.25,'c'],
+  // 'w' = upper-body bodyweight move, a source only. 5th field = share of body
+  // weight moved (push-up ≈64%, feet-elevated ≈70%, dips/pull-ups ≈95% since
+  // hands/forearms stay put, inverted row ≈60%); the set's w adds (+) or
+  // assists (−), and 'assist weight' exercises log the assistance as positive.
+  // Lower-body bodyweight moves are absent: the body is moved in the barbell
+  // version too, so bodyweight squat reps say nothing about external load.
+  'Push-ups':['press_h',1,'w',0,.64],'Wide-grip push-ups':['press_h',1,'w',0,.64],'Decline push-ups':['press_h',1,'w',0,.7],
+  'Diamond push-ups':['press_h',.88,'w',0,.64],'Close-grip push-ups':['press_h',.88,'w',0,.64],
+  'Chest dips':['press_h',1.15,'w',0,.95],'Tricep dips':['press_h',1.1,'w',0,.95],'Machine-assisted dip':['press_h',1.15,'w',0,.95],
+  'Pike push-ups':['press_v',1,'w',0,.7],
+  'Pull-ups':['row',1.05,'w',0,.95],'Chin-ups':['row',1.1,'w',0,.95],'Machine-assisted pull-up':['row',1.05,'w',0,.95],
+  'Inverted row':['row',.9,'w',0,.6],'Smith machine inverted row':['row',.9,'w',0,.6]
 };
 // Pattern-to-pattern norms (reference a ≈ k × reference b), used only when the
 // target's own pattern has no evidence at all: OHP ≈ 0.55–0.75 of bench, row ≈
@@ -15009,15 +15021,20 @@ const RIR_OF={easy:5,good:3.5,hard:1.5};
 // Current strength on one lift: best Epley e1RM over its last 3 sessions, reps
 // capped at 12 (the formulas overestimate beyond ~10), the last-set RIR rating
 // added to the final work set's reps, decayed 1%/week past 4 weeks (floor .85).
+// Body weight on a given day: the latest weigh-in on or before it.
+function bwAt(dk){let w=null;(ST.bw||[]).forEach(e=>{if(!dk||e.dk<=dk)w=e.w;});return w!==null?w:curBW();}
 function liftStrength(name){
   const hist=exHistory(name).slice(-3);let best=null;
+  const rel=LIFT_REL[name],meta=EXPOOL[name];
+  const bwFrac=rel&&rel[2]==='w'?rel[4]:0,assist=!!(meta&&meta.note==='assist weight');
   hist.forEach(s=>{
     const dk=ST.history[s.idx].dk;const days=dk?Math.max(0,dkDay(dkey(new Date()))-dkDay(dk)):0;
     const decay=Math.max(.85,1-Math.max(0,days/7-4)*.01);
     s.sets.forEach((st,i)=>{
-      if(!(st.w>0&&st.r>0))return;
+      const load=bwFrac?bwFrac*(bwAt(dk)||0)+(assist?-st.w:st.w):st.w;
+      if(!(load>0&&st.r>0))return;
       const rir=i===s.sets.length-1?(RIR_OF[s.exFeel]||0):0;
-      const e=st.w*(1+(Math.min(st.r,12)+rir)/30)*decay;
+      const e=load*(1+(Math.min(st.r,12)+rir)/30)*decay;
       if(!best||e>best.e)best={e,src:name};
     });
   });
@@ -15026,7 +15043,7 @@ function liftStrength(name){
 // Barbell ↔ dumbbell: the dumbbell share shrinks as the lifter gets stronger
 // (stabilising two heavy implements), so scale by (reference e1RM / 60kg)^∓0.1.
 function stabCurve(refE,from,to){
-  if(from===to||refE<=0||from==='c'||to==='c')return 1;
+  if(from===to||refE<=0||!/^[bd]$/.test(from)||!/^[bd]$/.test(to))return 1;
   const f=Math.pow(refE/(CFG.unit==='lbs'?132:60),.1);
   return to==='d'?1/f:f;
 }
@@ -15035,7 +15052,7 @@ function stabCurve(refE,from,to){
 // only proves a lower bound on strength, so an under-loaded lift never drags
 // another down. Returns {w,e,src,cross} (w unsnapped) or null.
 function liftEstimate(ex,reps){
-  const me=LIFT_REL[ex.name];if(!me||ex.note==='bodyweight'||ex.holdSecs)return null;
+  const me=LIFT_REL[ex.name];if(!me||me[2]==='w'||ex.note==='bodyweight'||ex.holdSecs)return null;
   const [fam,ratio,eq,iso]=me;
   const fromFam=(f,k,cross)=>{
     let best=null;
@@ -15043,12 +15060,12 @@ function liftEstimate(ex,reps){
       const r=LIFT_REL[n];if(n===ex.name||r[0]!==f||(r[2]==='c'&&eq!=='c'))return;
       const s=liftStrength(n);if(!s)return;
       const refE=s.e/r[1]*k;
-      const conf=(eq==='c'?(r[2]==='c'?.85:.75):r[2]===eq?.95:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
+      const conf=(eq==='c'?(r[2]==='c'?.85:.75):r[2]==='w'?.85:r[2]===eq?.95:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
       const e=refE*ratio*stabCurve(refE,r[2],eq)*conf;
       if(!best||e>best.e)best={e,src:n,cross};
     });
     if(!best&&!cross){
-      const logged=Object.keys(LIFT_REL).some(n=>LIFT_REL[n][0]===f&&exHistory(n).length);
+      const logged=Object.keys(LIFT_REL).some(n=>LIFT_REL[n][0]===f&&LIFT_REL[n][2]!=='w'&&exHistory(n).length);
       Object.keys(LIFT_SEED).forEach(key=>{
         const kl=(CFG.keyLifts||{})[key],sd=LIFT_SEED[key];
         const seq=sd[2]||'b';
@@ -15081,7 +15098,7 @@ function estReps(ex){return isPyramidEx(ex)?12:(ex.plannedR||CFG.prefReps);}
 // set 1–2 reps left or failure (then it's a genuine weak point), the proposal
 // is a raise, and it wasn't dismissed (it returns once the estimate rises 10%+).
 function syncSuggest(ex,curW,reps){
-  if(!LIFT_REL[ex.name]||LIFT_REL[ex.name][2]==='c'||ex.note==='bodyweight'||ex.holdSecs)return null;
+  if(!LIFT_REL[ex.name]||/[cw]/.test(LIFT_REL[ex.name][2])||ex.note==='bodyweight'||ex.holdSecs)return null;
   const hist=exHistory(ex.name);if(!hist.length)return null;
   const f=hist[hist.length-1].exFeel;if(f==='hard'||f==='max')return null;
   const own=liftStrength(ex.name),est=liftEstimate(ex,reps);

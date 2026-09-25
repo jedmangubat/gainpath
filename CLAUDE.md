@@ -271,7 +271,10 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   **A new free-weight or cable exercise needs a `LIFT_REL` entry**, or it
   silently falls back to baseW. Cables (`'c'`) are one-way on purpose: they
   can be estimated from free weights and other cables, never the reverse, and
-  they never get a sync chip. Don't add plate-loaded machines, because their
+  they never get a sync chip. Upper-body bodyweight moves (`'w'`, with a
+  body-weight share as the 5th field) are sources only. Their load is that
+  share × `bwAt(sessionDk)` ± the set's added/assisted weight. Don't add
+  lower-body bodyweight moves. Don't add plate-loaded machines, because their
   leverage and sled tare don't transfer between gyms. Related lifts may only *raise* a lift,
   and only via the Apply/Dismiss sync chip (`syncSuggest()`). An exercise's
   own history always sets its next weight. Body weight: read it with
