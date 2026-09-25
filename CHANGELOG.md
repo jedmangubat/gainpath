@@ -63,6 +63,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   remembered per exercise in `CFG.syncDismiss` and resurface only if the
   estimate rises 10%+.
 
+### Changed
+- **Weight suggestions now sit above the sets, not below Add Set.** Both the
+  related-lift sync chip and the last-set effort (RIR) chip used to render at
+  the bottom of the exercise card, easy to miss until after the first set was
+  logged at the old weight. They now appear directly above set 1.
+
 ### Fixed
 - **Profile body weight was frozen at the onboarding value.** Weigh-ins never
   updated it, and editing it in Settings never logged a weigh-in. Body weight
