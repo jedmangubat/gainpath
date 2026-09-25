@@ -263,6 +263,18 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   `CFG.gymDumbbells` / `CFG.gymPlates`), `'down'` for deloads, `'nearest'` is the
   legacy default. It's a no-op when no inventory is configured. Never surface a
   proposed weight (suggestion, warm-up, estimate) without snapping it.
+- **Starting weights come from related lifts, and body weight has one source
+  (v2.8.0).** `getAIEstimatedWeight()` first asks `liftEstimate()`, which
+  converts the strongest related free-weight lift through `LIFT_REL` (movement
+  family + ratio + bar/dumbbell + isolation) in e1RM space. Only lifts outside
+  `LIFT_REL` (machines, cables) fall through to the old baseW/keyLifts logic.
+  **A new free-weight exercise needs a `LIFT_REL` entry**, or it silently
+  falls back to baseW. Never add machines or cables to it, because their
+  loads don't transfer between gyms. Related lifts may only *raise* a lift,
+  and only via the Apply/Dismiss sync chip (`syncSuggest()`). An exercise's
+  own history always sets its next weight. Body weight: read it with
+  `curBW()`, never `CFG.bw` directly, and end every `ST.bw` write with
+  `syncBW()` (or use `setWeighIn()`).
 - **Reuse the analytics helpers** rather than recomputing inline:
   `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past

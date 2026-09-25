@@ -726,6 +726,70 @@ async function main() {
     check('chWindow: All removes the lower bound', chWindow([today - 90, today - 2]).from, null);
     ST.chRange = savedRange;
 
+    // ── Related-lift sync (v2.8.0). A first-time lift is estimated from the
+    // strongest related free-weight lift, in estimated-1RM space; an
+    // exercise's own history still always sets its next weight, and a
+    // related lift only ever raises (never lowers) via an Apply/Dismiss chip.
+    CFG.unit = 'kg'; CFG.gymDumbbells = []; CFG.gymPlates = {}; CFG.prefReps = 10;
+    CFG.setStyle = 'straight'; CFG.keyLifts = {}; CFG.exp = 'intermediate'; CFG.syncDismiss = {};
+    const tdk = dkey(new Date());
+    const sess = (...exs) => ({ dk: tdk, date: 'd', exercises: exs });
+    const lift = (name, w, r, exFeel) => ({ name, exFeel, sets: [{ done: true, t: 'x', w, r }] });
+    const dbPress = EXPOOL['Bench dumbbell chest press'], incDb = EXPOOL['Incline bench dumbbell press'];
+    const machPress = EXPOOL['Machine chest press'], dbOhp = EXPOOL['Seated dumbbell shoulder press'];
+
+    ST.history = [];
+    check('lift sync: no related history → unchanged baseW×experience fallback',
+      getAIEstimatedWeight(dbPress), 15);
+    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard'))];
+    const flatEst = getAIEstimatedWeight(dbPress), incEst = getAIEstimatedWeight(incDb);
+    check('lift sync: 80kg×8 barbell bench → first DB press is 20–30kg per hand, not 10',
+      flatEst >= 20 && flatEst <= 30, true);
+    check('lift sync: incline DB estimate is below flat DB estimate', incEst < flatEst && incEst >= 15, true);
+    check('lift sync: machines are not converted from free weights (gym-specific)',
+      getAIEstimatedWeight(machPress), 24);
+    const crossEst = liftEstimate(dbOhp, 10);
+    check('lift sync: no pressing-overhead history → cross-pattern estimate from bench, flagged as cross',
+      !!crossEst && crossEst.cross === true && getAIEstimatedWeight(dbOhp) >= 10 && getAIEstimatedWeight(dbOhp) <= 20, true);
+
+    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard')), sess(lift('Bench dumbbell chest press', 10, 10, 'good'))];
+    check('lift sync: own history still sets the planned weight (never silently overwritten)',
+      plannedFor(dbPress).w, 10);
+    const sync = syncSuggest(dbPress, 10, 10);
+    check('lift sync: DB press logged at 10kg with 3–4 reps left → sync chip proposes ≥20kg from the bench',
+      !!sync && sync.newW >= 20 && sync.src === 'Flat barbell bench press', true);
+    CFG.syncDismiss = { 'Bench dumbbell chest press': sync ? sync.newW : 0 };
+    check('lift sync: a dismissed sync suggestion stays dismissed at the same estimate', syncSuggest(dbPress, 10, 10), null);
+    CFG.syncDismiss = {};
+    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard')), sess(lift('Bench dumbbell chest press', 10, 10, 'hard'))];
+    check('lift sync: rated 1–2 reps left → the user\'s own rating wins, no chip', syncSuggest(dbPress, 10, 10), null);
+    ST.history = [sess(lift('Flat barbell bench press', 40, 8, 'hard')), sess(lift('Bench dumbbell chest press', 30, 8, 'good'))];
+    check('lift sync: a weaker related lift never pulls a stronger one down', syncSuggest(dbPress, 30, 8), null);
+
+    ST.history = [];
+    CFG.keyLifts = { chest: { w: 80, r: 8 } };
+    const seedEst = getAIEstimatedWeight(dbPress);
+    check('lift sync: onboarding baseline seeds the estimate when nothing is logged', seedEst >= 17.5 && seedEst < flatEst, true);
+    CFG.keyLifts = { chest: { w: 200, r: 1 } };
+    ST.history = [sess(lift('Flat barbell bench press', 60, 8, 'max'))];
+    check('lift sync: logged lifts supersede the onboarding baseline', getAIEstimatedWeight(dbPress) < seedEst, true);
+    CFG.keyLifts = {};
+
+    // ── Body weight: one source of truth — the latest weigh-in by date.
+    ST.bw = []; CFG.bw = 75;
+    check('curBW: no weigh-ins → profile value', curBW(), 75);
+    setWeighIn('2026-09-20', 72);
+    check('curBW: a weigh-in updates the profile body weight', [curBW(), CFG.bw], [72, 72]);
+    setWeighIn('2026-01-01', 90);
+    check('curBW: an older backdated weigh-in does not override the latest', [curBW(), CFG.bw], [72, 72]);
+    ST.bw = ST.bw.filter(e => e.dk !== '2026-09-20'); syncBW();
+    check('curBW: deleting the latest weigh-in falls back to the previous one', CFG.bw, 90);
+    openSettings();
+    check('Settings shows the latest weigh-in, not the onboarding value', gid('set-bw').value, '90');
+    gid('set-bw').value = '70'; collectSettingsFields();
+    check('Settings body-weight edit logs today\'s weigh-in', [CFG.bw, ST.bw[ST.bw.length - 1].dk, ST.bw[ST.bw.length - 1].w], [70, tdk, 70]);
+    ST.history = savedHist;
+
     return out;
   });
 

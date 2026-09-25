@@ -1375,7 +1375,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.7.0';
+const APP_VERSION='2.8.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1402,8 +1402,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.7.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4'];
+const WHATS_NEW_VERSION='2.8.0';
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -13263,7 +13263,7 @@ function healthSyncTrigger(phase){
 let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',gymPlates:{},gymDumbbells:[],step:1};
 const OB_STEPS=10;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();mergeCustomExercises();recomputeBadges();}catch(e){}}
+function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();mergeCustomExercises();syncBW(true);}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
 // firstName/lastName on first load so the greeting can address just the first name.
 function migrateName(){
@@ -13499,10 +13499,9 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Climb charts now make sense from day one: a starting-point card after your first session, and the line once there's a second point.",
-"whatsnew_item2": "Chart any lift you've logged — grouped by muscle, most-trained first — not just four barbell lifts.",
-"whatsnew_item3": "Charts open on the last month; 1M · 3M · 6M · All chips let you zoom out once your history is longer.",
-"whatsnew_item4": "The \"Session done!\" screen links to the GainPath Fitness Facebook page for tips and updates.",
+"whatsnew_item1": "Trying a lift for the first time? It now starts from your strongest related lift. Bench 80kg, and your first dumbbell press starts around 25kg per hand, not 10.",
+"whatsnew_item2": "If a lift you've already done looks far lighter than your related lifts, you'll get a one-tap Apply/Dismiss suggestion. Nothing changes on its own.",
+"whatsnew_item3": "Your profile body weight now always matches your latest weigh-in, and editing it in Settings logs today's weigh-in.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13656,6 +13655,9 @@ en:{
 "sw_manual_title": "✏️ I'll enter my own weights",
 "swap_exercise_title": "Swap exercise",
 "sync_watch_label": "Sync workouts to Apple Watch",
+"sync_chip": "Your {src} suggests about {w} here",
+"btn_apply": "Apply",
+"btn_dismiss": "Dismiss",
 "target_weight_label": "Target weight",
 "this_week_label": "this week",
 "timed_hold_label": "Timed hold",
@@ -13903,10 +13905,9 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "Climbのグラフが初日から見やすく：最初のセッション後はスタート地点を表示し、2回目の記録からラインを描きます。",
-"whatsnew_item2": "記録したどの種目でもグラフ化できるように（部位別・記録回数の多い順）。バーベル4種目に限りません。",
-"whatsnew_item3": "グラフは直近1ヶ月から表示。記録が増えたら 1ヶ月・3ヶ月・6ヶ月・全期間 で切り替えられます。",
-"whatsnew_item4": "「セッション完了」画面から、GainPath FitnessのFacebookページに「いいね！」できるようになりました。",
+"whatsnew_item1": "初めての種目は、関連する一番強い種目の記録から重量を提案します。ベンチ80kgなら、ダンベルプレスは10kgではなく片手約25kgから。",
+"whatsnew_item2": "すでに行った種目が関連種目より極端に軽い場合、ワンタップで「適用／閉じる」を選べる提案を表示します。自動では変わりません。",
+"whatsnew_item3": "プロフィールの体重は常に最新の体重記録と一致します。設定で変更すると今日の記録として保存されます。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -14061,6 +14062,9 @@ ja:{
 "sw_manual_title": "✏️ 自分で重量を入力する",
 "swap_exercise_title": "種目を入れ替え",
 "sync_watch_label": "ワークアウトをApple Watchに同期",
+"sync_chip": "{src}の記録から、ここは約{w}が目安です",
+"btn_apply": "適用",
+"btn_dismiss": "閉じる",
 "target_weight_label": "目標重量",
 "this_week_label": "今週",
 "timed_hold_label": "時間計測ホールド",
@@ -14308,10 +14312,9 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "Climb 그래프가 첫날부터 알기 쉬워졌어요: 첫 세션 후에는 출발점을, 두 번째 기록부터 그래프 선을 보여줘요.",
-"whatsnew_item2": "기록한 모든 운동을 그래프로 볼 수 있어요 (부위별, 많이 한 순서) — 바벨 운동 4개만이 아니에요.",
-"whatsnew_item3": "그래프는 최근 1개월부터 보여줘요. 기록이 쌓이면 1개월 · 3개월 · 6개월 · 전체로 바꿀 수 있어요.",
-"whatsnew_item4": "'세션 완료' 화면에서 GainPath Fitness 페이스북 페이지에 좋아요를 누를 수 있어요.",
+"whatsnew_item1": "처음 하는 운동은 관련된 가장 강한 운동 기록을 바탕으로 시작해요. 벤치 80kg라면 덤벨 프레스는 10kg가 아니라 한 손 약 25kg부터예요.",
+"whatsnew_item2": "이미 한 운동이 관련 운동보다 훨씬 가볍다면, 한 번에 '적용/닫기'를 고를 수 있는 제안이 떠요. 저절로 바뀌지는 않아요.",
+"whatsnew_item3": "프로필 체중은 항상 최신 체중 기록과 같아요. 설정에서 바꾸면 오늘 기록으로 저장돼요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14466,6 +14469,9 @@ ko:{
 "sw_manual_title": "✏️ 직접 무게를 입력할게요",
 "swap_exercise_title": "운동 교체",
 "sync_watch_label": "Apple Watch로 운동 동기화",
+"sync_chip": "{src} 기록으로 보면 여기서는 약 {w}가 적당해요",
+"btn_apply": "적용",
+"btn_dismiss": "닫기",
 "target_weight_label": "목표 무게",
 "this_week_label": "이번 주",
 "timed_hold_label": "시간제 홀드",
@@ -14844,7 +14850,7 @@ function obGearLabel(){
 function obFinish(){
   if(!OB.sw){alert('Please select a starting weight method');return;}
   CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,gymPlates:OB.gymPlates,gymDumbbells:OB.gymDumbbells,setup:true,lastSeenVersion:APP_VERSION});
-  saveCFG();accentColor();refreshHome();
+  saveCFG();if(OB.bw>0)setWeighIn(dkey(new Date()),OB.bw);accentColor();refreshHome();
   showTutorial(true);
 }
 
@@ -14939,8 +14945,146 @@ function getSavedWeight(exName,isBW){
   const ws=last.sets.filter(s=>s.done&&s.t!=='w'&&(isBW?s.w!==0:s.w>0));
   return ws.length?Math.max(...ws.map(s=>s.w)):undefined;
 }
+// ═══ RELATED-LIFT SYNC — see docs/superpowers/plans/2026-09-25-lift-sync.md ═══
+// Free-weight lifts grouped by movement pattern: [family, ratio of this lift's
+// e1RM to the family reference lift (ratio 1), 'b' bar | 'd' dumbbell (ratio
+// is per hand), 1 = isolation]. Ratios are from comparison studies where they
+// exist (DB bench ≈72–83% of barbell for both hands, incline ≈0.78–0.82 of
+// flat, front ≈0.8 of back squat) and coaching norms otherwise. Machines,
+// cables and bodyweight moves are deliberately absent: their numbers depend on
+// the specific machine's leverage/pulley/sled, so no ratio carries across gyms.
+const LIFT_REL={
+  'Flat barbell bench press':['press_h',1,'b'],'Decline barbell bench press':['press_h',1,'b'],'Incline barbell chest press':['press_h',.8,'b'],
+  'Barbell floor press':['press_h',.9,'b'],'Close-grip bench press':['press_h',.88,'b'],
+  'Bench dumbbell chest press':['press_h',.39,'d'],'Decline dumbbell press':['press_h',.39,'d'],'Incline bench dumbbell press':['press_h',.31,'d'],
+  'Neutral-grip dumbbell press':['press_h',.37,'d'],'Dumbbell floor press':['press_h',.36,'d'],'Dumbbell close-grip floor press':['press_h',.32,'d'],
+  'Dumbbell fly':['press_h',.17,'d',1],'Incline dumbbell fly':['press_h',.15,'d',1],'Decline dumbbell fly':['press_h',.17,'d',1],
+  'Barbell overhead press':['press_v',1,'b'],'Barbell seated shoulder press':['press_v',.95,'b'],'Barbell push press':['press_v',1.2,'b'],
+  'Seated dumbbell shoulder press':['press_v',.4,'d'],'Arnold press':['press_v',.35,'d'],
+  'Barbell back squat':['squat',1,'b'],'Box squat':['squat',.95,'b'],'Barbell front squat':['squat',.8,'b'],
+  'Barbell walking lunge':['squat',.45,'b'],'Barbell step-up':['squat',.4,'b'],'Goblet squat':['squat',.3,'d'],'Dumbbell sumo squat':['squat',.3,'d'],
+  'Dumbbell front squat':['squat',.25,'d'],'Heel-elevated dumbbell squat':['squat',.25,'d'],'Bulgarian split squat':['squat',.2,'d'],
+  'Dumbbell lunge':['squat',.2,'d'],'Walking lunge':['squat',.2,'d'],'Dumbbell reverse lunge':['squat',.2,'d'],'Dumbbell step-up':['squat',.18,'d'],
+  'Barbell deadlift':['hinge',1,'b'],'Sumo deadlift':['hinge',1,'b'],'Rack pull':['hinge',1.1,'b'],'Romanian deadlift':['hinge',.7,'b'],
+  'Stiff-leg deadlift':['hinge',.65,'b'],'Barbell good morning':['hinge',.35,'b'],'Dumbbell Romanian deadlift':['hinge',.3,'d'],
+  'Dumbbell sumo deadlift':['hinge',.35,'d'],'Single-leg dumbbell RDL':['hinge',.15,'d'],
+  'Barbell row':['row',1,'b'],'Pendlay row':['row',.9,'b'],'Yates row':['row',1.05,'b'],'Single-arm dumbbell row':['row',.5,'d'],
+  'Kroc row':['row',.55,'d'],'Chest-supported dumbbell row':['row',.4,'d'],'Incline dumbbell row':['row',.4,'d'],
+  'Barbell curl':['curl',1,'b',1],'EZ bar curl':['curl',1,'b',1],'Wide-grip barbell curl':['curl',.95,'b',1],'Drag curl':['curl',.8,'b',1],
+  'Preacher curl':['curl',.85,'b',1],'Barbell reverse curl':['curl',.7,'b',1],'Reverse EZ bar curl':['curl',.7,'b',1],
+  'Dumbbell bicep curl':['curl',.45,'d',1],'Hammer curls':['curl',.5,'d',1],'Cross-body hammer curl':['curl',.48,'d',1],
+  'Incline dumbbell curl':['curl',.38,'d',1],'Concentration curl':['curl',.42,'d',1],'Spider curl':['curl',.38,'d',1],'Zottman curl':['curl',.4,'d',1],
+  'Barbell skull crusher':['tri_ext',1,'b',1],'Overhead EZ bar tricep extension':['tri_ext',.9,'b',1],'Dumbbell skull crusher':['tri_ext',.4,'d',1],
+  'Single-arm dumbbell overhead tricep extension':['tri_ext',.3,'d',1],
+  'Barbell shrug':['shrug',1,'b'],'Dumbbell shrug':['shrug',.45,'d'],
+  'Barbell upright row':['upright',1,'b'],'Barbell high pull':['upright',1.1,'b'],'Dumbbell high pull':['upright',.45,'d'],
+  'Barbell hip thrust':['thrust',1,'b'],'Barbell glute bridge':['thrust',.9,'b'],'B-stance barbell hip thrust':['thrust',.6,'b'],
+  'Dumbbell hip thrust':['thrust',.35,'d'],'Dumbbell single-leg hip thrust':['thrust',.2,'d'],
+  'Dumbbell lateral raise':['raise',1,'d',1],'Dumbbell front raise':['raise',1.1,'d',1],'Dumbbell scaption raise':['raise',1,'d',1],
+  'Bent-over dumbbell reverse fly':['raise',.9,'d',1],'Incline bench dumbbell rear delt fly':['raise',.9,'d',1],
+  'Bench-supported seated reverse fly':['raise',.9,'d',1],'Prone dumbbell Y-raise':['raise',.5,'d',1],
+  'Barbell standing calf raise':['calf',1,'b'],'Dumbbell standing calf raise':['calf',.35,'d'],'Single-leg dumbbell calf raise':['calf',.2,'d']
+};
+// Pattern-to-pattern norms (reference a ≈ k × reference b), used only when the
+// target's own pattern has no evidence at all: OHP ≈ 0.55–0.75 of bench, row ≈
+// 0.8–1.05 of bench, deadlift ≈ 1.1–1.4 of squat.
+const LIFT_CROSS=[['press_v','press_h',.65],['row','press_h',.85],['hinge','squat',1.2]];
+// Onboarding baseline → family reference. The "Chest press" and "Hack squat /
+// Squat" fields may have been a machine, hence the extra discount; lat
+// pulldown is a cable stack and seeds nothing here.
+const LIFT_SEED={chest:['press_h',.85],squat:['squat',.85],ohp:['press_v',.95]};
+const RIR_OF={easy:5,good:3.5,hard:1.5};
+// Current strength on one lift: best Epley e1RM over its last 3 sessions, reps
+// capped at 12 (the formulas overestimate beyond ~10), the last-set RIR rating
+// added to the final work set's reps, decayed 1%/week past 4 weeks (floor .85).
+function liftStrength(name){
+  const hist=exHistory(name).slice(-3);let best=null;
+  hist.forEach(s=>{
+    const dk=ST.history[s.idx].dk;const days=dk?Math.max(0,dkDay(dkey(new Date()))-dkDay(dk)):0;
+    const decay=Math.max(.85,1-Math.max(0,days/7-4)*.01);
+    s.sets.forEach((st,i)=>{
+      if(!(st.w>0&&st.r>0))return;
+      const rir=i===s.sets.length-1?(RIR_OF[s.exFeel]||0):0;
+      const e=st.w*(1+(Math.min(st.r,12)+rir)/30)*decay;
+      if(!best||e>best.e)best={e,src:name};
+    });
+  });
+  return best;
+}
+// Barbell ↔ dumbbell: the dumbbell share shrinks as the lifter gets stronger
+// (stabilising two heavy implements), so scale by (reference e1RM / 60kg)^∓0.1.
+function stabCurve(refE,from,to){
+  if(from===to||refE<=0)return 1;
+  const f=Math.pow(refE/(CFG.unit==='lbs'?132:60),.1);
+  return to==='d'?1/f:f;
+}
+// Best estimate of ex's working weight at `reps` (3 reps in reserve) from every
+// related lift except ex itself. The strongest candidate wins: a logged weight
+// only proves a lower bound on strength, so an under-loaded lift never drags
+// another down. Returns {w,e,src,cross} (w unsnapped) or null.
+function liftEstimate(ex,reps){
+  const me=LIFT_REL[ex.name];if(!me||ex.note==='bodyweight'||ex.holdSecs)return null;
+  const [fam,ratio,eq,iso]=me;
+  const fromFam=(f,k,cross)=>{
+    let best=null;
+    Object.keys(LIFT_REL).forEach(n=>{
+      const r=LIFT_REL[n];if(n===ex.name||r[0]!==f)return;
+      const s=liftStrength(n);if(!s)return;
+      const refE=s.e/r[1]*k;
+      const conf=(r[2]===eq?.95:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
+      const e=refE*ratio*stabCurve(refE,r[2],eq)*conf;
+      if(!best||e>best.e)best={e,src:n,cross};
+    });
+    if(!best&&!cross){
+      const logged=Object.keys(LIFT_REL).some(n=>LIFT_REL[n][0]===f&&exHistory(n).length);
+      Object.keys(LIFT_SEED).forEach(key=>{
+        const kl=(CFG.keyLifts||{})[key],sd=LIFT_SEED[key];
+        if(logged||sd[0]!==f||!kl||!(kl.w>0))return;
+        const refE=kl.w*(1+Math.min(kl.r||1,12)/30)*sd[1];
+        const e=refE*ratio*stabCurve(refE,'b',eq)*(eq==='b'?.95:.9);
+        if(!best||e>best.e)best={e,src:null,cross:false};
+      });
+    }
+    return best;
+  };
+  let best=fromFam(fam,1,false);
+  if(!best)LIFT_CROSS.forEach(([a,b,k])=>{
+    const c=a===fam?fromFam(b,k,true):b===fam?fromFam(a,1/k,true):null;
+    if(c&&(!best||c.e>best.e))best=c;
+  });
+  if(!best)return null;
+  best.w=best.e/(1+(Math.min(reps||CFG.prefReps,12)+3)/30);
+  return best;
+}
+// Snap an estimate to real gear; with no inventory configured, at least land
+// on a plausible increment (2.5kg/5lb) rather than e.g. a 26.5kg dumbbell.
+function snapEstimate(ex,w){
+  const step=CFG.unit==='lbs'?5:2.5;
+  return roundToGymWeight(ex,Math.max(step,Math.round(w/step)*step),'nearest');
+}
+function estReps(ex){return isPyramidEx(ex)?12:(ex.plannedR||CFG.prefReps);}
+// Sync chip for a lift that already has history: shown only when its own
+// e1RM is under 75% of what related lifts imply, the user didn't rate its last
+// set 1–2 reps left or failure (then it's a genuine weak point), the proposal
+// is a raise, and it wasn't dismissed (it returns once the estimate rises 10%+).
+function syncSuggest(ex,curW,reps){
+  if(!LIFT_REL[ex.name]||ex.note==='bodyweight'||ex.holdSecs)return null;
+  const hist=exHistory(ex.name);if(!hist.length)return null;
+  const f=hist[hist.length-1].exFeel;if(f==='hard'||f==='max')return null;
+  const own=liftStrength(ex.name),est=liftEstimate(ex,reps);
+  if(!own||!est||own.e>=est.e*.75)return null;
+  const newW=snapEstimate(ex,est.w);if(!(newW>curW))return null;
+  const dis=(CFG.syncDismiss||{})[ex.name];if(dis&&newW<dis*1.1)return null;
+  return{newW,src:est.src};
+}
+function dismissSync(w){CFG.syncDismiss=CFG.syncDismiss||{};CFG.syncDismiss[ST.sd[ST.exi].ex.name]=w;saveCFG();dismissSuggest();}
 function getAIEstimatedWeight(ex){
-  const lifts=CFG.keyLifts||{};
+  const rel=liftEstimate(ex,estReps(ex));
+  if(rel)return snapEstimate(ex,rel.w);
+  // Lifts in LIFT_REL were already seeded from the baseline above; the per-
+  // muscle-group mapping below is only for machines/cables (it used to turn a
+  // 60kg lat pulldown into "48kg per hand" for dumbbell rows).
+  const lifts=LIFT_REL[ex.name]?{}:(CFG.keyLifts||{});
   const expMult={beginner:0.4,intermediate:0.6,advanced:0.8}[CFG.exp]||0.6;
   const mg=ex.mg;let est=ex.baseW;
   if(mg==='chest'&&lifts.chest&&lifts.chest.w>0){est=Math.round(lifts.chest.w*0.7*2)/2;}
@@ -15375,7 +15519,7 @@ function refreshHome(){
   renderCal();
 }
 function openSettings(){
-  gid('set-fname').value=CFG.firstName;gid('set-lname').value=CFG.lastName;gid('set-bw').value=CFG.bw;gid('set-ht').value=CFG.ht;gid('set-bf').value=CFG.bf||'';
+  gid('set-fname').value=CFG.firstName;gid('set-lname').value=CFG.lastName;gid('set-bw').value=curBW();gid('set-ht').value=CFG.ht;gid('set-bf').value=CFG.bf||'';
   gid('set-unit-lbl').textContent=CFG.unit;
   ['kg','lbs'].forEach(v=>gid('sunit-'+v).classList.toggle('on',CFG.unit===v));
   REPS_CUSTOM_OPEN.sreps=false;renderRepOpts('sreps');
@@ -15487,7 +15631,7 @@ function undoLeadEmail(){CFG.leadSubmitted=false;saveCFG();gid('notify-form').st
 // settings sub-screen's back button is tapped (autosave-on-exit, no
 // separate global "Save" button).
 function collectSettingsFields(){
-  CFG.firstName=gid('set-fname').value.trim()||CFG.firstName;CFG.lastName=gid('set-lname').value.trim();updateFullName();CFG.bw=parseFloat(gid('set-bw').value)||CFG.bw;CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;CFG.bf=parseFloat(gid('set-bf').value)||null;
+  CFG.firstName=gid('set-fname').value.trim()||CFG.firstName;CFG.lastName=gid('set-lname').value.trim();updateFullName();const nbw=parseFloat(gid('set-bw').value);if(nbw>0&&nbw!==curBW())setWeighIn(dkey(new Date()),nbw);CFG.ht=parseFloat(gid('set-ht').value)||CFG.ht;CFG.bf=parseFloat(gid('set-bf').value)||null;
   const denoms=PLATES[CFG.unit]||PLATES.kg;const gymPlates={};
   denoms.forEach(d=>{if(gid('set-plate-'+d).classList.contains('on'))gymPlates[d]=1;});
   CFG.gymPlates=gymPlates;
@@ -16168,7 +16312,8 @@ function renderEx(){
   const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\','+(ex.custom?1:0)+')">';
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
-    const fw=sets.find(s=>s.t!=='w');const sug=fw?suggestWeight(ex,fw.w):null;
+    const fw=sets.find(s=>s.t!=='w');const sync=fw?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!sync?suggestWeight(ex,fw.w):null;
+    if(sync)sugHtml='<div class="sug-chip"><span>🔗 '+t('sync_chip').replace('{src}',esc(exDisplayName(sync.src))).replace('{w}','<strong>'+sync.newW+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+sync.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSync('+sync.newW+')">'+t('btn_dismiss')+'</button></div>';
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb={easy:'you had 5+ reps left',good:'you had 3–4 reps left',max:'you hit failure'}[sug.feel]||'time to adjust';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db ok" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">Dismiss</button></div>';}
   }
@@ -16581,11 +16726,26 @@ function renderMGBalance(){
 }
 function openLogBW(){
   gid('bw-date').value=dkey(new Date());
-  const last=ST.bw.length?ST.bw[ST.bw.length-1]:null;
-  gid('bw-w-inp').value=last?last.w:(CFG.bw||'');
+  gid('bw-w-inp').value=curBW()||'';
   gid('bw-waist-inp').value='';gid('bw-arms-inp').value='';
   gid('bw-unit').textContent=CFG.unit;
   gid('bw-log-form').style.display='block';
+}
+// Body weight has one source of truth: the latest weigh-in by date, with the
+// onboarding/profile value only standing in until the first weigh-in exists.
+// Every write to ST.bw ends in syncBW(), so CFG.bw (what Settings shows) and
+// the weigh-in log can never disagree.
+function curBW(){return ST.bw&&ST.bw.length?ST.bw[ST.bw.length-1].w:CFG.bw;}
+function syncBW(quiet){
+  ST.bw.sort((a,b)=>String(a.dk).localeCompare(String(b.dk)));
+  if(ST.bw.length)CFG.bw=ST.bw[ST.bw.length-1].w;
+  recomputeBadges();if(!quiet)saveCFG();
+}
+function setWeighIn(dk,w){
+  const i=ST.bw.findIndex(e=>e.dk===dk);const prev=i>=0?ST.bw[i]:{};
+  const entry={dk,date:new Date(dk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),w,waist:prev.waist||null,arms:prev.arms||null};
+  if(i>=0)ST.bw[i]=entry;else ST.bw.push(entry);
+  saveData();syncBW();
 }
 function closeLogBW(){gid('bw-log-form').style.display='none';}
 function saveBWLog(){
@@ -16599,7 +16759,7 @@ function saveBWLog(){
   const entry={dk,date,w,waist,arms};
   if(idx>=0)ST.bw[idx]=entry;else ST.bw.push(entry);
   ST.bw.sort((a,b)=>a.dk.localeCompare(b.dk));
-  saveData();closeLogBW();renderBWSection();
+  saveData();syncBW();closeLogBW();renderBWSection();
 }
 function renderBWSection(){
   const latestEl=gid('bw-latest');if(!latestEl)return;
@@ -16628,7 +16788,7 @@ function renderBWSection(){
 }
 function deleteBWLog(dk){
   if(!confirm('Delete this weigh-in entry?'))return;
-  ST.bw=ST.bw.filter(e=>e.dk!==dk);saveData();renderBWSection();
+  ST.bw=ST.bw.filter(e=>e.dk!==dk);saveData();syncBW();renderBWSection();
 }
 function chartTheme(canvas,h){
   const cs=window.getComputedStyle(document.documentElement);
@@ -16788,7 +16948,7 @@ function importData(input){const file=input.files[0];if(!file)return;const reade
   if(data.history)ST.history=data.history.filter(h=>h&&typeof h==='object'&&!Array.isArray(h));
   if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
   if(data.bw)ST.bw=data.bw.filter(e=>e&&typeof e==='object'&&!Array.isArray(e));
-  syncProgramMeta();migrateDkTz();mergeCustomExercises();saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
+  syncProgramMeta();migrateDkTz();mergeCustomExercises();syncBW();saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
 function isStandalone(){return navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
 function renderHomeBanners(){
   const el=gid('prt-h');if(!el)return;

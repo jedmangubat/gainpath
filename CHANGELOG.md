@@ -26,6 +26,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the v2.6.5 convention that mid-workout edits are session-only (that note was
   written during v2.6.5 but never committed).
 
+## [2.8.0] - 2026-09-25
+
+### Added
+- **Related lifts inform each other's starting weight.** `getAIEstimatedWeight()`
+  used to ignore logged history entirely. It only mapped the four onboarding
+  baseline numbers onto whole muscle groups with one flat multiplier, so an
+  80 kg barbell bench still produced a 10 kg first dumbbell press, and a 60 kg
+  lat pulldown produced "48 kg per hand" for dumbbell rows. A first-time lift is
+  now estimated from the strongest related free-weight lift in estimated-1RM
+  space (`LIFT_REL`, `liftStrength()`, `liftEstimate()`):
+  - Epley with reps capped at 12, plus the last-set RIR rating.
+  - Evidence decays 1%/week past 4 weeks (floor 0.85).
+  - Per-pattern ratios from comparison studies where they exist: dumbbell
+    bench at 72–83% of barbell for both hands, incline at ~0.8 of flat, front
+    squat at ~0.8 of back squat.
+  - A barbell↔dumbbell stability curve, so stronger lifters get a
+    proportionally smaller dumbbell share.
+  - Confidence discounts for different equipment, isolation vs compound, and
+    cross-pattern links (OHP, row and deadlift from bench/squat, used only
+    when a pattern has no data of its own).
+  - Converted back at the planned reps with 3 reps in reserve, then snapped to
+    owned gear.
+
+  The onboarding baseline is a seed that logged lifts supersede. Machines,
+  cables and bodyweight moves are deliberately excluded, since their loads are
+  gym-specific. They keep the old estimate, and the per-muscle-group baseline
+  mapping now applies only to them. Design notes:
+  `docs/superpowers/plans/2026-09-25-lift-sync.md`.
+- **Sync chip for lifts logged far below their relatives** (`syncSuggest()`).
+  It appears when a lift's own e1RM is under 75% of what related lifts imply.
+  It's an Apply/Dismiss chip like the progression one and takes precedence over
+  it. Own history is never overwritten, a weaker related lift never lowers a
+  stronger one (a logged weight only proves a lower bound on strength), and a
+  last-set rating of 1–2 reps left or failure suppresses it. Dismissals are
+  remembered per exercise in `CFG.syncDismiss` and resurface only if the
+  estimate rises 10%+.
+
+### Fixed
+- **Profile body weight was frozen at the onboarding value.** Weigh-ins never
+  updated it, and editing it in Settings never logged a weigh-in. Body weight
+  now has one source, the latest weigh-in by date (`curBW()`). Logging,
+  deleting, importing and loading all re-sync `CFG.bw` (`syncBW()`, which also
+  re-derives badges). A Settings edit logs today's weigh-in, and onboarding
+  logs the first one.
+
 ## [2.7.0] - 2026-09-25
 
 ### Changed

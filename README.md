@@ -8,12 +8,11 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.7.0
+## ✨ What's new in v2.8.0
 
-- **Climb charts that make sense from day one** — before your first workout the Strength view is a single "your climb starts here" card instead of empty axes; after one session it shows your starting number, and the line appears once there's a second point to draw it through. Body weight works the same way.
-- **Chart any lift you've logged** — the Strength picker now lists every lift you've actually trained, grouped by muscle and most-trained first, instead of four fixed barbell lifts (which left dumbbell and machine lifters with a permanently empty chart).
-- **Last month by default, with ranges** — charts open on the last 30 days; once your history goes back further, **1M · 3M · 6M · All** chips let you zoom out.
-- **Follow GainPath on Facebook** — the "Session done!" screen now has a link to the GainPath Fitness Facebook page for training tips and app updates.
+- **Related lifts now inform each other.** Trying a lift for the first time? GainPath now starts it from the strongest related lift you've already logged. Bench 80 kg and your first flat dumbbell press starts around 25 kg per hand instead of 10, and incline dumbbell press around 20 kg. It isn't a flat percentage. It compares estimated 1-rep maxes, uses research-based ratios per movement pattern (dumbbells take a bigger discount the stronger you are), counts how many reps you had left, trusts recent sessions more than old ones, and leaves you 3 reps in reserve on day one. Machines and cables aren't converted, because their numbers depend on the specific machine.
+- **A sync chip for lifts that fell behind.** If a lift you've already done is logged far below what your related lifts show (e.g. dumbbell press at 10 kg next to an 80 kg bench), its screen offers a one-tap **Apply/Dismiss** suggestion. Your own history is never changed automatically, a lighter lift never drags a heavier one down, and if you rated that lift "1–2 reps left" or "to failure", GainPath takes your word for it.
+- **Body weight stays in sync.** Your profile weight is now always your latest weigh-in. Log one under Progress → Body and Settings shows it; change it in Settings and it's logged as today's weigh-in.
 
 ## Features
 
@@ -125,6 +124,7 @@ line), with the current set highlighted so you always know where you are.
 
 - The Progress tab is a three-way switch — **Strength**, **Balance** and **Body** — showing one at a time rather than stacking them
 - Progress chart for any lift you've logged (grouped by muscle, most-trained first) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
+- Charts make sense from day one — a "your climb starts here" card before your first session, your starting number after one, and the line once there's a second point (body weight works the same way). They open on the last 30 days, with **1M · 3M · 6M · All** chips once your history goes back further
 - Per-exercise session history (on the Days tab) — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt; the 8 most recent show by default with a **Show all** button for the rest
 - **Notes that remember for you** — jot a note on any exercise mid-workout ("seat position 4", "left shoulder pinch") or on the whole session; next time you land on that exercise, GainPath reminds you what you wrote
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best. The all-time list is **grouped by muscle** into collapsible sections, each headed with its record count and your heaviest lift for that muscle
@@ -169,6 +169,7 @@ GainPath is a pure web app with no HealthKit access, so this works by triggering
 <img src="images/screenshots/feedback.png" width="260" alt="Built-in feedback form for bugs, feature requests, and general feedback">
 
 - Built-in feedback form for bug reports, feature requests, and general feedback
+- The "Session done!" screen links to the GainPath Fitness Facebook page for training tips and app updates
 
 ---
 
