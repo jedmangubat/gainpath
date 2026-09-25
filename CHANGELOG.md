@@ -26,6 +26,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the v2.6.5 convention that mid-workout edits are session-only (that note was
   written during v2.6.5 but never committed).
 
+## [2.7.0] - 2026-09-25
+
+### Changed
+- **Climb charts only draw when there's a line to draw.** Before any workout
+  the Strength segment showed its lift and metric pickers above an empty chart
+  box, and after one session it plotted a lone dot on invented axes. Now there
+  are three states: nothing logged → a single "Your climb starts here" card
+  with a Go to Train button (no pickers, no axes); one logged day for the
+  selected lift → a "Starting point" card with the value, metric and date;
+  two or more → the chart. Body weight follows the same rule — the chart
+  appears from the second weigh-in, with a hint after the first.
+- **The Strength picker lists the lifts you've actually logged**, grouped by
+  muscle (`<optgroup>` in `MG_LIST` order) and defaulting to the most-logged
+  one, instead of four fixed barbell "bellwether" lifts — anyone training with
+  dumbbells or machines previously got an empty chart forever. The list is
+  rebuilt on every visit (`chLifts()`), keeping the current pick if it still
+  exists. `PR_KEY_LIFTS` stays, since the deload check still uses it.
+- **Charts open on the last 30 days, with 1M · 3M · 6M · All range chips**
+  (`chWindow()`, `rngChips()`, shared `ST.chRange`). The chips only appear once
+  the data reaches back more than a month; before that there's nothing to
+  choose between. A windowed chart spans the whole window on its x axis, so
+  a quiet week still reads as a gap. Waypoint flags are computed over the full
+  history, so a range starting mid-climb doesn't flag its first point as a new
+  best. A range with fewer than two points says so instead of drawing one dot.
+
+### Added
+- **Facebook page invite on the "Session done!" screen** — a small card below
+  Share / Back to home asking users to like the GainPath Fitness page, linking
+  to it in a new tab. Shown after every workout; strings in all three languages.
+- `test:units` cases for `chLifts()` (only plottable lifts, most-logged first)
+  and `chWindow()` (no window for ≤1 month of data, 30-day default, All).
+
+### Other
+- README "What's new" rewritten for v2.7.0 (v2.6.6's bullets folded into
+  Features), progress screenshot and the tutorial's Climb screenshot
+  regenerated (spotlight re-measured, unchanged), `CACHE_NAME` → v41.
+
 ## [2.6.6] - 2026-09-22
 
 ### Fixed

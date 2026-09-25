@@ -703,6 +703,29 @@ async function main() {
     check('migrateMW never overwrites an existing shared value', ST.mw, { 'Smith machine': 22 });
     ST.mw = {};
 
+    // Progress chart: the picker offers only lifts with a plottable working
+    // set, most-logged first; charts open on the last month, and the range
+    // only applies (chips shown) once data reaches back further than that.
+    const savedHist = ST.history, savedRange = ST.chRange;
+    const lg = (name, sets) => ({ name, sets });
+    ST.history = [
+      { dk: '2026-01-01', exercises: [lg('B', [{ w: 50, r: 5, done: true }]), lg('Warm only', [{ w: 20, r: 10, done: true, t: 'w' }])] },
+      { dk: '2026-01-03', exercises: [lg('B', [{ w: 52, r: 5, done: true }]), lg('A', [{ w: 10, r: 8, done: true }]), lg('Bodyweight', [{ w: 0, r: 12, done: true }])] },
+      { dk: '2026-01-05', exercises: [lg('A', [{ w: 12, r: 8, done: true }]), lg('Undone', [{ w: 40, r: 5, done: false }])] },
+      { dk: '2026-01-07', exercises: [lg('A', [{ w: 12, r: 9, done: true }])] },
+    ];
+    check('chLifts: plottable lifts only, most-logged first', chLifts(), ['A', 'B']);
+    ST.history = [];
+    check('chLifts: empty history offers nothing', chLifts(), []);
+    ST.history = savedHist;
+    const today = dkDay(dkey(new Date()));
+    ST.chRange = '1m';
+    check('chWindow: a month or less of data shows everything, no chips', chWindow([today - 20, today - 2]), { long: false, from: null, to: today });
+    check('chWindow: older data defaults to the last 30 days', chWindow([today - 90, today - 2]), { long: true, from: today - 30, to: today });
+    ST.chRange = 'all';
+    check('chWindow: All removes the lower bound', chWindow([today - 90, today - 2]).from, null);
+    ST.chRange = savedRange;
+
     return out;
   });
 

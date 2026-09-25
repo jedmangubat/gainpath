@@ -8,10 +8,12 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.6.6
+## ✨ What's new in v2.7.0
 
-- **Settings → About** shows the app version you have installed, with a "What's new" button and a link to the full changelog on GitHub, so you can check what's changed without waiting for the auto-shown update sheet.
-- Apple Watch sync's setup walkthrough now flags a known iOS 27 issue (the Start/End Workout Shortcuts actions can silently stop running), with a link to the feedback form so reports can inform a real fix.
+- **Climb charts that make sense from day one** — before your first workout the Strength view is a single "your climb starts here" card instead of empty axes; after one session it shows your starting number, and the line appears once there's a second point to draw it through. Body weight works the same way.
+- **Chart any lift you've logged** — the Strength picker now lists every lift you've actually trained, grouped by muscle and most-trained first, instead of four fixed barbell lifts (which left dumbbell and machine lifters with a permanently empty chart).
+- **Last month by default, with ranges** — charts open on the last 30 days; once your history goes back further, **1M · 3M · 6M · All** chips let you zoom out.
+- **Follow GainPath on Facebook** — the "Session done!" screen now has a link to the GainPath Fitness Facebook page for training tips and app updates.
 
 ## Features
 
@@ -65,7 +67,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of ten sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, How to use, and About — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of ten sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, How to use, and About (your installed version, a "What's new" button, and a link to the full changelog) — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
 
 The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen, reachable any time and shown once automatically after setup.
 
@@ -119,10 +121,10 @@ line), with the current set highlighted so you always know where you are.
 
 ### 📈 Progress tracking
 
-<img src="images/screenshots/progress.png" width="260" alt="Progress tab — estimated-1RM chart for a bellwether lift, plus the body-weight trend">
+<img src="images/screenshots/progress.png" width="260" alt="Progress tab — estimated-1RM chart for a logged lift over the last month, with range chips">
 
 - The Progress tab is a three-way switch — **Strength**, **Balance** and **Body** — showing one at a time rather than stacking them
-- Progress chart anchored to one bellwether lift per body part (chest → flat barbell bench press, back → barbell row, quads → barbell back squat, shoulders → barbell overhead press) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
+- Progress chart for any lift you've logged (grouped by muscle, most-trained first) — plot **estimated 1RM** (default), **max weight**, or **session volume** over time for that lift
 - Per-exercise session history (on the Days tab) — pick any exercise to see every past date logged for it, with the sets you logged, that session's volume and best estimated 1RM, and how it felt; the 8 most recent show by default with a **Show all** button for the rest
 - **Notes that remember for you** — jot a note on any exercise mid-workout ("seat position 4", "left shoulder pinch") or on the whole session; next time you land on that exercise, GainPath reminds you what you wrote
 - Personal record (PR) tracker — auto-detects new PRs, celebrates on screen, and shows each PR's estimated 1RM; tap any PR to see the full timeline of every time that record was broken, not just the current best. The all-time list is **grouped by muscle** into collapsible sections, each headed with its record count and your heaviest lift for that muscle

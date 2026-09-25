@@ -40,6 +40,11 @@ tab is a three-way segment (Strength / Balance / Body, `chSeg()` +
 canvas measured inside a `display:none` parent comes out 0px wide, so any
 new segment must draw on the way in, never all at once up front. Per-exercise
 session history lives on the **Days** tab, not Climb.
+Climb charts (v2.7.0) never draw with fewer than two points — nothing logged
+is a "start here" card, one point is a "starting point" card — and open on the
+last 30 days via `chWindow()`, with 1M/3M/6M/All chips appearing only once data
+reaches back further. The Strength picker is built from logged lifts
+(`chLifts()`), not a fixed list; a new dated chart should reuse `chWindow()`.
 
 ## Coding discipline
 

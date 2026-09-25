@@ -286,6 +286,7 @@ textarea{resize:vertical;min-height:100px}
 .toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle.on::after{left:21px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rng{display:flex;gap:6px;margin-bottom:10px}.rng-b{flex:1;padding:7px 4px;border:1px solid var(--bdr);border-radius:999px;background:var(--bg);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer}.rng-b.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .mw-inp{display:inline-block;background:var(--tint-amber-1);color:var(--tint-amber-text);border-radius:8px;padding:4px 8px;font-size:13px;font-weight:600}
 .sug-chip{background:var(--tint-amber-1);border:1px solid var(--tint-amber-2);border-radius:10px;padding:8px 12px;margin-top:12px;font-size:13px;color:var(--tint-amber-text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5}
@@ -560,16 +561,25 @@ textarea{resize:vertical;min-height:100px}
       <button class="opt-btn" id="chseg-body" onclick="chSeg('body')" data-i18n="ch_seg_body">Body</button>
     </div>
     <div id="ch-seg-strength">
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="progress_hint">Tracked via one bellwether lift per body part — log it during a workout to see progress here.</div>
+    <div class="card" id="ch-start" style="display:none;text-align:center;padding:2rem 1.25rem">
+      <i class="ti ti-mountain" aria-hidden="true" style="font-size:34px;color:var(--accent)"></i>
+      <div style="font-family:var(--font-display);font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-top:10px" data-i18n="ch_start_title">Your climb starts here</div>
+      <div style="font-size:13px;color:var(--txt2);margin:6px 0 16px;line-height:1.5" data-i18n="ch_start_body">Log a weighted set in a workout and every lift you train gets its own progress line here.</div>
+      <button class="bp" style="justify-content:center" onclick="bnav('wk')"><i class="ti ti-barbell" aria-hidden="true"></i> <span data-i18n="ch_start_btn">Go to Train</span></button>
+    </div>
+    <div id="ch-has">
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="progress_hint">Pick any lift you've logged — most-trained first — to see how it's climbing.</div>
     <select id="ch-sel" onchange="drawChart()"></select>
     <select id="ch-metric" onchange="drawChart()">
       <option value="w" data-i18n="metric_max_weight">Max weight</option>
       <option value="e" selected data-i18n="metric_e1rm">Estimated 1RM</option>
       <option value="v" data-i18n="metric_volume">Session volume</option>
     </select>
+    <div class="rng" id="ch-rng" style="display:none"></div>
     <div style="background:var(--bg2);border-radius:10px;padding:14px;box-shadow:var(--shadow-sm)">
       <canvas id="ch-cv" height="180"></canvas>
-      <div id="ch-empty" style="text-align:center;padding:2rem 1rem;font-size:13px;color:var(--txt2);display:none" data-i18n="chart_empty">No data yet — finish a session first</div>
+      <div id="ch-one" style="text-align:center;padding:1.5rem 1rem;display:none"></div>
+    </div>
     </div>
     </div>
     <div id="ch-seg-balance" style="display:none">
@@ -586,9 +596,11 @@ textarea{resize:vertical;min-height:100px}
         <div><div style="font-size:13px;color:var(--txt2)" data-i18n="latest_label">Latest</div><div style="font-size:20px;font-weight:700;color:var(--txt)" id="bw-latest">—</div></div>
         <button class="bp" onclick="openLogBW()"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="log_weight_btn">Log weight</span></button>
       </div>
+      <div class="rng" id="bw-rng" style="display:none"></div>
       <div style="background:var(--bg2);border-radius:10px;padding:14px;box-shadow:var(--shadow-sm)">
         <canvas id="bw-cv" height="140"></canvas>
         <div id="bw-empty" style="text-align:center;padding:1.5rem 1rem;font-size:13px;color:var(--txt2);display:none" data-i18n="bw_empty">No weigh-ins logged yet</div>
+        <div id="bw-one" style="text-align:center;padding:1.5rem 1rem;font-size:13px;color:var(--txt2);display:none"></div>
       </div>
       <div id="bw-list" style="margin-top:10px"></div>
       <div id="bw-log-form" style="display:none;margin-top:14px;border-top:1px solid var(--bdr);padding-top:14px">
@@ -1333,6 +1345,11 @@ textarea{resize:vertical;min-height:100px}
     <img id="share-preview-img" style="max-width:100%;border-radius:8px;box-shadow:var(--shadow-md)" alt="Session summary card">
     <div style="font-size:11px;color:var(--txt2);margin-top:8px" data-i18n="press_hold_save_hint">Press and hold the image to save it</div>
   </div>
+  <div class="card" style="margin-top:18px;display:flex;align-items:center;gap:12px">
+    <i class="ti ti-heart" aria-hidden="true" style="font-size:24px;color:var(--accent);flex-shrink:0"></i>
+    <div style="flex:1;min-width:0;font-size:13px;color:var(--txt2);line-height:1.45" data-i18n="fb_invite_body">Enjoying GainPath? Like our Facebook page for training tips and app updates.</div>
+    <a class="bs" id="su-fb" href="https://www.facebook.com/profile.php?id=61594331834438" target="_blank" rel="noopener" style="flex-shrink:0;text-decoration:none;white-space:nowrap;padding:9px 14px;font-size:13px" data-i18n="fb_invite_btn">Like page</a>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -1358,7 +1375,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.6.6';
+const APP_VERSION='2.7.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1385,8 +1402,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.6.6';
-const WHATS_NEW_ITEMS=['whatsnew_item1'];
+const WHATS_NEW_VERSION='2.7.0';
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -13211,7 +13228,7 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   lastSeenVersion:'0',tutorialSeen:false,badgesIntroSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},chSeg:'strength',histAll:false,bwAll:false,editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},chSeg:'strength',chRange:'1m',histAll:false,bwAll:false,editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,HOLD_TARGET=null,HOLD_ALERTED=false,DE_EXPANDED=null;
 function startHoldTimerInterval(i){
   HOLD_TIMER=setInterval(()=>{
@@ -13304,7 +13321,19 @@ en:{
 "bw_empty": "No weigh-ins logged yet",
 "cal_hint": "Tap a colored day to see and edit its sessions — browse any month with the arrows.",
 "cal_title": "Workout calendar",
-"chart_empty": "No data yet — finish a session first",
+"fb_invite_body": "Enjoying GainPath? Like our Facebook page for training tips and app updates.",
+"fb_invite_btn": "Like page",
+"ch_start_title": "Your climb starts here",
+"ch_start_body": "Log a weighted set in a workout and every lift you train gets its own progress line here.",
+"ch_start_btn": "Go to Train",
+"ch_one_label": "Starting point",
+"ch_one_hint": "Log this lift once more to draw your line.",
+"bw_one_hint": "Log another weigh-in to see your trend line.",
+"rng_sparse": "Fewer than two entries in this range — try a longer one.",
+"rng_1m": "1M",
+"rng_3m": "3M",
+"rng_6m": "6M",
+"rng_all": "All",
 "custom_ex_hint": "For a machine or movement your gym has that isn't in the built-in list. No bundled image — it'll link out to a YouTube search instead.",
 "custom_program_hint": "Build your own training days from scratch. Name each day, then tap the list icon to add exercises (supersets, sets, reps and weights all work the same as any day).",
 "custom_program_title": "Custom program",
@@ -13470,7 +13499,10 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Settings → About now shows the app version you have installed, with a \"What's new\" button to reopen this sheet and a link to the full changelog on GitHub.",
+"whatsnew_item1": "Climb charts now make sense from day one: a starting-point card after your first session, and the line once there's a second point.",
+"whatsnew_item2": "Chart any lift you've logged — grouped by muscle, most-trained first — not just four barbell lifts.",
+"whatsnew_item3": "Charts open on the last month; 1M · 3M · 6M · All chips let you zoom out once your history is longer.",
+"whatsnew_item4": "The \"Session done!\" screen links to the GainPath Fitness Facebook page for tips and updates.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13592,7 +13624,7 @@ en:{
 "pref_work_sets_label": "Work sets",
 "press_hold_save_hint": "Press and hold the image to save it",
 "program_name_label": "Program name",
-"progress_hint": "Tracked via one bellwether lift per body part — log it during a workout to see progress here.",
+"progress_hint": "Pick any lift you've logged — most-trained first — to see how it's climbing.",
 "progress_title": "Progress",
 "ramping_warmup_label": "Ramping warm-up steps",
 "rest_label": "Rest",
@@ -13694,7 +13726,19 @@ ja:{
 "bw_empty": "体重の記録がまだありません",
 "cal_hint": "色付きの日をタップするとセッションを確認・編集できます。矢印で月を切り替えられます。",
 "cal_title": "ワークアウトカレンダー",
-"chart_empty": "データがまだありません — まずセッションを完了しましょう",
+"fb_invite_body": "GainPathを気に入っていただけましたか？トレーニングのコツやアプリの最新情報は、Facebookページに「いいね！」してチェック。",
+"fb_invite_btn": "いいね！する",
+"ch_start_title": "ここから登り始めよう",
+"ch_start_body": "ワークアウトで重量付きのセットを記録すると、種目ごとの進捗ラインがここに表示されます。",
+"ch_start_btn": "トレーニングへ",
+"ch_one_label": "スタート地点",
+"ch_one_hint": "この種目をもう一度記録するとラインが描かれます。",
+"bw_one_hint": "もう一度体重を記録すると推移が表示されます。",
+"rng_sparse": "この期間の記録が2件未満です — 期間を長くしてみましょう。",
+"rng_1m": "1ヶ月",
+"rng_3m": "3ヶ月",
+"rng_6m": "6ヶ月",
+"rng_all": "全期間",
 "custom_ex_hint": "ジムにあるけど内蔵リストにないマシンや種目向けです。画像は付属せず、代わりにYouTube検索へリンクします。",
 "custom_program_hint": "トレーニング曜日をゼロから作成できます。各曜日に名前を付け、リストアイコンをタップして種目を追加してください(スーパーセット、セット数、レップ数、重量はどの曜日でも同じように機能します)。",
 "custom_program_title": "カスタムプログラム",
@@ -13859,7 +13903,10 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "設定 → アプリ情報で、インストール済みのバージョンを確認できるようになりました。「アップデート情報」ボタンでこのシートをもう一度開いたり、GitHubで変更履歴の全文を見たりできます。",
+"whatsnew_item1": "Climbのグラフが初日から見やすく：最初のセッション後はスタート地点を表示し、2回目の記録からラインを描きます。",
+"whatsnew_item2": "記録したどの種目でもグラフ化できるように（部位別・記録回数の多い順）。バーベル4種目に限りません。",
+"whatsnew_item3": "グラフは直近1ヶ月から表示。記録が増えたら 1ヶ月・3ヶ月・6ヶ月・全期間 で切り替えられます。",
+"whatsnew_item4": "「セッション完了」画面から、GainPath FitnessのFacebookページに「いいね！」できるようになりました。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -13982,7 +14029,7 @@ ja:{
 "press_hold_save_hint": "画像を長押しして保存",
 "profile_bw_label": "体重 (<span id=\"set-unit-lbl\">kg</span>)",
 "program_name_label": "プログラム名",
-"progress_hint": "各部位を代表する種目1つで進捗を追跡します — ワークアウト中に記録すると、ここに進捗が表示されます。",
+"progress_hint": "記録した種目から選んで、伸びを確認しましょう（記録回数の多い順）。",
 "progress_title": "進捗",
 "ramping_warmup_label": "ウォームアップの段階数",
 "rest_label": "休憩",
@@ -14084,7 +14131,19 @@ ko:{
 "bw_empty": "아직 기록된 체중이 없어요",
 "cal_hint": "색칠된 날짜를 탭하면 세션을 확인하고 수정할 수 있어요 — 화살표로 다른 달도 볼 수 있습니다.",
 "cal_title": "운동 캘린더",
-"chart_empty": "아직 데이터가 없어요 — 먼저 세션을 완료해 보세요",
+"fb_invite_body": "GainPath가 마음에 드시나요? 페이스북 페이지에 좋아요를 누르고 운동 팁과 앱 소식을 받아보세요.",
+"fb_invite_btn": "좋아요 누르기",
+"ch_start_title": "여기서 등반이 시작돼요",
+"ch_start_body": "운동 중에 중량 세트를 기록하면 운동별 진행 그래프가 여기에 표시돼요.",
+"ch_start_btn": "운동하러 가기",
+"ch_one_label": "출발점",
+"ch_one_hint": "이 운동을 한 번 더 기록하면 그래프가 그려져요.",
+"bw_one_hint": "체중을 한 번 더 기록하면 추이를 볼 수 있어요.",
+"rng_sparse": "이 기간의 기록이 2개 미만이에요 — 더 긴 기간을 선택해 보세요.",
+"rng_1m": "1개월",
+"rng_3m": "3개월",
+"rng_6m": "6개월",
+"rng_all": "전체",
 "custom_ex_hint": "헬스장에 있지만 기본 목록에 없는 머신이나 동작을 위한 기능이에요. 기본 이미지는 제공되지 않고, 대신 유튜브 검색으로 연결됩니다.",
 "custom_program_hint": "나만의 운동 요일을 처음부터 만들어보세요. 각 요일에 이름을 붙인 다음 목록 아이콘을 탭해 운동을 추가하세요 (슈퍼세트, 세트, 반복 횟수, 무게 모두 다른 요일과 동일하게 작동합니다).",
 "custom_program_title": "커스텀 프로그램",
@@ -14249,7 +14308,10 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "설정 → 정보에서 설치된 앱 버전을 확인할 수 있습니다. '업데이트 소식' 버튼으로 이 시트를 다시 열거나 GitHub에서 전체 변경 이력을 볼 수 있어요.",
+"whatsnew_item1": "Climb 그래프가 첫날부터 알기 쉬워졌어요: 첫 세션 후에는 출발점을, 두 번째 기록부터 그래프 선을 보여줘요.",
+"whatsnew_item2": "기록한 모든 운동을 그래프로 볼 수 있어요 (부위별, 많이 한 순서) — 바벨 운동 4개만이 아니에요.",
+"whatsnew_item3": "그래프는 최근 1개월부터 보여줘요. 기록이 쌓이면 1개월 · 3개월 · 6개월 · 전체로 바꿀 수 있어요.",
+"whatsnew_item4": "'세션 완료' 화면에서 GainPath Fitness 페이스북 페이지에 좋아요를 누를 수 있어요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14372,7 +14434,7 @@ ko:{
 "press_hold_save_hint": "이미지를 길게 눌러 저장하세요",
 "profile_bw_label": "체중 (<span id=\"set-unit-lbl\">kg</span>)",
 "program_name_label": "프로그램 이름",
-"progress_hint": "부위별로 기준이 되는 대표 운동 하나로 추적돼요 — 운동 중에 기록하면 여기서 진행 상황을 볼 수 있어요.",
+"progress_hint": "기록한 운동 중 하나를 골라 성장 추이를 확인하세요 (많이 한 순서).",
 "progress_title": "진행 상황",
 "ramping_warmup_label": "램핑 워밍업 단계",
 "rest_label": "휴식",
@@ -16423,8 +16485,22 @@ function shareSessionCard(){
 }
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
 const PR_KEY_LIFTS={chest:'Flat barbell bench press',back:'Barbell row',quads:'Barbell back squat',shoulders:'Barbell overhead press'};
+// Lifts with at least one logged working set at a real weight — exactly what
+// drawChart() can plot — most-logged first. Offering only fixed bellwether
+// lifts left anyone who trains other movements staring at an empty chart.
+function chLifts(){
+  const n={};
+  ST.history.forEach(h=>(h.exercises||[]).forEach(ex=>{if((ex.sets||[]).some(s=>s.done&&s.t!=='w'&&s.w>0))n[ex.name]=(n[ex.name]||0)+1;}));
+  return Object.keys(n).sort((a,b)=>n[b]-n[a]||a.localeCompare(b));
+}
 function initChart(){
-  const sel=gid('ch-sel');if(!sel.options.length)Object.keys(PR_KEY_LIFTS).forEach(mg=>{const o=document.createElement('option');o.value=PR_KEY_LIFTS[mg];o.textContent=humanizeMG(mg)+' — '+PR_KEY_LIFTS[mg];sel.appendChild(o);});
+  // Rebuilt on every visit: history changes between visits. Keeps the current
+  // pick if it's still there, otherwise defaults to the most-logged lift.
+  const sel=gid('ch-sel'),prev=sel.value,lifts=chLifts(),grp={};
+  lifts.forEach(n=>{const mg=(EXPOOL[n]&&EXPOOL[n].mg)||'other';(grp[mg]=grp[mg]||[]).push(n);});
+  const order=MG_LIST.filter(mg=>grp[mg]).concat(Object.keys(grp).filter(mg=>MG_LIST.indexOf(mg)<0).sort());
+  sel.innerHTML=order.map(mg=>'<optgroup label="'+esc(humanizeMG(mg))+'">'+grp[mg].map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('')+'</optgroup>').join('');
+  if(lifts.length)sel.value=lifts.indexOf(prev)>=0?prev:lifts[0];
   if(!ST.mgWeek)ST.mgWeek=dkey(startOfWeek(new Date()));
   renderChSeg();
 }
@@ -16433,6 +16509,19 @@ function initChart(){
 // sized inside a display:none parent comes out 0px wide, so each segment draws
 // on the way in rather than all three up front.
 function chSeg(n){ST.chSeg=n;renderChSeg();}
+// Both charts open on the last month. The range chips only appear once the
+// data reaches back further than that — before then there's nothing to pick.
+const CH_RANGES=[['1m',30],['3m',91],['6m',182],['all',0]];
+function chWindow(days){
+  const to=dkDay(dkey(new Date())),long=days.length>0&&to-days[0]>30;
+  const r=long?(CH_RANGES.find(x=>x[0]===ST.chRange)||CH_RANGES[0]):CH_RANGES[3];
+  return{long,from:r[1]?to-r[1]:null,to};
+}
+function rngChips(id,long){
+  const el=gid(id);el.style.display=long?'flex':'none';
+  if(long)el.innerHTML=CH_RANGES.map(([k])=>'<button class="rng-b'+(k===ST.chRange?' on':'')+'" aria-pressed="'+(k===ST.chRange)+'" onclick="setChRange('+jsArg(k)+')">'+t('rng_'+k)+'</button>').join('');
+}
+function setChRange(k){ST.chRange=k;renderChSeg();}
 function renderChSeg(){
   const n=ST.chSeg||'strength';
   ['strength','balance','body'].forEach(x=>{gid('ch-seg-'+x).style.display=x===n?'block':'none';gid('chseg-'+x).classList.toggle('on',x===n);});
@@ -16516,13 +16605,21 @@ function renderBWSection(){
   const latestEl=gid('bw-latest');if(!latestEl)return;
   const sorted=ST.bw;
   latestEl.textContent=sorted.length?sorted[sorted.length-1].w+CFG.unit:'—';
-  const canvas=gid('bw-cv'),empty=gid('bw-empty');
+  const canvas=gid('bw-cv'),empty=gid('bw-empty'),one=gid('bw-one');
   if(ST.bwChart){ST.bwChart.destroy();ST.bwChart=null;}
-  if(!sorted.length){canvas.style.display='none';empty.style.display='block';return;}
-  canvas.style.display='block';empty.style.display='none';
+  const win=chWindow(sorted.map(e=>dkDay(e.dk)));rngChips('bw-rng',win.long);
+  const inWin=sorted.filter(e=>win.from===null||dkDay(e.dk)>=win.from);
+  empty.style.display=sorted.length?'none':'block';
+  // One weigh-in (or one in the chosen range) isn't a trend — say what's
+  // needed instead of drawing a single dot.
+  one.style.display=sorted.length&&inWin.length<2?'block':'none';
+  one.textContent=sorted.length>1?t('rng_sparse'):t('bw_one_hint');
+  canvas.style.display=inWin.length<2?'none':'block';
+  if(inWin.length>=2){
   const theme=chartTheme(canvas,140);
-  const bwDays=sorted.map(e=>dkDay(e.dk));
-  ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:sorted.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(bwDays,theme.tick)}}});
+  const bwDays=inWin.map(e=>dkDay(e.dk));
+  ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:inWin.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?bwDays:[win.from,win.to],theme.tick)}}});
+  }
   const BWCAP=8,bwOrdered=sorted.slice().reverse(),bwShown=ST.bwAll?bwOrdered:bwOrdered.slice(0,BWCAP);
   gid('bw-list').innerHTML=bwShown.map(e=>{
     const extras=[e.waist?'Waist '+e.waist+'cm':null,e.arms?'Arms '+e.arms+'cm':null].filter(Boolean).join(' · ');
@@ -16546,7 +16643,12 @@ function chartTheme(canvas,h){
   return{accent,accent2,grid,tick,forge,bg,fill};
 }
 function drawChart(){
-  const name=gid('ch-sel').value,metric=(gid('ch-metric')&&gid('ch-metric').value)||'w',empty=gid('ch-empty'),canvas=gid('ch-cv');
+  const name=gid('ch-sel').value,metric=(gid('ch-metric')&&gid('ch-metric').value)||'w',one=gid('ch-one'),canvas=gid('ch-cv');
+  if(ST.chart){ST.chart.destroy();ST.chart=null;}
+  // Nothing logged yet: no pickers, no empty axes — one card pointing at Train.
+  const has=!!name;
+  gid('ch-start').style.display=has?'none':'block';gid('ch-has').style.display=has?'block':'none';
+  if(!has)return;
   // Keyed by day, not pushed per session: ST.history is only ever appended, so
   // a back-dated/edited session would otherwise plot out of order, and two
   // sessions of this lift on one day would land on the same x. Volume sums
@@ -16561,20 +16663,31 @@ function drawChart(){
     else y=Math.max(...ws.map(s=>s.w));
     byDay[dk]=byDay[dk]===undefined?y:(metric==='v'?byDay[dk]+y:Math.max(byDay[dk],y));
   });
-  const pts=Object.keys(byDay).sort().map(dk=>({day:dkDay(dk),w:byDay[dk]}));
-  if(ST.chart){ST.chart.destroy();ST.chart=null;}
-  if(!pts.length){canvas.style.display='none';empty.style.display='block';return;}
-  canvas.style.display='block';empty.style.display='none';
+  const all=Object.keys(byDay).sort().map(dk=>({day:dkDay(dk),w:byDay[dk]}));
+  // Waypoints come from the full history, so a range that starts mid-climb
+  // doesn't flag its first point as a new best.
+  let runningMax=-Infinity;
+  const wpAll=all.map(p=>{const wp=p.w>runningMax;if(wp)runningMax=p.w;return wp;});
+  const win=chWindow(all.map(p=>p.day));rngChips('ch-rng',win.long);
+  const pts=all.filter(p=>win.from===null||p.day>=win.from),isWaypoint=wpAll.slice(all.length-pts.length);
+  if(pts.length<2){
+    canvas.style.display='none';one.style.display='block';
+    // A single logged day is a starting point, not a line — a lone dot on
+    // invented axes says nothing, so show the number and when it was set.
+    const p=all[0],mEl=gid('ch-metric'),mLbl=mEl.options[mEl.selectedIndex].text;
+    one.innerHTML=all.length>1?'<div style="font-size:13px;color:var(--txt2)">'+t('rng_sparse')+'</div>':'<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt2)">'+t('ch_one_label')+'</div><div style="font-family:var(--font-display);font-size:34px;font-weight:900;letter-spacing:-.02em;color:var(--accent);margin-top:4px">'+(metric==='v'?fmtVol(p.w,CFG.unit):(Math.round(p.w*10)/10)+CFG.unit)+'</div><div style="font-size:12px;color:var(--txt2);margin-top:2px">'+esc(mLbl)+' · '+dayLabel(p.day,true)+'</div><div style="font-size:13px;color:var(--txt2);margin-top:12px">'+t('ch_one_hint')+'</div>';
+    return;
+  }
+  canvas.style.display='block';one.style.display='none';
   const theme=chartTheme(canvas,180);
   const label=(metric==='v'?'Volume':metric==='e'?'Est. 1RM':'Max weight')+' ('+CFG.unit+')';
   // "Elevation profile" signature: waypoint-flag styling on every point that
   // set a new best at the time, like flags along a trail's ascent — a
   // running max over pts, not just today's PR list, so old peaks stay marked.
-  let runningMax=-Infinity;
-  const isWaypoint=pts.map(p=>{const wp=p.w>runningMax;if(p.w>runningMax)runningMax=p.w;return wp;});
-  const pointRadius=isWaypoint.map((wp,i)=>i===0?5:wp?8:4);
-  const pointColor=isWaypoint.map((wp,i)=>i>0&&wp?theme.forge:theme.accent);
-  ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&c.dataIndex>0?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(pts.map(p=>p.day),theme.tick)}}});
+  const first=all.length-pts.length===0;
+  const pointRadius=isWaypoint.map((wp,i)=>i===0&&first?5:wp?8:4);
+  const pointColor=isWaypoint.map((wp,i)=>(i>0||!first)&&wp?theme.forge:theme.accent);
+  ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&(c.dataIndex>0||!first)?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?pts.map(p=>p.day):[win.from,win.to],theme.tick)}}});
 }
 function prCard(k){const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}
 function togglePRGroup(mg){ST.prOpenMG[mg]=!ST.prOpenMG[mg];renderPRs();}
