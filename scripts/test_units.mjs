@@ -800,8 +800,8 @@ async function main() {
     // weight (at that session's date) + added weight, or − assistance.
     const pulldown = EXPOOL['Lat pulldown'], goblet = EXPOOL['Goblet squat'];
     ST.history = [];
-    const gobletFallback = getAIEstimatedWeight(goblet);
     ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80;
+    const gobletFallback = getAIEstimatedWeight(goblet);
     ST.history = [sess(lift('Push-ups', 0, 15, 'good'))];
     const pu80 = getAIEstimatedWeight(dbPress);
     check('bodyweight sync: 15 push-ups at 80kg body weight → first DB press 15–25kg, from Push-ups',
@@ -811,7 +811,7 @@ async function main() {
     ST.bw = [{ dk: '2026-01-01', w: 80 }];
     ST.history = [sess(lift('Pull-ups', 0, 8, 'hard'))];
     const pull = getAIEstimatedWeight(pulldown);
-    check('bodyweight sync: 8 pull-ups at 80kg → lat pulldown estimated from them (≥45kg)', pull >= 45 && liftEstimate(pulldown, 10).src === 'Pull-ups', true);
+    check('bodyweight sync: 8 pull-ups at 80kg → lat pulldown estimated from them (40–50kg)', pull >= 40 && pull <= 50 && liftEstimate(pulldown, 10).src === 'Pull-ups', true);
     ST.history = [sess(lift('Pull-ups', 10, 8, 'hard'))];
     check('bodyweight sync: added weight on pull-ups raises the estimate', getAIEstimatedWeight(pulldown) > pull, true);
     ST.history = [sess(lift('Machine-assisted pull-up', 30, 8, 'hard'))];
@@ -821,8 +821,82 @@ async function main() {
     const atDate = liftStrength('Push-ups').e;
     ST.bw = [{ dk: '2026-01-01', w: 60 }];
     check('bodyweight sync: uses the weigh-in at the session date, not today\'s', Math.abs(liftStrength('Push-ups').e - atDate) < 1e-9, true);
+    ST.bw = [{ dk: '2026-01-01', w: 80 }];
     ST.history = [sess(lift('Bodyweight squat', 0, 20, 'easy'))];
     check('bodyweight sync: lower-body bodyweight moves don\'t feed barbell/dumbbell estimates', getAIEstimatedWeight(goblet), gobletFallback);
+
+    // ── Smith machine: one shared bar, so Smith lifts convert between each
+    // other with high confidence and to/from free weights with medium.
+    ST.bw = []; CFG.bw = 75;
+    const smithInc = EXPOOL['Smith machine incline press'];
+    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard'))];
+    const smFromBar = liftEstimate(smithInc, 10);
+    check('smith sync: barbell bench estimates a first Smith incline press', !!smFromBar && smFromBar.src === 'Flat barbell bench press' && getAIEstimatedWeight(smithInc) >= 40, true);
+    ST.history = [sess(lift('Smith machine bench press', 80, 8, 'hard'))];
+    check('smith sync: Smith bench → Smith incline is more confident than barbell → Smith incline', liftEstimate(smithInc, 10).e > smFromBar.e, true);
+
+    // ── Default weights scale with body weight when nothing related is logged
+    // (strength ∝ body mass^0.67, clamped to 0.75–1.25×).
+    ST.history = [];
+    CFG.bw = 75; const fb75 = getAIEstimatedWeight(dbPress);
+    CFG.bw = 100; const fb100 = getAIEstimatedWeight(dbPress);
+    CFG.bw = 55; const fb55 = getAIEstimatedWeight(dbPress);
+    CFG.bw = 250; const fb250 = getAIEstimatedWeight(dbPress);
+    check('bw scaling: heavier → higher default, lighter → lower, reference weight unchanged', [fb75, fb100 > fb75, fb55 < fb75], [15, true, true]);
+    check('bw scaling: clamped at 1.25× for outlier body weights', fb250 <= 19, true);
+    CFG.bw = 75;
+
+    // ── Sex-appropriate defaults for exercises swapped in from the pool.
+    CFG.sex = 'female';
+    check('pool: women get the women\'s program default for a swapped-in lift', poolEx('Bench dumbbell chest press').baseW, 10);
+    check('pool: the shared EXPOOL entry is not mutated', EXPOOL['Bench dumbbell chest press'].baseW, 25);
+    ST.editDay = 'push'; ST.editList = []; ST.swapIdx = null; pickSwapEx('Bench dumbbell chest press');
+    check('pool: pickSwapEx uses the sex-appropriate default', ST.editList[0].baseW, 10);
+    clearEditState(); CFG.sex = 'male';
+    check('pool: men keep the men\'s default', poolEx('Bench dumbbell chest press').baseW, 25);
+
+    // ── Rep-target change re-targets the carried weight via e1RM.
+    const rowFull = EXPOOL['Barbell row'];
+    ST.history = [sess(lift('Barbell row', 60, 10, 'hard'))];
+    CFG.prefReps = 10; CFG.prefRepsChangedAt = null;
+    check('rep carry: same reps → same weight', plannedFor(rowFull).w, 60);
+    CFG.prefReps = 5; CFG.prefRepsChangedAt = tdk;
+    const rc = plannedFor(rowFull);
+    check('rep carry: 60kg×10 then a 5-rep target → ~68.5kg×5', [rc.r, rc.w >= 67 && rc.w <= 70], [5, true]);
+    CFG.prefReps = 15;
+    check('rep carry: a higher rep target lowers the weight', plannedFor(rowFull).w < 60, true);
+    CFG.prefReps = 10; CFG.prefRepsChangedAt = null;
+
+    // ── Long break → ease-back-in chip, never an automatic change.
+    const ago = (d) => { const x = new Date(); x.setDate(x.getDate() - d); return dkey(x); };
+    const oldSess = (d) => [{ dk: ago(d), date: 'd', exercises: [lift('Barbell row', 100, 5, 'good')] }];
+    ST.history = oldSess(14);
+    check('break: 2 weeks off → no chip', breakSuggest(rowFull, 100), null);
+    ST.history = oldSess(42);
+    check('break: 6 weeks off → 10% lighter', breakSuggest(rowFull, 100), { newW: 90, weeks: 6 });
+    ST.history = oldSess(70);
+    check('break: 10 weeks off → 15% lighter', breakSuggest(rowFull, 100), { newW: 85, weeks: 10 });
+    check('break: own history still sets the planned weight', plannedFor(rowFull).w, 100);
+
+    // ── Unit switch converts every stored weight (it used to just relabel).
+    CFG.unit = 'kg';
+    ST.history = [sess(lift('Barbell row', 100, 5, 'good'))]; recomputePRs();
+    ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80; ST.mw = { 'Hack squat': 40 };
+    CFG.gymDumbbells = [10, 20]; CFG.gymPlates = { 20: 1, 1.25: 1 }; CFG.keyLifts = { chest: { w: 100, r: 5 } };
+    CFG.dayPlan = { push: { 'Barbell row': { w: 50, r: 8 } } };
+    openSettings(); setSettingUnit('lbs');
+    check('units kg→lbs: history, PRs, weigh-ins, profile, machine base',
+      [ST.history[0].exercises[0].sets[0].w, ST.prs['Barbell row'].w, ST.bw[0].w, CFG.bw, ST.mw['Hack squat'], CFG.unit],
+      [220.5, 220.5, 176.4, 176.4, 88.2, 'lbs']);
+    check('units kg→lbs: gear maps to real sizes, baseline and day plan convert',
+      [CFG.gymDumbbells, Object.keys(CFG.gymPlates).map(Number).sort((a, b) => a - b), CFG.keyLifts.chest.w, CFG.dayPlan.push['Barbell row'].w],
+      [[20, 45], [2.5, 45], 220.5, 110.2]);
+    check('units kg→lbs: Settings body-weight field shows the converted value', gid('set-bw').value, '176.4');
+    collectSettingsFields();
+    check('units: leaving Settings after a switch does not log a bogus weigh-in', ST.bw.length, 1);
+    setSettingUnit('kg');
+    check('units lbs→kg: round-trips back', [ST.history[0].exercises[0].sets[0].w, ST.bw[0].w, CFG.unit], [100, 80, 'kg']);
+    CFG.gymDumbbells = []; CFG.gymPlates = {}; CFG.keyLifts = {}; CFG.dayPlan = {}; ST.mw = {};
 
     // ── Body weight: one source of truth — the latest weigh-in by date.
     ST.bw = []; CFG.bw = 75;

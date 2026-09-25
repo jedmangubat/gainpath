@@ -1403,7 +1403,7 @@ function track(event){
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
 const WHATS_NEW_VERSION='2.8.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3'];
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);
@@ -1810,8 +1810,8 @@ function getEffectiveDayExercises(dayId){
   const links=CFG.dayLinks[dayId];
   const plan=(CFG.dayPlan||{})[dayId];
   let list;
-  if(isCustomDay(dayId)){list=(custom||[]).filter(n=>EXPOOL[n]).map(n=>EXPOOL[n]);}
-  else if(custom&&custom.length&&custom.every(n=>EXPOOL[n])){list=custom.map(n=>EXPOOL[n]);}
+  if(isCustomDay(dayId)){list=(custom||[]).filter(n=>EXPOOL[n]).map(poolEx);}
+  else if(custom&&custom.length&&custom.every(n=>EXPOOL[n])){list=custom.map(poolEx);}
   else list=getDayExercises(dayId,CFG.sex);
   return list.map((ex,i)=>{
     let out=ex;
@@ -1873,6 +1873,11 @@ function buildExercisePool(){
   Object.values(EXPOOL_BY_MG).forEach(list=>list.sort(equipSort));
 }
 buildExercisePool();
+// EXPOOL keeps each exercise's first definition, which is the men's program's;
+// the women's programs list lighter defaults for the same lift. Anything that
+// builds a day from pool names (swap picker, custom days) goes through poolEx().
+const EXPOOL_F={};Object.keys(EX).filter(k=>/_f$/.test(k)).forEach(k=>EX[k].forEach(e=>{if(EXPOOL_F[e.name]===undefined)EXPOOL_F[e.name]=e.baseW;}));
+function poolEx(n){const e=EXPOOL[n];return e&&CFG.sex==='female'&&EXPOOL_F[n]!==undefined&&EXPOOL_F[n]!==e.baseW?Object.assign({},e,{baseW:EXPOOL_F[n]}):e;}
 function humanizeMG(mg){return mg.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
 
 // ═══ PER-EXERCISE REST-SCREEN TIPS ═══
@@ -13502,6 +13507,7 @@ en:{
 "whatsnew_item1": "Trying a lift for the first time? It now starts from your strongest related lift. Bench 80kg, and your first dumbbell press starts around 25kg per hand, not 10.",
 "whatsnew_item2": "If a lift you've already done looks far lighter than your related lifts, you'll get a one-tap Apply/Dismiss suggestion. Nothing changes on its own.",
 "whatsnew_item3": "Your profile body weight now always matches your latest weigh-in, and editing it in Settings logs today's weigh-in.",
+"whatsnew_item4": "Back after 4+ weeks off an exercise? It suggests easing back in lighter. Change your rep target and the weight adjusts to match. Switching kg/lbs now converts your data.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13656,6 +13662,7 @@ en:{
 "swap_exercise_title": "Swap exercise",
 "sync_watch_label": "Sync workouts to Apple Watch",
 "sync_chip": "Your {src} suggests about {w} here",
+"break_chip": "It's been {n} weeks since you last did this — ease back in at {w}",
 "btn_apply": "Apply",
 "btn_dismiss": "Dismiss",
 "target_weight_label": "Target weight",
@@ -13908,6 +13915,7 @@ ja:{
 "whatsnew_item1": "初めての種目は、関連する一番強い種目の記録から重量を提案します。ベンチ80kgなら、ダンベルプレスは10kgではなく片手約25kgから。",
 "whatsnew_item2": "すでに行った種目が関連種目より極端に軽い場合、ワンタップで「適用／閉じる」を選べる提案を表示します。自動では変わりません。",
 "whatsnew_item3": "プロフィールの体重は常に最新の体重記録と一致します。設定で変更すると今日の記録として保存されます。",
+"whatsnew_item4": "4週間以上空いた種目は軽めからの再開を提案。目標回数を変えると重量も調整されます。kg/lbsの切り替えで記録も換算されるようになりました。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -14063,6 +14071,7 @@ ja:{
 "swap_exercise_title": "種目を入れ替え",
 "sync_watch_label": "ワークアウトをApple Watchに同期",
 "sync_chip": "{src}の記録から、ここは約{w}が目安です",
+"break_chip": "前回から{n}週間空いています。{w}から再開しましょう",
 "btn_apply": "適用",
 "btn_dismiss": "閉じる",
 "target_weight_label": "目標重量",
@@ -14315,6 +14324,7 @@ ko:{
 "whatsnew_item1": "처음 하는 운동은 관련된 가장 강한 운동 기록을 바탕으로 시작해요. 벤치 80kg라면 덤벨 프레스는 10kg가 아니라 한 손 약 25kg부터예요.",
 "whatsnew_item2": "이미 한 운동이 관련 운동보다 훨씬 가볍다면, 한 번에 '적용/닫기'를 고를 수 있는 제안이 떠요. 저절로 바뀌지는 않아요.",
 "whatsnew_item3": "프로필 체중은 항상 최신 체중 기록과 같아요. 설정에서 바꾸면 오늘 기록으로 저장돼요.",
+"whatsnew_item4": "4주 이상 쉬었던 운동은 가볍게 다시 시작하도록 제안해요. 목표 횟수를 바꾸면 무게도 맞춰져요. kg/lbs를 바꾸면 기록도 환산돼요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14470,6 +14480,7 @@ ko:{
 "swap_exercise_title": "운동 교체",
 "sync_watch_label": "Apple Watch로 운동 동기화",
 "sync_chip": "{src} 기록으로 보면 여기서는 약 {w}가 적당해요",
+"break_chip": "마지막으로 한 지 {n}주가 지났어요. {w}부터 다시 시작해 보세요",
 "btn_apply": "적용",
 "btn_dismiss": "닫기",
 "target_weight_label": "목표 무게",
@@ -14945,6 +14956,33 @@ function getSavedWeight(exName,isBW){
   const ws=last.sets.filter(s=>s.done&&s.t!=='w'&&(isBW?s.w!==0:s.w>0));
   return ws.length?Math.max(...ws.map(s=>s.w)):undefined;
 }
+// Last session's weight, re-targeted when the rep target has since changed
+// (Settings preference or a day-plan rep count): 60kg×10 → ~68.5kg×5, using the
+// same Epley rep↔1RM relation as e1rm() (reps capped at 15, beyond which the
+// formula overestimates). Pyramid, bodyweight and timed holds are left as-is.
+function carriedWeight(ex){
+  const isBW=ex.note==='bodyweight',saved=getSavedWeight(ex.name,isBW);
+  if(saved===undefined||isBW||ex.holdSecs||isPyramidEx(ex))return saved;
+  const last=lastSessionEx(ex.name),top=last&&(last.sets||[]).find(s=>s.done&&s.t!=='w'&&s.w===saved);
+  const r=ex.plannedR||getSavedReps(ex.name)||CFG.prefReps;
+  if(!top||!(top.r>0)||top.r===r)return saved;
+  const w=saved*(1+Math.min(top.r,15)/30)/(1+Math.min(r,15)/30);
+  return roundToGymWeight(ex,Math.round(w*2)/2,'nearest');
+}
+// Back after 4+ weeks off: Bosquet et al. 2013 (meta-analysis, 103 studies)
+// found maximal strength essentially unchanged up to ~4 weeks of cessation,
+// with losses growing after that. No primary source pins the size precisely,
+// so this is a conservative easing (−10% for 4–8 weeks, −15% beyond) offered as
+// an Apply/Dismiss chip — the old weight stays unless the user taps Apply.
+function breakSuggest(ex,curW){
+  if(ex.note==='bodyweight'||ex.holdSecs||!(curW>0))return null;
+  const hist=exHistory(ex.name);if(!hist.length)return null;
+  const dk=ST.history[hist[hist.length-1].idx].dk;if(!dk)return null;
+  const weeks=Math.floor((dkDay(dkey(new Date()))-dkDay(dk))/7);
+  if(weeks<4)return null;
+  const newW=roundToGymWeight(ex,Math.round(curW*(weeks>=8?.85:.9)*2)/2,'down');
+  return newW<curW?{newW,weeks}:null;
+}
 // ═══ RELATED-LIFT SYNC — see docs/superpowers/plans/2026-09-25-lift-sync.md ═══
 // Free-weight lifts grouped by movement pattern: [family, ratio of this lift's
 // e1RM to the family reference lift (ratio 1), 'b' bar | 'd' dumbbell (ratio
@@ -14996,17 +15034,26 @@ const LIFT_REL={
   'Triceps pushdown':['tri_ext',1.1,'c',1],'Cable rope tricep extension':['tri_ext',.9,'c',1],'Overhead cable tricep extension':['tri_ext',.9,'c',1],'Cable tricep kickback':['tri_ext',.25,'c',1],
   'Cable shrug':['shrug',.8,'c'],'Cable pull-through':['hinge',.25,'c'],
   // 'w' = upper-body bodyweight move, a source only. 5th field = share of body
-  // weight moved (push-up ≈64%, feet-elevated ≈70%, dips/pull-ups ≈95% since
-  // hands/forearms stay put, inverted row ≈60%); the set's w adds (+) or
+  // weight moved: push-up ≈64%, feet-elevated ≈70% (Ebben 2011, force plate);
+  // pull-ups/dips ≈90% (body minus the arms, ExRx segment data); inverted row
+  // 69–73% with the body parallel to the floor (TRX force-plate study, PMC10516423),
+  // .65 here since most setups are less horizontal. The set's w adds (+) or
   // assists (−), and 'assist weight' exercises log the assistance as positive.
   // Lower-body bodyweight moves are absent: the body is moved in the barbell
   // version too, so bodyweight squat reps say nothing about external load.
   'Push-ups':['press_h',1,'w',0,.64],'Wide-grip push-ups':['press_h',1,'w',0,.64],'Decline push-ups':['press_h',1,'w',0,.7],
   'Diamond push-ups':['press_h',.88,'w',0,.64],'Close-grip push-ups':['press_h',.88,'w',0,.64],
-  'Chest dips':['press_h',1.15,'w',0,.95],'Tricep dips':['press_h',1.1,'w',0,.95],'Machine-assisted dip':['press_h',1.15,'w',0,.95],
+  'Chest dips':['press_h',1.15,'w',0,.9],'Tricep dips':['press_h',1.1,'w',0,.9],'Machine-assisted dip':['press_h',1.15,'w',0,.9],
   'Pike push-ups':['press_v',1,'w',0,.7],
-  'Pull-ups':['row',1.05,'w',0,.95],'Chin-ups':['row',1.1,'w',0,.95],'Machine-assisted pull-up':['row',1.05,'w',0,.95],
-  'Inverted row':['row',.9,'w',0,.6],'Smith machine inverted row':['row',.9,'w',0,.6]
+  'Pull-ups':['row',1.05,'w',0,.9],'Chin-ups':['row',1.1,'w',0,.9],'Machine-assisted pull-up':['row',1.05,'w',0,.9],
+  'Inverted row':['row',.9,'w',0,.65],'Smith machine inverted row':['row',.9,'w',0,.65],
+  // 's' = Smith machine: one shared guided bar (same mwKey tare), so Smith↔Smith
+  // converts with high confidence. Cotterman 2005: Smith bench 1RM ≈ 0.95×free
+  // −6.8kg (≈.87–.89 at typical loads) → .88; Smith squat ≈ free for men
+  // (higher for women) → 1. Other Smith ratios assume the free-weight ratio.
+  'Smith machine bench press':['press_h',.88,'s'],'Smith machine incline press':['press_h',.7,'s'],'Smith machine squat':['squat',1,'s'],
+  'Smith machine shoulder press':['press_v',.9,'s'],'Smith machine Romanian deadlift':['hinge',.7,'s'],'Smith machine hip thrust':['thrust',1,'s'],
+  'Smith machine shrug':['shrug',1,'s'],'Smith machine standing calf raise':['calf',1,'s']
 };
 // Pattern-to-pattern norms (reference a ≈ k × reference b), used only when the
 // target's own pattern has no evidence at all: OHP ≈ 0.55–0.75 of bench, row ≈
@@ -15018,6 +15065,7 @@ const LIFT_CROSS=[['press_v','press_h',.65],['row','press_h',.85],['hinge','squa
 // pulls only, like any other cable number.
 const LIFT_SEED={chest:['press_h',.85],squat:['squat',.85],ohp:['press_v',.95],lat:['row',1,'c']};
 const RIR_OF={easy:5,good:3.5,hard:1.5};
+const LB_PER_KG=2.20462;
 // Current strength on one lift: best Epley e1RM over its last 3 sessions, reps
 // capped at 12 (the formulas overestimate beyond ~10), the last-set RIR rating
 // added to the final work set's reps, decayed 1%/week past 4 weeks (floor .85).
@@ -15060,7 +15108,7 @@ function liftEstimate(ex,reps){
       const r=LIFT_REL[n];if(n===ex.name||r[0]!==f||(r[2]==='c'&&eq!=='c'))return;
       const s=liftStrength(n);if(!s)return;
       const refE=s.e/r[1]*k;
-      const conf=(eq==='c'?(r[2]==='c'?.85:.75):r[2]==='w'?.85:r[2]===eq?.95:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
+      const conf=(eq==='c'?(r[2]==='c'?.85:.75):r[2]==='w'?.85:r[2]===eq?.95:(r[2]==='s'||eq==='s')?.85:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
       const e=refE*ratio*stabCurve(refE,r[2],eq)*conf;
       if(!best||e>best.e)best={e,src:n,cross};
     });
@@ -15108,6 +15156,15 @@ function syncSuggest(ex,curW,reps){
   return{newW,src:est.src};
 }
 function dismissSync(w){CFG.syncDismiss=CFG.syncDismiss||{};CFG.syncDismiss[ST.sd[ST.exi].ex.name]=w;saveCFG();dismissSuggest();}
+// Program defaults assume a ~75kg man / ~60kg woman. Strength scales with body
+// mass^b: b=0.67 in theory (geometric similarity), but measured across the
+// general lifting population b≈0.55 for men and ≈0.50 for women (Frontiers in
+// Physiology 2026, large-scale allometric powerlifting analysis). Clamped to
+// 0.75–1.25× so an outlier profile can't swing a default too far.
+function bwScale(){
+  const f=CFG.sex==='female',ref=(f?60:75)*(CFG.unit==='lbs'?LB_PER_KG:1),b=curBW();
+  return b>0?Math.min(1.25,Math.max(.75,Math.pow(b/ref,f?.5:.55))):1;
+}
 function getAIEstimatedWeight(ex){
   const rel=liftEstimate(ex,estReps(ex));
   if(rel)return snapEstimate(ex,rel.w);
@@ -15121,7 +15178,7 @@ function getAIEstimatedWeight(ex){
   else if((mg==='back'||mg==='rear_delts')&&lifts.lat&&lifts.lat.w>0){est=Math.round(lifts.lat.w*0.8*2)/2;}
   else if(mg==='shoulders'&&lifts.ohp&&lifts.ohp.w>0){est=Math.round(lifts.ohp.w*0.6*2)/2;}
   else if((mg==='quads'||mg==='hamstrings')&&lifts.squat&&lifts.squat.w>0){est=Math.round(lifts.squat.w*0.7*2)/2;}
-  else{est=Math.round(ex.baseW*expMult*2)/2||ex.baseW;}
+  else{est=Math.round(ex.baseW*expMult*bwScale()*2)/2||ex.baseW;}
   // Snap the estimate up to a weight the user can actually load (no-op if no
   // gym inventory is configured); never propose e.g. a 2.5 kg dumbbell he
   // doesn't own.
@@ -15624,7 +15681,7 @@ function removeMWSetting(name){delete ST.mw[name];saveData();renderMWSettings();
 // just re-labeled), so switching units without it left "My gym" showing the
 // old unit's chips — found by scripts/simulate.mjs toggling unit and My-gym
 // in the same run, which crashed on a plate id that no longer existed.
-function setSettingUnit(v){CFG.unit=v;['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;renderGymSettings();saveCFG();}
+function setSettingUnit(v){convertUnits(CFG.unit,v);gid('set-bw').value=curBW();['kg','lbs'].forEach(x=>gid('sunit-'+x).classList.toggle('on',x===v));gid('set-unit-lbl').textContent=v;renderGymSettings();saveCFG();}
 function setSettingReps(v){setRepsPreset('sreps',v);CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
 function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));saveCFG();}
 function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));saveCFG();}
@@ -15808,7 +15865,7 @@ function closeDayEdit(){
     const fullWithWU=addWarmupFlags(fullRaw);
     const newRemaining=fullWithWU.slice(kept.length).map(ex=>{
       const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
-      const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
+      const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?carriedWeight(ex):(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
       return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
     });
     ST.sd=kept.concat(newRemaining);
@@ -15828,7 +15885,7 @@ function plannedFor(ex){
   const isBW=ex.note==='bodyweight';
   const saved=getSavedWeight(ex.name,isBW);
   const fallback=isBW?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW);
-  const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:fallback);
+  const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?carriedWeight(ex):fallback);
   // Same precedence as buildSets(), or the day-edit screen shows a rep target
   // the workout is not going to use.
   const r=ex.plannedR||getSavedReps(ex.name)||CFG.prefReps;
@@ -15964,7 +16021,7 @@ function commitDayEdit(){
     const fullWithWU=addWarmupFlags(fullRaw);
     const newRemaining=fullWithWU.slice(kept.length).map(ex=>{
       const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
-      const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
+      const w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?carriedWeight(ex):(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
       return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
     });
     ST.sd=kept.concat(newRemaining);
@@ -16068,7 +16125,7 @@ function pickSwapPart(mg){
   saveInProgress();
 }
 function pickSwapEx(name){
-  if(ST.swapIdx===null)ST.editList.push(EXPOOL[name]);else ST.editList[ST.swapIdx]=EXPOOL[name];
+  if(ST.swapIdx===null)ST.editList.push(poolEx(name));else ST.editList[ST.swapIdx]=poolEx(name);
   DE_EXPANDED=null;
   ss('dayedit');renderDayEdit();
 }
@@ -16132,7 +16189,7 @@ function startDay(k,exList){
   const deload=!!CFG.deloadActive;
   ST.sd=exWithWU.map(ex=>{
     const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
-    let w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?saved:(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
+    let w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?carriedWeight(ex):(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):ex.baseW)));
     if(deload&&ex.note!=='bodyweight'&&w>0)w=Math.max(0,Math.round(w*0.7*2)/2);
     return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
   });
@@ -16149,6 +16206,33 @@ function startDay(k,exList){
   if(ST.mwQueue.length){processMWQueue();}else{renderEx();ss('wo');saveInProgress();}
 }
 const PLATES={kg:[25,20,15,10,5,2.5,1.25],lbs:[45,35,25,10,5,2.5]};
+// Every stored weight is a plain number in CFG.unit, so switching units must
+// convert all of them — it used to only relabel, turning an 80kg bench into
+// "80 lbs". Logged weights keep 0.1 precision (an honest record); owned plates
+// and dumbbells map to the nearest real size in the new unit; PRs and badges
+// are re-derived rather than converted.
+function nearestIn(list,v){return list.reduce((b,d)=>Math.abs(d-v)<Math.abs(b-v)?d:b,list[0]);}
+function convertUnits(from,to){
+  if(!from||from===to||!PLATES[to])return;
+  const f=to==='lbs'?LB_PER_KG:1/LB_PER_KG;
+  const cv=w=>typeof w==='number'&&w?Math.round(w*f*10)/10:w;
+  const cvSets=sets=>(sets||[]).forEach(st=>{st.w=cv(st.w);});
+  const cvExs=exs=>(exs||[]).forEach(e=>{cvSets(e.sets);if(e.plannedW!==undefined)e.plannedW=cv(e.plannedW);});
+  ST.history.forEach(h=>cvExs(h.exercises));
+  (ST.bw||[]).forEach(e=>{e.w=cv(e.w);});
+  Object.keys(ST.mw||{}).forEach(k=>{ST.mw[k]=cv(ST.mw[k]);});
+  CFG.bw=cv(CFG.bw);
+  Object.values(CFG.keyLifts||{}).forEach(l=>{if(l)l.w=cv(l.w);});
+  Object.values(CFG.dayPlan||{}).forEach(p=>Object.values(p||{}).forEach(x=>{if(x&&x.w!==undefined)x.w=cv(x.w);}));
+  (CFG.customExercises||[]).forEach(ex=>{ex.baseW=cv(ex.baseW);});
+  Object.keys(CFG.syncDismiss||{}).forEach(k=>{CFG.syncDismiss[k]=cv(CFG.syncDismiss[k]);});
+  if(CFG.dumbbellMax)CFG.dumbbellMax=cv(CFG.dumbbellMax);
+  const pl={};Object.keys(CFG.gymPlates||{}).forEach(d=>{if(CFG.gymPlates[d]>0)pl[nearestIn(PLATES[to],d*f)]=1;});CFG.gymPlates=pl;
+  CFG.gymDumbbells=[...new Set((CFG.gymDumbbells||[]).map(d=>nearestIn(DUMBBELLS[to],d*f)))].sort((a,b)=>a-b);
+  if(ST.day){(ST.sd||[]).forEach(it=>{cvSets(it.sets);if(it.ex&&it.ex.plannedW!==undefined)it.ex.plannedW=cv(it.ex.plannedW);});if(ST.pendingRec)cvExs(ST.pendingRec.exercises);}
+  if(ST.editDay)(ST.editList||[]).forEach(e=>{if(e.plannedW!==undefined)e.plannedW=cv(e.plannedW);});
+  CFG.unit=to;recomputePRs();recomputeBadges();saveData();saveCFG();if(ST.day||ST.editDay)saveInProgress();
+}
 // Standard commercial-gym dumbbell rack denominations. Real racks aren't a
 // uniform step (1kg jumps below 10kg, 2.5kg jumps above is a common shape),
 // so this is presented as a flat tap-what-you-have list, same as plates,
@@ -16268,7 +16352,7 @@ function saveMW(skip){
   if(ST.mwCurrent){ST.mwCurrent=mwKey(ST.mwCurrent);ST.mw[ST.mwCurrent]=val;saveData();
     // Rebuilding the sets must not throw away a weight the user planned on the
     // day-edit screen — same precedence startDay() uses.
-    ST.sd.forEach((it,idx)=>{if(mwKey(it.ex.name)!==ST.mwCurrent)return;const ex=it.ex;const baseW=ex.plannedW!==undefined?ex.plannedW:(getSavedWeight(ex.name)||getAIEstimatedWeight(ex));ST.sd[idx].sets=buildSets(ex,baseW);});
+    ST.sd.forEach((it,idx)=>{if(mwKey(it.ex.name)!==ST.mwCurrent)return;const ex=it.ex;const baseW=ex.plannedW!==undefined?ex.plannedW:(carriedWeight(ex)||getAIEstimatedWeight(ex));ST.sd[idx].sets=buildSets(ex,baseW);});
   }
   processMWQueue();
 }
@@ -16342,7 +16426,8 @@ function renderEx(){
   const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\','+(ex.custom?1:0)+')">';
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
-    const fw=sets.find(s=>s.t!=='w');const sync=fw?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!sync?suggestWeight(ex,fw.w):null;
+    const fw=sets.find(s=>s.t!=='w');const brk=fw?breakSuggest(ex,fw.w):null;const sync=fw&&!brk?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!brk&&!sync?suggestWeight(ex,fw.w):null;
+    if(brk){const bd=ex.machine&&mwBase>0?(+(brk.newW-mwBase).toFixed(1)):brk.newW;sugHtml='<div class="sug-chip"><span>⏸️ '+t('break_chip').replace('{n}',brk.weeks).replace('{w}','<strong>'+bd+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+brk.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
     if(sync)sugHtml='<div class="sug-chip"><span>🔗 '+t('sync_chip').replace('{src}',esc(exDisplayName(sync.src))).replace('{w}','<strong>'+sync.newW+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+sync.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSync('+sync.newW+')">'+t('btn_dismiss')+'</button></div>';
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb={easy:'you had 5+ reps left',good:'you had 3–4 reps left',max:'you hit failure'}[sug.feel]||'time to adjust';
       sugHtml='<div class="sug-chip"><span>💡 Last time '+verb+' — try <strong>'+disp+CFG.unit+'</strong> ('+(sug.delta>0?'+':'')+sug.delta+')</span><button class="db ok" onclick="applySuggest('+sug.newW+')">Apply</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">Dismiss</button></div>';}

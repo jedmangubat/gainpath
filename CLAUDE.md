@@ -279,7 +279,14 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   and only via the Apply/Dismiss sync chip (`syncSuggest()`). An exercise's
   own history always sets its next weight. Body weight: read it with
   `curBW()`, never `CFG.bw` directly, and end every `ST.bw` write with
-  `syncBW()` (or use `setWeighIn()`).
+  `syncBW()` (or use `setWeighIn()`). **Any new stored weight field must be
+  added to `convertUnits()`**, or a kg↔lbs switch silently relabels it. Next
+  session's weight goes through `carriedWeight()` (rep re-targeting), never
+  raw `getSavedWeight()`. Days built from pool names use `poolEx()` for
+  sex-appropriate defaults. Every ratio/threshold in this model is graded
+  (study / norm / heuristic) in `docs/superpowers/plans/2026-09-25-lift-sync.md`;
+  keep that table current when a number changes, and keep heuristics
+  conservative.
 - **Reuse the analytics helpers** rather than recomputing inline:
   `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past

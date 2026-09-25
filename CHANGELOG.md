@@ -63,8 +63,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   push-ups (plus the machine-assisted pull-up and dip) are now sources.
   - The load is the share of body weight moved, plus added weight or minus
     assistance, using the weigh-in from that session's date (`bwAt()`).
-  - Shares: push-up ≈64% (≈70% feet-elevated), dips/pull-ups ≈95%, inverted
-    row ≈60%, pike push-up ≈70%.
+  - Shares: push-up ≈64% (≈70% feet-elevated; Ebben 2011), dips/pull-ups
+    ≈90% (body minus the arms), inverted row ≈65% (69–73% measured with the
+    body parallel to the floor, discounted for less-horizontal setups),
+    pike push-up ≈70%.
   - Confidence is ×0.85.
 
   So 20 push-ups suggest a heavier first dumbbell press for a 90 kg lifter
@@ -82,6 +84,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   remembered per exercise in `CFG.syncDismiss` and resurface only if the
   estimate rises 10%+.
 
+- **Smith machine lifts join the related-lift model.** Every Smith exercise
+  uses one guided bar, so Smith↔Smith converts at high confidence (×0.95)
+  and Smith↔free weight at ×0.85. Cotterman 2005 gives Smith bench 1RM ≈
+  0.95 × free − 6.76 kg, so the ratio is 0.88. Smith squat ≈ free weight.
+- **Ease-back-in chip after 4+ weeks off an exercise** (`breakSuggest()`):
+  −10% for 4–8 weeks, −15% beyond, snapped down, Apply/Dismiss only. It takes
+  precedence over the sync and effort chips. The 4-week threshold is from
+  Bosquet 2013 (meta-analysis: maximal strength essentially unchanged for
+  ~4 weeks of cessation). The size is a conservative heuristic, since no
+  primary source pins it.
+- **Changing the rep target re-targets the carried weight**
+  (`carriedWeight()`). Last session's weight used to carry over unchanged
+  when the Settings rep preference or a day-plan rep count changed, so 60 kg
+  × 10 stayed 60 kg for sets of 5. It's now converted through the same Epley
+  relation as `e1rm()` (reps capped at 15), so 60 kg × 10 becomes ~68.5 kg × 5.
+  Pyramid, bodyweight and timed holds are untouched.
+- **Default weights scale with body weight** when no related lift is logged
+  (`bwScale()`): body mass^0.55 for men and ^0.50 for women relative to a
+  75/60 kg reference, clamped 0.75–1.25×. The exponents are measured
+  general-population allometric values, not the theoretical 0.67. Until now
+  the README said starting weights used "your body stats", but the fallback
+  never read body weight.
+
 ### Changed
 - **Weight suggestions now sit above the sets, not below Add Set.** Both the
   related-lift sync chip and the last-set effort (RIR) chip used to render at
@@ -89,6 +114,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   logged at the old weight. They now appear directly above set 1.
 
 ### Fixed
+- **Switching kg ↔ lbs only relabelled every stored number**, so an 80 kg
+  bench became "80 lbs". `convertUnits()` now converts all of them: history,
+  weigh-ins, profile, machine base weights, onboarding baseline, day plans,
+  custom exercises, sync dismissals and an in-progress workout. Logged
+  weights keep 0.1 precision. Owned plates and dumbbells map to the nearest
+  real size in the new unit. PRs and badges are re-derived. The Settings
+  body-weight field refreshes too, so leaving Settings can't log the old
+  number as a weigh-in.
+- **Women got men's default weights on swapped-in and custom-day
+  exercises.** The shared pool keeps each exercise's first definition (the
+  men's program). `poolEx()` now uses the women's program default when one
+  exists.
 - **Profile body weight was frozen at the onboarding value.** Weigh-ins never
   updated it, and editing it in Settings never logged a weigh-in. Body weight
   now has one source, the latest weigh-in by date (`curBW()`). Logging,
