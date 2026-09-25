@@ -268,9 +268,11 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   converts the strongest related free-weight lift through `LIFT_REL` (movement
   family + ratio + bar/dumbbell + isolation) in e1RM space. Only lifts outside
   `LIFT_REL` (machines, cables) fall through to the old baseW/keyLifts logic.
-  **A new free-weight exercise needs a `LIFT_REL` entry**, or it silently
-  falls back to baseW. Never add machines or cables to it, because their
-  loads don't transfer between gyms. Related lifts may only *raise* a lift,
+  **A new free-weight or cable exercise needs a `LIFT_REL` entry**, or it
+  silently falls back to baseW. Cables (`'c'`) are one-way on purpose: they
+  can be estimated from free weights and other cables, never the reverse, and
+  they never get a sync chip. Don't add plate-loaded machines, because their
+  leverage and sled tare don't transfer between gyms. Related lifts may only *raise* a lift,
   and only via the Apply/Dismiss sync chip (`syncSuggest()`). An exercise's
   own history always sets its next weight. Body weight: read it with
   `curBW()`, never `CFG.bw` directly, and end every `ST.bw` write with

@@ -49,10 +49,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Converted back at the planned reps with 3 reps in reserve, then snapped to
     owned gear.
 
-  The onboarding baseline is a seed that logged lifts supersede. Machines,
-  cables and bodyweight moves are deliberately excluded, since their loads are
-  gym-specific. They keep the old estimate, and the per-muscle-group baseline
-  mapping now applies only to them. Design notes:
+  The onboarding baseline is a seed that logged lifts supersede. **Cable
+  lifts** are included as a lower-confidence ballpark (×0.85 from another
+  cable, ×0.75 from a free weight), because stack numbers vary by station.
+  The direction is one-way: a cable number never feeds a free-weight estimate
+  (with strongest-wins selection, a heavy-numbered stack would otherwise
+  inflate it), and cable lifts never get a sync chip. The onboarding lat
+  pulldown now seeds cable pulls only, not dumbbell rows. Plate-loaded
+  machines and bodyweight moves stay excluded and keep the old estimate; the
+  per-muscle-group baseline mapping now applies only to them. Design notes:
   `docs/superpowers/plans/2026-09-25-lift-sync.md`.
 - **Sync chip for lifts logged far below their relatives** (`syncSuggest()`).
   It appears when a lift's own e1RM is under 75% of what related lifts imply.

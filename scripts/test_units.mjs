@@ -775,6 +775,27 @@ async function main() {
     check('lift sync: logged lifts supersede the onboarding baseline', getAIEstimatedWeight(dbPress) < seedEst, true);
     CFG.keyLifts = {};
 
+    // Cables: estimated from free weights and other cables (lower
+    // confidence, stacks differ between stations), but a cable number never
+    // feeds a free-weight estimate, and cable lifts never get a sync chip.
+    const cableCurl = EXPOOL['Cable bicep curl'], cableRow = EXPOOL['Seated cable row'], dbRow = EXPOOL['Single-arm dumbbell row'];
+    ST.history = [];
+    const cableCurlFallback = getAIEstimatedWeight(cableCurl), dbRowFallback = getAIEstimatedWeight(dbRow);
+    ST.history = [sess(lift('Barbell curl', 40, 8, 'hard'))];
+    const cc = getAIEstimatedWeight(cableCurl);
+    check('cable sync: 40kg×8 barbell curl → first cable curl estimated from it (20–35kg)', cc >= 20 && cc <= 35 && liftEstimate(cableCurl, 10).src === 'Barbell curl', true);
+    ST.history = [sess(lift('Lat pulldown', 60, 10, 'good'))];
+    check('cable sync: lat pulldown estimates a first seated cable row', liftEstimate(cableRow, 10) && liftEstimate(cableRow, 10).src, 'Lat pulldown');
+    check('cable sync: a cable number never feeds a free-weight estimate', getAIEstimatedWeight(dbRow), dbRowFallback);
+    ST.history = [];
+    CFG.keyLifts = { lat: { w: 60, r: 8 } };
+    check('cable sync: onboarding lat pulldown seeds cable pulls only',
+      [getAIEstimatedWeight(cableRow) >= 40, getAIEstimatedWeight(dbRow)], [true, dbRowFallback]);
+    CFG.keyLifts = {};
+    ST.history = [sess(lift('Barbell curl', 60, 8, 'hard')), sess(lift('Cable bicep curl', 10, 10, 'good'))];
+    check('cable sync: cable lifts never get a sync chip (ballpark only)', syncSuggest(cableCurl, 10, 10), null);
+    check('cable sync: fallback still used with no related data', cableCurlFallback > 0, true);
+
     // ── Body weight: one source of truth — the latest weigh-in by date.
     ST.bw = []; CFG.bw = 75;
     check('curBW: no weigh-ins → profile value', curBW(), 75);
