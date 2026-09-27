@@ -69,6 +69,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   reset; a partially migrated state; and a forced verification failure.
 
 ### Fixed
+- **Installed-app colours now match the dark theme.** `manifest.json`
+  `theme_color`/`background_color` were still the pre-v2.0 light `#EDEBE3`, so
+  on Android the splash screen and title bar flashed light cream before the dark
+  app appeared. Both are now `#0C1512`, matching `<meta name="theme-color">`.
+  Found while writing `RELEASING.md` and logged there as a known issue.
 - Export wrote `gp_last_export` before the download without a `try`, so when
   storage was full the one rescue path threw before saving anything.
 - Restore accepted any JSON object as a backup (e.g. a random config file). A
@@ -78,6 +83,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   restored history, as everywhere else.
 
 ### Changed
+- `eslint.config.js` renamed to `eslint.config.mjs`. It uses ES module syntax,
+  so Node printed a `MODULE_TYPELESS_PACKAGE_JSON` warning on every lint run.
+  Dev tooling only.
 - Tutorial screenshots regenerated with `npm run capture:tutorial`, because the
   Reports & backup screen gained a section. Every spotlight was re-measured,
   and only step 1's box moved (0.2 points).
@@ -164,12 +172,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `CLAUDE.md` documents `fb_post.py` and the token-handling rules, and records
   the v2.6.5 convention that mid-workout edits are session-only (that note was
   written during v2.6.5 but never committed).
-
-### Known issues
-- `manifest.json` `theme_color`/`background_color` are still the pre-v2.0
-  light `#EDEBE3`, not the dark Kinetic `#0C1512`. On Android that means a
-  light splash screen and title bar. Found while writing `RELEASING.md` and
-  not changed yet.
 
 ## [2.8.0] - 2026-09-25
 

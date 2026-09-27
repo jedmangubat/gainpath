@@ -25,7 +25,7 @@ async function main() {
   const scriptStartLine = html.slice(0, match.index).split('\n').length;
   const source = match[1];
 
-  const eslint = new ESLint({ overrideConfigFile: path.join(ROOT, 'eslint.config.js') });
+  const eslint = new ESLint({ overrideConfigFile: path.join(ROOT, 'eslint.config.mjs') });
   const results = await eslint.lintText(source, { filePath: 'index.html.inline.js' });
 
   let errorCount = 0, warningCount = 0;

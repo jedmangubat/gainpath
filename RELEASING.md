@@ -45,8 +45,7 @@ startup or storage can't be rolled back for them.
       anywhere.
 - [ ] Icons referenced there still exist, and `theme_color`/`background_color`
       still match the dark Kinetic palette
-      (`#0C1512`). As of v2.8.0 they are still the old light `#EDEBE3`; see
-      CHANGELOG `[Unreleased]`.
+      (`#0C1512`, same as `<meta name="theme-color">` in `index.html`).
 
 ## 5. Docs
 

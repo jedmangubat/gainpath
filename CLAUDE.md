@@ -391,7 +391,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   `scripts/.visual-check/` (gitignored). Use this after any UI change instead of
   ad hoc one-off browser scripts.
 - **`npm run lint`** — extracts the inline `<script>` block from `index.html`
-  and runs ESLint (`eslint.config.js`) against it, mapping line numbers back to
+  and runs ESLint (`eslint.config.mjs`) against it, mapping line numbers back to
   `index.html`. Scoped to bug-catching rules only (`no-undef`, `no-unused-vars`,
   etc.) — deliberately no stylistic/formatting rules, since the inline script's
   dense, semicolon-chained style is intentional and Prettier would rewrite the
