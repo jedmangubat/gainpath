@@ -6,6 +6,7 @@
     "visual-check": "node scripts/visual_check.mjs",
     "lint": "node scripts/lint_html.mjs",
     "test:units": "node scripts/test_units.mjs",
+    "precheck": "node scripts/precheck.mjs",
     "capture:tutorial": "node scripts/capture_tutorial.mjs",
     "simulate": "node scripts/simulate.mjs",
     "chaos": "node scripts/chaos.mjs",

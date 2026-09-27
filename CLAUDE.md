@@ -66,6 +66,10 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   (or similar) and wait for a yes before running `git push origin main`.
   Never push proactively/silently, and a prior approval doesn't carry over to
   a later commit — confirm each time.
+- **Every version bump follows `RELEASING.md`** (version string locations,
+  `CACHE_NAME`, manifest, docs, then `npm run precheck` must pass before
+  committing). `precheck` runs lint → test:units → visual-check and stops at
+  the first failure.
 - **Version bumps must be tagged and released, not just pushed.** When a commit
   bumps the version (the `(vX.Y.Z)` in its message + the new `CHANGELOG.md`
   entry), then once the user approves that push, also create and push the
@@ -336,6 +340,10 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
 
 ## Dev tooling (optional, dev-only — `npm install` once to use)
 
+- **`npm run precheck`** (`scripts/precheck.mjs`) — the pre-release gate:
+  `lint` → `test:units` → `visual-check` in sequence, stops at the first
+  failing step with a banner naming it, exits non-zero. Lint *warnings* don't
+  fail it (only errors do, same as `npm run lint`).
 - **`npm run visual-check`** — starts a static server, loads `index.html` in
   headless Chromium (Playwright), screenshots the onboarding and home screens,
   and fails if anything throws a console/page error. Screenshots land in

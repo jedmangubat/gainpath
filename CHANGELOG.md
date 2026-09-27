@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **`RELEASING.md` and `npm run precheck` (2026-09-28): a written release
+  checklist and a single pre-release gate.** Release steps used to live only
+  as scattered rules in `CLAUDE.md`, which is how the What's New sheet re-fired
+  in v2.0.2 and GitHub releases fell behind at v1.1.1 while `main` was at
+  v1.2.6. `RELEASING.md` puts the steps in order: release type, every version
+  string location, `sw.js` cache bump, manifest check, docs, checks, then
+  commit, push approval, tag and release. `npm run precheck`
+  (`scripts/precheck.mjs`) runs `lint` → `test:units` → `visual-check` in
+  sequence, stops at the first failure with a banner naming the step, and exits
+  non-zero. Dev tooling only: nothing the app ships changed, so there is no
+  version bump and no `CACHE_NAME` change.
+
 - **`scripts/fb_post.py` (2026-09-22) — dev tooling for posting to the GainPath
   Fitness Facebook Page.** Subcommands `check`, `post`, `get` and `delete`,
   pinned to Graph API v26.0, supporting text, link and photo posts and
@@ -25,6 +37,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `CLAUDE.md` documents `fb_post.py` and the token-handling rules, and records
   the v2.6.5 convention that mid-workout edits are session-only (that note was
   written during v2.6.5 but never committed).
+
+### Known issues
+- `manifest.json` `theme_color`/`background_color` are still the pre-v2.0
+  light `#EDEBE3`, not the dark Kinetic `#0C1512`. On Android that means a
+  light splash screen and title bar. Found while writing `RELEASING.md` and
+  not changed yet.
 
 ## [2.8.0] - 2026-09-25
 
