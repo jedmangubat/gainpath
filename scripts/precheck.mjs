@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Pre-release gate: runs lint, test:units and visual-check in sequence and
+// Pre-release gate: runs lint, test:units, test:data and visual-check in sequence and
 // stops at the first failure with a banner naming the step. Exits non-zero on
 // any failure so it can't be skimmed past. See RELEASING.md.
 //
@@ -7,7 +7,7 @@
 
 import { spawnSync } from 'child_process';
 
-const STEPS = ['lint', 'test:units', 'visual-check'];
+const STEPS = ['lint', 'test:units', 'test:data', 'visual-check'];
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 for (const [i, step] of STEPS.entries()) {

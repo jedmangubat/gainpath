@@ -66,8 +66,8 @@ startup or storage can't be rolled back for them.
 
 ## 6. Checks
 
-- [ ] `npm run precheck` passes. It runs lint → test:units → visual-check and
-      stops loudly at the first failure.
+- [ ] `npm run precheck` passes. It runs lint → test:units → test:data →
+      visual-check and stops loudly at the first failure.
 - [ ] Changed storage, Settings, or day editing? Also run `npm run simulate`.
 - [ ] Changed a screen, sheet, or touch target? Also run `npm run chaos`.
 - [ ] Changed the workout set row? Check visual-check's overflow results

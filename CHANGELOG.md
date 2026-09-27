@@ -6,6 +6,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-09-28
+
+### Added
+- **Save failures are visible.** `saveData()`, `saveCFG()` and `saveInProgress()`
+  used to swallow every error (`catch(e){}`), so full or blocked storage lost
+  workouts without a word. Any failure now raises a fixed alert on every screen
+  ("Couldn't save…") with a **Back up** button. The backup is built from
+  memory, so it still works while saving fails. The alert clears on the next
+  successful save.
+- **iPhone "not installed" warning.** On iPhone/iPad outside an installed Home
+  Screen app, Train shows a red warning: iPhone erases a site's script-written
+  data after 7 days without a visit. It gives install steps and, when there is
+  data, a Back up button plus how to restore inside the installed app, because
+  Safari data isn't guaranteed to carry over. Dismissing it ("Later") brings it
+  back after 30 days, since the risk doesn't go away. It replaces the softer
+  install tip on iOS; other platforms keep that tip.
+- **Settings → Reports & backup → Data safety.** Shows the days since the last
+  backup, whether this browser protects the data (`navigator.storage.persist()`,
+  now requested at startup) or, on a non-installed iPhone, the 7-day risk. Also
+  a reminder interval of 3/7/14/30 days (`CFG.backupEveryDays`, default 7, which
+  was the old fixed value).
+- **Backups go where the user chooses.** On phones, Export uses the share sheet
+  (iOS: Save to Files / iCloud Drive). Elsewhere it downloads. Files are now
+  dated (`gainpath-backup-YYYY-MM-DD.json`). A cancelled share isn't counted as
+  a backup. A browser can't write a file on a timer without a tap, so
+  "scheduled" means the reminder at your chosen interval plus a one-tap save.
+- **Safer restore with undo.** Restoring over existing sessions asks first and
+  keeps the replaced data (`gp_pre_restore`). If that copy can't be stored, the
+  restore stops and asks for an export first. **Undo last restore** in Reports &
+  backup brings it back.
+- `npm run test:data` (`scripts/test_data_safety.mjs`, 26 checks) runs as part of
+  `npm run precheck`. It drives the real UI with real files:
+  - a 400-session lbs user exported, then restored on a fresh device through
+    onboarding, record-by-record identical;
+  - restore-over-data cancel, restore and undo;
+  - a non-backup file rejected;
+  - a forced `QuotaExceededError` showing the alert, rescuing an unsaved weigh-in
+    through Back up, and clearing;
+  - the reminder interval;
+  - the iPhone warning and its 30-day return, in WebKit with an iPhone user
+    agent.
+
+### Fixed
+- Export wrote `gp_last_export` before the download without a `try`, so when
+  storage was full the one rescue path threw before saving anything.
+- Restore accepted any JSON object as a backup (e.g. a random config file). A
+  file with neither settings nor history is now rejected before anything is
+  replaced.
+- Restore trusted the file's cached PRs. PRs and badges are now rebuilt from the
+  restored history, as everywhere else.
+
+### Changed
+- Tutorial screenshots regenerated with `npm run capture:tutorial`, because the
+  Reports & backup screen gained a section. Every spotlight was re-measured,
+  and only step 1's box moved (0.2 points).
+- `sw.js` `CACHE_NAME` → `gainpath-v44`.
+
 ## [2.8.1] - 2026-09-28
 
 ### Fixed

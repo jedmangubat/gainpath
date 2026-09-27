@@ -32,7 +32,7 @@
    Light = fog & contour lines, dark = summit night. Fraunces serif display
    type for headers/numerals, topographic contour motif, moss+amber accent
    (unchanged from the logo-matched palette), PRs marked as trail flags. */
-:root{
+:root{--alert-bg:#2B1813;--alert-bdr:#9A4A33;--alert-txt:#FFD0C2;
   --paper:#ECEEE4;--contour:#CDD0C0;
   --bg:#FFFFFF;--bg2:#F4F6EC;--bg3:#E7EADB;
   --txt:#131A16;--txt2:#4F5E57;--txt3:#7D8C83;
@@ -73,6 +73,7 @@ html[data-theme="dark"]{
   --tint-amber-1:#1D3326;--tint-amber-2:#2A4A3B;--tint-amber-text:#C6F24E;
   --tint-forge-1:#1D3326;--tint-forge-2:#2A4A3B;
   --tint-gold-1:#1D3326;--tint-gold-2:#2A4A3B;
+  --alert-bg:#2B1813;--alert-bdr:#9A4A33;--alert-txt:#FFD0C2;
   --topo-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='140'%3E%3Cpath d='M-10 24 Q45 4 110 24 T230 24' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3Cpath d='M-10 74 Q45 54 110 74 T230 74' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3Cpath d='M-10 118 Q45 98 110 118 T230 118' stroke='%2322332A' stroke-width='1' fill='none' opacity='.55'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent}
@@ -238,6 +239,8 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .ail{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:13px}
 .da span{animation:bl 1.2s infinite}.da span:nth-child(2){animation-delay:.2s}.da span:nth-child(3){animation-delay:.4s}
 @keyframes bl{0%,80%,100%{opacity:0}40%{opacity:1}}
+.save-alert{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:9999;display:none;align-items:center;gap:10px;background:var(--alert-bg);border:1px solid var(--alert-bdr);color:var(--alert-txt);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.45;max-width:520px;margin:0 auto}
+.prt.prt-alert{background:var(--alert-bg);border:1px solid var(--alert-bdr);color:var(--alert-txt);display:block}
 .prt{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);font-weight:500;margin-bottom:10px;animation:si .3s ease}
 @keyframes si{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .feel-btn{width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:var(--radius);background:var(--bg);font-size:15px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:all .15s;box-shadow:var(--shadow-sm)}
@@ -293,6 +296,7 @@ textarea{resize:vertical;min-height:100px}
 </style>
 </head>
 <body>
+<div id="save-alert" class="save-alert" role="alert"></div>
 <div class="app">
 
 <!-- ONBOARDING -->
@@ -958,6 +962,13 @@ textarea{resize:vertical;min-height:100px}
       </div>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
       <button class="bs" style="width:100%;font-size:13px;margin-top:8px" onclick="exportCSV()"><i class="ti ti-table" aria-hidden="true"></i> <span data-i18n="btn_export_csv">Export CSV (all sets)</span></button>
+      <button class="bs" id="undo-restore-btn" style="width:100%;font-size:13px;margin-top:8px;display:none" onclick="undoRestore()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> <span data-i18n="btn_undo_restore">Undo last restore</span></button>
+    </div>
+    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
+      <h2 data-i18n="data_safety_title">Data safety</h2>
+      <div id="bk-status" style="font-size:13px;color:var(--txt2);line-height:1.55;margin-bottom:12px"></div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="backup_remind_label">Remind me to back up every (days)</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"><button class="opt-btn" id="bkd-3" onclick="setBackupEvery(3)">3</button><button class="opt-btn" id="bkd-7" onclick="setBackupEvery(7)">7</button><button class="opt-btn" id="bkd-14" onclick="setBackupEvery(14)">14</button><button class="opt-btn" id="bkd-30" onclick="setBackupEvery(30)">30</button></div>
     </div>
     <div id="ex-st" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
 </div>
@@ -974,11 +985,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="39.9" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="39.7" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
-        <rect x="2.6" y="39.9" width="94.9" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="39.7" width="94.9" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:50.9%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:50.7%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
     </div>
   </div>
 
@@ -1375,7 +1386,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.8.1';
+const APP_VERSION='2.9.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -1402,7 +1413,7 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.8.0';
+const WHATS_NEW_VERSION='2.9.0';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
@@ -13288,6 +13299,16 @@ en:{
 "aria_close_instructions": "Close instructions",
 "arms_label": "Arms (cm)",
 "backup_restore_sub": "Keep your data safe or move to another device",
+"data_safety_title": "Data safety",
+"backup_remind_label": "Remind me to back up every (days)",
+"btn_undo_restore": "Undo last restore",
+"bk_never": "Never backed up from this device.",
+"bk_ago": "Last backup: {n} day(s) ago.",
+"bk_today": "Last backup: today.",
+"bk_ios_risk": "Not protected: iPhone deletes this site's saved data if you don't open it for 7 days. Install GainPath to your Home Screen to stop this.",
+"bk_persisted": "Protected: this browser won't clear your data to free up space.",
+"bk_not_persisted": "This browser may clear saved data if the device runs very low on space — keep backups.",
+"bk_failed": "Saving is failing on this device right now. Back up immediately.",
 "backup_restore_title": "Backup & restore",
 "bar_frame_weight_label": "Bar / frame weight (<span id=\"plate-unit\">kg</span>)",
 "bodyweight_title": "Body weight",
@@ -13503,10 +13524,10 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Trying a lift for the first time? It now starts from your strongest related lift. Bench 80kg, and your first dumbbell press starts around 25kg per hand, not 10.",
-"whatsnew_item2": "If a lift you've already done looks far lighter than your related lifts, you'll get a one-tap Apply/Dismiss suggestion. Nothing changes on its own.",
-"whatsnew_item3": "Your profile body weight now always matches your latest weigh-in, and editing it in Settings logs today's weigh-in.",
-"whatsnew_item4": "Back after 4+ weeks off an exercise? It suggests easing back in lighter. Change your rep target and the weight adjusts to match. Switching kg/lbs now converts your data.",
+"whatsnew_item1": "If saving ever fails, an alert now shows on every screen with a one-tap Back up that still works. Before, a failed save lost the workout silently.",
+"whatsnew_item2": "Using GainPath in Safari without installing it? iPhone erases a site's data after 7 days unvisited. You'll now see a clear warning and install steps.",
+"whatsnew_item3": "Back up to Files or iCloud Drive from the share sheet, and choose how often to be reminded (3, 7, 14 or 30 days).",
+"whatsnew_item4": "Restoring over existing data now asks first, keeps a copy, and can be undone from Reports & backup.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13697,6 +13718,16 @@ ja:{
 "aria_close_instructions": "説明を閉じる",
 "arms_label": "腕囲 (cm)",
 "backup_restore_sub": "データを安全に保つ、または別の端末に移行",
+"data_safety_title": "データの安全",
+"backup_remind_label": "バックアップのリマインド間隔(日)",
+"btn_undo_restore": "直前の復元を取り消す",
+"bk_never": "この端末ではまだバックアップしていません。",
+"bk_ago": "最後のバックアップ:{n}日前。",
+"bk_today": "最後のバックアップ:今日。",
+"bk_ios_risk": "保護されていません:iPhoneは7日間開かれなかったサイトの保存データを削除します。ホーム画面に追加すると防げます。",
+"bk_persisted": "保護されています:空き容量確保のためにデータが消されることはありません。",
+"bk_not_persisted": "端末の空き容量が極端に少なくなると、ブラウザが保存データを消すことがあります。バックアップを続けてください。",
+"bk_failed": "現在この端末では保存に失敗しています。すぐにバックアップしてください。",
 "backup_restore_title": "バックアップと復元",
 "bar_frame_weight_label": "バー/フレーム重量 (<span id=\"plate-unit\">kg</span>)",
 "bodyweight_title": "体重",
@@ -13911,10 +13942,10 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "初めての種目は、関連する一番強い種目の記録から重量を提案します。ベンチ80kgなら、ダンベルプレスは10kgではなく片手約25kgから。",
-"whatsnew_item2": "すでに行った種目が関連種目より極端に軽い場合、ワンタップで「適用／閉じる」を選べる提案を表示します。自動では変わりません。",
-"whatsnew_item3": "プロフィールの体重は常に最新の体重記録と一致します。設定で変更すると今日の記録として保存されます。",
-"whatsnew_item4": "4週間以上空いた種目は軽めからの再開を提案。目標回数を変えると重量も調整されます。kg/lbsの切り替えで記録も換算されるようになりました。",
+"whatsnew_item1": "保存に失敗すると、すべての画面に警告が表示され、保存できない状態でもワンタップでバックアップできます。以前は失敗しても何も表示されずワークアウトが失われていました。",
+"whatsnew_item2": "SafariでGainPathを使っていてホーム画面に追加していない場合、iPhoneは7日間開かれなかったサイトのデータを削除します。その警告と追加手順を表示するようになりました。",
+"whatsnew_item3": "共有シートから「ファイル」やiCloud Driveにバックアップでき、リマインドの間隔(3・7・14・30日)も選べます。",
+"whatsnew_item4": "既存データへの復元は確認のうえ現在のデータを保管し、「レポートとバックアップ」から取り消せます。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -14106,6 +14137,16 @@ ko:{
 "aria_close_instructions": "안내 닫기",
 "arms_label": "팔 (cm)",
 "backup_restore_sub": "데이터를 안전하게 보관하거나 다른 기기로 이동하세요",
+"data_safety_title": "데이터 안전",
+"backup_remind_label": "백업 알림 주기 (일)",
+"btn_undo_restore": "마지막 복원 취소",
+"bk_never": "이 기기에서 아직 백업한 적이 없습니다.",
+"bk_ago": "마지막 백업: {n}일 전.",
+"bk_today": "마지막 백업: 오늘.",
+"bk_ios_risk": "보호되지 않음: iPhone은 7일 동안 열지 않은 사이트의 저장 데이터를 삭제합니다. 홈 화면에 추가하면 막을 수 있습니다.",
+"bk_persisted": "보호됨: 저장 공간 확보를 위해 브라우저가 데이터를 지우지 않습니다.",
+"bk_not_persisted": "기기 저장 공간이 매우 부족하면 브라우저가 저장된 데이터를 지울 수 있습니다. 백업을 유지하세요.",
+"bk_failed": "현재 이 기기에서 저장이 실패하고 있습니다. 즉시 백업하세요.",
 "backup_restore_title": "백업 및 복원",
 "bar_frame_weight_label": "바 / 프레임 무게 (<span id=\"plate-unit\">kg</span>)",
 "bodyweight_title": "체중",
@@ -14320,10 +14361,10 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "처음 하는 운동은 관련된 가장 강한 운동 기록을 바탕으로 시작해요. 벤치 80kg라면 덤벨 프레스는 10kg가 아니라 한 손 약 25kg부터예요.",
-"whatsnew_item2": "이미 한 운동이 관련 운동보다 훨씬 가볍다면, 한 번에 '적용/닫기'를 고를 수 있는 제안이 떠요. 저절로 바뀌지는 않아요.",
-"whatsnew_item3": "프로필 체중은 항상 최신 체중 기록과 같아요. 설정에서 바꾸면 오늘 기록으로 저장돼요.",
-"whatsnew_item4": "4주 이상 쉬었던 운동은 가볍게 다시 시작하도록 제안해요. 목표 횟수를 바꾸면 무게도 맞춰져요. kg/lbs를 바꾸면 기록도 환산돼요.",
+"whatsnew_item1": "저장에 실패하면 모든 화면에 경고가 뜨고, 저장이 안 되는 상태에서도 한 번에 백업할 수 있어요. 이전에는 실패해도 아무 표시 없이 운동 기록이 사라졌어요.",
+"whatsnew_item2": "Safari에서 홈 화면에 추가하지 않고 쓰고 있다면, iPhone은 7일 동안 열지 않은 사이트의 데이터를 지워요. 이제 경고와 설치 방법을 보여줘요.",
+"whatsnew_item3": "공유 시트로 '파일'이나 iCloud Drive에 백업하고, 알림 주기(3·7·14·30일)를 고를 수 있어요.",
+"whatsnew_item4": "기존 데이터 위에 복원할 때 먼저 확인하고 현재 데이터를 보관하며, '리포트와 백업'에서 되돌릴 수 있어요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14560,8 +14601,19 @@ function migrateDkTz(){
   });
   if(chg)saveData();
 }
-function saveCFG(){try{localStorage.setItem('gp_cfg',JSON.stringify(CFG));}catch(e){}}
-function saveData(){try{localStorage.setItem('gp_h',JSON.stringify(ST.history));localStorage.setItem('gp_p',JSON.stringify(ST.prs));localStorage.setItem('gp_mw',JSON.stringify(ST.mw));localStorage.setItem('gp_bw',JSON.stringify(ST.bw));}catch(e){}}
+// A failed save used to be swallowed silently (catch(e){}), so a full or
+// blocked storage lost workouts without a word. Now any failure raises a
+// fixed alert on every screen until a later save succeeds; Back up works from
+// memory, so the data can still be rescued.
+let SAVE_FAILED=false,STORAGE_PERSISTED=null;
+function saveFailed(){
+  if(SAVE_FAILED)return;SAVE_FAILED=true;const el=gid('save-alert');if(!el)return;
+  el.innerHTML='<i class="ti ti-alert-triangle" aria-hidden="true" style="font-size:18px;flex-shrink:0"></i><div style="flex:1"><strong>Couldn’t save.</strong> Your latest changes aren’t stored on this device (storage is full or blocked). Back up now so nothing is lost.</div><button class="bp" style="padding:8px 12px;font-size:13px;flex-shrink:0" onclick="exportData()">Back up</button>';
+  el.style.display='flex';
+}
+function saveOK(){if(!SAVE_FAILED)return;SAVE_FAILED=false;const el=gid('save-alert');if(el)el.style.display='none';}
+function saveCFG(){try{localStorage.setItem('gp_cfg',JSON.stringify(CFG));saveOK();}catch(e){saveFailed();}}
+function saveData(){try{localStorage.setItem('gp_h',JSON.stringify(ST.history));localStorage.setItem('gp_p',JSON.stringify(ST.prs));localStorage.setItem('gp_mw',JSON.stringify(ST.mw));localStorage.setItem('gp_bw',JSON.stringify(ST.bw));saveOK();}catch(e){saveFailed();}}
 function saveInProgress(){
   if(!ST.day&&!ST.editDay)return;
   const activeEl=document.querySelector('.screen.active');
@@ -14569,7 +14621,7 @@ function saveInProgress(){
   const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restTotal:ST.restTotal||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,plateIdx:ST.plateIdx,feelQueue:ST.feelQueue,feelTarget:ST.feelTarget,ssGroupEnd:ST.ssGroupEnd,restRated:ST.restRated||false,screen,ts:Date.now()};
   if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.editIncludeCurrent=ST.editIncludeCurrent;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.swapSearch=ST.swapSearch;wip.deExpanded=DE_EXPANDED;}
   if(HOLD_IDX!==null){wip.holdIdx=HOLD_IDX;wip.holdStart=HOLD_START;wip.holdTarget=HOLD_TARGET;wip.holdAlerted=HOLD_ALERTED;}
-  try{localStorage.setItem('gp_wip',JSON.stringify(wip));}catch(e){}
+  try{localStorage.setItem('gp_wip',JSON.stringify(wip));saveOK();}catch(e){saveFailed();}
 }
 function clearInProgress(){try{localStorage.removeItem('gp_wip');}catch(e){}}
 function restoreInProgress(){
@@ -17038,7 +17090,7 @@ function showPRHistory(name){
   gid('exinfo-list').innerHTML=events.length?events.slice().reverse().map(e=>'<li style="font-size:15px;color:var(--txt);line-height:1.6;margin-bottom:2px">'+esc(e.date)+' \u2014 '+(isBW?bwWeightLabel(e.w):isHold?fmt(e.r)+' held':e.w+CFG.unit+' \u00d7 '+e.r)+'</li>').join(''):'<li style="font-size:13px;color:var(--txt2)">No PR history yet.</li>';
   gid('exinfo-overlay').style.display='block';gid('exinfo-sheet').style.display='block';document.body.style.overflow='hidden';
 }
-function openDataSettings(){initExport();ss('setdata');}
+function openDataSettings(){initExport();renderBackupStatus();ss('setdata');}
 function initExport(){const ms=gid('ex-mo'),ys=gid('ex-yr');if(ms.options.length)return;MN.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i+1).padStart(2,'0');o.textContent=m;ms.appendChild(o);});const now=new Date();ms.value=String(now.getMonth()+1).padStart(2,'0');for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o);}}
 function hRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 async function genPDF(){
@@ -17077,7 +17129,27 @@ async function genPDF(){
   doc.save('gainpath-'+mName.toLowerCase()+'-'+year+'.pdf');st.textContent='Report saved!';setTimeout(()=>{st.textContent='';},5000);
   track('pdf_generated');
 }
-function exportData(){const data={cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,bw:ST.bw,exported:new Date().toISOString(),version:'2.0'};localStorage.setItem('gp_last_export',data.exported);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gainpath-backup.json';a.click();URL.revokeObjectURL(url);CFG.exportedAtHistoryLen=ST.history.length;saveCFG();gid('ex-st').textContent='Backup downloaded!';setTimeout(()=>{gid('ex-st').textContent='';},4000);renderHomeBanners();track('data_exported');}
+// ═══ DATA SAFETY: backups, restore, storage protection, iOS eviction warning ═══
+function backupPayload(){return{cfg:CFG,history:ST.history,prs:ST.prs,mw:ST.mw,bw:ST.bw,exported:new Date().toISOString(),version:'2.0'};}
+function isMobileUA(){return /iPhone|iPad|iPod|Android/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+function isIOS(){return /iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+// The backup is built from memory, so it still works when saving is failing.
+// On phones it goes through the share sheet (iOS: "Save to Files" / iCloud
+// Drive, a location the user controls); elsewhere, or if sharing isn't
+// available, it downloads. A cancelled share doesn't count as a backup.
+async function exportData(){
+  const data=backupPayload(),name='gainpath-backup-'+dkey(new Date())+'.json',json=JSON.stringify(data,null,2);
+  let shared=false;
+  if(isMobileUA()&&navigator.share&&navigator.canShare){
+    try{const file=new File([json],name,{type:'application/json'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'GainPath backup'});shared=true;}}
+    catch(e){if(e&&e.name==='AbortError')return;}
+  }
+  if(!shared){const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  try{localStorage.setItem('gp_last_export',data.exported);}catch(e){}
+  CFG.exportedAtHistoryLen=ST.history.length;saveCFG();
+  const st=gid('ex-st');if(st){st.textContent=shared?'Backup saved!':'Backup downloaded!';setTimeout(()=>{st.textContent='';},4000);}
+  renderHomeBanners();renderBackupStatus();track('data_exported');
+}
 function csvEscape(v){const s=String(v==null?'':v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function exportCSV(){
   const rows=[['Date','Day','Exercise','Set','Weight ('+CFG.unit+')','Reps','Feel']];
@@ -17103,23 +17175,78 @@ function sanitizeImport(v){
   if(v&&typeof v==='object'){const o={};Object.keys(v).forEach(k=>{o[sanitizeImport(k)]=sanitizeImport(v[k]);});return o;}
   return v;
 }
-function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{
-  const data=sanitizeImport(JSON.parse(e.target.result));
+function validateBackup(data){
   if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('not a backup object');
+  if(!data.cfg&&!data.history)throw new Error('no GainPath data in file');
   if(data.history&&!Array.isArray(data.history))throw new Error('bad history');
   if(data.bw&&!Array.isArray(data.bw))throw new Error('bad bw');
   if(data.prs&&(typeof data.prs!=='object'||Array.isArray(data.prs)))throw new Error('bad prs');
   if(data.mw&&(typeof data.mw!=='object'||Array.isArray(data.mw)))throw new Error('bad mw');
   if(data.cfg&&(typeof data.cfg!=='object'||Array.isArray(data.cfg)))throw new Error('bad cfg');
+  return data;
+}
+// PRs and badges are derived, so they are rebuilt from the restored history
+// rather than trusted from the file.
+function applyBackup(data){
   if(data.cfg)CFG=Object.assign(CFG,data.cfg);
   if(data.history)ST.history=data.history.filter(h=>h&&typeof h==='object'&&!Array.isArray(h));
   if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
   if(data.bw)ST.bw=data.bw.filter(e=>e&&typeof e==='object'&&!Array.isArray(e));
-  syncProgramMeta();migrateDkTz();mergeCustomExercises();syncBW();saveCFG();saveData();accentColor();refreshHome();ss('home');gid('ex-st').textContent='Data restored!';setTimeout(()=>{gid('ex-st').textContent='';},4000);}catch(err){gid('ex-st').textContent='Error: invalid backup file.';}};reader.readAsText(file);input.value='';}
+  syncProgramMeta();migrateDkTz();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
+}
+function restoreDone(msg){refreshHome();ss('home');renderBackupStatus();const st=gid('ex-st');if(st){st.textContent=msg;setTimeout(()=>{st.textContent='';},4000);}}
+// Restoring replaces everything, so: confirm when there is data to lose, and
+// keep a copy of it (gp_pre_restore) for "Undo last restore". If that copy
+// can't be stored, stop and ask for an export first rather than risk it.
+function importData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{
+  let data;
+  try{data=validateBackup(sanitizeImport(JSON.parse(e.target.result)));}catch(err){const st=gid('ex-st');if(st)st.textContent='Error: invalid backup file.';return;}
+  const had=ST.history.length;
+  if(had&&!confirm('Replace your current data ('+had+' session'+(had===1?'':'s')+') with this backup? You can undo this from Reports & backup.'))return;
+  if(had){try{localStorage.setItem('gp_pre_restore',JSON.stringify(backupPayload()));}catch(err){const st=gid('ex-st');if(st)st.textContent='Not enough space to keep a copy of your current data. Tap Export first, then restore.';return;}}
+  applyBackup(data);restoreDone(SAVE_FAILED?'Restored for now, but it couldn’t be saved — back up again.':'Data restored!');
+};reader.readAsText(file);input.value='';}
+function undoRestore(){
+  let prev=null;try{prev=JSON.parse(localStorage.getItem('gp_pre_restore')||'null');}catch(e){prev=null;}
+  if(!prev||!confirm('Undo the last restore and go back to the data you had before it?'))return;
+  applyBackup(validateBackup(prev));if(!SAVE_FAILED){try{localStorage.removeItem('gp_pre_restore');}catch(e){}}
+  restoreDone('Restore undone.');
+}
+// No renderHomeBanners() here: rendering the reminder off-screen would stamp
+// it as seen, so returning to Train would never show it.
+function setBackupEvery(n){CFG.backupEveryDays=n;saveCFG();renderBackupStatus();}
+function daysSinceBackup(){let ex=null;try{ex=localStorage.getItem('gp_last_export');}catch(e){}return ex?Math.floor((Date.now()-new Date(ex).getTime())/864e5):null;}
+// navigator.storage.persist() asks the browser not to evict this site's
+// storage (localStorage included) under storage pressure. It does not lift
+// iOS Safari's 7-day limit for sites that aren't installed; only installing does.
+function requestPersist(){
+  try{if(!navigator.storage||!navigator.storage.persist)return;
+    navigator.storage.persisted().then(p=>p||navigator.storage.persist()).then(r=>{STORAGE_PERSISTED=!!r;renderBackupStatus();}).catch(()=>{});}catch(e){}
+}
+function renderBackupStatus(){
+  const el=gid('bk-status');if(!el)return;
+  const d=daysSinceBackup(),lines=[];
+  if(SAVE_FAILED)lines.push('<span style="color:var(--alert-txt)"><i class="ti ti-alert-triangle" aria-hidden="true"></i> '+t('bk_failed')+'</span>');
+  lines.push('<i class="ti ti-clock" aria-hidden="true"></i> '+(d===null?t('bk_never'):d===0?t('bk_today'):t('bk_ago').replace('{n}',d)));
+  if(isIOS()&&!isStandalone())lines.push('<span style="color:var(--alert-txt)"><i class="ti ti-alert-triangle" aria-hidden="true"></i> '+t('bk_ios_risk')+'</span>');
+  else lines.push('<i class="ti ti-shield-check" aria-hidden="true"></i> '+(STORAGE_PERSISTED?t('bk_persisted'):t('bk_not_persisted')));
+  el.innerHTML=lines.join('<br>');
+  const every=CFG.backupEveryDays||7;[3,7,14,30].forEach(n=>{const b=gid('bkd-'+n);if(b)b.classList.toggle('on',n===every);});
+  let pre=null;try{pre=localStorage.getItem('gp_pre_restore');}catch(e){}
+  const u=gid('undo-restore-btn');if(u)u.style.display=pre?'':'none';
+}
 function isStandalone(){return navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
 function renderHomeBanners(){
   const el=gid('prt-h');if(!el)return;
-  if(!isStandalone()&&localStorage.getItem('gp_a2hs_dismissed')!=='true'){
+  // iPhone/iPad, not installed: WebKit deletes a site's script-written storage
+  // after 7 days without a visit, so this is a data-loss warning, not a tip.
+  // It returns 30 days after being dismissed, because the risk doesn't go away.
+  if(!isStandalone()&&isIOS()&&iosWarnDue()){
+    const has=ST.history.length>0;
+    el.innerHTML='<div class="prt prt-alert"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-alert-triangle" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">Your workouts could be deleted</div><div style="font-size:13px;margin-top:2px;line-height:1.5">iPhone erases a website’s saved data if you don’t open it for 7 days. Installing GainPath to your Home Screen stops this.</div><div id="a2hs-steps" style="display:none;font-size:13px;margin-top:8px;line-height:1.6">'+(has?'1. Tap “Back up” below and save the file<br>2. ':'1. ')+'Tap <i class="ti ti-upload" aria-hidden="true"></i> Share in Safari’s toolbar<br>'+(has?'3. ':'2. ')+'Tap “Add to Home Screen”, then “Add”<br>'+(has?'4. Open GainPath from the new icon. If your workouts aren’t there, tap “Already used GainPath before?” and pick the backup file':'3. Open GainPath from the new icon')+'</div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="bp" style="font-size:13px;padding:8px 12px" onclick="toggleA2HSSteps()">How to install</button>'+(has?'<button class="bs" style="font-size:13px;padding:8px 12px" onclick="exportData()">Back up</button>':'')+'<button class="bg" style="font-size:13px;color:var(--alert-txt)" onclick="dismissIOSWarn()">Later</button></div></div></div></div>';
+    return;
+  }
+  if(!isStandalone()&&!isIOS()&&localStorage.getItem('gp_a2hs_dismissed')!=='true'){
     el.innerHTML='<div class="prt" style="background:var(--tint-green-1);border:1px solid var(--tint-green-2);color:var(--brand-green);display:block"><div style="display:flex;align-items:flex-start;gap:8px"><i class="ti ti-home-2" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-weight:600">Keep GainPath handy</div><div style="font-size:13px;margin-top:2px;line-height:1.5">Install it on your Home Screen for one-tap access — and to make sure Safari never quietly clears your saved workouts.</div><div id="a2hs-steps" style="display:none;font-size:13px;margin-top:8px;line-height:1.6">1. Tap <i class="ti ti-upload" aria-hidden="true"></i> Share in Safari’s toolbar<br>2. Scroll down and tap “Add to Home Screen”<br>3. Tap “Add”</div><div style="display:flex;gap:8px;margin-top:10px"><button class="bp" style="font-size:13px;padding:8px 12px" onclick="toggleA2HSSteps()">How to add</button><button class="bg" style="font-size:13px;color:var(--brand-green)" onclick="dismissA2HS()">Maybe later</button></div></div></div></div>';
     return;
   }
@@ -17167,12 +17294,14 @@ function applyDeload(){CFG.deloadActive=true;saveCFG();renderHomeBanners();}
 function dismissDeload(){CFG.deloadDismissedAtLen=ST.history.length;saveCFG();renderHomeBanners();}
 function toggleA2HSSteps(){const s=gid('a2hs-steps');if(s)s.style.display=s.style.display==='none'?'block':'none';}
 function dismissA2HS(){localStorage.setItem('gp_a2hs_dismissed','true');renderHomeBanners();}
+function iosWarnDue(){let d=null;try{d=localStorage.getItem('gp_ios_warn_dismissed');}catch(e){}return !d||(Date.now()-new Date(d).getTime())/864e5>=30;}
+function dismissIOSWarn(){try{localStorage.setItem('gp_ios_warn_dismissed',new Date().toISOString());}catch(e){}renderHomeBanners();}
 function sessionsSinceBackup(){return Math.max(0,ST.history.length-Math.max(CFG.exportedAtHistoryLen||0,CFG.backupNudgeDismissedAtLen||0));}
 function checkBackupNudge(){
   if(!ST.history.length)return false;
   const exp=localStorage.getItem('gp_last_export'),seen=localStorage.getItem('gp_backup_nudge_seen');
   const ref=Math.max(exp?new Date(exp).getTime():0,seen?new Date(seen).getTime():0);
-  const timeDue=!ref||(Date.now()-ref)/86400000>=7;
+  const timeDue=!ref||(Date.now()-ref)/86400000>=(CFG.backupEveryDays||7);
   return timeDue||sessionsSinceBackup()>=15;
 }
 function dismissBackupNudge(){localStorage.setItem('gp_backup_nudge_seen',new Date().toISOString());CFG.backupNudgeDismissedAtLen=ST.history.length;saveCFG();gid('prt-h').innerHTML='';}
@@ -17210,7 +17339,7 @@ async function sendFeedback(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
 }
 
-load();applyTheme();applyLang();OB.step=1;obDots();renderRepOpts('reps');
+load();requestPersist();applyTheme();applyLang();OB.step=1;obDots();renderRepOpts('reps');
 if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){

@@ -8,14 +8,13 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 
 ---
 
-## ✨ What's new in v2.8.0
+## ✨ What's new in v2.9.0
 
-- **Related lifts now inform each other.** Trying a lift for the first time? GainPath now starts it from the strongest related lift you've already logged. Bench 80 kg and your first flat dumbbell press starts around 25 kg per hand instead of 10, and incline dumbbell press around 20 kg. It isn't a flat percentage. It compares estimated 1-rep maxes, uses research-based ratios per movement pattern (dumbbells take a bigger discount the stronger you are), counts how many reps you had left, trusts recent sessions more than old ones, and leaves you 3 reps in reserve on day one. Bodyweight moves count too, scaled by your own body weight: 20 push-ups suggest more for a 90 kg lifter than a 70 kg one, and pull-ups estimate your first lat pulldown. Cable lifts get a more cautious ballpark from related free-weight and cable lifts, because stack numbers differ between stations. Plate-loaded machines keep their usual estimate, since their numbers depend on the specific machine.
-- **A sync chip for lifts that fell behind.** If a lift you've already done is logged far below what your related lifts show (e.g. dumbbell press at 10 kg next to an 80 kg bench), its screen offers a one-tap **Apply/Dismiss** suggestion. Your own history is never changed automatically, a lighter lift never drags a heavier one down, and if you rated that lift "1–2 reps left" or "to failure", GainPath takes your word for it.
-- **Back after a break?** After 4+ weeks away from an exercise, it suggests easing back in 10–15% lighter instead of reloading your old top weight. It's a one-tap suggestion, never automatic.
-- **Change your rep target and the weight follows.** Switch from sets of 10 to sets of 5 and your next weight goes up to match (60 kg × 10 becomes about 68.5 kg × 5), instead of staying the same.
-- Bug fixes: switching between kg and lbs now converts your history, weigh-ins, gym equipment and plans instead of just relabelling them, and women now get women's default weights on exercises they swap in.
-- **Body weight stays in sync.** Your profile weight is now always your latest weigh-in. Log one under Progress → Body and Settings shows it; change it in Settings and it's logged as today's weigh-in.
+- **Your data is harder to lose.** If saving ever fails (storage full or blocked), a clear alert now appears on every screen with a one-tap **Back up** that works even while saving is failing. Previously a failed save lost the workout silently.
+- **iPhone warning.** Using GainPath in Safari without installing it? iPhone erases a website's saved data after 7 days without a visit. GainPath now says so plainly, with step-by-step install instructions and a backup button.
+- **Backups you control.** On a phone, Export opens the share sheet, so you can save the file to Files, iCloud Drive or anywhere else. Pick how often to be reminded (every 3, 7, 14 or 30 days). Settings → Reports & backup shows when you last backed up and whether this browser protects your data.
+- **Safer restore.** Restoring over existing data asks first, keeps a copy, and adds **Undo last restore**. PRs and badges are rebuilt from the restored history.
+- Bug fixes and stability improvements.
 
 ## Features
 
@@ -78,6 +77,12 @@ The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen
 <img src="images/screenshots/plate-calc.png" width="260" alt="Plate calculator showing the per-side plate breakdown for a target weight">
 
 - Estimates starting weights from your related lifts (including bodyweight moves, scaled by your body weight), or, when nothing related is logged, from your body weight, sex, experience level and strength baseline
+- **Related lifts inform each other.** A first-time lift starts from the strongest related lift you've logged, compared as estimated 1-rep maxes with research-based ratios per movement pattern (bench 80 kg → first dumbbell press around 25 kg per hand, not 10). Bodyweight moves count too, scaled by your body weight. Cable lifts get a more cautious ballpark, and plate-loaded machines keep their own estimate
+- **Sync chip for lifts that fell behind.** If a lift you've done is logged far below what related lifts show, its screen offers a one-tap Apply/Dismiss raise. Your history is never changed automatically, and a lift you rated "1–2 reps left" or "to failure" is taken at your word
+- **Back after a break?** After 4+ weeks away from an exercise it suggests easing back in 10–15% lighter, as a one-tap suggestion
+- **Change your rep target and the weight follows** (60 kg × 10 becomes about 68.5 kg × 5)
+- **kg ↔ lbs switching converts everything** (history, weigh-ins, gym equipment, plans) and switching back restores your exact original numbers
+- **Body weight stays in sync.** Your profile weight is always your latest weigh-in; editing it in Settings logs today's weigh-in
 - Suggests your next weight from how many reps you had left on your last set — "5+ reps left" offers a full bump, "3–4 left" a small step, "1–2 left" holds you in the sweet spot, and failing two sessions in a row offers a deload. Always a one-tap suggestion you can apply or dismiss, never an automatic change
 - Change a set's rep count mid-workout and the next session pre-fills that exercise with the same rep target, the same way weights already carry over — a rep target you set on the day's screen before starting overrides that carry-over, and so does changing your preferred reps in Settings (it immediately applies again even to exercises you've already logged, until you log a different rep count in a real workout)
 - Machine tare weight system — enter the base weight of plate-loaded machines once, saved permanently. The app shows plate weight only and calculates total automatically
@@ -159,9 +164,11 @@ line), with the current set highlighted so you always know where you are.
 <img src="images/screenshots/backup.png" width="260" alt="Backup & restore — export your data to JSON or import it on another device">
 
 - Export all your data as a JSON file, or as a flat **CSV** of every logged set (date, day, exercise, set, weight, reps, feel) for your own analysis
-- Restore from backup on any device
+- On a phone, Export opens the share sheet so you can save the backup to Files, iCloud Drive, or anywhere you choose
+- Restore from backup on any device, including a brand-new one from the first screen ("Already used GainPath before?"). Restoring over existing data asks first and can be undone
 - No cloud account needed
-- A reminder nudges you to back up periodically — after enough days or enough logged sessions since your last export, whichever comes first
+- A reminder nudges you to back up — every 3, 7, 14 or 30 days (your choice), or after 15 logged sessions, whichever comes first
+- If saving ever fails, an alert tells you right away and offers a backup
 
 ### ⌚ Apple Watch sync
 
@@ -245,6 +252,8 @@ either way, the substitution pool isn't gendered.
 4. Tap **Add**
 
 The app will appear on your home screen and open full-screen like a native app. Your workout data is saved in Safari's local storage.
+
+**Why install it:** if you only use GainPath as a Safari tab, iPhone erases its saved data after 7 days without a visit. An installed app is exempt. If you already have workouts in Safari, export a backup first. If they don't appear in the installed app, restore the backup from its first screen.
 
 > **Tip:** Export a backup regularly from Settings → Reports & backup to protect your data.
 

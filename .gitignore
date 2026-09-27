@@ -3,6 +3,7 @@
 ._*
 node_modules/
 scripts/.visual-check/
+scripts/.data-safety/
 scripts/.gen/
 scripts/.tutorial-coords.json
 scripts/.ios-verify/

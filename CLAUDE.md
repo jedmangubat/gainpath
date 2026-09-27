@@ -68,8 +68,8 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   a later commit — confirm each time.
 - **Every version bump follows `RELEASING.md`** (version string locations,
   `CACHE_NAME`, manifest, docs, then `npm run precheck` must pass before
-  committing). `precheck` runs lint → test:units → visual-check and stops at
-  the first failure.
+  committing). `precheck` runs lint → test:units → test:data → visual-check and
+  stops at the first failure.
 - **Version bumps must be tagged and released, not just pushed.** When a commit
   bumps the version (the `(vX.Y.Z)` in its message + the new `CHANGELOG.md`
   entry), then once the user approves that push, also create and push the
@@ -241,6 +241,21 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   It holds local-only tokens (e.g. the Facebook Page posting token used by
   marketing scripts). Never print, echo or commit its contents; check existence
   and size only.
+- **Never swallow a storage error.** Every `localStorage` write that holds user
+  data ends in `saveOK()` on success and `saveFailed()` in its `catch`. That
+  raises the `#save-alert` bar on every screen. A bare `catch(e){}` around a
+  save is how failed saves used to lose workouts silently (fixed v2.9.0).
+  Anything offered as a rescue (`exportData`) must work from memory and must
+  not depend on a storage write succeeding first.
+- **Restore = `validateBackup()` → `applyBackup()`.** It asks before replacing
+  existing sessions, keeps the old data in `gp_pre_restore` for Undo, and stops
+  if that copy can't be stored. `applyBackup()` recomputes PRs and badges.
+  `npm run test:data` guards the whole round trip with real files. Extend it
+  whenever backup, restore or storage code changes.
+- **iPhone data-loss warning:** `isIOS() && !isStandalone()` shows the red
+  "could be deleted" banner (`gp_ios_warn_dismissed`, returns after 30 days).
+  Scripts that emulate an iPhone user agent will see it above everything else
+  on Train. Seed `gp_ios_warn_dismissed` with a recent ISO date to hide it.
 - **PRs are derived, not authoritative.** `ST.prs` is a cache rebuilt from
   `ST.history` by `recomputePRs()`. Any code that mutates a logged session's sets
   or removes a session (the session editor, delete, future history tooling) MUST
@@ -358,7 +373,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
 ## Dev tooling (optional, dev-only — `npm install` once to use)
 
 - **`npm run precheck`** (`scripts/precheck.mjs`) — the pre-release gate:
-  `lint` → `test:units` → `visual-check` in sequence, stops at the first
+  `lint` → `test:units` → `test:data` → `visual-check` in sequence, stops at the first
   failing step with a banner naming it, exits non-zero. Lint *warnings* don't
   fail it (only errors do, same as `npm run lint`).
 - **`npm run visual-check`** — starts a static server, loads `index.html` in
