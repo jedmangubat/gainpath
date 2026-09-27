@@ -2,7 +2,7 @@
 
 A free, open-source workout tracking web app. No account needed, no subscriptions, no ads. Just open it and train.
 
-🔗 **Live app:** [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath)
+🔗 **Live app:** [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath) · [Privacy](https://jedmangubat.github.io/gainpath/privacy.html): your workouts never leave your device
 
 GainPath is free, ad-free, and has no subscriptions. If it's been useful to you, consider [☕ supporting development via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com).
 
@@ -13,6 +13,7 @@ GainPath is free, ad-free, and has no subscriptions. If it's been useful to you,
 - **Your data is harder to lose.** If saving ever fails (storage full or blocked), a clear alert now appears on every screen with a one-tap **Back up** that works even while saving is failing. Previously a failed save lost the workout silently.
 - **iPhone warning.** Using GainPath in Safari without installing it? iPhone erases a website's saved data after 7 days without a visit. GainPath now says so plainly, with step-by-step install instructions and a backup button.
 - **Backups you control.** On a phone, Export opens the share sheet, so you can save the file to Files, iCloud Drive or anywhere else. Pick how often to be reminded (every 3, 7, 14 or 30 days). Settings → Reports & backup shows when you last backed up and whether this browser protects your data.
+- **See exactly what's shared.** A new Settings → Privacy screen explains in plain language what stays on your device (all your workouts) and what the app sends: anonymous usage counts made of a random ID and an action name, plus anything you choose to send. Full details are on the [privacy page](https://jedmangubat.github.io/gainpath/privacy.html).
 - **Safer restore.** Restoring over existing data asks first, keeps a copy, and adds **Undo last restore**. PRs and badges are rebuilt from the restored history.
 - Bug fixes and stability improvements.
 
@@ -68,7 +69,7 @@ Not limited to the five built-in splits — tap "Build a custom program" on the 
 
 ### ⚙️ Organized Settings
 
-A language picker (English / 日本語 / 한국어) sits at the top, then a menu of ten sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, How to use, and About (your installed version, a "What's new" button, and a link to the full changelog) — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
+A language picker (English / 日本語 / 한국어) sits at the top, then a menu of eleven sections — Profile, Preferences, My gym, Machine base weights, Planned rest, Reports & backup, Apple Watch sync, Native app updates, How to use, Privacy, and About (your installed version, a "What's new" button, and a link to the full changelog) — each opening its own screen and saving every change immediately, instead of one long scrolling page. Train, Days, Climb and PRs are always-visible bottom tabs, so navigation never disappears while you're deep in a day's exercises or a Settings screen — including mid-workout, where they now stay put too, so you can check another tab without ending your session.
 
 The **How to use** walkthrough is a spotlight-on-screenshot tour of every screen, reachable any time and shown once automatically after setup.
 

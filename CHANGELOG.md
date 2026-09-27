@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   keeps the replaced data (`gp_pre_restore`). If that copy can't be stored, the
   restore stops and asks for an export first. **Undo last restore** in Reports &
   backup brings it back.
-- `npm run test:data` (`scripts/test_data_safety.mjs`, 39 checks) runs as part of
+- `npm run test:data` (`scripts/test_data_safety.mjs`, 43 checks) runs as part of
   `npm run precheck`. It drives the real UI with real files:
   - a 400-session lbs user exported, then restored on a fresh device through
     onboarding, record-by-record identical;
@@ -68,6 +68,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   exercises; running twice; dual-write; recovery after `localStorage` is wiped;
   reset; a partially migrated state; and a forced verification failure.
 
+- **Settings → Privacy and `privacy.html`.** An audit of everything the app
+  sends, checked against both the code and captured network traffic:
+  - **Usage counter** (Cloudflare Worker, `analytics-worker/`): each message is
+    exactly `{id, event}`. `id` is a random ID made on the device (`gp_anon_id`),
+    and `event` is one of six actions (session start, workout complete, PR,
+    program saved, PDF report, backup export). For each ID the worker stores the
+    first and last time it was seen, a count per event, and the times of the
+    first two finished workouts, plus a monthly PDF-report count. It stores no
+    IP address or user agent.
+  - **Feedback** (EmailJS): the message, an optional reply address, and the
+    user's name, sex, split and experience level.
+  - **Native app updates:** the email address entered, with a timestamp.
+  - **Other hosts:** the app is served by GitHub Pages and loads Chart.js and
+    jsPDF from cdnjs and the EmailJS SDK from jsDelivr. There are no cookies, no
+    Google Fonts and no ads.
+
+  The Privacy screen summarises this in all three languages and shows the
+  device's random ID, without creating one. `privacy.html` is a standalone
+  page, precached for offline use, that says only what the code supports. It is
+  linked from Settings and the README. There is **no opt-out for the usage
+  counts yet**, and both places say so plainly.
 ### Fixed
 - **Installed-app colours now match the dark theme.** `manifest.json`
   `theme_color`/`background_color` were still the pre-v2.0 light `#EDEBE3`, so
@@ -83,6 +104,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   restored history, as everywhere else.
 
 ### Changed
+- The Facebook Page token moved from a plaintext file into the macOS
+  Keychain (dev tooling, nothing the app ships). `scripts/fb_post.py` reads it
+  with `security find-generic-password` and never prints it. The local
+  `secrets/save.sh` now writes the clipboard into the Keychain, passing the
+  token on stdin so it never appears in a process list, and reads it back to
+  confirm. The old `secrets/facebook_system_user_token.txt` has not been
+  deleted yet; it's waiting for the owner's go-ahead.
 - `eslint.config.js` renamed to `eslint.config.mjs`. It uses ES module syntax,
   so Node printed a `MODULE_TYPELESS_PACKAGE_JSON` warning on every lint run.
   Dev tooling only.

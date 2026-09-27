@@ -237,10 +237,14 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   v2.6.5). `renderEx()` → `saveInProgress()` already persists the session, so a
   mid-workout relaunch keeps the new order. `test:units` guards this; don't
   re-add a save to the mid branches.
-- **`secrets/` is gitignored — put credentials there, never anywhere tracked.**
-  It holds local-only tokens (e.g. the Facebook Page posting token used by
-  marketing scripts). Never print, echo or commit its contents; check existence
-  and size only.
+- **Credentials live in the macOS Keychain, not in files (since 2026-09-28).**
+  The Facebook system-user token is Keychain service
+  `gainpath.facebook-system-user-token`, account `gainpath`. Pass a secret to
+  `security` on stdin (`printf 'add-generic-password … -w %s\n' "$t" | security -i`),
+  never as an argument, because argv shows in `ps`. Read it with
+  `security find-generic-password … -w`, captured and never printed.
+  `secrets/` (gitignored) still holds local-only helpers like `save.sh`. Never
+  print, echo or commit a secret; check existence and length only.
 - **Never swallow a storage error.** Every `localStorage` write that holds user
   data ends in `saveOK()` on success and `saveFailed()` in its `catch`. That
   raises the `#save-alert` bar on every screen. A bare `catch(e){}` around a
@@ -523,17 +527,18 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   Graph v26.0 (`check` / `post` / `get` / `delete`). **Every write is a dry
   run unless `--yes` is passed**, which is how the draft-then-approve rule is
   enforced: show the user the dry run, get an explicit yes for that specific
-  post, then re-run with `--yes`. It reads `secrets/facebook_system_user_token.txt`
-  and never prints it. It shells out to `curl` (token via `curl -K -` on stdin)
+  post, then re-run with `--yes`. It reads the token from the Keychain
+  (`system_token()`) and never prints it. It shells out to `curl` (token via `curl -K -` on stdin)
   because the python.org Python here has no CA bundle — don't "fix" that by
   disabling TLS verification. Photo posts return the *photo* id; the feed post
   is `<page-id>_<photo-id>`, and the API can't pin, so pinning is a Page-UI step.
-  `secrets/save.sh` saves a copied token from the clipboard (validates its
-  shape, prints only a length) — run it in the same step as clicking Copy,
-  never ask the user to copy a command while a token is on the clipboard.
-  It is local-only like the rest of `secrets/` (gitignored, so a fresh clone
+  `secrets/save.sh` saves a copied token from the clipboard into the Keychain
+  (validates its shape, reads it back, prints only a length) — run it in the
+  same step as clicking Copy, never ask the user to copy a command while a
+  token is on the clipboard. It is local-only (gitignored, so a fresh clone
   won't have it — recreate it: validate `pbpaste` against `[A-Za-z0-9_-]{100,400}`,
-  write it to `facebook_system_user_token.txt`, `pbcopy < /dev/null`).
+  pipe `add-generic-password -U -a gainpath -s gainpath.facebook-system-user-token -w <t>`
+  into `security -i`, verify the read-back, `pbcopy < /dev/null`).
 
 ## Claude Code plugins
 

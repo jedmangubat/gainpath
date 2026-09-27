@@ -8,7 +8,7 @@ const CDN_URLS = [
   'https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js'
 ];
 const SHELL_URLS = [
-  './', './index.html', './manifest.json',
+  './', './index.html', './manifest.json', './privacy.html',
   './images/branding/favicon-16.png', './images/branding/favicon-32.png',
   './images/branding/apple-touch-icon.png', './images/branding/logo.png',
   // Self-hosted Kinetic Athletic fonts (latin subset) — precached so the

@@ -18,15 +18,16 @@ Implementation notes (why it shells out to curl): the python.org Python on this
 Mac ships no CA bundle, so urllib fails TLS verification. curl uses the macOS
 trust store, and its `-K -` config on stdin keeps the token out of argv and
 the URL. Captions go through curl's form-string so `;` and `@` are not
-interpreted (curl -F truncates at `;`). The token lives in secrets/ (gitignored);
-this script never prints it.
+interpreted (curl -F truncates at `;`). The token lives in the macOS Keychain
+(service gainpath.facebook-system-user-token, account gainpath; save it with
+`sh secrets/save.sh`); this script never prints it.
 """
 import argparse, datetime as dt, json, os, subprocess, sys
 
 VERSION = "v26.0"  # Graph API; v19/v20 are expired or expiring, Meta silently reroutes old versions
 PAGE_ID = "1360573253802118"  # GainPath Fitness (the Graph id, not the number in the profile.php URL)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOKEN_FILE = os.path.join(ROOT, "secrets", "facebook_system_user_token.txt")
+KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT = "gainpath.facebook-system-user-token", "gainpath"
 BASE = f"https://graph.facebook.com/{VERSION}"
 
 
@@ -59,10 +60,18 @@ def call(method, path, token, fields=None, files=None, params=None):
     return data
 
 
+def system_token():
+    """Read the system-user token from the macOS Keychain (captured, never printed)."""
+    r = subprocess.run(["security", "find-generic-password", "-a", KEYCHAIN_ACCOUNT, "-s", KEYCHAIN_SERVICE, "-w"],
+                       capture_output=True, text=True)
+    tok = r.stdout.strip()
+    if r.returncode != 0 or not tok:
+        sys.exit("No token in the Keychain (service %s). Click Copy on the token in Meta, then run: sh secrets/save.sh" % KEYCHAIN_SERVICE)
+    return tok
+
+
 def tokens():
-    if not os.path.exists(TOKEN_FILE):
-        sys.exit("No token at secrets/facebook_system_user_token.txt (see CLAUDE.md > secrets/).")
-    sys_tok = open(TOKEN_FILE).read().strip()
+    sys_tok = system_token()
     # The system-user token alone fails with (#210) "A page access token is required".
     return call("GET", PAGE_ID, sys_tok, params={"fields": "access_token"})["access_token"]
 

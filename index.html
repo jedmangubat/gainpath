@@ -748,6 +748,7 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="openPrivacySettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-shield-check" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_privacy">Privacy</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_privacy_sub">What stays on your device and what's sent</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="day-btn" onclick="ss('setabout')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-list-details" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_about">About</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_about_sub">Version and what's new</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()" data-i18n="btn_reset_app">Reset app</button>
@@ -914,6 +915,30 @@ textarea{resize:vertical;min-height:100px}
     <button type="button" class="bs" style="width:100%;margin-bottom:8px" onclick="showWhatsNew()"><i class="ti ti-sparkles" aria-hidden="true"></i> <span data-i18n="btn_whats_new">What's new</span></button>
     <button type="button" class="bs" style="width:100%" onclick="window.open('https://github.com/jedmangubat/gainpath/blob/main/CHANGELOG.md','_blank','noopener')"><i class="ti ti-link" aria-hidden="true"></i> <span data-i18n="btn_full_changelog">Full changelog on GitHub</span></button>
   </div>
+</div>
+
+<!-- SETTINGS: PRIVACY — plain-language summary of privacy.html; keep the two in sync -->
+<div id="s-setprivacy" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_privacy">Privacy</div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_local_t">Your workouts stay on this device</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.55" data-i18n="priv_local_b">Workouts, weights, body weight, notes and settings are stored only in this browser. They're never uploaded. Backups go only where you save them.</div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_counts_t">Anonymous usage counts</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.55" data-i18n="priv_counts_b">When you start or finish a workout, set a PR, save a program, make a PDF report or export a backup, the app sends two things to GainPath's counter: a random ID made on this device, and which of those actions happened. No names, weights, workouts or emails. Your IP address reaches Cloudflare, which runs the counter, but the counter doesn't store it.</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:10px" data-i18n="priv_id_label">Your random ID</div>
+    <div id="privacy-anon-id" style="font-family:'Space Mono',monospace;font-size:13px;color:var(--txt);word-break:break-all;margin-top:2px"></div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:10px;line-height:1.55" data-i18n="priv_optout_b">There's no switch to turn these counts off yet. To have your ID's record deleted, send it with Send feedback.</div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_choice_t">Only if you send it</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.55" data-i18n="priv_choice_b">Send feedback emails your message (and reply address, if you give one) with your name, sex, split and experience level, through EmailJS. Native app updates stores the email address you enter.</div>
+  </div>
+  <button type="button" class="bs" style="width:100%" onclick="window.open('privacy.html','_blank','noopener')"><span data-i18n="priv_full">Read the full privacy page</span></button>
 </div>
 
 <!-- SETTINGS: NOTIFY ON NATIVE APP LAUNCH -->
@@ -13464,6 +13489,17 @@ en:{
 "mw_unit_label": "Machine base weight (<span id=\"mw-unit\">kg</span>)",
 "machines_hint": "The weight of each machine's frame, added to the plates you load to get the total. You're asked once, the first time you use a machine — fix it here if you got it wrong.",
 "menu_about": "About",
+"menu_privacy": "Privacy",
+"menu_privacy_sub": "What stays on your device and what's sent",
+"priv_local_t": "Your workouts stay on this device",
+"priv_local_b": "Workouts, weights, body weight, notes and settings are stored only in this browser. They're never uploaded. Backups go only where you save them.",
+"priv_counts_t": "Anonymous usage counts",
+"priv_counts_b": "When you start or finish a workout, set a PR, save a program, make a PDF report or export a backup, the app sends two things to GainPath's counter: a random ID made on this device, and which of those actions happened. No names, weights, workouts or emails. Your IP address reaches Cloudflare, which runs the counter, but the counter doesn't store it.",
+"priv_id_label": "Your random ID",
+"priv_optout_b": "There's no switch to turn these counts off yet. To have your ID's record deleted, send it with Send feedback.",
+"priv_choice_t": "Only if you send it",
+"priv_choice_b": "Send feedback emails your message (and reply address, if you give one) with your name, sex, split and experience level, through EmailJS. Native app updates stores the email address you enter.",
+"priv_full": "Read the full privacy page",
 "menu_about_sub": "Version and what's new",
 "about_version_label": "Version installed",
 "about_dev_hint": "See what changed in the latest release, or follow ongoing development on GitHub.",
@@ -13882,6 +13918,17 @@ ja:{
 "machine_base_weight_title": "マシンの基本重量",
 "machines_hint": "各マシンのフレーム重量です。ここにロードするプレートと合わせて総重量になります。マシンを初めて使うときに一度だけ聞かれます — 間違えた場合はここで修正できます。",
 "menu_about": "アプリ情報",
+"menu_privacy": "プライバシー",
+"menu_privacy_sub": "端末に残るデータと送信されるデータ",
+"priv_local_t": "ワークアウトはこの端末に保存されます",
+"priv_local_b": "ワークアウト、重量、体重、メモ、設定はこのブラウザ内にのみ保存され、アップロードされることはありません。バックアップはあなたが保存した場所にだけ保存されます。",
+"priv_counts_t": "匿名の利用回数",
+"priv_counts_b": "ワークアウトの開始・完了、自己ベスト更新、プログラム保存、PDFレポート作成、バックアップ書き出しのときに、GainPathのカウンターへ2つの情報だけを送ります:この端末で作られたランダムなIDと、どの操作が行われたか。名前、重量、ワークアウト内容、メールアドレスは送りません。IPアドレスはカウンターを運用するCloudflareに届きますが、カウンターには保存されません。",
+"priv_id_label": "あなたのランダムID",
+"priv_optout_b": "現在、このカウントをオフにする設定はありません。IDの記録を削除したい場合は「フィードバックを送信」からIDを送ってください。",
+"priv_choice_t": "送信を選んだときだけ",
+"priv_choice_b": "「フィードバックを送信」は、メッセージ(入力した場合は返信先アドレスも)と、名前・性別・分割法・経験レベルをEmailJS経由でメール送信します。「ネイティブアプリの最新情報」は入力したメールアドレスを保存します。",
+"priv_full": "プライバシーページを読む",
 "menu_about_sub": "バージョンと最新情報",
 "about_version_label": "インストール済みバージョン",
 "about_dev_hint": "最新リリースの変更点を確認したり、GitHubで開発の進捗をフォローできます。",
@@ -14301,6 +14348,17 @@ ko:{
 "machine_base_weight_title": "머신 기본 무게",
 "machines_hint": "각 머신 프레임 자체의 무게로, 여기에 로딩한 플레이트를 더해 총 무게가 됩니다. 해당 머신을 처음 사용할 때 한 번만 물어보며, 잘못 입력했다면 여기서 수정할 수 있어요.",
 "menu_about": "정보",
+"menu_privacy": "개인정보",
+"menu_privacy_sub": "기기에 남는 것과 전송되는 것",
+"priv_local_t": "운동 기록은 이 기기에만 저장돼요",
+"priv_local_b": "운동, 무게, 체중, 메모, 설정은 이 브라우저에만 저장되고 업로드되지 않아요. 백업은 직접 저장한 곳에만 있어요.",
+"priv_counts_t": "익명 사용 횟수",
+"priv_counts_b": "운동을 시작하거나 마칠 때, PR을 세울 때, 프로그램을 저장할 때, PDF 리포트를 만들 때, 백업을 내보낼 때 GainPath 카운터로 두 가지만 보내요: 이 기기에서 만든 무작위 ID와 어떤 동작이 있었는지. 이름, 무게, 운동 내용, 이메일은 보내지 않아요. IP 주소는 카운터를 운영하는 Cloudflare에 전달되지만 카운터에 저장되지 않아요.",
+"priv_id_label": "내 무작위 ID",
+"priv_optout_b": "아직 이 카운트를 끄는 설정은 없어요. ID 기록 삭제를 원하면 '피드백 보내기'로 ID를 보내 주세요.",
+"priv_choice_t": "직접 보낼 때만",
+"priv_choice_b": "'피드백 보내기'는 메시지(입력한 경우 회신 주소 포함)와 이름, 성별, 분할, 경험 수준을 EmailJS를 통해 이메일로 보내요. '네이티브 앱 소식'은 입력한 이메일 주소를 저장해요.",
+"priv_full": "개인정보 페이지 전체 보기",
 "menu_about_sub": "버전 및 새로운 소식",
 "about_version_label": "설치된 버전",
 "about_dev_hint": "최신 릴리스에서 변경된 내용을 확인하거나 GitHub에서 개발 진행 상황을 확인하세요.",
@@ -15993,6 +16051,8 @@ function collectSettingsFields(){
   CFG.healthSyncEndShortcut=gid('set-hs-end').value.trim()||CFG.healthSyncEndShortcut;
   saveCFG();
 }
+// Shows the ID without creating one: nothing has been sent if there's none yet.
+function openPrivacySettings(){let id=null;try{id=localStorage.getItem('gp_anon_id');}catch(e){}gid('privacy-anon-id').textContent=id||'—';ss('setprivacy');}
 function closeSettingsSection(){collectSettingsFields();accentColor();refreshHome();ss('settings');}
 // Erase must clear the IndexedDB mirror too, or idbRecover() would bring the data back.
 function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();idbClear().then(()=>location.reload());}

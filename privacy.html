@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0C1512">
+<title>GainPath Privacy</title>
+<meta name="description" content="What GainPath stores, what it sends, and to whom. Your workouts stay on your device.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/branding/favicon-32.png">
+<style>
+@font-face{font-family:'Archivo';font-style:normal;font-weight:500 900;font-display:swap;src:url('fonts/archivo-latin-var.woff2') format('woff2')}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('fonts/space-grotesk-latin-var.woff2') format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/space-mono-latin-400.woff2') format('woff2')}
+:root{--bg:#0C1512;--card:#141F1A;--bdr:#22332A;--txt:#F0EFE8;--txt2:#8FA39A;--accent:#C6F24E;--accent-ink:#0C1512}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;font-size:16px;-webkit-text-size-adjust:100%}
+main{max-width:680px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 28px) 16px 56px}
+h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:30px;letter-spacing:-.01em;text-transform:uppercase;line-height:1.1}
+h1 span{color:var(--accent)}
+.sub{color:var(--txt2);margin-top:8px}
+h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.01em;margin:32px 0 10px;color:var(--txt)}
+p,li{color:var(--txt)}
+p+p{margin-top:10px}
+ul{padding-left:20px;margin-top:8px}
+li{margin-top:6px}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-top:12px}
+.lead{font-size:18px;font-weight:600}
+code{font-family:'Space Mono',monospace;font-size:14px;background:var(--bdr);padding:1px 6px;border-radius:5px;word-break:break-all}
+a{color:var(--accent)}
+.btn{display:inline-block;margin-top:28px;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none;padding:12px 18px;border-radius:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bdr);vertical-align:top}
+td:first-child code{word-break:normal;white-space:nowrap}
+ul+p,table+p{margin-top:12px}
+th{color:var(--txt2);font-weight:600}
+.muted{color:var(--txt2);font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Gain<span>Path</span> privacy</h1>
+  <p class="sub">Last updated 28 September 2026 · applies to GainPath v2.9.0 and later</p>
+
+  <div class="card">
+    <p class="lead">Your workouts stay on your device.</p>
+    <p>GainPath has no accounts and no ads. Your workouts, weights, body weight, notes and settings are never uploaded. The only data that leaves your device is listed below.</p>
+  </div>
+
+  <h2>1. Stored on your device only</h2>
+  <p>Everything you log is kept in this browser's own storage on your phone or computer: localStorage, plus a second copy in IndexedDB. GainPath's developer can't see it, and nobody else can either.</p>
+  <ul>
+    <li><strong>Backups</strong> are files you save yourself, wherever you choose. GainPath never uploads them.</li>
+    <li><strong>Deleting it:</strong> <strong>Reset app</strong> at the bottom of Settings erases everything GainPath stored in this browser. So does clearing this website's data in your browser.</li>
+    <li>On an iPhone, Safari deletes a website's stored data if you don't open it for 7 days, unless GainPath is installed to your Home Screen. Keep backups.</li>
+  </ul>
+
+  <h2>2. Anonymous usage counts</h2>
+  <p>To learn whether GainPath is useful, the app counts a few actions. It sends a message to GainPath's counter, a small service run on Cloudflare Workers, when you:</p>
+  <ul>
+    <li>start a workout</li>
+    <li>finish a workout</li>
+    <li>set a personal record</li>
+    <li>save a custom program</li>
+    <li>create a monthly PDF report</li>
+    <li>export a backup</li>
+  </ul>
+  <p>Each message contains exactly two things:</p>
+  <table>
+    <tr><th>Field</th><th>What it is</th></tr>
+    <tr><td><code>id</code></td><td>A random ID created on your device the first time the app runs (for example <code>097137a2-7d2c-41c0-a364-85c723e5c07e</code>). It isn't linked to your name, email or device, and GainPath can't work out who you are from it.</td></tr>
+    <tr><td><code>event</code></td><td>Which of the six actions above happened.</td></tr>
+  </table>
+  <p style="margin-top:12px">The counter keeps one record per random ID, holding:</p>
+  <ul>
+    <li>when that ID was first and last seen</li>
+    <li>how many times each of the six actions happened</li>
+    <li>the times of the first two finished workouts, to measure whether people come back for a second one</li>
+  </ul>
+  <p>It also keeps a monthly count of PDF reports. No workout contents, weights, names or emails are sent with these counts.</p>
+  <p>Like any request on the internet, each message reaches Cloudflare with your IP address and browser type. GainPath's counter doesn't store those. Cloudflare handles the connection under <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>.</p>
+  <p><strong>Turning it off:</strong> there is currently no in-app switch for these counts. You can see your random ID in Settings → Privacy. If you want it deleted, send it with Settings → Send feedback or open a <a href="https://github.com/jedmangubat/gainpath/issues">GitHub issue</a>. Records are kept until deleted; nothing removes them automatically.</p>
+
+  <h2>3. Only if you choose to send it</h2>
+  <p><strong>Feedback</strong> (Settings → Send feedback) is emailed to the developer through <a href="https://www.emailjs.com/legal/privacy-policy/">EmailJS</a>. It contains:</p>
+  <ul>
+    <li>the feedback type, subject and message you typed</li>
+    <li>the reply email, if you enter one</li>
+    <li>your name, sex, training split and experience level from your profile, to help understand the report</li>
+  </ul>
+  <p><strong>Native app updates</strong> (Settings → Native app updates): tapping “Notify me” stores the email address you enter, with the date, so you can be told when a native app ships. Choosing “Use a different email” adds the new address; it doesn't delete the old one. To remove your email, use Settings → Send feedback or a GitHub issue.</p>
+
+  <h2>4. Other services the app loads from</h2>
+  <ul>
+    <li><strong>GitHub Pages</strong> serves the app itself.</li>
+    <li><strong>cdnjs.cloudflare.com</strong> serves the chart and PDF libraries.</li>
+    <li><strong>cdn.jsdelivr.net</strong> serves the EmailJS library used by Feedback.</li>
+  </ul>
+  <p>As with any website, these services see your IP address and browser type when the files load. GainPath sends them none of your data.</p>
+  <p>Fonts and icons are hosted with the app, not loaded from Google. The app sets no cookies.</p>
+  <p>Tapping a “Tutorial” link on a custom exercise opens a YouTube search, and Apple Watch sync runs a Shortcut on your own device. Neither happens unless you choose it.</p>
+
+  <h2>5. Changes</h2>
+  <p>Changes to this page are recorded in the <a href="https://github.com/jedmangubat/gainpath/blob/main/CHANGELOG.md">changelog</a>. GainPath is open source, so everything above can be checked in its <a href="https://github.com/jedmangubat/gainpath">code</a>.</p>
+
+  <a class="btn" href="index.html">Open GainPath</a>
+</main>
+</body>
+</html>

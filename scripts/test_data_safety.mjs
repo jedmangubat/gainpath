@@ -208,6 +208,21 @@ async function main() {
   check('reminder: after switching to 3 days, going back to Train shows the reminder; the setting is saved', /back up/i.test(rem.banner) && rem.saved === 3, rem);
   check('status: shows days since the last backup', /Last backup: 5 day/.test(await e.textContent('#bk-status')));
   check('desktop: no iPhone warning banner or risk line', !/could be deleted/.test(await e.textContent('#prt-h')) && !/7 days/.test(await e.textContent('#bk-status')));
+  // ── Privacy screen + page.
+  await e.evaluate(() => localStorage.removeItem('gp_anon_id'));
+  await e.evaluate(() => { openSettings(); openPrivacySettings(); });
+  check('privacy: with no ID yet, the screen shows none and does not create one', (await e.textContent('#privacy-anon-id')) === '—' && await e.evaluate(() => localStorage.getItem('gp_anon_id')) === null);
+  const anon = await e.evaluate(() => getAnonId());
+  await e.evaluate(() => openPrivacySettings());
+  check('privacy: the screen shows the exact ID the usage counter receives', (await e.textContent('#privacy-anon-id')) === anon);
+  await e.setViewportSize({ width: 390, height: 844 }); await e.waitForTimeout(400); await e.screenshot({ path: path.join(OUT, 'privacy-settings.png'), fullPage: true });
+  const pp = await (await e.context()).newPage(); const ext = []; const perr = [];
+  pp.on('request', r => { const h = new URL(r.url()).hostname; if (h !== 'localhost') ext.push(h); }); pp.on('pageerror', x => perr.push(String(x)));
+  await pp.goto(`http://localhost:${PORT}/privacy.html`); await pp.waitForLoadState('networkidle');
+  check('privacy.html: loads with no third-party requests and no errors', ext.length === 0 && perr.length === 0 && /Your workouts stay on your device/.test(await pp.textContent('body')), { ext, perr });
+  await pp.setViewportSize({ width: 390, height: 844 }); await pp.screenshot({ path: path.join(OUT, 'privacy-page.png'), fullPage: true });
+  check('privacy.html: no horizontal scroll at phone width', await pp.evaluate(() => document.documentElement.scrollWidth <= 390));
+  await pp.close();
   await cE.close();
 
   // ── 6. IndexedDB mirror: verified migration, dual-write, recovery, reset.
