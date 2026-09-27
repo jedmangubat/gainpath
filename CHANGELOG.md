@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.8.1] - 2026-09-28
+
+### Fixed
+- **lbs users got kg-sized defaults (about 2.2× too light).** Built-in exercise
+  defaults are written in kg but were used as-is for lbs users, so a new lbs
+  user's barbell bench default read "60 lb" and first-time estimates were
+  scaled from that. A new `defaultW()` converts built-in defaults to lb
+  (rounded to 5 lb) wherever a default feeds a weight. Custom exercises already
+  store their default in the user's unit and are left alone.
+- **Switching kg ↔ lbs and back changed weights and shrank "My gym".** lbs-entered
+  weights came back 0.1 off (225 → 225.1, 165 lb body weight → 164.9), 1.25 kg
+  came back as 1.3, and a full dumbbell rack lost 6–8 sizes (and the 25 kg
+  plate) because several sizes map to the same size in the other unit. New
+  rounding rule: converted weights still round to 0.1 for display, but
+  `CFG.unitMemo` remembers each pre-switch value and gear size, so switching
+  back restores the exact originals. Anything logged or edited in between
+  converts normally, and a converted value shared by two different originals is
+  never "restored" to the wrong one. Repeated switching can't drift.
+- **Two failed sessions at the lightest weight could propose a 0 kg deload.** It
+  now holds instead.
+- **Fallback starting estimates landed on weights that don't exist** (14.5 kg per
+  hand, a 36 kg barbell). They now snap to the nearest standard dumbbell for
+  dumbbell lifts and to a 2.5 kg / 5 lb step otherwise, before snapping to owned
+  gear.
+
+
 ### Added
 - **`RELEASING.md` and `npm run precheck` (2026-09-28): a written release
   checklist and a single pre-release gate.** Release steps used to live only
@@ -49,14 +75,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   tests pass, and `simulate` and `chaos` are clean. `sw.js` `CACHE_NAME` bumped to
   `gainpath-v43` because `index.html` changed; `APP_VERSION` is unchanged because
   nothing is user-visible.
-- **`npm run test:units` now covers every formula in that section (225 checks,
+- **`npm run test:units` now covers every formula in that section (248 checks,
   up from 178).** New cases cover zero and missing history, missing or invalid
   body weight, very light and very heavy lifters, women's defaults,
   bodyweight-only users, timed holds, lbs users, gear snapping, and kg↔lbs round
   trips over history, weigh-ins, machine bases, baselines, day plans, custom
   exercises and gear. A new check fails if the math section ever gains DOM,
-  storage or UI calls. Bugs these tests exposed are recorded as `known('Bn')`
-  checks, reported on every run without failing it, and listed below.
+  storage or UI calls. The bugs these tests exposed are fixed above; the
+  `known('Bn', …)` helper stays for recording future found-but-unfixed bugs.
 - `.gitignore` now ignores `secrets/`, where the Facebook token lives.
 - `CLAUDE.md` documents `fb_post.py` and the token-handling rules, and records
   the v2.6.5 convention that mid-workout edits are session-only (that note was
@@ -67,23 +93,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   light `#EDEBE3`, not the dark Kinetic `#0C1512`. On Android that means a
   light splash screen and title bar. Found while writing `RELEASING.md` and
   not changed yet.
-- Found by the new math tests; recorded as `known()` checks, not fixed yet:
-  - **B1:** lbs → kg → lbs changes lbs-entered weights by 0.1 (225 → 225.1,
-    135 → 134.9, 165 lb body weight → 164.9). A value that is already a
-    converted kg value round-trips exactly, and repeated switching adds no
-    drift beyond the first round trip.
-  - **B2:** kg values with two decimals (1.25) come back rounded (1.3).
-  - **B3:** switching units and back shrinks the "My gym" inventory: a full kg
-    dumbbell rack goes from 26 sizes to 20, the 25 kg plate is lost, and a full
-    lbs rack loses 8 sizes.
-  - **B4:** built-in exercise defaults (`baseW`) are kg numbers but are used
-    unconverted for lbs users, so a new lbs user's defaults and first-time
-    estimates are about 2.2× too light (bench default "60 lb").
-  - **B5:** two failed sessions at a light weight can propose a 0 kg deload for a
-    loaded lift.
-  - **B6:** the fallback estimate (used when no related lift is logged) isn't
-    snapped to a real increment, e.g. 14.5 kg per hand for farmers carry or a
-    36 kg barbell bench.
 
 ## [2.8.0] - 2026-09-25
 

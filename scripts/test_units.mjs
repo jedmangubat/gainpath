@@ -754,7 +754,7 @@ async function main() {
       flatEst >= 20 && flatEst <= 30, true);
     check('lift sync: incline DB estimate is below flat DB estimate', incEst < flatEst && incEst >= 15, true);
     check('lift sync: machines are not converted from free weights (gym-specific)',
-      getAIEstimatedWeight(machPress), 24);
+      getAIEstimatedWeight(machPress), 25);
     const crossEst = liftEstimate(dbOhp, 10);
     check('lift sync: no pressing-overhead history → cross-pattern estimate from bench, flagged as cross',
       !!crossEst && crossEst.cross === true && getAIEstimatedWeight(dbOhp) >= 10 && getAIEstimatedWeight(dbOhp) <= 20, true);
@@ -850,7 +850,7 @@ async function main() {
     CFG.bw = 55; const fb55 = getAIEstimatedWeight(dbPress);
     CFG.bw = 250; const fb250 = getAIEstimatedWeight(dbPress);
     check('bw scaling: heavier → higher default, lighter → lower, reference weight unchanged', [fb75, fb100 > fb75, fb55 < fb75], [15, true, true]);
-    check('bw scaling: clamped at 1.25× for outlier body weights', fb250 <= 19, true);
+    check('bw scaling: clamped at 1.25× for outlier body weights (20, not the unclamped ~29)', fb250, 20);
     CFG.bw = 75;
 
     // ── Sex-appropriate defaults for exercises swapped in from the pool.
@@ -1047,25 +1047,53 @@ async function main() {
 
     for (const w of [225, 135, 70, 137.5]) {
       seedUnits('lbs', w, 165, noGear); const a = unitSnap(); roundTrip('lbs', 'kg');
-      known('B1', `units: lbs ${w} → kg → lbs should return every stored weight exactly`, unitSnap(), a);
+      check(`math/units: lbs ${w} → kg → lbs returns every stored weight exactly`, unitSnap(), a);
     }
-    seedUnits('kg', 1.25, 80, noGear); const a125 = unitSnap(); roundTrip('kg', 'lbs');
-    known('B2', 'units: a 2-decimal kg value (1.25) should survive kg → lbs → kg', unitSnap(), a125);
-    seedUnits('kg', 100, 80, { db: DUMBBELLS.kg, pl: PLATES.kg }); const gk = gearSnap(); roundTrip('kg', 'lbs');
-    known('B3', 'units: a full kg dumbbell rack + plate set should survive kg → lbs → kg', gearSnap(), gk);
-    seedUnits('lbs', 225, 165, { db: DUMBBELLS.lbs, pl: PLATES.lbs }); const gl = gearSnap(); roundTrip('lbs', 'kg');
-    known('B3', 'units: a full lbs dumbbell rack should survive lbs → kg → lbs', gearSnap(), gl);
+    seedUnits('kg', 1.25, 80, noGear); const a125 = unitSnap(); convertUnitData('kg', 'lbs');
+    check('math/units: 1.25kg shows as 2.8 lb after a switch', unitSnap().history, 2.8);
+    convertUnitData('lbs', 'kg');
+    check('math/units: a 2-decimal kg value (1.25) survives kg → lbs → kg', unitSnap(), a125);
+    seedUnits('kg', 100, 80, { db: DUMBBELLS.kg, pl: PLATES.kg }); const gk = gearSnap(); roundTrip('kg', 'lbs', 5);
+    check('math/units: a full kg dumbbell rack + plate set survives five kg ↔ lbs round trips', gearSnap(), gk);
+    seedUnits('lbs', 225, 165, { db: DUMBBELLS.lbs, pl: PLATES.lbs }); const gl = gearSnap(); roundTrip('lbs', 'kg', 5);
+    check('math/units: a full lbs rack survives five lbs ↔ kg round trips', gearSnap(), gl);
+    seedUnits('lbs', 225, 165, noGear); convertUnitData('lbs', 'kg');
+    ST.history[0].exercises[0].sets[0].w = 105; convertUnitData('kg', 'lbs');
+    check('math/units: a weight edited after the switch converts fresh; untouched ones restore', [unitSnap().history, unitSnap().weighIn, unitSnap().keyLift], [231.5, 165, 225]);
+    seedUnits('lbs', 225, 165, { db: [20, 25], pl: [] }); convertUnitData('lbs', 'kg');
+    CFG.gymDumbbells.push(20); CFG.gymDumbbells = [...new Set(CFG.gymDumbbells)].sort((a, b) => a - b); convertUnitData('kg', 'lbs');
+    check('math/units: gear added after the switch converts fresh; original sizes restore', gearSnap().dumbbells, [20, 25, 45]);
+    seedUnits('lbs', 225, 165, noGear); ST.history[0].exercises[0].sets.push({ done: true, t: 'x', w: 225.1, r: 3 });
+    convertUnitData('lbs', 'kg');
+    check('math/units: two originals sharing one converted value (225, 225.1 → 102.1) are not memoised',
+      [ST.history[0].exercises[0].sets.map(x => x.w), CFG.unitMemo.w['102.1']], [[102.1, 102.1], null]);
+    convertUnitData('kg', 'lbs');
+    check('math/units: … so both convert fresh on the way back (no wrong restore)', ST.history[0].exercises[0].sets.map(x => x.w), [225.1, 225.1]);
+    seedUnits('kg', 100, 80, noGear); convertUnitData('kg', 'lbs');
+    check('math/units: the memo records the direction of the last switch', [CFG.unitMemo.from, CFG.unitMemo.to, CFG.unitMemo.w['220.5']], ['kg', 'lbs', 100]);
 
-    // ── Other bugs found while writing these tests (recorded, not fixed).
+    // ── lbs users: built-in defaults are kg numbers, converted on use.
     reset(); CFG.unit = 'lbs'; CFG.bw = 165;
-    known('B4', 'lbs user: built-in default for barbell bench should be ~60kg in lb (≈135), not 60', M.bench.baseW >= 130, true);
-    known('B4', 'lbs user: first-time barbell bench estimate should be ~36kg in lb (≈80), not 36', getAIEstimatedWeight(M.bench) >= 75, true);
+    check('math/lbs defaults: built-in 60kg bench default → 130 lb; 25kg DB press → 55 lb', [defaultW(M.bench), defaultW(M.dbPress)], [130, 55]);
+    check('math/lbs defaults: first-time bench estimate is ~36kg in lb (80), not 36', getAIEstimatedWeight(M.bench), 80);
+    check('math/lbs defaults: first-time DB press estimate lands on a real lb dumbbell', getAIEstimatedWeight(M.dbPress), 35);
+    CFG.startingWeights = 'default';
+    check('math/lbs defaults: "program defaults" setting also converts', plannedFor(M.bench).w, 130);
+    CFG.startingWeights = 'ai';
+    check('math/lbs defaults: custom exercises keep their own (already lb) default', defaultW({ name: 'Mine', baseW: 60, custom: true }), 60);
+    CFG.unit = 'kg';
+    check('math/kg defaults: unchanged for kg users', [defaultW(M.bench), defaultW(M.dbPress)], [60, 25]);
+
+    // ── Deload floor and fallback snapping.
     reset();
     ST.history = [one('Barbell row', 2.5, 8, 'max'), one('Barbell row', 2.5, 8, 'max')];
-    known('B5', 'deload after two failures should never propose 0kg for a loaded lift', suggestWeight(M.row, 2.5).newW > 0, true);
+    check('math/deload: two failures at the lightest weight → hold, never a 0kg proposal', suggestWeight(M.row, 2.5), null);
+    ST.history = [one('Barbell row', 50, 8, 'max'), one('Barbell row', 50, 8, 'max')];
+    check('math/deload: two failures at 50kg still deload normally', suggestWeight(M.row, 50), { feel: 'max', delta: -5, newW: 45 });
     reset();
-    known('B6', 'fallback estimate should land on a real increment (Farmers carry 14.5kg/hand, bench 36kg)',
-      [getAIEstimatedWeight(M.farmers) % 2.5, getAIEstimatedWeight(M.bench) % 2.5], [0, 0]);
+    check('math/fallback: farmers carry lands on a real dumbbell (15), bench on a 2.5 step (35)', [getAIEstimatedWeight(M.farmers), getAIEstimatedWeight(M.bench)], [15, 35]);
+    CFG.sex = 'female'; CFG.bw = 60;
+    check('math/fallback: small dumbbells keep 1kg resolution (women DB press 6kg)', getAIEstimatedWeight(poolEx('Bench dumbbell chest press')), 6);
     reset();
 
     ST.history = savedHist;

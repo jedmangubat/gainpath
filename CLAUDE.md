@@ -300,6 +300,14 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   A bug found but not yet approved for fixing gets a `known('Bn', …)` check in
   `test:units` (reported, doesn't fail) plus a CHANGELOG "Known issues" line.
   Never silently change a formula's behaviour.
+- **Built-in `baseW` is always kg — read defaults through `defaultW(ex)`,**
+  never `ex.baseW`, anywhere a default becomes a weight (it converts for lbs
+  users; custom exercises already store their own unit). Until v2.8.1 lbs users
+  got kg numbers labelled lb.
+- **kg↔lbs rounding rule (v2.8.1):** converted weights round to 0.1, and
+  `CFG.unitMemo` maps each converted value/gear size back to its pre-switch
+  original so switching back is exact. Anything that converts a weight must go
+  through `convertUnitData()`'s `cv`/`cvGear`, never a bare multiply.
 - **Reuse the analytics helpers** rather than recomputing inline:
   `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
