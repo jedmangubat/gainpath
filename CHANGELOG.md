@@ -33,6 +33,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   app ships, so there is no version bump and no `CACHE_NAME` change.
 
 ### Changed
+- **All weight formulas now live in one section of `index.html` (2026-09-28).**
+  The estimation, progression and conversion code was spread across four places
+  in the file, mixed in with UI code. It is now one block, between
+  `// ═══ GAINPATH MATH` and `// ═══ END GAINPATH MATH ═══`, with no DOM access,
+  storage writes or UI strings. That block covers starting-weight estimates,
+  related-lift sync, RIR progression, body-weight scaling, rep re-targeting,
+  ease-back after a break, gear snapping and kg↔lbs conversion. Code was moved,
+  not rewritten. A line-by-line comparison of the old and new file shows the
+  same lines in a new order, except that `convertUnits()` is now split in two:
+  `convertUnitData()` (data only, inside the section) and a `convertUnits()`
+  wrapper that recomputes PRs/badges and saves in the same order as before.
+  `stepWeight`, `feelChip`, `dismissSync` and the label maps moved just outside
+  the section because they are UI. No behaviour change: all 178 existing unit
+  tests pass, and `simulate` and `chaos` are clean. `sw.js` `CACHE_NAME` bumped to
+  `gainpath-v43` because `index.html` changed; `APP_VERSION` is unchanged because
+  nothing is user-visible.
+- **`npm run test:units` now covers every formula in that section (225 checks,
+  up from 178).** New cases cover zero and missing history, missing or invalid
+  body weight, very light and very heavy lifters, women's defaults,
+  bodyweight-only users, timed holds, lbs users, gear snapping, and kg↔lbs round
+  trips over history, weigh-ins, machine bases, baselines, day plans, custom
+  exercises and gear. A new check fails if the math section ever gains DOM,
+  storage or UI calls. Bugs these tests exposed are recorded as `known('Bn')`
+  checks, reported on every run without failing it, and listed below.
 - `.gitignore` now ignores `secrets/`, where the Facebook token lives.
 - `CLAUDE.md` documents `fb_post.py` and the token-handling rules, and records
   the v2.6.5 convention that mid-workout edits are session-only (that note was
@@ -43,6 +67,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   light `#EDEBE3`, not the dark Kinetic `#0C1512`. On Android that means a
   light splash screen and title bar. Found while writing `RELEASING.md` and
   not changed yet.
+- Found by the new math tests; recorded as `known()` checks, not fixed yet:
+  - **B1:** lbs → kg → lbs changes lbs-entered weights by 0.1 (225 → 225.1,
+    135 → 134.9, 165 lb body weight → 164.9). A value that is already a
+    converted kg value round-trips exactly, and repeated switching adds no
+    drift beyond the first round trip.
+  - **B2:** kg values with two decimals (1.25) come back rounded (1.3).
+  - **B3:** switching units and back shrinks the "My gym" inventory: a full kg
+    dumbbell rack goes from 26 sizes to 20, the 25 kg plate is lost, and a full
+    lbs rack loses 8 sizes.
+  - **B4:** built-in exercise defaults (`baseW`) are kg numbers but are used
+    unconverted for lbs users, so a new lbs user's defaults and first-time
+    estimates are about 2.2× too light (bench default "60 lb").
+  - **B5:** two failed sessions at a light weight can propose a 0 kg deload for a
+    loaded lift.
+  - **B6:** the fallback estimate (used when no related lift is logged) isn't
+    snapped to a real increment, e.g. 14.5 kg per hand for farmers carry or a
+    36 kg barbell bench.
 
 ## [2.8.0] - 2026-09-25
 

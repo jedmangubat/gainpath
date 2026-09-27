@@ -284,13 +284,22 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   own history always sets its next weight. Body weight: read it with
   `curBW()`, never `CFG.bw` directly, and end every `ST.bw` write with
   `syncBW()` (or use `setWeighIn()`). **Any new stored weight field must be
-  added to `convertUnits()`**, or a kg↔lbs switch silently relabels it. Next
+  added to `convertUnitData()`**, or a kg↔lbs switch silently relabels it. Next
   session's weight goes through `carriedWeight()` (rep re-targeting), never
   raw `getSavedWeight()`. Days built from pool names use `poolEx()` for
   sex-appropriate defaults. Every ratio/threshold in this model is graded
   (study / norm / heuristic) in `docs/superpowers/plans/2026-09-25-lift-sync.md`;
   keep that table current when a number changes, and keep heuristics
   conservative.
+- **Weight formulas live in the `GAINPATH MATH` section of `index.html`**
+  (`// ═══ GAINPATH MATH —` … `// ═══ END GAINPATH MATH ═══`): estimates,
+  progression, body-weight scaling, rep re-targeting, break easing, gear
+  snapping, kg↔lbs conversion (`convertUnitData`; `convertUnits` outside it
+  only adds recompute + save). Keep new formulas there. It must stay free of DOM
+  access, storage writes and UI strings, and `test:units` fails if it gains any.
+  A bug found but not yet approved for fixing gets a `known('Bn', …)` check in
+  `test:units` (reported, doesn't fail) plus a CHANGELOG "Known issues" line.
+  Never silently change a formula's behaviour.
 - **Reuse the analytics helpers** rather than recomputing inline:
   `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
   warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
@@ -369,7 +378,8 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   the measured boxes. See the tutorial note above for why the two must never be
   regenerated separately.
 - **`npm run test:units`** — unit-tests GainPath's pure calculation functions
-  (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`) against the real
+  (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`, and everything in
+  the `GAINPATH MATH` section) against the real
   inline script, using the same Playwright boot pattern as `visual-check`
   (seed `localStorage`, load `index.html`, call the real `window`-scope
   functions from `page.evaluate`) rather than reimplementing their logic in

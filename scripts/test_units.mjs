@@ -17,6 +17,13 @@
 // every field, not just the sub-screen's back-arrow tap) — both were lost
 // silently before v2.7.0.
 //
+// Also covers every formula in index.html's GAINPATH MATH section (starting
+// estimates, RIR progression, body-weight scaling, rep re-targeting,
+// ease-back after a break, gear snapping, kg↔lbs round trips) across edge
+// cases, and fails if that section ever gains DOM/storage/UI calls.
+// known('Bn', ...) records a bug that has been found but not yet fixed: it is
+// printed as KNOWN every run without failing it, and as FIXED? once it passes.
+//
 // Usage: npm run test:units
 
 import { chromium } from 'playwright';
@@ -911,6 +918,156 @@ async function main() {
     check('Settings shows the latest weigh-in, not the onboarding value', gid('set-bw').value, '90');
     gid('set-bw').value = '70'; collectSettingsFields();
     check('Settings body-weight edit logs today\'s weigh-in', [CFG.bw, ST.bw[ST.bw.length - 1].dk, ST.bw[ST.bw.length - 1].w], [70, tdk, 70]);
+
+    // ══ GAINPATH MATH section: edge cases (Phase 2 safety net) ══
+    // Every formula in the section, driven through the real functions with
+    // controlled ST/CFG. `known(...)` records a bug found while writing these
+    // (reported every run, doesn't fail it until the fix lands; see the
+    // KNOWN BUGS list printed at the end).
+    const known = (id, name, actual, expected) => {
+      out.push({ name: `[${id}] ${name}`, pass: JSON.stringify(actual) === JSON.stringify(expected), actual, expected, known: id });
+    };
+    const M = {
+      dbPress: EXPOOL['Bench dumbbell chest press'], bench: EXPOOL['Flat barbell bench press'], row: EXPOOL['Barbell row'],
+      plank: EXPOOL['Plank'], pushups: EXPOOL['Push-ups'], pullups: EXPOOL['Pull-ups'], farmers: EXPOOL['Farmers carry'], latpd: EXPOOL['Lat pulldown']
+    };
+    const reset = () => {
+      CFG.unit = 'kg'; CFG.sex = 'male'; CFG.bw = 75; CFG.exp = 'intermediate'; CFG.prefReps = 10; CFG.prefRepsChangedAt = null;
+      CFG.setStyle = 'straight'; CFG.keyLifts = {}; CFG.gymDumbbells = []; CFG.gymPlates = {}; CFG.syncDismiss = {};
+      CFG.dayPlan = {}; CFG.customExercises = []; CFG.dumbbellMax = null; ST.history = []; ST.bw = []; ST.mw = {};
+    };
+    const one = (name, w, r, exFeel, dk) => ({ dk: dk || tdk, date: 'd', exercises: [{ name, exFeel, sets: [{ done: true, t: 'x', w, r }] }] });
+
+    // ── Zero / missing history: every formula degrades to "no opinion".
+    reset();
+    check('math/no history: getSavedWeight & getSavedReps are undefined', [getSavedWeight('Barbell row'), getSavedReps('Barbell row')], [undefined, undefined]);
+    check('math/no history: carriedWeight is undefined (caller falls back to the estimate)', carriedWeight(M.row), undefined);
+    check('math/no history: suggestWeight, breakSuggest, syncSuggest all null', [suggestWeight(M.row, 60), breakSuggest(M.row, 60), syncSuggest(M.dbPress, 20, 10)], [null, null, null]);
+    check('math/no history: liftStrength and liftEstimate null', [liftStrength('Barbell row'), liftEstimate(M.dbPress, 10)], [null, null]);
+    check('math/no history: estimate = baseW × intermediate 0.6 × bwScale 1', getAIEstimatedWeight(M.row), 30);
+    ST.history = [{ date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'x', w: 100, r: 5 }] }] }];
+    check('math/legacy session without dk: breakSuggest stays silent instead of guessing', breakSuggest(M.row, 100), null);
+    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'good', sets: [{ done: false, t: 'x', w: 100, r: 5 }, { done: true, t: 'w', w: 50, r: 10 }] }] }];
+    check('math/only warm-ups or unfinished sets logged: counts as no history', [getSavedWeight('Barbell row'), suggestWeight(M.row, 60), liftStrength('Barbell row')], [undefined, null, null]);
+
+    // ── Missing / bad profile values never produce NaN.
+    reset();
+    for (const bw of [0, undefined, null, NaN, -5]) {
+      CFG.bw = bw;
+      check(`math/body weight ${String(bw)}: bwScale is neutral and the estimate is a number`, [bwScale(), getAIEstimatedWeight(M.dbPress)], [1, 15]);
+    }
+    reset(); CFG.exp = 'unknown-level';
+    check('math/unknown experience level → intermediate multiplier', getAIEstimatedWeight(M.row), 30);
+    CFG.exp = 'beginner'; const begRow = getAIEstimatedWeight(M.row); CFG.exp = 'advanced';
+    check('math/experience ordering: beginner < intermediate < advanced', [begRow, 30, getAIEstimatedWeight(M.row)], [20, 30, 40]);
+
+    // ── Very light and very heavy lifters.
+    reset();
+    ST.history = [one('Flat barbell bench press', 20, 5, 'max')];
+    const lightEst = getAIEstimatedWeight(M.dbPress);
+    ST.history = [one('Flat barbell bench press', 220, 5, 'easy')];
+    const heavyEst = getAIEstimatedWeight(M.dbPress);
+    check('math/light lifter (20kg×5 bench to failure) → small but non-zero DB press, on a 2.5 step', [lightEst > 0 && lightEst <= 10, lightEst % 2.5], [true, 0]);
+    check('math/heavy lifter (220kg×5 bench) → DB press 50–75kg per hand', heavyEst >= 50 && heavyEst <= 75, true);
+    check('math/stabCurve: dumbbell share shrinks as strength rises', stabCurve(300, 'b', 'd') < stabCurve(60, 'b', 'd'), true);
+    check('math/stabCurve: same equipment or cable → no correction', [stabCurve(100, 'b', 'b'), stabCurve(100, 'b', 'c')], [1, 1]);
+    CFG.bw = 40; const bwLight = bwScale(); CFG.bw = 200; const bwHeavy = bwScale();
+    check('math/bwScale clamps to 0.75–1.25× for extreme body weights', [bwLight, bwHeavy], [0.75, 1.25]);
+    reset();
+    ST.history = [one('Barbell row', 60, 30, 'good')]; CFG.prefReps = 1; CFG.prefRepsChangedAt = tdk;
+    check('math/rep re-target caps logged reps at 15 (60×30 → 1-rep target is 87, not 116)', carriedWeight(M.row), 87);
+
+    // ── Women's defaults.
+    reset(); CFG.sex = 'female'; CFG.bw = 60;
+    check('math/women: pool default 10kg, estimate = 10 × 0.6 at the 60kg reference', [poolEx('Bench dumbbell chest press').baseW, getAIEstimatedWeight(poolEx('Bench dumbbell chest press'))], [10, 6]);
+    CFG.bw = 75;
+    check('math/women: bwScale uses exponent 0.5 against a 60kg reference', Math.round(bwScale() * 1000) / 1000, Math.round(Math.pow(75 / 60, 0.5) * 1000) / 1000);
+    CFG.sex = 'male';
+    check('math/men: bwScale uses exponent 0.55 against a 75kg reference', bwScale(), 1);
+
+    // ── Bodyweight-only users.
+    reset();
+    ST.history = [{ dk: tdk, date: 'd', exercises: [
+      { name: 'Push-ups', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 20 }] },
+      { name: 'Plank', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 60 }] }] }];
+    check('math/bodyweight-only: push-ups plan 0kg and get no weight suggestion', [plannedFor(M.pushups).w, suggestWeight(M.pushups, 0), breakSuggest(M.pushups, 0)], [0, null, null]);
+    check('math/bodyweight-only: timed holds plan 0kg and are never snapped to gear', [plannedFor(M.plank).w, roundToGymWeight(M.plank, 7, 'up')], [0, 7]);
+    check('math/bodyweight-only: push-ups still seed a first DB press', liftEstimate(M.dbPress, 10).src, 'Push-ups');
+    check('math/bodyweight moves are sources only (never estimated themselves)', liftEstimate(M.pullups, 10), null);
+
+    // ── RIR progression in lbs.
+    reset(); CFG.unit = 'lbs';
+    ST.history = [one('Barbell row', 135, 8, 'easy')];
+    check('math/lbs: 5+ reps left on a back lift → +10 lb', suggestWeight(M.row, 135), { feel: 'easy', delta: 10, newW: 145 });
+    ST.history = [one('Barbell row', 135, 8, 'good')];
+    check('math/lbs: 3–4 reps left → +5 lb', suggestWeight(M.row, 135), { feel: 'good', delta: 5, newW: 140 });
+    check('math/lbs: estimates snap to a 5 lb step when no gear is set', snapEstimate(M.dbPress, 33), 35);
+    CFG.bw = 165.3465;
+    check('math/lbs: bwScale reference is 75kg expressed in lb', Math.round(bwScale() * 1e6) / 1e6, 1);
+    ST.history = [one('Barbell row', 225, 5, 'good', ago(42))];
+    check('math/lbs: 6 weeks off → 10% lighter, snapped to 0.5', breakSuggest(M.row, 225), { newW: 202.5, weeks: 6 });
+
+    // ── Gear snapping with an inventory.
+    reset(); CFG.gymPlates = { 20: 1, 10: 1, 5: 1, 2.5: 1 };
+    check('math/plates: 61kg barbell rounds up to the next loadable total (65)', roundToGymWeight(M.bench, 61, 'up'), 65);
+    check('math/plates: 61kg rounds down to 60', roundToGymWeight(M.bench, 61, 'down'), 60);
+    check('math/plates: below the bar weight is returned unchanged', roundToGymWeight(M.bench, 15, 'up'), 15);
+    check('math/calcPlates: 32.5 per side with 20/10/2.5 plates', calcPlates(32.5), { counts: [{ d: 20, n: 1 }, { d: 10, n: 1 }, { d: 2.5, n: 1 }], remaining: 0 });
+
+    // ── kg ↔ lbs round trips. Rounding rule today: every converted weight is
+    // rounded to 0.1 in the new unit; owned plates/dumbbells map to the
+    // nearest real size in the new unit.
+    const seedUnits = (unit, w, bw, gear) => {
+      reset(); CFG.unit = unit;
+      ST.history = [{ dk: '2026-01-01', date: 'd', exercises: [{ name: 'Barbell row', plannedW: w, sets: [{ done: true, t: 'x', w, r: 5 }] }] }];
+      ST.bw = [{ dk: '2026-01-01', w: bw }]; CFG.bw = bw; ST.mw = { 'Hack squat': w };
+      CFG.keyLifts = { chest: { w, r: 5 } }; CFG.dayPlan = { push: { 'Barbell row': { w, r: 8 } } };
+      CFG.customExercises = [{ name: 'Custom', baseW: w }]; CFG.syncDismiss = { 'Barbell row': w }; CFG.dumbbellMax = w;
+      CFG.gymDumbbells = gear.db.slice(); CFG.gymPlates = {}; gear.pl.forEach(p => { CFG.gymPlates[p] = 1; });
+    };
+    const unitSnap = () => ({
+      history: ST.history[0].exercises[0].sets[0].w, plannedW: ST.history[0].exercises[0].plannedW, weighIn: ST.bw[0].w, profileBw: CFG.bw,
+      machineBase: ST.mw['Hack squat'], keyLift: CFG.keyLifts.chest.w, dayPlan: CFG.dayPlan.push['Barbell row'].w,
+      customBaseW: CFG.customExercises[0].baseW, syncDismiss: CFG.syncDismiss['Barbell row'], dumbbellMax: CFG.dumbbellMax
+    });
+    const gearSnap = () => ({ dumbbells: CFG.gymDumbbells.slice(), plates: Object.keys(CFG.gymPlates).map(Number).sort((a, b) => a - b) });
+    const roundTrip = (u, v, n) => { for (let i = 0; i < (n || 1); i++) { convertUnitData(u, v); convertUnitData(v, u); } };
+    const noGear = { db: [], pl: [] };
+    for (const w of [100, 62.5, 57.5, 77.3, 140, 250]) {
+      seedUnits('kg', w, 80, noGear); const a = unitSnap(); roundTrip('kg', 'lbs');
+      check(`math/units: kg ${w} → lbs → kg returns every stored weight exactly`, unitSnap(), a);
+    }
+    seedUnits('kg', 100, 80, noGear); convertUnitData('kg', 'lbs');
+    check('math/units: kg→lbs converts at 2.20462, rounded to 0.1', [unitSnap().history, unitSnap().weighIn], [220.5, 176.4]);
+    check('math/units: converting to the same unit is a no-op', [convertUnitData('lbs', 'lbs'), CFG.unit], [false, 'lbs']);
+    seedUnits('kg', 100, 80, noGear); roundTrip('kg', 'lbs'); const once = unitSnap(); roundTrip('kg', 'lbs', 10);
+    check('math/units: after one round trip, ten more change nothing (no cumulative drift)', unitSnap(), once);
+    seedUnits('lbs', 225, 165, noGear); roundTrip('lbs', 'kg'); const onceL = unitSnap(); roundTrip('lbs', 'kg', 10);
+    check('math/units: lbs values settle after one round trip (no cumulative drift)', unitSnap(), onceL);
+
+    for (const w of [225, 135, 70, 137.5]) {
+      seedUnits('lbs', w, 165, noGear); const a = unitSnap(); roundTrip('lbs', 'kg');
+      known('B1', `units: lbs ${w} → kg → lbs should return every stored weight exactly`, unitSnap(), a);
+    }
+    seedUnits('kg', 1.25, 80, noGear); const a125 = unitSnap(); roundTrip('kg', 'lbs');
+    known('B2', 'units: a 2-decimal kg value (1.25) should survive kg → lbs → kg', unitSnap(), a125);
+    seedUnits('kg', 100, 80, { db: DUMBBELLS.kg, pl: PLATES.kg }); const gk = gearSnap(); roundTrip('kg', 'lbs');
+    known('B3', 'units: a full kg dumbbell rack + plate set should survive kg → lbs → kg', gearSnap(), gk);
+    seedUnits('lbs', 225, 165, { db: DUMBBELLS.lbs, pl: PLATES.lbs }); const gl = gearSnap(); roundTrip('lbs', 'kg');
+    known('B3', 'units: a full lbs dumbbell rack should survive lbs → kg → lbs', gearSnap(), gl);
+
+    // ── Other bugs found while writing these tests (recorded, not fixed).
+    reset(); CFG.unit = 'lbs'; CFG.bw = 165;
+    known('B4', 'lbs user: built-in default for barbell bench should be ~60kg in lb (≈135), not 60', M.bench.baseW >= 130, true);
+    known('B4', 'lbs user: first-time barbell bench estimate should be ~36kg in lb (≈80), not 36', getAIEstimatedWeight(M.bench) >= 75, true);
+    reset();
+    ST.history = [one('Barbell row', 2.5, 8, 'max'), one('Barbell row', 2.5, 8, 'max')];
+    known('B5', 'deload after two failures should never propose 0kg for a loaded lift', suggestWeight(M.row, 2.5).newW > 0, true);
+    reset();
+    known('B6', 'fallback estimate should land on a real increment (Farmers carry 14.5kg/hand, bench 36kg)',
+      [getAIEstimatedWeight(M.farmers) % 2.5, getAIEstimatedWeight(M.bench) % 2.5], [0, 0]);
+    reset();
+
     ST.history = savedHist;
 
     return out;
@@ -919,14 +1076,28 @@ async function main() {
   await browser.close();
   server.close();
 
-  const failed = results.filter(r => !r.pass);
+  // The GAINPATH MATH section must stay free of DOM access, storage writes and
+  // UI, so it can be tested (and later moved into a module) on its own.
+  const html = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+  const sec = html.split('// ═══ GAINPATH MATH —')[1]?.split('// ═══ END GAINPATH MATH ═══')[0];
+  const code = (sec || '').split('\n').filter(l => !/^\s*\/\//.test(l)).join('\n');
+  const banned = code.match(/\bgid\(|\bdocument\.|innerHTML|textContent|\bsave[A-Z]\w*\(|localStorage|\balert\(|\btrack\(|\bss\(|\brender[A-Z]\w*\(/g);
+  results.push({ name: 'math section: exists and has no DOM/storage/UI calls', pass: !!sec && !banned, actual: sec ? (banned || []) : 'section markers missing', expected: [] });
+
+  // Known bugs (see the [Bn] ids) are reported but don't fail the run; one
+  // that starts passing is flagged so it can be promoted to a normal check.
+  const failed = results.filter(r => !r.pass && !r.known);
   for (const r of results) {
-    console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}`);
+    const tag = r.known ? (r.pass ? 'FIXED?' : 'KNOWN') : (r.pass ? 'PASS' : 'FAIL');
+    console.log(`${tag.padEnd(6)}${r.name}`);
     if (!r.pass) console.log(`      expected: ${JSON.stringify(r.expected)}\n      actual:   ${JSON.stringify(r.actual)}`);
   }
+  const knownOpen = results.filter(r => r.known && !r.pass), knownFixed = results.filter(r => r.known && r.pass);
+  if (knownOpen.length) console.log(`\nKNOWN BUGS still open: ${[...new Set(knownOpen.map(r => r.known))].join(', ')} (${knownOpen.length} checks)`);
+  if (knownFixed.length) console.log(`Known-bug checks now passing — promote to check(): ${knownFixed.map(r => r.name).join('; ')}`);
   if (pageErrors.length) console.log('\nPage errors during test run:\n' + pageErrors.join('\n'));
 
-  console.log(`\n${results.length - failed.length}/${results.length} passed.`);
+  console.log(`\n${results.filter(r => !r.known && r.pass).length}/${results.filter(r => !r.known).length} passed.`);
   process.exit(failed.length > 0 || pageErrors.length > 0 ? 1 : 0);
 }
 
