@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   keeps the replaced data (`gp_pre_restore`). If that copy can't be stored, the
   restore stops and asks for an export first. **Undo last restore** in Reports &
   backup brings it back.
-- `npm run test:data` (`scripts/test_data_safety.mjs`, 26 checks) runs as part of
+- `npm run test:data` (`scripts/test_data_safety.mjs`, 39 checks) runs as part of
   `npm run precheck`. It drives the real UI with real files:
   - a 400-session lbs user exported, then restored on a fresh device through
     onboarding, record-by-record identical;
@@ -47,6 +47,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - the reminder interval;
   - the iPhone warning and its 30-day return, in WebKit with an iPhone user
     agent.
+
+- **A second, verified copy of your data in IndexedDB.** On first launch the app
+  runs this sequence:
+  1. Snapshot every `gp_*` key into an IndexedDB `backups` store
+     (`pre-idb-2.9.0`, kept for at least two releases).
+  2. Copy the keys into a `kv` store in one transaction.
+  3. Read them back and compare them key by key, and session by session for the
+     history.
+
+  Only a full match enables mirroring. After that, every save also goes to
+  IndexedDB. An interrupted or partial copy re-runs next launch. A mismatch
+  records `state:'failed'` with the reason, logs it, and changes nothing.
+  `localStorage` stays the copy the app reads. IndexedDB is read only if
+  `localStorage` has lost the profile while the mirror still has it; the data
+  is then written back and the app reloads once. "Erase all data" now clears
+  both, so an erase stays erased. Switching reads over to IndexedDB is left
+  for a later release, once this mirror has proven itself on real devices.
+  `test:data` covers it: fresh user; a 400-session lbs user with custom
+  exercises; running twice; dual-write; recovery after `localStorage` is wiped;
+  reset; a partially migrated state; and a forced verification failure.
 
 ### Fixed
 - Export wrote `gp_last_export` before the download without a `try`, so when

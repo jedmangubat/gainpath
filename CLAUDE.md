@@ -247,6 +247,15 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   save is how failed saves used to lose workouts silently (fixed v2.9.0).
   Anything offered as a rescue (`exportData`) must work from memory and must
   not depend on a storage write succeeding first.
+- **Storage: localStorage is the store the app reads; IndexedDB is a
+  verified mirror (v2.9.0).** Write user data through `lsSave(k,v)` (which
+  mirrors) inside the `saveOK`/`saveFailed` pattern, never
+  `localStorage.setItem` directly. `idbInit()` migrates once: backup snapshot,
+  then one-transaction copy, then `idbVerify()`, and only then `state:'verified'`.
+  `idbRecover()` is the only IndexedDB read: it runs when `gp_cfg` is missing
+  from localStorage. Anything that erases data must also call `idbClear()`, or
+  the data comes back. Keep the `pre-idb-2.9.0` backup until at least v2.11.
+  Switching reads to IndexedDB is a separate, later step.
 - **Restore = `validateBackup()` → `applyBackup()`.** It asks before replacing
   existing sessions, keeps the old data in `gp_pre_restore` for Undo, and stops
   if that copy can't be stored. `applyBackup()` recomputes PRs and badges.

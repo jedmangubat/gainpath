@@ -12,7 +12,7 @@
 //  - the backup-reminder interval setting
 // Downloads land in scripts/.data-safety/ (gitignored).
 //
-// Usage: npm run test:data
+// Usage: npm run test:data   (ENGINE=webkit npm run test:data for WebKit)
 
 import { chromium, webkit, devices } from 'playwright';
 import { createServer } from 'http';
@@ -75,6 +75,19 @@ async function seed(page, u, extra = {}) {
   // snapshots are what the app itself stores.
   await page.evaluate(() => { saveCFG(); saveData(); });
 }
+// Seed localStorage from a non-app page on the same origin, so the app's very
+// first boot (and its IndexedDB migration) sees this data. Deleting the
+// database under a live page is deferred in WebKit, so tests never do that.
+async function seedCold(page, u) {
+  await page.goto(`http://localhost:${PORT}/manifest.json`);
+  await page.evaluate((u) => {
+    localStorage.setItem('gp_cfg', JSON.stringify(u.cfg)); localStorage.setItem('gp_h', JSON.stringify(u.history));
+    localStorage.setItem('gp_bw', JSON.stringify(u.bw)); localStorage.setItem('gp_mw', JSON.stringify(u.mw)); localStorage.setItem('gp_p', '{}');
+    localStorage.setItem('gp_a2hs_dismissed', 'true'); localStorage.setItem('gp_last_export', new Date().toISOString());
+  }, u);
+  await page.goto(URL0);
+  await page.waitForSelector('#s-home.active');
+}
 const stored = (page) => page.evaluate(() => ({
   cfg: JSON.parse(localStorage.getItem('gp_cfg')), history: JSON.parse(localStorage.getItem('gp_h')),
   bw: JSON.parse(localStorage.getItem('gp_bw')), mw: JSON.parse(localStorage.getItem('gp_mw')), prs: JSON.parse(localStorage.getItem('gp_p'))
@@ -107,7 +120,8 @@ async function main() {
   const results = [], errors = [];
   const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail });
 
-  const browser = await chromium.launch();
+  // ENGINE=webkit runs sections 1–4 and 6 in WebKit (the iPhone engine) too.
+  const browser = await (process.env.ENGINE === 'webkit' ? webkit : chromium).launch();
   const ctx = async (opts) => { const c = await browser.newContext({ acceptDownloads: true, ...opts }); const p = await c.newPage(); p.on('pageerror', e => { errors.push(String(e)); console.log('PAGEERROR', String(e)); }); return [c, p]; };
 
   // ── 1. Backup on one device, restore on a fresh one.
@@ -158,6 +172,7 @@ async function main() {
   check('undo restore: the original data is back exactly', core(await stored(c)) === core(mine));
   check('undo restore: the kept copy is cleared', await c.evaluate(() => localStorage.getItem('gp_pre_restore')) === null);
   await c.setInputFiles('#import-file', path.join(ROOT, 'package.json'));
+  await c.waitForFunction(() => /invalid backup/.test(gid('ex-st').textContent), null, { timeout: 5000 }).catch(() => {});
   check('restore: a non-backup JSON file is rejected with a message', /invalid backup/.test(await c.textContent('#ex-st')) && core(await stored(c)) === core(mine));
   await cC.close();
 
@@ -194,6 +209,92 @@ async function main() {
   check('status: shows days since the last backup', /Last backup: 5 day/.test(await e.textContent('#bk-status')));
   check('desktop: no iPhone warning banner or risk line', !/could be deleted/.test(await e.textContent('#prt-h')) && !/7 days/.test(await e.textContent('#bk-status')));
   await cE.close();
+
+  // ── 6. IndexedDB mirror: verified migration, dual-write, recovery, reset.
+  const idbDump = (page) => page.evaluate(() => new Promise((res, rej) => {
+    const r = indexedDB.open('gainpath', 1);
+    r.onsuccess = () => {
+      const d = r.result, out = { kv: {}, meta: {}, backups: {} }, tx = d.transaction(['kv', 'meta', 'backups']);
+      ['kv', 'meta', 'backups'].forEach(n => { const c = tx.objectStore(n).openCursor(); c.onsuccess = () => { const x = c.result; if (x) { out[n][x.key] = x.value; x.continue(); } }; });
+      tx.oncomplete = () => { d.close(); res(out); }; tx.onerror = () => rej(tx.error);
+    };
+    r.onerror = () => rej(r.error);
+  }));
+  const lsAll = (page) => page.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('gp_')) o[k] = localStorage.getItem(k); } return o; });
+  const idbSettled = (page) => page.waitForFunction(() => IDB_READY || (IDB_ACTIVE_STATE && IDB_ACTIVE_STATE.state === 'failed'));
+  const mirrorMatches = (ls, kv) => ['gp_cfg', 'gp_h', 'gp_p', 'gp_mw', 'gp_bw'].every(k => ls[k] === kv[k]);
+
+  // Fresh user (no data yet).
+  let [cF, f] = await ctx();
+  await f.goto(URL0); await idbSettled(f);
+  let db = await idbDump(f);
+  check('idb/fresh user: migration verified with nothing to copy, backup snapshot written', db.meta.migration?.state === 'verified' && !!db.backups['pre-idb-2.9.0']);
+  await f.evaluate(() => { CFG.firstName = 'Fresh'; saveCFG(); });
+  await f.waitForTimeout(100); db = await idbDump(f);
+  check('idb/fresh user: later saves are mirrored', db.kv.gp_cfg === await f.evaluate(() => localStorage.getItem('gp_cfg')));
+  await cF.close();
+
+  // Large lbs history with custom exercises: migrate, verify, backup, re-run.
+  let [cG, g] = await ctx();
+  const gu = bigUser(185);
+  await seedCold(g, gu);
+  await idbSettled(g);
+  const lsBefore = { gp_h: JSON.stringify(gu.history) };
+  db = await idbDump(g);
+  const lsNow = await lsAll(g);
+  check('idb/large lbs user: migration verified', db.meta.migration?.state === 'verified', db.meta.migration);
+  check('idb/large lbs user: mirror matches localStorage key by key (400 sessions, custom exercise, lbs)',
+    mirrorMatches(lsNow, db.kv) && JSON.parse(db.kv.gp_h).length === 400 && JSON.parse(db.kv.gp_cfg).unit === 'lbs' && JSON.parse(db.kv.gp_cfg).customExercises[0].name === 'My cable thing');
+  check('idb/large lbs user: pre-migration backup holds the original data', db.backups['pre-idb-2.9.0'].data.gp_h === lsBefore.gp_h && JSON.parse(db.backups['pre-idb-2.9.0'].data.gp_cfg).name === 'Big Lbs');
+  check('idb/localStorage untouched by the migration', lsNow.gp_h === lsBefore.gp_h && lsNow.gp_bw === JSON.stringify(gu.bw) && lsNow.gp_mw === JSON.stringify(gu.mw));
+  const firstAt = db.backups['pre-idb-2.9.0'].at, firstMig = db.meta.migration.at;
+  await g.reload(); await g.waitForSelector('#s-home.active'); await idbSettled(g);
+  db = await idbDump(g);
+  check('idb/running twice: backup and migration record are not redone', db.backups['pre-idb-2.9.0'].at === firstAt && db.meta.migration.at === firstMig);
+  await g.evaluate(() => setWeighIn(dkey(new Date()), 183.2)); await g.waitForTimeout(150);
+  db = await idbDump(g);
+  check('idb/dual-write: a new weigh-in lands in both stores', mirrorMatches(await lsAll(g), db.kv) && JSON.parse(db.kv.gp_bw).some(e => e.w === 183.2));
+
+  // localStorage loses the data, the verified mirror brings it back once.
+  await g.evaluate(() => localStorage.clear());
+  await g.reload(); await g.waitForSelector('#s-home.active', { timeout: 15000 });
+  check('idb/recovery: after localStorage is wiped, the app comes back with all 400 sessions', await g.evaluate(() => ST.history.length) === 400 && await g.evaluate(() => JSON.parse(localStorage.getItem('gp_bw')).some(e => e.w === 183.2)));
+
+  // Erase all data must stay erased.
+  g.once('dialog', dd => dd.accept());
+  await g.evaluate(() => { openSettings(); resetApp(); });
+  await g.waitForSelector('#s-ob.active, #s-onboarding.active, .ob-step.active', { timeout: 15000 });
+  await g.reload(); await g.waitForTimeout(800);
+  check('idb/reset: erased data does not come back from the mirror', await g.evaluate(() => !localStorage.getItem('gp_cfg') && ST.history.length === 0));
+  await cG.close();
+
+  // Partially migrated (interrupted copy, no verified flag): finishes cleanly.
+  let [cH, h] = await ctx();
+  await seed(h, bigUser(150));
+  await idbSettled(h);
+  await h.evaluate(() => new Promise(r => { const tx = IDB.transaction(['kv', 'meta'], 'readwrite'); tx.objectStore('meta').delete('migration'); tx.objectStore('kv').clear(); tx.objectStore('kv').put('[{"stale":true}]', 'gp_h'); tx.oncomplete = r; }));
+  await h.reload(); await h.waitForSelector('#s-home.active'); await idbSettled(h);
+  db = await idbDump(h);
+  check('idb/partial state: re-run completes, verifies, and replaces the stale partial copy', db.meta.migration?.state === 'verified' && mirrorMatches(await lsAll(h), db.kv));
+  await cH.close();
+
+  // Verification failure: mirror corrupts gp_h → stays on localStorage, logs why.
+  let [cI, iP] = await ctx();
+  const warns = []; iP.on('console', m => { if (m.type() === 'warning') warns.push(m.text()); });
+  await iP.addInitScript(() => {
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (v, k) { return put.call(this, k === 'gp_h' && typeof v === 'string' ? v.replace('"w":185', '"w":186') : v, k); };
+  });
+  const iu = bigUser(185);
+  await seedCold(iP, iu);
+  await idbSettled(iP);
+  const lsI = { gp_h: JSON.stringify(iu.history) };
+  db = await idbDump(iP);
+  check('idb/verification failure: state failed with the reason recorded', db.meta.migration?.state === 'failed' && /gp_h session \d+ differs/.test(db.meta.migration.reason), db.meta.migration);
+  check('idb/verification failure: logged, mirroring off, localStorage unchanged, app works',
+    warns.some(w => /verification failed/.test(w)) && await iP.evaluate(() => !IDB_READY) && (await lsAll(iP)).gp_h === lsI.gp_h && await iP.evaluate(() => ST.history.length) === 400);
+  await cI.close();
+
   await browser.close();
 
   // ── 5. iPhone, not installed (WebKit with an iPhone user agent).

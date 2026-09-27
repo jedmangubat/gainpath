@@ -266,7 +266,7 @@ The app will appear on your home screen and open full-screen like a native app. 
 - Icons via [Tabler Icons](https://tabler.io/icons) (MIT), self-hosted in `fonts/` as a subset of only the glyphs the app uses
 - PDF export via [jsPDF](https://parall.ax/products/jspdf)
 - Feedback via [EmailJS](https://emailjs.com)
-- Data stored in browser localStorage
+- Data stored on your device in browser localStorage, with a verified second copy in IndexedDB
 
 ---
 
