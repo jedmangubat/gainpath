@@ -27,7 +27,8 @@ const SHELL_URLS = [
   './js/exercise-text.js?v=2.9.0',
   './js/state.js?v=2.9.0',
   './js/i18n.js?v=2.9.0',
-  './js/storage.js?v=2.9.0'
+  './js/storage.js?v=2.9.0',
+  './js/ui-core.js?v=2.9.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
