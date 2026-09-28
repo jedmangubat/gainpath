@@ -451,3 +451,4 @@ function roundToGymWeight(ex,w,dir){
   }
   return w;
 }
+// ═══ END GAINPATH MATH ═══

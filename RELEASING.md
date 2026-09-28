@@ -12,7 +12,7 @@ startup or storage can't be rolled back for them.
   `WHATS_NEW_VERSION` and `WHATS_NEW_ITEMS` alone, or upgraders will see the
   previous release's announcement under the new version number (this shipped
   broken in v2.0.2).
-- **Tooling/docs only** (nothing in `index.html`, `sw.js`, `manifest.json`,
+- **Tooling/docs only** (nothing in `index.html`, `js/`, `sw.js`, `manifest.json`,
   `images/` or `fonts/` changed): no version bump. Log it under
   `## [Unreleased]` in `CHANGELOG.md` and stop here.
 
@@ -20,9 +20,10 @@ startup or storage can't be rolled back for them.
 
 | Where | What | When |
 |---|---|---|
-| `index.html`: `const APP_VERSION=` | `'X.Y.Z'` | every release |
-| `index.html`: `const WHATS_NEW_VERSION=` | `'X.Y.Z'` | feature releases only |
-| `index.html`: `WHATS_NEW_ITEMS` + `whatsnew_item*` strings | rewrite in **all three languages** | feature releases only |
+| `js/boot.js`: `const APP_VERSION=` | `'X.Y.Z'` | every release |
+| `index.html`: every `<script src="js/…?v=">` tag, and `sw.js`: every `./js/…?v=` in `SHELL_URLS` | `?v=X.Y.Z` (same as `APP_VERSION`) | every release. `visual-check` fails on any mismatch. |
+| `js/boot.js`: `const WHATS_NEW_VERSION=` | `'X.Y.Z'` | feature releases only |
+| `js/boot.js`: `WHATS_NEW_ITEMS` + `js/i18n.js`: `whatsnew_item*` strings | rewrite in **all three languages** | feature releases only |
 | `sw.js`: `const CACHE_NAME=` | `'gainpath-vN'` → `N+1` | whenever anything precached changed (in practice, every release) |
 | commit message | ends with `(vX.Y.Z)` | every release |
 

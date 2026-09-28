@@ -61,7 +61,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ## Tech
 
-One `index.html` with no framework, no build step and no backend. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf), [EmailJS](https://emailjs.com) for feedback, and self-hosted [Tabler Icons](https://tabler.io/icons).
+Plain HTML, CSS and JavaScript (`index.html` plus `js/`) with no framework, no build step and no backend. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf), [EmailJS](https://emailjs.com) for feedback, and self-hosted [Tabler Icons](https://tabler.io/icons).
 
 ## Contributing
 

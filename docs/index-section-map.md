@@ -1,8 +1,29 @@
-# index.html section map
+# App section map
 
-Snapshot of `index.html` at v2.9.0 (commit after 6c5dc8b): 17,212 lines,
-1.27 MB. Line numbers drift with every edit, so re-run the commands at the
-bottom before relying on them.
+**Since the Phase 7 split (v2.9.0) each section below is its own file under
+`js/`**, loaded in this order by plain `<script src>` tags in `index.html`:
+
+| File | Sections (from the table below) |
+|---|---|
+| `js/boot.js` | Boot constants, analytics, What's New |
+| `js/exercises.js` | Splits and machine keys, exercise database, exercise pool |
+| `js/exercise-text.js` | Exercise tips, names and instructions (en/ja/ko), ~830 KB |
+| `js/state.js` | State (`CFG`, `ST`, `load()`) |
+| `js/i18n.js` | `STRINGS`, `t()` |
+| `js/storage.js` | Migrations, saving, IndexedDB mirror, in-progress workout |
+| `js/ui-core.js` | Date/DOM helpers, `ss()` navigation, audio and timers |
+| `js/onboarding.js` | Onboarding, tutorial |
+| `js/math.js` | GAINPATH MATH |
+| `js/history.js` | Suggestion chips, session editor, calendar, streaks, badges, Home |
+| `js/settings.js` | Settings, custom program builder |
+| `js/day-edit.js` | Day edit, swap, custom exercises |
+| `js/workout.js` | Start workout, plate calculator, workout screen |
+| `js/climb.js` | Climb charts, PRs, PDF report |
+| `js/data-safety.js` | Backups, restore, Home banners, nudges, feedback |
+| `js/main.js` | Startup sequence and service-worker registration |
+
+The line ranges below are from the pre-split `index.html` (commit 6c5dc8b),
+kept because they show each section's ownership and dependencies.
 
 ## Top level
 
@@ -67,7 +88,7 @@ bottom before relying on them.
 ## Regenerate
 
 ```sh
-grep -n "// ═══" index.html                      # section markers
-awk 'NR>1290 && /^(async )?function |^(const|let|var) /' index.html   # declarations
-awk 'NR>1290 && /^[A-Za-z_$(\[;!]/ && !/^(async )?function |^(const|let|var) /' index.html  # load-time statements
+grep -n "// ═══" js/*.js                                    # section markers
+grep -nE '^(async )?function |^(const|let|var) ' js/*.js    # declarations
+grep -nE '^[A-Za-z_$(\[;!]' js/*.js | grep -vE ':(async )?function |:(const|let|var) '  # load-time statements
 ```

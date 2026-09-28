@@ -121,6 +121,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   restored history, as everywhere else.
 
 ### Changed
+- **The app's JavaScript moved out of `index.html` into 16 files under `js/`**
+  (boot, exercises, exercise text, state, i18n, storage, UI core, onboarding,
+  math, history, settings, day edit, workout, Climb, data safety, main). The
+  code was moved, not rewritten: the files concatenate back to the old inline
+  script line for line, and they are plain scripts in the same global scope and
+  order, so behaviour is unchanged. Native ES modules were considered and
+  rejected: inline `onclick` handlers call ~150 functions by name, and shared
+  state such as `CFG`/`ST` is reassigned from several files, which modules
+  don't allow. Each file loads with `?v=<APP_VERSION>`, so a new release never
+  pairs with a stale cached script, and `sw.js` precaches every file. Verified
+  with precheck after every file, the simulate and chaos fuzzers (Chromium and
+  WebKit), an offline boot from the precache, and an upgrade from the live
+  v2.8.1 (single file, cache `v43`) that keeps the user's workouts and then
+  boots offline. `index.html` goes from 1.27 MB to about 120 KB.
 - **First run goes from 10 setup screens plus a 12-step tour down to 3 screens.**
   New users reach the core loop (pick a day, start, log sets, finish) straight
   after setup.

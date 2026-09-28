@@ -1,7 +1,6 @@
 // GainPath: suggestion chips, session history, calendar, streaks, badges and Home
 // A plain script (not a module) sharing one global scope with the other
 // js/ files; index.html sets the load order. Map: docs/index-section-map.md
-// ═══ END GAINPATH MATH ═══
 function dismissSync(w){CFG.syncDismiss=CFG.syncDismiss||{};CFG.syncDismiss[ST.sd[ST.exi].ex.name]=w;saveCFG();dismissSuggest();}
 // FEEL_META = the session-level "how did it feel overall" rating (unchanged).
 // RIR_META  = the per-exercise last-set "reps left in the tank" rating. Same

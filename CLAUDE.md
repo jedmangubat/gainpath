@@ -1,12 +1,39 @@
 # GainPath — Project Instructions
 
-GainPath is a fitness tracking web app. The app itself is a single `index.html`
-file with no build process and no runtime dependencies — no bundler, no
-framework. Everything (markup, CSS, JS) lives in that one file, and that's
-deliberate; don't introduce a build step for the app to consume `package.json`.
+GainPath is a fitness tracking web app with no build process and no runtime
+dependencies — no bundler, no framework, no transpiling. `index.html` holds the
+markup and CSS; the JavaScript lives in `js/*.js` (since v2.9.0), loaded by
+plain `<script src>` tags at the end of `<body>`. Don't introduce a build step
+for the app to consume `package.json`.
+
+**The js/ files are plain scripts, not ES modules, deliberately.** They share
+one global scope exactly as the old single inline `<script>` did: 271 inline
+`onclick=""` handlers call ~150 top-level functions by bare name, shared state
+like `CFG`/`ST`/`OB`/`TUT` is *reassigned* from several files, and every test
+reaches in by bare name. Modules would break all three (module scope hides
+handlers, imported bindings can't be reassigned). Rules:
+- **Load order is the dependency order**, set by the tag list in `index.html`
+  (boot → exercises → exercise-text → state → i18n → storage → ui-core →
+  onboarding → math → history → settings → day-edit → workout → climb →
+  data-safety → main). Function declarations only hoist *within* a file, so
+  code that runs at load (a top-level call, a `const` initializer that calls
+  something) may only use what earlier files, or its own file, define.
+  Everything else runs later from handlers and `main.js`, where order doesn't
+  matter. `docs/index-section-map.md` says what each file owns.
+- **Adding a file:** create `js/<name>.js`, add
+  `<script src="js/<name>.js?v=<APP_VERSION>"></script>` in the right place,
+  and add `'./js/<name>.js?v=<APP_VERSION>'` to `SHELL_URLS` in `sw.js`.
+  `visual-check` fails if any file is not loaded, not precached, or its `?v=`
+  doesn't match `APP_VERSION`, and it boots the app offline from the precache.
+- **Every release bumps the `?v=` on all tags and `SHELL_URLS` entries** along
+  with `APP_VERSION` (see `RELEASING.md`). That is what stops a phone from
+  pairing a new `index.html` with a stale cached script.
+- Put new code in the file that owns that feature; don't recreate an inline
+  `<script>` in `index.html` (lint and the checks read `js/` via
+  `scripts/app_sources.mjs`, which does still handle one if it appears).
 
 There is a dev-only `package.json` (Playwright + ESLint, see below) used purely
-for local tooling — it never touches what ships in `index.html`.
+for local tooling — it never touches what ships.
 
 **GainPath is not an "AI" product — don't reintroduce AI branding or
 positioning.** An "AI coaching" feature (live Anthropic API calls) was tried and
@@ -14,7 +41,7 @@ removed more than once, and the app was at one point marketed as "AI-powered"
 across its title, splash, onboarding, `manifest.json`, and `README.md`. All of
 that is gone. The only thing that ever looked like "AI" is the starting-weight
 estimate, which is a plain deterministic formula (`getAIEstimatedWeight` in
-`index.html`) over body stats, experience, and strength baseline — describe it
+`js/math.js`) over body stats, experience, and strength baseline — describe it
 as an estimate, never as AI. The function name and the `startingWeights:'ai'` /
 `sw-ai` identifiers are kept only for saved-config compatibility; they are not
 user-facing and are not a license to call the feature "AI" in copy. Note the app
@@ -80,7 +107,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   it previously drifted (releases sat at v1.1.1 while `main` was at v1.2.6
   because the v1.2.x commits were pushed but never tagged).
 - **Exercise images** live in `images/exercises/`, named lowercase with hyphens
-  matching the exact exercise `name` field in the `EX` object in `index.html`
+  matching the exact exercise `name` field in the `EX` object in `js/exercises.js`
   (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`). These are
   precached for offline use by the service worker: `sw.js` holds an
   `EX_IMAGE_URLS` list of every file in `images/exercises/`. **When you add or
@@ -151,7 +178,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   (headline-worthy fixes can be named briefly).
 - **In-app "What's New" and the persistent tutorial (added v1.10.0) need the
   same upkeep as the README's "What's new" section — don't let them go
-  stale.** `WHATS_NEW_ITEMS` (near the top of `index.html`'s script, next to
+  stale.** `WHATS_NEW_ITEMS` (in `js/boot.js`, next to
   `APP_VERSION`) drives a one-time bottom-sheet shown to returning users.
   **The sheet is gated on `WHATS_NEW_VERSION`, not `APP_VERSION`** — it's the
   version `WHATS_NEW_ITEMS` actually describes, and it shows only when
@@ -199,7 +226,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   throwaway Playwright script (seed realistic localStorage state, click
   through to each screen, screenshot at `deviceScaleFactor: 2`) rather than
   leaving them showing the old look. Two gotchas hit while doing this the
-  first time: (1) `index.html` registers a service worker unconditionally, and
+  first time: (1) the app (`js/main.js`) registers a service worker unconditionally, and
   (2) screens fade in via a CSS animation on `.screen.active` — take the
   screenshot only after both the page has settled and a short
   (~300ms+) wait past any screen transition, or the capture shows a
@@ -344,7 +371,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   (study / norm / heuristic) in `docs/superpowers/plans/2026-09-25-lift-sync.md`;
   keep that table current when a number changes, and keep heuristics
   conservative.
-- **Weight formulas live in the `GAINPATH MATH` section of `index.html`**
+- **Weight formulas live in the `GAINPATH MATH` section, `js/math.js`**
   (`// ═══ GAINPATH MATH —` … `// ═══ END GAINPATH MATH ═══`): estimates,
   progression, body-weight scaling, rep re-targeting, break easing, gear
   snapping, kg↔lbs conversion (`convertUnitData`; `convertUnits` outside it
@@ -402,10 +429,11 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
 - **A third-party CDN must never be able to break the app.** Anything loaded
   from a CDN (`Chart.js`, `jsPDF`, EmailJS in `<head>`) is used lazily inside
   the feature that needs it, or guarded at the call site — never dereferenced
-  at the top level of the script block. The whole app is one `<script>`, so a
-  single `ReferenceError` there stops every function from ever being defined
-  and strands the user on a dead onboarding screen (this is what
-  `emailjs.init()` did until v2.1.1). Prefer self-hosting outright, as the
+  at the top level of a script file. A `ReferenceError` at load stops the rest
+  of that file from being defined and, since `main.js` then boots against
+  missing functions, strands the user on a dead onboarding screen (this is
+  what `emailjs.init()` did until v2.1.1, back when the app was one
+  `<script>`). Prefer self-hosting outright, as the
   display fonts and icons already are.
 
 ## Dev tooling (optional, dev-only — `npm install` once to use)
@@ -416,13 +444,18 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   fail it (only errors do, same as `npm run lint`).
 - **`npm run visual-check`** — starts a static server, loads `index.html` in
   headless Chromium (Playwright), screenshots the onboarding and home screens,
-  and fails if anything throws a console/page error. Screenshots land in
+  and fails if anything throws a console/page error. It also checks that every
+  `js/` file is loaded and precached with the current `?v=`, boots the app
+  offline straight after the service worker installs, and gates the guide
+  pages. Screenshots land in
   `scripts/.visual-check/` (gitignored). Use this after any UI change instead of
   ad hoc one-off browser scripts.
-- **`npm run lint`** — extracts the inline `<script>` block from `index.html`
-  and runs ESLint (`eslint.config.mjs`) against it, mapping line numbers back to
-  `index.html`. Scoped to bug-catching rules only (`no-undef`, `no-unused-vars`,
-  etc.) — deliberately no stylistic/formatting rules, since the inline script's
+- **`npm run lint`** — reads the app's scripts in load order
+  (`scripts/app_sources.mjs`), lints them as one concatenated script (they
+  share a global scope, so linting files separately would flag every
+  cross-file call as `no-undef`), and maps each report back to its real
+  `js/<file>:<line>`. Scoped to bug-catching rules only (`no-undef`, `no-unused-vars`,
+  etc.) — deliberately no stylistic/formatting rules, since the code's
   dense, semicolon-chained style is intentional and Prettier would rewrite the
   whole file. Top-level functions are only ever called from inline `onclick=""`
   attributes, so don't be surprised they look "unused" in isolation — the config
@@ -441,7 +474,7 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
 - **`npm run test:units`** — unit-tests GainPath's pure calculation functions
   (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`, and everything in
   the `GAINPATH MATH` section) against the real
-  inline script, using the same Playwright boot pattern as `visual-check`
+  app scripts, using the same Playwright boot pattern as `visual-check`
   (seed `localStorage`, load `index.html`, call the real `window`-scope
   functions from `page.evaluate`) rather than reimplementing their logic in
   the test. Guards exactly the invariants called out below under "PRs are
@@ -477,11 +510,11 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   thousands of actions per screen per run. It seeds a fresh horde on each of
   six starting screens (`home`, `dayedit`, `wo`, `settings`, `wo-organize`,
   `wo-cancel`) in both
-  Chromium and WebKit; a run is clean if nothing throws, since `index.html`
+  Chromium and WebKit; a run is clean if nothing throws, since the app
   has no intentional `console.error`/`warn` calls to filter — except one
   known-benign WebKit message ("Notification prompting can only be done
-  from a user gesture", from `Notification.requestPermission()` at
-  index.html:15864 firing on every synthetic click that reaches it, since
+  from a user gesture", from `Notification.requestPermission()` in
+  `js/workout.js` (`startRest`) firing on every synthetic click that reaches it, since
   gremlins clicks aren't trusted user gestures), which is filtered out by
   name in `runEngine()`'s console listener rather than reported as a false
   positive every single run. **Any screen.setup added here must be wrapped
