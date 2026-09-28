@@ -33,7 +33,8 @@ const SHELL_URLS = [
   './js/math.js?v=2.9.0',
   './js/history.js?v=2.9.0',
   './js/settings.js?v=2.9.0',
-  './js/day-edit.js?v=2.9.0'
+  './js/day-edit.js?v=2.9.0',
+  './js/workout.js?v=2.9.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
