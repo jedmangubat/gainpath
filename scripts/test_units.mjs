@@ -504,14 +504,12 @@ async function main() {
     openRepsCustom('sreps'); gid('sreps-custom-inp').value = '9'; commitRepsCustom('sreps');
     check('commitRepsCustom stamps prefRepsChangedAt too', typeof CFG.prefRepsChangedAt, 'string');
 
-    // ── Preferred reps: five presets plus a free-typed custom number, offered
-    // identically in onboarding ('reps' → OB.reps) and Settings ('sreps' →
-    // CFG.prefReps). "Custom" is derived from the stored number alone, so it
+    // ── Preferred reps: five presets plus a free-typed custom number, in
+    // Settings ('sreps' → CFG.prefReps; onboarding stopped asking in v2.9.0). "Custom" is derived from the stored number alone, so it
     // has to come back correctly after a reload with nothing extra persisted.
     check('the rep presets are 6/8/10/12/15', REP_PRESETS, [6, 8, 10, 12, 15]);
-    check('onboarding and Settings offer exactly the same rep options',
-      ['reps', 'sreps'].map(p => REP_PRESETS.every(v => !!gid(p + '-' + v)) && !!gid(p + '-custom')),
-      [true, true]);
+    check('Settings offers every rep preset plus Custom',
+      REP_PRESETS.every(v => !!gid('sreps-' + v)) && !!gid('sreps-custom'), true);
     const srepsState = () => ({
       v: CFG.prefReps,
       on: REP_PRESETS.filter(x => gid('sreps-' + x).classList.contains('on')),
@@ -534,12 +532,22 @@ async function main() {
     gid('sreps-custom-inp').value = '12'; commitRepsCustom('sreps');
     check('settings: typing a preset number into Custom selects that preset chip instead',
       srepsState(), { v: 12, on: [12], custom: false });
-    // Onboarding drives the same handlers against OB.reps.
-    setReps(6);
-    check('onboarding: picking 6 stores it in OB', OB.reps, 6);
-    openRepsCustom('reps'); gid('reps-custom-inp').value = '21'; commitRepsCustom('reps');
-    check('onboarding: a custom value is stored and lights Custom',
-      { v: OB.reps, custom: gid('reps-custom').classList.contains('on') }, { v: 21, custom: true });
+    // First run (v2.9.0) is three steps and only asks what changes the plan
+    // or a proposed weight; everything else keeps its default. Picking a day
+    // count suggests a split; going Back to step 2 and forward again must keep
+    // a split the user picked by hand.
+    check('first run is three steps', OB_STEPS, 3);
+    check('first run no longer asks for reps, height or gear',
+      ['reps-6', 'ob-ht', 'ob-bf', 'ob-lname', 'ob-plate-inv', 'ob-summary'].filter(id => gid(id)), []);
+    OB.exp = 'intermediate'; setFreq(3);
+    const s3 = OB.split;
+    OB.exp = 'beginner'; setFreq(3);
+    check('split suggestion follows days/week, and beginners get the bro split',
+      [s3, OB.split], [SPLIT_FREQ[3], 'bro']);
+    OB.split = 'fb'; gid('ob-bw').value = '70'; OB.exp = 'advanced';
+    ['ob-1', 'ob-3'].forEach(id => gid(id).classList.remove('active')); gid('ob-2').classList.add('active');
+    obNext(2);
+    check('Back then Continue keeps the split the user picked', OB.split, 'fb');
     check('the Custom chip and its placeholder are translated in every language',
       ['en', 'ja', 'ko'].map(l => !!(STRINGS[l] && STRINGS[l].pref_reps_custom && STRINGS[l].ph_custom_reps)),
       [true, true, true]);

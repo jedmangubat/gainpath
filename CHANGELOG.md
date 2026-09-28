@@ -104,6 +104,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   restored history, as everywhere else.
 
 ### Changed
+- **First run goes from 10 setup screens plus a 12-step tour down to 3 screens.**
+  New users reach the core loop (pick a day, start, log sets, finish) straight
+  after setup.
+  1. Language, first name and sex.
+  2. Unit, body weight and experience. Known lifts are behind an optional
+     "Know your current lifts?" button.
+  3. Days per week, which reveals the suggested split, then **Start training**.
+
+  Removed questions and why:
+  - Last name, height, body fat, fitness goal and "last workout" were stored
+    but never used by any calculation. Height and body fat are left empty
+    rather than defaulting to 175 cm, so Settings → Profile no longer shows a
+    number the user never entered. Last name stays editable there.
+  - Reps, sets, rest, set style and warm-ups keep the same defaults the old
+    screens pre-selected (10 reps, 3 sets, 90 s, straight sets, warm-ups on)
+    and live in Settings → Preferences.
+  - Gym plates and dumbbells stay in Settings → My gym. The "set up your gym"
+    Home banner now waits until the first workout is logged, so it isn't the
+    first thing a new user sees.
+  - Starting weights always use the estimate for new users. The "enter my own"
+    mode is kept for existing users who chose it; everyone can type any weight
+    on the set row.
+
+  The tutorial no longer auto-plays after setup. Home shows a "New here? See
+  how it works" link until the first workout is logged, and Settings → How to
+  use still opens it anytime. Going Back from step 3 and returning keeps a
+  hand-picked split. Existing users are unaffected: setup only runs when
+  `CFG.setup` is false. 45 strings used only by the removed screens were
+  deleted in all three languages.
+- **The selected split card in setup had white text on lime,** which fails
+  contrast. It now uses `--accent-ink`.
+- **The README is short and scannable:** a one-line summary, a screenshot row,
+  and grouped feature bullets. Full detail stays in this changelog. It also
+  drops the stale "Save" tab and the iPhone advice to restore a backup after
+  installing, because workouts carry over. The in-app What's New items are now
+  one line each. `images/screenshots/onboarding.png` was regenerated for the
+  new first screen.
+- `visual-check` and `test:units` drive the new three-step setup. They check
+  that the split list appears only after a day count is picked, that known lifts
+  are saved, that setup lands on Home with the tour link, and that Back then
+  Continue keeps the user's split.
 - The Facebook Page token moved from a plaintext file into the macOS
   Keychain (dev tooling, nothing the app ships). `scripts/fb_post.py` reads it
   with `security find-generic-password` and never prints it. The local

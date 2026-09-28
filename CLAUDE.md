@@ -164,8 +164,9 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   announcement re-headed with the new number (this shipped broken in v2.0.2;
   fixed in v2.0.3). The
   tutorial (`#s-tutorial`, `TUT_TOTAL` steps, functions prefixed `tut*`) is
-  a spotlight-on-screenshot walkthrough shown once after onboarding
-  (skippable) and reachable anytime from Settings → How to use.
+  a spotlight-on-screenshot walkthrough reachable anytime from Settings →
+  How to use, and from a "New here?" link on Home (`#h-tour`) until the first
+  workout is logged. Since v2.9.0 it is **not** auto-played after onboarding.
   **Never regenerate a tutorial screenshot without re-measuring its spotlight**
   — the highlight rectangles are percentages of the screenshot, so a fresh
   capture leaves them pointing at whatever used to be in that spot. This
@@ -226,6 +227,14 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   for conventions meant to persist across future sessions.
 
 ## Data model & app conventions
+
+- **First run is three steps and stays that way (v2.9.0).** Onboarding asks
+  only what changes the plan or a proposed weight: name + sex, unit + body
+  weight + experience (known lifts behind an optional button), and days/week +
+  split. Everything else keeps its `CFG` default and lives in Settings. Don't
+  add a question to onboarding unless it changes a calculation *before* the
+  first workout. Put a new preference in Settings, and hold any Home nudge
+  about it until `ST.history` is non-empty, the way `checkGymNudge()` does.
 
 - **Mid-workout edits are session-only; pre-start organizing persists (v2.6.5).**
   `openDayEdit()` → `closeDayEdit()`/`commitDayEdit()` (before Start) writes

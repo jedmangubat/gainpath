@@ -51,30 +51,30 @@ async function main() {
   await page.waitForSelector('#s-ob.active');
   await page.screenshot({ path: path.join(OUT_DIR, 'onboarding.png') });
 
-  // Onboarding step 8 collects the user's plates/dumbbells. Its chips are
-  // rendered on the way in from obNext(), and its i18n keys are its own
-  // (obgym_*) because the shared Settings strings embed unit <span>s by id.
+  // First run is three steps (v2.9.0): name/sex → unit/body weight/experience
+  // (+ optional known lifts) → days per week + split, then straight to Home.
+  // The split list only renders once a day count is picked, and finishing must
+  // land on Home with the tour link showing, not auto-play the tutorial.
   const ob = await page.evaluate(() => {
-    gid('ob-fname').value = 'Visual'; OB.sex = 'male'; obNext(1);
-    gid('ob-bw').value = '75'; gid('ob-ht').value = '175'; obNext(2);
-    obNext(3);
-    setExp('intermediate'); setGoal('strength'); obNext(4);
-    setFreq(5); obNext(5); obNext(6); obNext(7);
-    const plates = gid('ob-plate-inv').children.length;
-    const dbs = gid('ob-db-inv').children.length;
-    const onGym = gid('ob-8').classList.contains('active'); // before advancing off it
-    gid('ob-plate-20').classList.add('on');
-    gid('ob-db-' + dbId(10)).classList.add('on');
-    obNext(8);
-    return { steps: OB_STEPS, onGym, plates, dbs,
-             collected: { p: Object.keys(OB.gymPlates), d: OB.gymDumbbells },
-             dupIds: ['ob-gym-unit1', 'set-gym-unit1'].map(id => document.querySelectorAll('[id="' + id + '"]').length) };
+    gid('ob-fname').value = 'Visual'; setSex('male'); obNext(1);
+    gid('ob-bw').value = '75'; setExp('intermediate');
+    obToggleLifts(); gid('ob-sq-w').value = '100'; gid('ob-sq-r').value = '5';
+    obNext(2);
+    const splitHiddenBefore = gid('ob-split-wrap').style.display === 'none';
+    setFreq(5);
+    const splits = gid('split-opts').children.length;
+    obFinish();
+    return { steps: OB_STEPS, splitHiddenBefore, splits, split: CFG.split, squat: CFG.keyLifts.squat,
+             screen: document.querySelector('.screen.active').id,
+             tour: getComputedStyle(gid('h-tour')).display };
   });
-  if (ob.steps !== 10) issues.push(`OB_STEPS should be 10, got ${ob.steps}`);
-  if (!ob.onGym) issues.push('onboarding step 8 is not the gym step');
-  if (!ob.plates || !ob.dbs) issues.push(`gym step rendered no chips (plates ${ob.plates}, dumbbells ${ob.dbs})`);
-  if (ob.collected.p.length !== 1 || ob.collected.d.length !== 1) issues.push(`gym step did not collect selections: ${JSON.stringify(ob.collected)}`);
-  if (ob.dupIds.some((n) => n > 1)) issues.push(`duplicate unit-label ids in the DOM: ${JSON.stringify(ob.dupIds)}`);
+  if (ob.steps !== 3) issues.push(`OB_STEPS should be 3, got ${ob.steps}`);
+  if (!ob.splitHiddenBefore || !ob.splits) issues.push(`split list should appear only after a day count (hidden before: ${ob.splitHiddenBefore}, options: ${ob.splits})`);
+  if (ob.split !== 'pplul') issues.push(`5 days for an intermediate should suggest pplul, got ${ob.split}`);
+  if (!ob.squat || ob.squat.w !== 100 || ob.squat.r !== 5) issues.push(`optional known lifts were not saved: ${JSON.stringify(ob.squat)}`);
+  if (ob.screen !== 's-home') issues.push(`finishing onboarding should land on Home, got ${ob.screen}`);
+  if (ob.tour === 'none') issues.push('the "see how it works" link should show on Home for a new user');
+  await page.evaluate(async () => { await idbClear(); localStorage.clear(); });
   await page.reload();
   await page.waitForSelector('#s-ob.active');
 

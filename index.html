@@ -319,11 +319,8 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob1_title">Let's get started</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob1_sub">Tell us about yourself</div>
-    <label data-i18n="ob1_name_label">Your name</label>
-    <div class="g2">
-      <input class="inp" id="ob-fname" type="text" placeholder="First name" autocomplete="given-name" data-i18n-ph="ph_first_name">
-      <input class="inp" id="ob-lname" type="text" placeholder="Last name" autocomplete="family-name" data-i18n-ph="ph_last_name">
-    </div>
+    <label data-i18n="ph_first_name">First name</label>
+    <input class="inp" id="ob-fname" type="text" placeholder="First name" autocomplete="given-name" data-i18n-ph="ph_first_name">
     <label>Sex</label>
     <div class="g2">
       <button class="opt-btn" id="sex-m" onclick="setSex('male')">♂ Male</button>
@@ -335,24 +332,21 @@ textarea{resize:vertical;min-height:100px}
   </div>
 
   <div class="ob-step" id="ob-2">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob2_title">Body stats</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob2_sub">Helps personalise your starting weights</div>
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob2_title">About you</div>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob2_sub">Used to estimate your starting weights. You can change any weight during a workout.</div>
     <label data-i18n="ob2_unit_label">Weight unit</label>
     <div class="g2"><button class="opt-btn on" id="unit-kg" onclick="setUnit('kg')">kg</button><button class="opt-btn" id="unit-lbs" onclick="setUnit('lbs')">lbs</button></div>
     <label data-i18n="ob2_bw_label">Body weight (<span id="unit-lbl1">kg</span>)</label>
     <input class="inp" id="ob-bw" type="number" placeholder="e.g. 75" min="30" max="400" data-i18n-ph="ph_bw_example">
-    <label data-i18n="ob2_ht_label">Height (cm)</label>
-    <input class="inp" id="ob-ht" type="number" placeholder="e.g. 175" min="100" max="250" data-i18n-ph="ph_ht_example">
-    <label data-i18n="ob2_bf_label">Body fat % <span style="font-weight:400;color:var(--txt3)" data-i18n="optional_paren">(optional)</span></label>
-    <input class="inp" id="ob-bf" type="number" placeholder="e.g. 18" min="3" max="60" data-i18n-ph="ph_bf_example">
-    <div style="font-size:13px;color:var(--txt2);margin-top:-8px;margin-bottom:12px" data-i18n="ob2_bf_hint">Leave blank if unknown — we'll estimate from your other stats</div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(2)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(2)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-3">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob3_title">Strength baseline</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob3_sub">Enter the heaviest weight you've recently done for any reps. Skip if you're new.</div>
+    <label data-i18n="ob4_exp_label">Experience level</label>
+    <div class="g3" style="margin-bottom:14px">
+      <button class="opt-btn" id="exp-beginner" onclick="setExp('beginner')">🌱<br><span data-i18n="exp_beginner">Beginner</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_beginner_yrs">0–1 yr</span></button>
+      <button class="opt-btn" id="exp-intermediate" onclick="setExp('intermediate')">💪<br><span data-i18n="exp_intermediate">Intermediate</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_intermediate_yrs">1–3 yrs</span></button>
+      <button class="opt-btn" id="exp-advanced" onclick="setExp('advanced')">🏆<br><span data-i18n="exp_advanced">Advanced</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_advanced_yrs">3+ yrs</span></button>
+    </div>
+    <button class="bg" id="ob-lifts-btn" style="width:100%;margin-bottom:12px" onclick="obToggleLifts()" data-i18n="ob_lifts_toggle">+ Know your current lifts? (optional)</button>
+    <div id="ob-lifts" style="display:none">
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="ob3_sub">Enter the heaviest weight you've recently done for any reps. Skip if you're new.</div>
     <label data-i18n="ob3_squat_label">Hack squat / Squat (<span id="unit-lbl2">kg</span>) × reps</label>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <input class="inp" style="margin-bottom:0" id="ob-sq-w" type="number" placeholder="weight" min="0" data-i18n-ph="ph_weight">
@@ -373,32 +367,13 @@ textarea{resize:vertical;min-height:100px}
       <input class="inp" style="margin-bottom:0" id="ob-op-w" type="number" placeholder="weight" min="0" data-i18n-ph="ph_weight">
       <input class="inp" style="margin-bottom:0;width:80px" id="ob-op-r" type="number" placeholder="reps" min="1" max="30" data-i18n-ph="ph_reps">
     </div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:16px" data-i18n="ob3_hint">All fields optional — leave blank to skip</div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(3)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(3)" data-i18n="btn_back">Back</button>
+    </div>
+    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(2)" data-i18n="btn_continue">Continue</button>
+    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(2)" data-i18n="btn_back">Back</button>
   </div>
 
-  <div class="ob-step" id="ob-4">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob4_title">Training profile</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob4_sub">Tailors your split and starting weights</div>
-    <label data-i18n="ob4_exp_label">Experience level</label>
-    <div class="g3" style="margin-bottom:14px">
-      <button class="opt-btn" id="exp-beginner" onclick="setExp('beginner')">🌱<br><span data-i18n="exp_beginner">Beginner</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_beginner_yrs">0–1 yr</span></button>
-      <button class="opt-btn" id="exp-intermediate" onclick="setExp('intermediate')">💪<br><span data-i18n="exp_intermediate">Intermediate</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_intermediate_yrs">1–3 yrs</span></button>
-      <button class="opt-btn" id="exp-advanced" onclick="setExp('advanced')">🏆<br><span data-i18n="exp_advanced">Advanced</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_advanced_yrs">3+ yrs</span></button>
-    </div>
-    <label data-i18n="ob4_goal_label">Fitness goal</label>
-    <div class="g3">
-      <button class="opt-btn" id="goal-definition" onclick="setGoal('definition')">✂️<br><span data-i18n="goal_definition">Definition</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="goal_definition_sub">Cut & tone</span></button>
-      <button class="opt-btn" id="goal-strength" onclick="setGoal('strength')">🏋️<br><span data-i18n="goal_strength">Strength</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="goal_strength_sub">Get stronger</span></button>
-      <button class="opt-btn" id="goal-general" onclick="setGoal('general')">⚡<br><span data-i18n="goal_general">General</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="goal_general_sub">Stay fit</span></button>
-    </div>
-    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obNext(4)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(4)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-5">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob5_title">Training frequency</div>
+  <div class="ob-step" id="ob-3">
+    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob_plan_title">Your plan</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob5_sub">How many days per week do you plan to train?</div>
     <div class="g3" style="margin-bottom:8px">
       <button class="opt-btn" id="freq-2" onclick="setFreq(2)">2 <span data-i18n="unit_days">days</span></button>
@@ -410,113 +385,14 @@ textarea{resize:vertical;min-height:100px}
       <button class="opt-btn" id="freq-6" onclick="setFreq(6)">6 <span data-i18n="unit_days">days</span></button>
       <button class="opt-btn" id="freq-7" onclick="setFreq(7)">7 <span data-i18n="unit_days">days</span></button>
     </div>
-    <div id="freq-suggest" style="background:var(--bg2);border-radius:10px;padding:12px 16px;margin-top:12px;font-size:13px;color:var(--txt2);display:none"></div>
-    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obNext(5)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(5)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-6">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob6_title">Choose your split</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:16px" id="ob-split-suggest"></div>
-    <div id="split-opts" style="margin-bottom:8px"></div>
-    <button class="bp" style="width:100%;margin-top:8px;justify-content:center" onclick="obNext(6)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(6)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-7">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob7_title">Session preferences</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob7_sub">Customise how your sessions run</div>
-    <label data-i18n="ob7_reps_label">Preferred reps per work set</label>
-    <div class="g3" style="margin-bottom:8px">
-      <button class="opt-btn" id="reps-6" onclick="setReps(6)">6 <span data-i18n="unit_reps">reps</span></button>
-      <button class="opt-btn" id="reps-8" onclick="setReps(8)">8 <span data-i18n="unit_reps">reps</span></button>
-      <button class="opt-btn on" id="reps-10" onclick="setReps(10)">10 <span data-i18n="unit_reps">reps</span></button>
-      <button class="opt-btn" id="reps-12" onclick="setReps(12)">12 <span data-i18n="unit_reps">reps</span></button>
-      <button class="opt-btn" id="reps-15" onclick="setReps(15)">15 <span data-i18n="unit_reps">reps</span></button>
-      <button class="opt-btn" id="reps-custom" onclick="openRepsCustom('reps')" data-i18n="pref_reps_custom">Custom</button>
+    <div id="ob-split-wrap" style="display:none;margin-top:16px">
+      <label data-i18n="ob6_title">Choose your split</label>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="ob-split-suggest"></div>
+      <div id="split-opts" style="margin-bottom:8px"></div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:4px" data-i18n="ob_later_hint">Sets, reps, rest, warm-ups and your gym's plates and dumbbells are in Settings whenever you want them.</div>
     </div>
-    <div id="reps-custom-wrap" style="display:none;margin-bottom:14px">
-      <input class="inp" style="margin-bottom:0" id="reps-custom-inp" type="number" min="1" max="50" placeholder="e.g. 20" data-i18n-ph="ph_custom_reps" oninput="updRepsCustom('reps',this.value)" onchange="commitRepsCustom('reps')">
-    </div>
-    <label data-i18n="ob7_sets_label">Work sets per exercise</label>
-    <div class="g3" style="margin-bottom:14px">
-      <button class="opt-btn" id="sets-2" onclick="setSets(2)">2 <span data-i18n="unit_sets">sets</span></button>
-      <button class="opt-btn on" id="sets-3" onclick="setSets(3)">3 <span data-i18n="unit_sets">sets</span></button>
-      <button class="opt-btn" id="sets-4" onclick="setSets(4)">4 <span data-i18n="unit_sets">sets</span></button>
-    </div>
-    <label data-i18n="ob7_style_label">Set style</label>
-    <div class="g2" style="margin-bottom:6px">
-      <button class="opt-btn on" id="setstyle-straight" onclick="setSetStyle('straight')" data-i18n="setstyle_straight">Straight sets</button>
-      <button class="opt-btn" id="setstyle-pyramid" onclick="setSetStyle('pyramid')" data-i18n="setstyle_pyramid">Pyramid sets</button>
-    </div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" id="setstyle-desc">Same weight and reps across every work set — change the first set's weight and the rest follow.</div>
-    <label data-i18n="ob7_rest_label">Rest time between sets</label>
-    <div class="g3" style="margin-bottom:14px">
-      <button class="opt-btn" id="rest-60" onclick="setRest(60)">60<span data-i18n="unit_s">s</span></button>
-      <button class="opt-btn on" id="rest-90" onclick="setRest(90)">90<span data-i18n="unit_s">s</span></button>
-      <button class="opt-btn" id="rest-120" onclick="setRest(120)">2 <span data-i18n="unit_min">min</span></button>
-    </div>
-    <div class="toggle-row">
-      <div><div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="warmup_sets_label">Warm-up sets</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="warmup_sets_sub">First exercise per muscle group</div></div>
-      <button class="toggle on" id="tog-wu" onclick="toggleWU()"></button>
-    </div>
-    <div id="wu-reps-row" style="margin-top:12px">
-      <label data-i18n="ob7_wureps_label">Warm-up set reps</label>
-      <div class="g3">
-        <button class="opt-btn" id="wureps-10" onclick="setWUReps(10)">10 <span data-i18n="unit_reps">reps</span></button>
-        <button class="opt-btn on" id="wureps-12" onclick="setWUReps(12)">12 <span data-i18n="unit_reps">reps</span></button>
-        <button class="opt-btn" id="wureps-15" onclick="setWUReps(15)">15 <span data-i18n="unit_reps">reps</span></button>
-      </div>
-    </div>
-    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obNext(7)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(7)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-8">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="obgym_title">Your gym</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="obgym_sub">Optional — tap what you actually have and GainPath will only ever suggest weights you can really load. Skip it and it assumes a fully stocked gym.</div>
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="obgym_plates_label">Plates owned (<span id="ob-gym-unit1">kg</span>, per pair)</div>
-    <div id="ob-plate-inv" class="chip-grid" style="margin-bottom:14px"></div>
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="obgym_db_label">Dumbbells owned (<span id="ob-gym-unit2">kg</span>, per hand)</div>
-    <div id="ob-db-inv" class="chip-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:0"></div>
-    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obNext(8)" data-i18n="btn_continue">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(8)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-9">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob8_title">Last workout</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob8_sub">How long ago was your last workout?</div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-      <button class="opt-btn" id="last-today" onclick="setLast('today')" data-i18n="last_today">Today</button>
-      <button class="opt-btn" id="last-1-2days" onclick="setLast('1-2days')" data-i18n="last_1_2days">1–2 days ago</button>
-      <button class="opt-btn" id="last-3-7days" onclick="setLast('3-7days')" data-i18n="last_3_7days">3–7 days ago</button>
-      <button class="opt-btn" id="last-1-2weeks" onclick="setLast('1-2weeks')" data-i18n="last_1_2weeks">1–2 weeks ago</button>
-      <button class="opt-btn" id="last-1month" onclick="setLast('1month')" data-i18n="last_1month">1+ month ago</button>
-      <button class="opt-btn" id="last-never" onclick="setLast('never')" data-i18n="last_never">Never / just starting</button>
-    </div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="obNext(9)">Continue</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(9)" data-i18n="btn_back">Back</button>
-  </div>
-
-  <div class="ob-step" id="ob-10">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob9_title">Starting weights</div>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob9_sub">How should GainPath determine your starting weights?</div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-      <button class="opt-btn" id="sw-ai" onclick="setSW('ai')" style="text-align:left;padding:16px 16px">
-        <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="sw_ai_title">📊 Estimate for me</div>
-        <div style="font-size:13px;color:var(--txt2);margin-top:4px;font-weight:400" data-i18n="sw_ai_sub">Uses your body stats, experience, and strength baseline to suggest starting weights</div>
-      </button>
-      <button class="opt-btn" id="sw-manual" onclick="setSW('manual')" style="text-align:left;padding:16px 16px">
-        <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="sw_manual_title">✏️ I'll enter my own weights</div>
-        <div style="font-size:13px;color:var(--txt2);margin-top:4px;font-weight:400" data-i18n="sw_manual_sub">You set the weight for each exercise on your first session. It defaults to your last logged weight after that.</div>
-      </button>
-    </div>
-    <div style="background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:16px">
-      <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px" data-i18n="ob9_summary_title">Your setup summary</div>
-      <div id="ob-summary" style="font-size:13px;color:var(--txt2);line-height:2.2"></div>
-    </div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="obFinish()" data-i18n="btn_start_training">Start training 🚀</button>
-    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(10)" data-i18n="btn_back">Back</button>
+    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obFinish()" data-i18n="btn_start_training">Start training 🚀</button>
+    <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(3)" data-i18n="btn_back">Back</button>
   </div>
 </div>
 
@@ -545,6 +421,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div id="p-wk">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
+    <a href="#" id="h-tour" style="display:none;font-size:13px;font-weight:600;color:var(--brand-green);text-decoration:none;margin:-4px 0 14px" onclick="showTutorial(true);return false;" data-i18n="home_tour_link">New here? See how it works →</a>
     <button class="bp" id="h-repeat-btn" style="width:100%;justify-content:center;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
     <div id="dbtn-list"></div>
   </div>
@@ -13300,8 +13177,8 @@ function healthSyncTrigger(phase){
   if(!name)return;
   try{location.href='shortcuts://run-shortcut?name='+encodeURIComponent(name);}catch(e){}
 }
-let OB={firstName:'',lastName:'',lang:'en',sex:'',unit:'kg',exp:'',goal:'',freq:0,split:'',reps:10,rest:90,wu:true,wuReps:12,sets:3,setStyle:'straight',last:'',sw:'ai',gymPlates:{},gymDumbbells:[],step:1};
-const OB_STEPS=10;
+let OB={firstName:'',lang:'en',sex:'',unit:'kg',exp:'',freq:0,split:'',keyLifts:{},step:1};
+const OB_STEPS=3;
 
 function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();mergeCustomExercises();syncBW(true);}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
@@ -13467,22 +13344,10 @@ en:{
 "feel_too_much": "Too much",
 "fsw_hint": "Enter the weight you want to start with. It defaults to your last logged weight from your next session onwards.",
 "fsw_title": "First time — set your weight",
-"goal_definition": "Definition",
-"goal_definition_sub": "Cut & tone",
-"goal_general": "General",
-"goal_general_sub": "Stay fit",
-"goal_strength": "Strength",
-"goal_strength_sub": "Get stronger",
 "gym_hint": "Tap what you actually have — the plate calculator and weight suggestions will only use combinations you can really load. Leave everything off to skip this (unrestricted, standard-gym assumption).",
 "keep_screen_awake_label": "Keep screen awake mid-workout",
 "keep_screen_awake_sub": "Stops your phone locking between sets",
 "lang_label": "Language",
-"last_1_2days": "1–2 days ago",
-"last_1_2weeks": "1–2 weeks ago",
-"last_1month": "1+ month ago",
-"last_3_7days": "3–7 days ago",
-"last_never": "Never / just starting",
-"last_today": "Today",
 "latest_label": "Latest",
 "log_weight_btn": "Log weight",
 "machine_base_weight_title": "Machine base weight",
@@ -13560,10 +13425,10 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "If saving ever fails, an alert now shows on every screen with a one-tap Back up that still works. Before, a failed save lost the workout silently.",
-"whatsnew_item2": "Using GainPath in Safari without installing it? iPhone erases a site's data after 7 days unvisited. You'll now see a clear warning and install steps.",
-"whatsnew_item3": "Back up to Files or iCloud Drive from the share sheet, and choose how often to be reminded (3, 7, 14 or 30 days).",
-"whatsnew_item4": "Restoring over existing data now asks first, keeps a copy, and can be undone from Reports & backup.",
+"whatsnew_item1": "Saves are safer: if one ever fails, you'll see an alert and a one-tap backup.",
+"whatsnew_item2": "Using Safari on iPhone? You'll see a warning about its 7-day data wipe and how to avoid it.",
+"whatsnew_item3": "Back up to Files or iCloud Drive, pick how often to be reminded, and undo a restore.",
+"whatsnew_item4": "Settings → Privacy shows exactly what leaves your device. Your workouts never do.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -13576,47 +13441,28 @@ en:{
 "nav_prs": "PRs",
 "nav_workouts": "Train",
 "next_set_label": "Next set",
-"ob1_name_label": "Your name",
 "ob1_sub": "Tell us about yourself",
 "ob1_title": "Let's get started",
-"ob2_bf_hint": "Leave blank if unknown — we'll estimate from your other stats",
 "ob2_bf_label": "Body fat %",
 "ob2_bw_label": "Body weight (<span id=\"unit-lbl1\">kg</span>)",
 "profile_bw_label": "Body weight (<span id=\"set-unit-lbl\">kg</span>)",
 "ob2_ht_label": "Height (cm)",
-"ob2_sub": "Helps personalise your starting weights",
-"ob2_title": "Body stats",
+"ob2_sub": "Used to estimate your starting weights. You can change any weight during a workout.",
+"ob_lifts_toggle": "+ Know your current lifts? (optional)",
+"ob_plan_title": "Your plan",
+"ob_later_hint": "Sets, reps, rest, warm-ups and your gym's plates and dumbbells are in Settings whenever you want them.",
+"home_tour_link": "New here? See how it works →",
+"ob2_title": "About you",
 "ob2_unit_label": "Weight unit",
 "ob3_chest_label": "Chest press (<span id=\"unit-lbl3\">kg</span>) × reps",
-"ob3_hint": "All fields optional — leave blank to skip",
 "ob3_lat_label": "Lat pulldown (<span id=\"unit-lbl4\">kg</span>) × reps",
 "ob3_ohp_label": "Overhead press (<span id=\"unit-lbl5\">kg</span>) × reps",
 "ob3_squat_label": "Hack squat / Squat (<span id=\"unit-lbl2\">kg</span>) × reps",
 "ob3_sub": "Enter the heaviest weight you've recently done for any reps. Skip if you're new.",
-"ob3_title": "Strength baseline",
 "ob4_exp_label": "Experience level",
-"ob4_goal_label": "Fitness goal",
-"ob4_sub": "Tailors your split and starting weights",
-"ob4_title": "Training profile",
 "ob5_sub": "How many days per week do you plan to train?",
-"ob5_title": "Training frequency",
 "ob6_title": "Choose your split",
-"ob7_reps_label": "Preferred reps per work set",
-"ob7_rest_label": "Rest time between sets",
-"ob7_sets_label": "Work sets per exercise",
 "ob7_style_label": "Set style",
-"ob7_sub": "Customise how your sessions run",
-"ob7_title": "Session preferences",
-"ob7_wureps_label": "Warm-up set reps",
-"ob8_sub": "How long ago was your last workout?",
-"obgym_title": "Your gym",
-"obgym_sub": "Optional \u2014 tap what you actually have and GainPath will only ever suggest weights you can really load. Skip it and it assumes a fully stocked gym.",
-"obgym_plates_label": "Plates owned (<span id=\"ob-gym-unit1\">kg</span>, per pair)",
-"obgym_db_label": "Dumbbells owned (<span id=\"ob-gym-unit2\">kg</span>, per hand)",
-"ob8_title": "Last workout",
-"ob9_sub": "How should GainPath determine your starting weights?",
-"ob9_summary_title": "Your setup summary",
-"ob9_title": "Starting weights",
 "ob_already_used": "Already used GainPath before?",
 "optional_for_reply": "(optional — for reply)",
 "optional_paren": "(optional)",
@@ -13624,13 +13470,11 @@ en:{
 "pdf_report_title": "Monthly PDF report",
 "per_hand_dumbbell": "— per hand if dumbbell",
 "per_side_label": "Per side",
-"ph_bf_example": "e.g. 18",
 "ph_brief_description": "Brief description",
 "ph_bw_example": "e.g. 75",
 "ph_custom_reps": "e.g. 20",
 "ph_describe_feedback": "Describe your bug, idea, or feedback in detail...",
 "ph_ex_name_example": "e.g. Nautilus chest press",
-"ph_ht_example": "e.g. 175",
 "ph_my_program": "My program",
 "ph_reps": "reps",
 "ph_search_exercises": "Search exercises…",
@@ -13711,10 +13555,6 @@ en:{
 "starting_weight_label": "Starting weight (<span id=\"fsw-unit\">kg</span>)",
 "streak_wk_label": "Wk streak",
 "subject_label": "Subject",
-"sw_ai_sub": "Uses your body stats, experience, and strength baseline to suggest starting weights",
-"sw_ai_title": "📊 Estimate for me",
-"sw_manual_sub": "You set the weight for each exercise on your first session. It defaults to your last logged weight after that.",
-"sw_manual_title": "✏️ I'll enter my own weights",
 "swap_exercise_title": "Swap exercise",
 "sync_watch_label": "Sync workouts to Apple Watch",
 "sync_chip": "Your {src} suggests about {w} here",
@@ -13729,14 +13569,10 @@ en:{
 "training_days_title": "Training days",
 "typical_start_weight_label": "Typical starting weight (<span id=\"cex-unit\">kg</span>)",
 "unit_days": "days",
-"unit_min": "min",
-"unit_reps": "reps",
 "unit_s": "s",
-"unit_sets": "sets",
 "volume_label": "Volume",
 "waist_label": "Waist (cm)",
 "warmup_sets_label": "Warm-up sets",
-"warmup_sets_sub": "First exercise per muscle group",
 "weight_label": "Weight (<span id=\"bw-unit\">kg</span>)",
 "wo_cancel_title": "Cancel this workout?",
 "wo_cancel_body": "All progress from this session — every set you've logged — will be lost. This can't be undone.",
@@ -13897,22 +13733,10 @@ ja:{
 "feel_too_much": "キツすぎる",
 "fsw_hint": "最初に使いたい重量を入力してください。次回のセッション以降は、前回記録した重量が自動的に初期値になります。",
 "fsw_title": "初回 — 重量を設定",
-"goal_definition": "減量",
-"goal_definition_sub": "絞って引き締める",
-"goal_general": "健康維持",
-"goal_general_sub": "体型をキープ",
-"goal_strength": "筋力アップ",
-"goal_strength_sub": "もっと強くなる",
 "gym_hint": "実際に持っているものだけをタップしてください — プレート計算機と重量の提案は、実際に組める組み合わせだけを使うようになります。すべてオフのままにすると、この設定はスキップされます(制限なし、標準的なジムを想定)。",
 "keep_screen_awake_label": "ワークアウト中は画面をスリープさせない",
 "keep_screen_awake_sub": "セット間でスマホがロックされるのを防ぎます",
 "lang_label": "言語",
-"last_1_2days": "1〜2日前",
-"last_1_2weeks": "1〜2週間前",
-"last_1month": "1ヶ月以上前",
-"last_3_7days": "3〜7日前",
-"last_never": "未経験 / これから始める",
-"last_today": "今日",
 "latest_label": "最新",
 "log_weight_btn": "体重を記録",
 "machine_base_weight_title": "マシンの基本重量",
@@ -13989,10 +13813,10 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "保存に失敗すると、すべての画面に警告が表示され、保存できない状態でもワンタップでバックアップできます。以前は失敗しても何も表示されずワークアウトが失われていました。",
-"whatsnew_item2": "SafariでGainPathを使っていてホーム画面に追加していない場合、iPhoneは7日間開かれなかったサイトのデータを削除します。その警告と追加手順を表示するようになりました。",
-"whatsnew_item3": "共有シートから「ファイル」やiCloud Driveにバックアップでき、リマインドの間隔(3・7・14・30日)も選べます。",
-"whatsnew_item4": "既存データへの復元は確認のうえ現在のデータを保管し、「レポートとバックアップ」から取り消せます。",
+"whatsnew_item1": "保存がより安全に。万一失敗したら警告が表示され、ワンタップでバックアップできます。",
+"whatsnew_item2": "iPhoneのSafariでお使いの方へ：7日間でデータが消える仕組みと、その防ぎ方をお知らせします。",
+"whatsnew_item3": "「ファイル」やiCloud Driveにバックアップ、リマインド間隔の選択、復元の取り消しができます。",
+"whatsnew_item4": "設定 → プライバシーで、端末から送信される内容を確認できます。ワークアウトは送信されません。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -14006,46 +13830,27 @@ ja:{
 "nav_prs": "自己記録",
 "nav_workouts": "トレーニング",
 "next_set_label": "次のセット",
-"ob1_name_label": "お名前",
 "ob1_sub": "あなたについて教えてください",
 "ob1_title": "はじめましょう",
-"ob2_bf_hint": "分からなければ空欄でOK — 他の情報から推定します",
 "ob2_bf_label": "体脂肪率(%)",
 "ob2_bw_label": "体重 (<span id=\"unit-lbl1\">kg</span>)",
 "ob2_ht_label": "身長 (cm)",
-"ob2_sub": "最初の重量を個別に最適化するために使います",
-"ob2_title": "身体データ",
+"ob2_sub": "開始重量の目安に使います。重量はワークアウト中にいつでも変更できます。",
+"ob_lifts_toggle": "+ 今の挙上重量がわかる場合(任意)",
+"ob_plan_title": "トレーニングプラン",
+"ob_later_hint": "セット数・回数・休憩・ウォームアップ、ジムのプレートやダンベルは、あとから設定でいつでも変更できます。",
+"home_tour_link": "はじめての方へ：使い方を見る →",
+"ob2_title": "あなたについて",
 "ob2_unit_label": "重量の単位",
 "ob3_chest_label": "チェストプレス (<span id=\"unit-lbl3\">kg</span>) × レップ数",
-"ob3_hint": "すべて任意入力です — 空欄でスキップできます",
 "ob3_lat_label": "ラットプルダウン (<span id=\"unit-lbl4\">kg</span>) × レップ数",
 "ob3_ohp_label": "オーバーヘッドプレス (<span id=\"unit-lbl5\">kg</span>) × レップ数",
 "ob3_squat_label": "ハックスクワット / スクワット (<span id=\"unit-lbl2\">kg</span>) × レップ数",
 "ob3_sub": "最近扱った中で一番重い重量を、レップ数に関わらず入力してください。初心者の方はスキップでOKです。",
-"ob3_title": "筋力の基準値",
 "ob4_exp_label": "トレーニング経験",
-"ob4_goal_label": "フィットネスの目標",
-"ob4_sub": "分割法と初期重量をあなたに合わせます",
-"ob4_title": "トレーニングプロフィール",
 "ob5_sub": "週に何日トレーニングする予定ですか?",
-"ob5_title": "トレーニング頻度",
 "ob6_title": "分割法を選択",
-"ob7_reps_label": "本セットの希望レップ数",
-"ob7_rest_label": "セット間の休憩時間",
-"ob7_sets_label": "種目ごとの本セット数",
 "ob7_style_label": "セットのスタイル",
-"ob7_sub": "セッションの進め方をカスタマイズ",
-"ob7_title": "セッション設定",
-"ob7_wureps_label": "ウォームアップセットのレップ数",
-"ob8_sub": "最後にトレーニングしたのはいつですか?",
-"obgym_title": "あなたのジム",
-"obgym_sub": "任意 \u2014 実際に持っているものをタップすると、GainPath は実際に組める重量だけを提案します。スキップした場合は、設備の揃ったジムを想定します。",
-"obgym_plates_label": "所有プレート (<span id=\"ob-gym-unit1\">kg</span>、1組あたり)",
-"obgym_db_label": "所有ダンベル (<span id=\"ob-gym-unit2\">kg</span>、片手分)",
-"ob8_title": "前回のワークアウト",
-"ob9_sub": "GainPathはどのように初期重量を決めればいいですか?",
-"ob9_summary_title": "設定内容のまとめ",
-"ob9_title": "初期重量",
 "ob_already_used": "GainPathを使ったことがありますか?",
 "optional_for_reply": "(任意 — 返信用)",
 "optional_paren": "(任意)",
@@ -14053,13 +13858,11 @@ ja:{
 "pdf_report_title": "月間PDFレポート",
 "per_hand_dumbbell": "— ダンベルの場合は片手分",
 "per_side_label": "片側あたり",
-"ph_bf_example": "例: 18",
 "ph_brief_description": "簡単な説明",
 "ph_bw_example": "例: 75",
 "ph_custom_reps": "例: 20",
 "ph_describe_feedback": "不具合、アイデア、ご意見を詳しく教えてください...",
 "ph_ex_name_example": "例: ノーチラスチェストプレス",
-"ph_ht_example": "例: 175",
 "ph_my_program": "マイプログラム",
 "ph_reps": "レップ数",
 "ph_search_exercises": "種目を検索…",
@@ -14141,10 +13944,6 @@ ja:{
 "starting_weight_label": "初期重量 (<span id=\"fsw-unit\">kg</span>)",
 "streak_wk_label": "週継続",
 "subject_label": "件名",
-"sw_ai_sub": "身体データ、経験、筋力の基準値から初期重量を提案します",
-"sw_ai_title": "📊 自動で推定してほしい",
-"sw_manual_sub": "初回セッションで各種目の重量を自分で設定します。以降は前回記録した重量が初期値になります。",
-"sw_manual_title": "✏️ 自分で重量を入力する",
 "swap_exercise_title": "種目を入れ替え",
 "sync_watch_label": "ワークアウトをApple Watchに同期",
 "sync_chip": "{src}の記録から、ここは約{w}が目安です",
@@ -14159,14 +13958,10 @@ ja:{
 "training_days_title": "トレーニング曜日",
 "typical_start_weight_label": "標準的な初期重量 (<span id=\"cex-unit\">kg</span>)",
 "unit_days": "日",
-"unit_min": "分",
-"unit_reps": "レップ",
 "unit_s": "秒",
-"unit_sets": "セット",
 "volume_label": "ボリューム",
 "waist_label": "ウエスト (cm)",
 "warmup_sets_label": "ウォームアップセット",
-"warmup_sets_sub": "各筋肉部位の最初の種目",
 "weight_label": "重量 (<span id=\"bw-unit\">kg</span>)",
 "wo_cancel_title": "このワークアウトをキャンセルしますか?",
 "wo_cancel_body": "このセッションの記録 — ログしたセットすべて — が失われます。この操作は取り消せません。",
@@ -14327,22 +14122,10 @@ ko:{
 "feel_too_much": "너무 힘들었어요",
 "fsw_hint": "시작하고 싶은 무게를 입력하세요. 다음 세션부터는 마지막으로 기록한 무게가 기본값으로 사용됩니다.",
 "fsw_title": "처음이시군요 — 무게를 설정하세요",
-"goal_definition": "체지방 감량",
-"goal_definition_sub": "컷팅 & 탄탄한 몸",
-"goal_general": "일반 건강",
-"goal_general_sub": "건강 유지",
-"goal_strength": "근력",
-"goal_strength_sub": "더 강해지기",
 "gym_hint": "실제로 보유한 것만 선택하세요 — 플레이트 계산기와 무게 추천은 실제로 로딩 가능한 조합만 사용합니다. 전부 선택 해제하면 이 단계를 건너뛸 수 있어요 (제한 없음, 일반 헬스장 기준으로 가정).",
 "keep_screen_awake_label": "운동 중 화면 켜짐 유지",
 "keep_screen_awake_sub": "세트 사이에 휴대폰이 잠기지 않도록 해요",
 "lang_label": "언어",
-"last_1_2days": "1~2일 전",
-"last_1_2weeks": "1~2주 전",
-"last_1month": "1개월 이상 전",
-"last_3_7days": "3~7일 전",
-"last_never": "안 해봤어요 / 이제 막 시작",
-"last_today": "오늘",
 "latest_label": "최근",
 "log_weight_btn": "체중 기록",
 "machine_base_weight_title": "머신 기본 무게",
@@ -14419,10 +14202,10 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "저장에 실패하면 모든 화면에 경고가 뜨고, 저장이 안 되는 상태에서도 한 번에 백업할 수 있어요. 이전에는 실패해도 아무 표시 없이 운동 기록이 사라졌어요.",
-"whatsnew_item2": "Safari에서 홈 화면에 추가하지 않고 쓰고 있다면, iPhone은 7일 동안 열지 않은 사이트의 데이터를 지워요. 이제 경고와 설치 방법을 보여줘요.",
-"whatsnew_item3": "공유 시트로 '파일'이나 iCloud Drive에 백업하고, 알림 주기(3·7·14·30일)를 고를 수 있어요.",
-"whatsnew_item4": "기존 데이터 위에 복원할 때 먼저 확인하고 현재 데이터를 보관하며, '리포트와 백업'에서 되돌릴 수 있어요.",
+"whatsnew_item1": "저장이 더 안전해졌어요. 실패하면 경고와 함께 한 번에 백업할 수 있어요.",
+"whatsnew_item2": "iPhone Safari를 쓰고 있다면, 7일 후 데이터가 지워지는 문제와 해결 방법을 알려드려요.",
+"whatsnew_item3": "'파일'이나 iCloud Drive에 백업하고, 알림 주기를 고르고, 복원을 되돌릴 수 있어요.",
+"whatsnew_item4": "설정 → 개인정보에서 기기 밖으로 나가는 정보를 확인할 수 있어요. 운동 기록은 나가지 않아요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -14436,46 +14219,27 @@ ko:{
 "nav_prs": "PR",
 "nav_workouts": "트레이닝",
 "next_set_label": "다음 세트",
-"ob1_name_label": "이름",
 "ob1_sub": "자신에 대해 알려주세요",
 "ob1_title": "시작해볼까요",
-"ob2_bf_hint": "모르면 비워두세요 — 다른 정보로 추정해드릴게요",
 "ob2_bf_label": "체지방률 %",
 "ob2_bw_label": "체중 (<span id=\"unit-lbl1\">kg</span>)",
 "ob2_ht_label": "키 (cm)",
-"ob2_sub": "시작 무게를 맞춤 설정하는 데 도움이 돼요",
-"ob2_title": "신체 정보",
+"ob2_sub": "시작 무게를 추정하는 데 사용해요. 무게는 운동 중에 언제든 바꿀 수 있어요.",
+"ob_lifts_toggle": "+ 현재 중량을 알고 있나요? (선택)",
+"ob_plan_title": "내 플랜",
+"ob_later_hint": "세트, 반복 횟수, 휴식, 워밍업, 헬스장 원판과 덤벨은 언제든 설정에서 바꿀 수 있어요.",
+"home_tour_link": "처음이세요? 사용법 보기 →",
+"ob2_title": "내 정보",
 "ob2_unit_label": "무게 단위",
 "ob3_chest_label": "체스트 프레스 (<span id=\"unit-lbl3\">kg</span>) × 반복 횟수",
-"ob3_hint": "모두 선택 입력이에요 — 건너뛰려면 비워두세요",
 "ob3_lat_label": "랫 풀다운 (<span id=\"unit-lbl4\">kg</span>) × 반복 횟수",
 "ob3_ohp_label": "오버헤드 프레스 (<span id=\"unit-lbl5\">kg</span>) × 반복 횟수",
 "ob3_squat_label": "핵 스쿼트 / 스쿼트 (<span id=\"unit-lbl2\">kg</span>) × 반복 횟수",
 "ob3_sub": "최근에 몇 회든 상관없이 들어본 가장 무거운 무게를 입력하세요. 초보자라면 건너뛰어도 됩니다.",
-"ob3_title": "기초 근력",
 "ob4_exp_label": "경력 수준",
-"ob4_goal_label": "운동 목표",
-"ob4_sub": "분할과 시작 무게를 맞춤 설정해요",
-"ob4_title": "운동 프로필",
 "ob5_sub": "일주일에 며칠 운동할 계획인가요?",
-"ob5_title": "운동 빈도",
 "ob6_title": "분할 방식 선택",
-"ob7_reps_label": "본 세트당 선호 반복 횟수",
-"ob7_rest_label": "세트 간 휴식 시간",
-"ob7_sets_label": "운동당 본 세트 수",
 "ob7_style_label": "세트 방식",
-"ob7_sub": "세션 진행 방식을 맞춤 설정하세요",
-"ob7_title": "세션 환경설정",
-"ob7_wureps_label": "워밍업 세트 반복 횟수",
-"ob8_sub": "마지막 운동이 언제였나요?",
-"obgym_title": "내 헬스장",
-"obgym_sub": "선택 사항 \u2014 실제로 보유한 것을 선택하면 GainPath가 실제로 들 수 있는 무게만 추천합니다. 건너뛰면 모든 장비가 갖춰진 헬스장으로 가정합니다.",
-"obgym_plates_label": "보유 플레이트 (<span id=\"ob-gym-unit1\">kg</span>, 한 쌍당)",
-"obgym_db_label": "보유 덤벨 (<span id=\"ob-gym-unit2\">kg</span>, 한 손당)",
-"ob8_title": "마지막 운동",
-"ob9_sub": "GainPath가 시작 무게를 어떻게 정하면 될까요?",
-"ob9_summary_title": "설정 요약",
-"ob9_title": "시작 무게",
 "ob_already_used": "GainPath를 예전에 써보셨나요?",
 "optional_for_reply": "(선택 — 답장용)",
 "optional_paren": "(선택)",
@@ -14483,13 +14247,11 @@ ko:{
 "pdf_report_title": "월간 PDF 리포트",
 "per_hand_dumbbell": "— 덤벨이라면 한 손 기준",
 "per_side_label": "한쪽 기준",
-"ph_bf_example": "예: 18",
 "ph_brief_description": "간단한 설명",
 "ph_bw_example": "예: 75",
 "ph_custom_reps": "예: 20",
 "ph_describe_feedback": "버그, 아이디어, 또는 피드백을 자세히 설명해주세요...",
 "ph_ex_name_example": "예: 노틸러스 체스트 프레스",
-"ph_ht_example": "예: 175",
 "ph_my_program": "내 프로그램",
 "ph_reps": "회",
 "ph_search_exercises": "운동 검색…",
@@ -14571,10 +14333,6 @@ ko:{
 "starting_weight_label": "시작 무게 (<span id=\"fsw-unit\">kg</span>)",
 "streak_wk_label": "주 연속 기록",
 "subject_label": "제목",
-"sw_ai_sub": "신체 정보, 경력, 기초 근력을 바탕으로 시작 무게를 추천해드려요",
-"sw_ai_title": "📊 대신 추정해주세요",
-"sw_manual_sub": "첫 세션에서 각 운동의 무게를 직접 설정하세요. 이후에는 마지막으로 기록한 무게가 기본값으로 사용됩니다.",
-"sw_manual_title": "✏️ 직접 무게를 입력할게요",
 "swap_exercise_title": "운동 교체",
 "sync_watch_label": "Apple Watch로 운동 동기화",
 "sync_chip": "{src} 기록으로 보면 여기서는 약 {w}가 적당해요",
@@ -14589,14 +14347,10 @@ ko:{
 "training_days_title": "운동 요일",
 "typical_start_weight_label": "일반적인 시작 무게 (<span id=\"cex-unit\">kg</span>)",
 "unit_days": "일",
-"unit_min": "분",
-"unit_reps": "회",
 "unit_s": "초",
-"unit_sets": "세트",
 "volume_label": "볼륨",
 "waist_label": "허리 (cm)",
 "warmup_sets_label": "워밍업 세트",
-"warmup_sets_sub": "근육 부위별 첫 번째 운동",
 "weight_label": "무게 (<span id=\"bw-unit\">kg</span>)",
 "wo_cancel_title": "이 운동을 취소할까요?",
 "wo_cancel_body": "이 세션의 모든 진행 상황 — 기록한 모든 세트 — 이 사라집니다. 이 작업은 되돌릴 수 없습니다.",
@@ -14906,20 +14660,22 @@ function setUnit(v){
   ['unit-lbl1','unit-lbl2','unit-lbl3','unit-lbl4','unit-lbl5'].forEach(id=>{const el=gid(id);if(el)el.textContent=v;});
 }
 function setExp(v){OB.exp=v;['beginner','intermediate','advanced'].forEach(x=>gid('exp-'+x).classList.toggle('on',x===v));}
-function setGoal(v){OB.goal=v;['definition','strength','general'].forEach(x=>gid('goal-'+x).classList.toggle('on',x===v));}
 function setFreq(v){
   OB.freq=v;
   [2,3,4,5,6,7].forEach(x=>gid('freq-'+x).classList.toggle('on',x===v));
-  const sugEl=gid('freq-suggest');
-  const suggestions={2:'Upper/Lower',3:'Full Body or Alternating',4:'Upper/Lower',5:'PPL/UL or Bro Split',6:'Bro Split or Alternating',7:'Any split'};
-  sugEl.style.display='block';
-  sugEl.innerHTML='<strong style="color:var(--txt)">Suggested:</strong> '+(OB.exp==='beginner'?'Bro Split — simplest for beginners':(suggestions[v]||'Choose any split'));
-  OB.split=OB.exp==='beginner'?'bro':(SPLIT_FREQ[v]||'pplul');
+  const sugId=OB.exp==='beginner'?'bro':(SPLIT_FREQ[v]||'pplul');
+  OB.split=sugId;
+  const sugName=(SPLITS.find(s=>s.id===sugId)||{name:sugId}).name;
+  gid('ob-split-suggest').textContent=OB.exp==='beginner'
+    ?'Since you’re just starting out, we suggest: '+sugName+' — one muscle group per day is the simplest way to learn.'
+    :'Based on '+v+' days/week, we suggest: '+sugName;
+  gid('ob-split-wrap').style.display='block';
+  renderSplitOpts('split-opts',OB.split,null);
 }
-// ── Preferred reps: five presets plus a free-typed custom number, offered
-// identically in onboarding (prefix 'reps', backed by OB.reps) and in Settings
-// ('sreps', backed by CFG.prefReps) — one set of handlers so the two screens
-// can't drift apart. Only the number is ever stored: "Custom" is the selected
+function obToggleLifts(){gid('ob-lifts').style.display='block';gid('ob-lifts-btn').style.display='none';}
+// ── Preferred reps: five presets plus a free-typed custom number, in Settings
+// (prefix 'sreps', backed by CFG.prefReps). Onboarding offered the same chips
+// until v2.9.0's shorter first run; the prefix stays so the ids don't change. Only the number is ever stored: "Custom" is the selected
 // chip whenever that number isn't one of the presets, so the highlighting is
 // derived and a custom value comes back correctly after a reload with no extra
 // flag to keep in sync. REPS_CUSTOM_OPEN is transient UI only: it holds the
@@ -14927,8 +14683,8 @@ function setFreq(v){
 // point the stored number decides the highlighting again.
 const REP_PRESETS=[6,8,10,12,15];
 const REPS_CUSTOM_OPEN={};
-function repsVal(p){return p==='sreps'?CFG.prefReps:OB.reps;}
-function setRepsVal(p,v){if(p==='sreps')CFG.prefReps=v;else OB.reps=v;}
+function repsVal(){return CFG.prefReps;}
+function setRepsVal(p,v){CFG.prefReps=v;}
 function renderRepOpts(p){
   const v=repsVal(p),custom=REPS_CUSTOM_OPEN[p]||REP_PRESETS.indexOf(v)<0;
   REP_PRESETS.forEach(x=>gid(p+'-'+x).classList.toggle('on',!custom&&x===v));
@@ -14944,14 +14700,6 @@ function commitRepsCustom(p){
   REPS_CUSTOM_OPEN[p]=false;renderRepOpts(p);
   if(p==='sreps'){CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
 }
-function setReps(v){setRepsPreset('reps',v);}
-function setRest(v){OB.rest=v;[60,90,120].forEach(x=>gid('rest-'+x).classList.toggle('on',x===v));}
-function setSets(v){OB.sets=v;[2,3,4].forEach(x=>gid('sets-'+x).classList.toggle('on',x===v));}
-function setSetStyle(v){OB.setStyle=v;['straight','pyramid'].forEach(x=>gid('setstyle-'+x).classList.toggle('on',x===v));gid('setstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';}
-function toggleWU(){OB.wu=!OB.wu;gid('tog-wu').classList.toggle('on',OB.wu);gid('wu-reps-row').style.display=OB.wu?'block':'none';}
-function setWUReps(v){OB.wuReps=v;[10,12,15].forEach(x=>gid('wureps-'+x).classList.toggle('on',x===v));}
-function setLast(v){OB.last=v;['today','1-2days','3-7days','1-2weeks','1month','never'].forEach(x=>gid('last-'+x).classList.toggle('on',x===v));}
-function setSW(v){OB.sw=v;['ai','manual'].forEach(x=>gid('sw-'+x).classList.toggle('on',x===v));}
 
 function renderSplitOpts(containerId,selectedId,onSelect){
   const el=gid(containerId);el.innerHTML='';
@@ -14959,7 +14707,7 @@ function renderSplitOpts(containerId,selectedId,onSelect){
     const btn=document.createElement('button');
     btn.className='opt-btn'+(selectedId===sp.id?' on':'');
     btn.style.textAlign='left';btn.style.padding='12px 14px';btn.style.marginBottom='8px';
-    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+sp.name+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'rgba(255,255,255,0.8)':'var(--txt2)')+';margin-top:3px">'+sp.desc+'</div>';
+    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+sp.name+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+sp.desc+'</div>';
     btn.onclick=()=>{OB.split=sp.id;renderSplitOpts(containerId,sp.id,onSelect);if(onSelect)onSelect(sp.id);};
     el.appendChild(btn);
   });
@@ -14984,68 +14732,29 @@ function obDots(){
 }
 
 function obNext(step){
-  if(step===1){const fname=gid('ob-fname').value.trim();const lname=gid('ob-lname').value.trim();if(!fname){alert('Please enter your first name');return;}if(!OB.sex){alert('Please select your sex');return;}OB.firstName=fname;OB.lastName=lname;}
-  if(step===2){const bw=parseFloat(gid('ob-bw').value);const ht=parseFloat(gid('ob-ht').value);if(!bw||bw<30){alert('Please enter a valid body weight');return;}if(!ht||ht<100){alert('Please enter a valid height');return;}OB.bw=bw;OB.ht=ht;OB.bf=parseFloat(gid('ob-bf').value)||null;}
-  if(step===3){OB.keyLifts={squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}};}
-  if(step===4){if(!OB.exp){alert('Please select your experience level');return;}if(!OB.goal){alert('Please select a fitness goal');return;}}
-  if(step===5){if(!OB.freq){alert('Please select how many days per week you plan to train');return;}}
-  if(step===6){if(!OB.split){alert('Please select a training split');return;}}
-  if(step===8){collectObGym();}
-  if(step===9){if(!OB.last){alert('Please select when you last worked out');return;}}
-  if(step===10){if(!OB.sw){alert('Please choose how starting weights should be set');return;}}
+  if(step===1){const fname=gid('ob-fname').value.trim();if(!fname){alert('Please enter your first name');return;}if(!OB.sex){alert('Please select your sex');return;}OB.firstName=fname;}
+  if(step===2){const bw=parseFloat(gid('ob-bw').value);if(!bw||bw<30){alert('Please enter a valid body weight');return;}if(!OB.exp){alert('Please select your experience level');return;}OB.bw=bw;OB.keyLifts={squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}};}
   gid('ob-'+step).classList.remove('active');
   OB.step=step+1;
   gid('ob-'+OB.step).classList.add('active');
   obDots();
-  if(OB.step===6){
-    const sugId=OB.exp==='beginner'?'bro':(SPLIT_FREQ[OB.freq]||'pplul');
-    if(!OB.split)OB.split=sugId;
-    const sugName=(SPLITS.find(s=>s.id===sugId)||{name:sugId}).name;
-    gid('ob-split-suggest').textContent=OB.exp==='beginner'
-      ?'Since you’re just starting out, we suggest: '+sugName+' — one muscle group per day is the simplest way to learn.'
-      :'Based on '+OB.freq+' days/week, we suggest: '+sugName;
-    renderSplitOpts('split-opts',OB.split,null);
-  }
-  if(OB.step===8){renderObGym();}
-  if(OB.step===10){updateObSummary();}
-}
-// The gym step reuses the same PLATES/DUMBBELLS denominations as Settings →
-// My gym, but with its own element ids — the shared i18n strings embed the
-// unit <span> by id, so reusing them here would duplicate ids in the DOM.
-function renderObGym(){
-  ['ob-gym-unit1','ob-gym-unit2'].forEach(id=>{const el=gid(id);if(el)el.textContent=OB.unit;});
-  const denoms=PLATES[OB.unit]||PLATES.kg;
-  gid('ob-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(OB.gymPlates[d]?' on':'')+'" id="ob-plate-'+d+'" onclick="this.classList.toggle(\'on\')">'+d+OB.unit+'</button>').join('');
-  const dbList=DUMBBELLS[OB.unit]||DUMBBELLS.kg;
-  const owned=new Set(OB.gymDumbbells||[]);
-  gid('ob-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="ob-db-'+dbId(w)+'" onclick="this.classList.toggle(\'on\')">'+w+'</button>').join('');
-}
-function collectObGym(){
-  const denoms=PLATES[OB.unit]||PLATES.kg;const plates={};
-  denoms.forEach(d=>{const el=gid('ob-plate-'+d);if(el&&el.classList.contains('on'))plates[d]=1;});
-  OB.gymPlates=plates;
-  const dbList=DUMBBELLS[OB.unit]||DUMBBELLS.kg;
-  OB.gymDumbbells=dbList.filter(w=>{const el=gid('ob-db-'+dbId(w));return el&&el.classList.contains('on');});
+  // Back then forward: refresh the suggestion text (experience may have
+  // changed) but keep the split the user already picked.
+  if(OB.step===3&&OB.freq){const sp=OB.split;setFreq(OB.freq);OB.split=sp;renderSplitOpts('split-opts',sp,null);}
 }
 function obBack(step){gid('ob-'+step).classList.remove('active');OB.step=step-1;gid('ob-'+OB.step).classList.add('active');obDots();}
-function updateObSummary(){
-  const splitName=(SPLITS.find(s=>s.id===OB.split)||{name:OB.split}).name;
-  const goalMap={definition:'Muscle definition',strength:'Strength',general:'General fitness'};
-  const expMap={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
-  const lastMap={'today':'Today','1-2days':'1-2 days ago','3-7days':'3-7 days ago','1-2weeks':'1-2 weeks ago','1month':'1+ month ago','never':'Never / just starting'};
-  gid('ob-summary').innerHTML='👤 <strong>'+(OB.firstName+' '+OB.lastName).trim()+'</strong> \u00b7 '+(OB.sex==='male'?'Male':'Female')+' \u00b7 '+OB.bw+OB.unit+' \u00b7 '+OB.ht+'cm'+(OB.bf?' \u00b7 '+OB.bf+'% BF':'')+'<br>🎯 '+(goalMap[OB.goal]||'-')+' \u00b7 '+(expMap[OB.exp]||'-')+'<br>🗓 '+splitName+' \u00b7 '+OB.freq+' days/week<br>🔄 '+OB.sets+' sets \u00b7 '+OB.reps+' reps \u00b7 '+OB.rest+'s rest<br>🌡 Warm-up: '+(OB.wu?'Yes ('+OB.wuReps+' reps)':'No')+'<br>\u23F0 Last workout: '+(lastMap[OB.last]||OB.last)+'<br>\u2696 Starting weights: '+(OB.sw==='ai'?'Estimated':'Manual entry')+'<br>🏋️ Gym: '+obGearLabel();
-}
-function obGearLabel(){
-  const nP=Object.keys(OB.gymPlates||{}).length,nD=(OB.gymDumbbells||[]).length;
-  if(!nP&&!nD)return'Not set \u2014 assumes a full gym';
-  const bits=[];if(nP)bits.push(nP+' plate size'+(nP===1?'':'s'));if(nD)bits.push(nD+' dumbbell'+(nD===1?'':'s'));
-  return bits.join(' \u00b7 ');
-}
+// First run asks only what changes the plan or a proposed weight: name, sex,
+// unit, body weight, experience, optional known lifts, days per week, split.
+// Everything else keeps its CFG default and lives in Settings. Height and body
+// fat are left empty rather than defaulted, so Profile doesn't show a made-up
+// number as if the user had typed it. The tutorial isn't auto-played; Home
+// links to it until the first workout is logged.
 function obFinish(){
-  if(!OB.sw){alert('Please select a starting weight method');return;}
-  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:OB.lastName,name:(OB.firstName+' '+OB.lastName).trim(),sex:OB.sex,bw:OB.bw,ht:OB.ht,bf:OB.bf,unit:OB.unit,exp:OB.exp,goal:OB.goal,split:OB.split,freq:OB.freq,lastWorkout:OB.last,warmup:OB.wu,wuReps:OB.wuReps,prefReps:OB.reps,prefRest:OB.rest,prefSets:OB.sets,setStyle:OB.setStyle,startingWeights:OB.sw,keyLifts:OB.keyLifts,gymPlates:OB.gymPlates,gymDumbbells:OB.gymDumbbells,setup:true,lastSeenVersion:APP_VERSION});
+  if(!OB.freq){alert('Please select how many days per week you plan to train');return;}
+  if(!OB.split){alert('Please select a training split');return;}
+  CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:'',name:OB.firstName,sex:OB.sex,bw:OB.bw,ht:null,bf:null,unit:OB.unit,exp:OB.exp,split:OB.split,freq:OB.freq,keyLifts:OB.keyLifts,gymPlates:{},gymDumbbells:[],setup:true,lastSeenVersion:APP_VERSION});
   saveCFG();if(OB.bw>0)setWeighIn(dkey(new Date()),OB.bw);accentColor();refreshHome();
-  showTutorial(true);
+  ss('home');
 }
 
 // ═══ TUTORIAL — a persistent, revisitable "how it works" walkthrough shown
@@ -15918,6 +15627,7 @@ function refreshHome(){
     const rbtn=gid('h-repeat-btn');rbtn.style.display='flex';rbtn.innerHTML='<i class="ti ti-rotate-clockwise" aria-hidden="true"></i> '+t('repeat_last_workout_prefix')+esc(last);
   }
   else{gid('h-gr').textContent=t('greet_new_'+tod).split('{name}').join(CFG.firstName);gid('h-sg').textContent=t('pick_first_session');gid('h-repeat-btn').style.display='none';}
+  gid('h-tour').style.display=!ST.history.length&&!CFG.tutorialSeen?'block':'none';
   const con=gid('dbtn-list');con.innerHTML='';
   getSplitDays().forEach(k=>{
     const isSug=k===sug;const last=ST.history.filter(h=>h.day===k).slice(-1)[0];
@@ -17405,8 +17115,9 @@ function renderHomeBanners(){
 // inventory at all. Opens the full settings screen first: the gym sub-screen's
 // back button runs collectSettingsFields(), which reads every settings input,
 // so jumping straight to it would blank the fields openSettings() populates.
+// Waits for the first logged workout so a new user's first screen is just "pick a day".
 function checkGymNudge(){
-  if(!CFG.setup||CFG.gymNudgeDismissed)return false;
+  if(!CFG.setup||CFG.gymNudgeDismissed||!ST.history.length)return false;
   return !gymHasPlateInventory()&&!(CFG.gymDumbbells||[]).length;
 }
 function openGymSettings(){openSettings();ss('setequip');}
@@ -17474,7 +17185,7 @@ async function sendFeedback(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Send feedback';
 }
 
-load();requestPersist();idbInit();applyTheme();applyLang();OB.step=1;obDots();renderRepOpts('reps');
+load();requestPersist();idbInit();applyTheme();applyLang();OB.step=1;obDots();
 if(CFG.setup){
   accentColor();
   if(!restoreInProgress()){
