@@ -137,6 +137,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   restored history, as everywhere else.
 
 ### Changed
+- **CLAUDE.md rewritten short** (635 → 212 lines, 46.0 → 13.4 KB): only
+  rules that still apply, each stated once, without the version history; every
+  rule that prevents a real past mistake is kept. Developer docs only.
 - **The app's JavaScript moved out of `index.html` into 16 files under `js/`**
   (boot, exercises, exercise text, state, i18n, storage, UI core, onboarding,
   math, history, settings, day edit, workout, Climb, data safety, main). The
