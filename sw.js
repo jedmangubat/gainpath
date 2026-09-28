@@ -23,7 +23,8 @@ const SHELL_URLS = [
   // App code: plain scripts under js/, in index.html's load order. The ?v= is
   // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
   './js/boot.js?v=2.9.0',
-  './js/exercises.js?v=2.9.0'
+  './js/exercises.js?v=2.9.0',
+  './js/exercise-text.js?v=2.9.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
