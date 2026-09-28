@@ -19,7 +19,10 @@ const SHELL_URLS = [
   // in CDN_URLS, but only its stylesheet was ever cached — the font file it
   // references was not, so offline every icon in the app rendered as an empty
   // box. A stylesheet and the font it depends on must cache together.
-  './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2'
+  './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2',
+  // App code: plain scripts under js/, in index.html's load order. The ?v= is
+  // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
+  './js/boot.js?v=2.9.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
