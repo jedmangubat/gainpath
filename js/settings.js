@@ -128,7 +128,7 @@ function collectSettingsFields(){
 function openPrivacySettings(){let id=null;try{id=localStorage.getItem('gp_anon_id');}catch(e){}gid('privacy-anon-id').textContent=id||'—';ss('setprivacy');}
 function closeSettingsSection(){collectSettingsFields();accentColor();refreshHome();ss('settings');}
 // Erase must clear the IndexedDB mirror too, or idbRecover() would bring the data back.
-function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();idbClear().then(()=>location.reload());}
+function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();Promise.all([idbClear(),photoClear()]).then(()=>location.reload());}
 
 // ═══ CUSTOM PROGRAM BUILDER ═══
 const PROG_COLORS=['#29506D','#2F6B4F','#946F17','#6B4A87','#8C3A5E','#A24A2E'];

@@ -42,7 +42,7 @@ function track(event){
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
 const WHATS_NEW_VERSION='2.9.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4'];
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4','whatsnew_item5'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);

@@ -312,6 +312,18 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   from localStorage. Anything that erases data must also call `idbClear()`, or
   the data comes back. Keep the `pre-idb-2.9.0` backup until at least v2.11.
   Switching reads to IndexedDB is a separate, later step.
+- **Progress photos are on-device only and outside the backup (v2.9.0).**
+  `js/photos.js` keeps them in their own IndexedDB database `gainpath-photos`
+  (`photos` = metadata + thumbnail, `full` = id → full image, always written
+  and deleted in one transaction), never in the `gainpath` mirror or
+  `backupPayload()`. Store image bytes as **ArrayBuffers, never Blobs**:
+  WebKit refused a Blob in IndexedDB in testing. Every photo is downscaled
+  before saving. Every failure goes to `#ph-msg` as "Not saved…", decided by
+  an explicit `failed` flag and not by whether an error object exists, because
+  WebKit failed a write with a `null` error and it read as saved. The card must
+  keep saying photos aren't backed up. Anything that erases user data must call
+  `photoClear()` as well as `idbClear()`. Don't add photos to the JSON backup
+  without a plan for its size.
 - **Restore = `validateBackup()` → `applyBackup()`.** It asks before replacing
   existing sessions, keeps the old data in `gp_pre_restore` for Undo, and stops
   if that copy can't be stored. `applyBackup()` recomputes PRs and badges.

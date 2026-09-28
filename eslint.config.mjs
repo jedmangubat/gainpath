@@ -21,7 +21,7 @@ export default [
         Chart: 'readonly', jspdf: 'readonly', emailjs: 'readonly',
         performance: 'readonly', requestAnimationFrame: 'readonly',
         Notification: 'readonly', URLSearchParams: 'readonly', File: 'readonly',
-        crypto: 'readonly'
+        crypto: 'readonly', createImageBitmap: 'readonly', Image: 'readonly'
       }
     },
     rules: {

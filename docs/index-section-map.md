@@ -19,6 +19,7 @@
 | `js/day-edit.js` | Day edit, swap, custom exercises |
 | `js/workout.js` | Start workout, plate calculator, workout screen |
 | `js/climb.js` | Climb charts, PRs, PDF report |
+| `js/photos.js` | Progress photos (own IndexedDB database, added in Phase 8) |
 | `js/data-safety.js` | Backups, restore, Home banners, nudges, feedback |
 | `js/main.js` | Startup sequence and service-worker registration |
 

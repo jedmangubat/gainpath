@@ -36,6 +36,7 @@ const SHELL_URLS = [
   './js/day-edit.js?v=2.9.0',
   './js/workout.js?v=2.9.0',
   './js/climb.js?v=2.9.0',
+  './js/photos.js?v=2.9.0',
   './js/data-safety.js?v=2.9.0',
   './js/main.js?v=2.9.0'
 ];

@@ -106,6 +106,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   errors, sideways scrolling, missing tags, a missing app link, broken links,
   or a guide the hub or sitemap doesn't list.
 
+- **Progress photos (Climb → Body, `js/photos.js`).** Add photos from the
+  camera or library; each is downscaled to a 1600px JPEG plus a 400px
+  thumbnail and kept in its own IndexedDB database (`gainpath-photos`), never
+  in localStorage, the workout mirror or the JSON backup, and never uploaded.
+  The card says plainly that photos aren't backed up and are lost with the
+  phone or its browser data. It shows how much space photos use and how much
+  is left, warns when under 100 MB remains, and asks before adding more. Every
+  failure (storage full, unreadable file, a write that aborts) shows a "Not
+  saved" message; nothing that failed ever reads as saved. Tap a photo to view
+  it full size, **Save to Photos** (share sheet on phones, download elsewhere)
+  or delete it. **Reset app** erases photos too. Photos are stored as
+  ArrayBuffers, not Blobs: WebKit refused a Blob in IndexedDB during testing,
+  and an early version then reported the lost photo as saved. `test:data`
+  now covers all of this in Chromium and WebKit (16 checks each). The Privacy
+  screen and `privacy.html` mention photos, and What's New has a fifth item.
+
 ### Fixed
 - **Installed-app colours now match the dark theme.** `manifest.json`
   `theme_color`/`background_color` were still the pre-v2.0 light `#EDEBE3`, so

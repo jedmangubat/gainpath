@@ -10,6 +10,10 @@
 //  - the iPhone "not installed" warning (WebKit, iPhone user agent), its
 //    30-day return, and that desktop never sees it
 //  - the backup-reminder interval setting
+//  - progress photos, in Chromium and WebKit: downscaled and kept across a
+//    relaunch, never in the backup, visible errors when storage is full or a
+//    file can't be read, the low-storage warning, Save to Photos, delete, and
+//    Reset erasing them
 // Downloads land in scripts/.data-safety/ (gitignored).
 //
 // Usage: npm run test:data   (ENGINE=webkit npm run test:data for WebKit)
@@ -112,6 +116,86 @@ async function exportViaUI(page, file) {
   await page.evaluate(() => { openSettings(); openDataSettings(); });
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#s-setdata button[onclick="exportData()"]')]);
   const p = path.join(OUT, file); await dl.saveAs(p); exportViaUI.lastName = dl.suggestedFilename(); return p;
+}
+
+// ── Progress photos (both engines: WebKit is the iPhone engine, and Blob
+// storage in IndexedDB is exactly where it has differed in the past).
+async function photoTests(engine, tag, check, errors) {
+  const b = await engine.launch();
+  const c = await b.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
+  const p = await c.newPage(); p.on('pageerror', e => errors.push(`${tag}: ${e}`));
+  await seed(p, bigUser(135));
+  const toBody = () => p.evaluate(() => { bnav('ch'); chSeg('body'); });
+  // A camera-sized image, made in the page, handed to the real input handler.
+  const add = (n, w = 4032, h = 3024, kind = 'image/png') => p.evaluate(async ({ n, w, h, kind }) => {
+    const files = [];
+    for (let i = 0; i < n; i++) {
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d');
+      g.fillStyle = ['#3a6', '#c64', '#48c'][i % 3]; g.fillRect(0, 0, w, h); g.fillStyle = '#fff'; g.fillRect(w * .3, h * .2, w * .4, h * .6);
+      files.push(new File([await new Promise(r => cv.toBlob(r, kind))], 'IMG_' + i + '.png', { type: kind }));
+    }
+    await phAdd({ files, value: 'x' });
+    return gid('ph-msg').textContent;
+  }, { n, w, h, kind });
+  const count = () => p.evaluate(async () => { PH_LIST = null; return (await phLoad()).length; });
+  await toBody();
+  check(`${tag} photos: the not-backed-up notice shows where photos are added`, /aren't in your backup/.test(await p.textContent('#ph-card')) && await p.isVisible('.ph-note'));
+  const backupBefore = await p.evaluate(() => { const x = backupPayload(); delete x.exported; return JSON.stringify(x); });
+  const msg = await add(2);
+  const recs = await p.evaluate(async () => Promise.all((await phLoad()).map(async r => {
+    const full = await phTx('full', 'readonly', tx => idbReq(tx.objectStore('full').get(r.id)));
+    const b = new Uint8Array(full);
+    return { w: r.w, h: r.h, jpeg: b[0] === 0xFF && b[1] === 0xD8, size: full.byteLength, thumb: r.thumb.byteLength };
+  })));
+  check(`${tag} photos: two added and confirmed`, recs.length === 2 && /2 photos saved/.test(msg), { msg, recs });
+  check(`${tag} photos: downscaled to 1600px JPEG with a thumbnail`, recs.every(r => Math.max(r.w, r.h) === 1600 && r.jpeg && r.thumb > 0 && r.thumb < r.size), recs);
+  check(`${tag} photos: grid and usage line show them`, await p.locator('#ph-grid .ph-tile').count() === 2 && /2 photos/.test(await p.textContent('#ph-usage')));
+  await p.reload(); await p.waitForSelector('#s-home.active'); await toBody();
+  await p.waitForFunction(() => document.querySelectorAll('#ph-grid .ph-tile').length === 2);
+  check(`${tag} photos: still there after the app is relaunched`, await count() === 2);
+  const backupAfter = await p.evaluate(() => { const x = backupPayload(); delete x.exported; return JSON.stringify(x); });
+  check(`${tag} photos: the backup file is unchanged by photos`, backupBefore === backupAfter && !/gainpath-photos|image\/jpeg/.test(backupAfter));
+  await p.waitForTimeout(400);
+  await p.screenshot({ path: path.join(OUT, `photos-${tag}.png`), fullPage: true });
+  // Full storage: the write fails, the message says so, nothing looks saved.
+  await p.evaluate(() => { window.__put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function () { throw new DOMException('full', 'QuotaExceededError'); }; });
+  const full = await add(1, 800, 600);
+  await p.evaluate(() => { IDBObjectStore.prototype.put = window.__put; });
+  check(`${tag} photos: storage full is shown as an error and nothing is added`, /Not saved: there's no storage space/.test(full) && await p.getAttribute('#ph-msg', 'class') === 'ph-msg bad' && await count() === 2, full);
+  // WebKit once failed a write with no error object at all; that must still
+  // read as "Not saved", never as saved.
+  await p.evaluate(() => { IDBObjectStore.prototype.put = function () { this.transaction.abort(); return {}; }; });
+  const aborted = await add(1, 800, 600);
+  await p.evaluate(() => { IDBObjectStore.prototype.put = window.__put; });
+  check(`${tag} photos: a write that aborts without an error is still shown as not saved`, /^Not saved/.test(aborted) && await count() === 2, aborted);
+  const bad = await p.evaluate(async () => { await phAdd({ files: [new File(['not an image'], 'x.jpg', { type: 'image/jpeg' })], value: '' }); return gid('ph-msg').textContent; });
+  check(`${tag} photos: an unreadable file is shown as an error`, /couldn't read that photo/.test(bad) && await count() === 2, bad);
+  // Low storage: a standing warning, and adding asks first (No = nothing added).
+  await p.evaluate(() => { navigator.storage.estimate = async () => ({ quota: 1e9, usage: 1e9 - 40 * 1048576 }); window.confirm = () => false; });
+  await p.evaluate(() => renderPhotos());
+  check(`${tag} photos: low storage shows a warning`, await p.isVisible('#ph-low') && /almost full: 40 MB left/.test(await p.textContent('#ph-low')));
+  await add(1, 800, 600);
+  check(`${tag} photos: low storage asks before adding, and No adds nothing`, await count() === 2);
+  // Save to Photos: download on desktop, the share sheet with a JPEG on a phone.
+  await p.evaluate(() => openPhoto(PH_LIST[0].id));
+  check(`${tag} photos: tapping one opens it full size`, await p.isVisible('#ph-view') && !!(await p.getAttribute('#ph-view-img', 'src')));
+  const [dl] = await Promise.all([p.waitForEvent('download'), p.click('#ph-view button[onclick="savePhoto()"]')]);
+  check(`${tag} photos: Save downloads a .jpg where there's no share sheet`, /^gainpath-\d{4}-\d{2}-\d{2}\.jpg$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+  const shared = await p.evaluate(() => new Promise(res => {
+    window.isMobileUA = () => true; navigator.canShare = () => true;
+    navigator.share = async (d) => { res(d.files.map(f => f.type + ':' + f.size)); };
+    savePhoto();
+  }));
+  check(`${tag} photos: on a phone Save opens the share sheet with the JPEG`, shared.length === 1 && /^image\/jpeg:\d+$/.test(shared[0]), shared);
+  await p.evaluate(() => { window.confirm = () => true; });
+  await p.click('#ph-view button[onclick="deletePhoto()"]');
+  await p.waitForFunction(() => document.querySelectorAll('#ph-grid .ph-tile').length === 1);
+  check(`${tag} photos: delete removes it and closes the viewer`, await count() === 1 && !(await p.isVisible('#ph-view')));
+  // Reset app erases photos too, not only the workout data.
+  await Promise.all([p.waitForNavigation(), p.evaluate(() => { window.confirm = () => true; resetApp(); })]);
+  await p.waitForSelector('#s-ob.active');
+  check(`${tag} photos: Reset app erases them`, await p.evaluate(async () => (await phLoad()).length) === 0);
+  await b.close();
 }
 
 async function main() {
@@ -330,6 +414,8 @@ async function main() {
   await ip.waitForTimeout(500);
   await ip.screenshot({ path: path.join(OUT, 'iphone-data-settings.png') });
   await wk.close();
+  await photoTests(chromium, 'chromium', check, errors);
+  await photoTests(webkit, 'webkit', check, errors);
   server.close();
 
   for (const r of results) console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}${r.pass || r.detail === undefined ? '' : '\n      ' + JSON.stringify(r.detail)}`);

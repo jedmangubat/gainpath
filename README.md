@@ -16,6 +16,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - **Harder to lose your data.** A failed save now shows an alert with a one-tap backup. iPhone Safari users see a warning about the 7-day data wipe and how to avoid it.
 - **Backups you control.** Save to Files or iCloud Drive from the share sheet, choose how often to be reminded, and undo a restore.
 - **See what's shared.** Settings → Privacy lists exactly what leaves your device. Your workouts never do.
+- **Progress photos.** Climb → Body keeps dated photos on your phone, shrunk to save space. They aren't in backups, so save the ones you want to keep to your photo library.
 
 ## Features
 

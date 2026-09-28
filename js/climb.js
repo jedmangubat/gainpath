@@ -43,7 +43,7 @@ function setChRange(k){ST.chRange=k;renderChSeg();}
 function renderChSeg(){
   const n=ST.chSeg||'strength';
   ['strength','balance','body'].forEach(x=>{gid('ch-seg-'+x).style.display=x===n?'block':'none';gid('chseg-'+x).classList.toggle('on',x===n);});
-  if(n==='strength')drawChart();else if(n==='balance')renderMGBalance();else renderBWSection();
+  if(n==='strength')drawChart();else if(n==='balance')renderMGBalance();else{renderBWSection();renderPhotos();}
 }
 // Session history lives on the Days tab now — it browses logged sessions, which
 // is what that tab is for, and it left the Progress tab carrying four screens.
