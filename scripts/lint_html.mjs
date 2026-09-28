@@ -1,40 +1,38 @@
 #!/usr/bin/env node
-// Lints the inline <script> block in index.html (ESLint doesn't look inside
-// HTML by default). Extracts the script text in-memory, lints it, and maps
-// reported line numbers back to their real line in index.html. Also lints
-// sw.js directly, since it's a real file with its own (service-worker)
-// globals, separate from the inline script's page-context globals.
+// Lints the app's JavaScript: the js/*.js files index.html loads, in load
+// order, plus any inline <script> block left in index.html. They share one
+// global scope (plain scripts, not modules), so they are linted as one
+// concatenated script — otherwise every cross-file call would look like
+// no-undef — and each report is mapped back to its real file and line.
+// Also lints sw.js directly, since it has its own service-worker globals.
 //
 // Usage: npm run lint
 
 import { ESLint } from 'eslint';
-import { readFile } from 'fs/promises';
+import { appSources, concatSources } from './app_sources.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const INDEX_HTML = path.join(ROOT, 'index.html');
 
 async function main() {
-  const html = await readFile(INDEX_HTML, 'utf8');
-  const match = html.match(/<script>([\s\S]*)<\/script>\s*<\/body>/);
-  if (!match) {
-    console.error('Could not find the inline <script> block in index.html');
+  const sources = await appSources(ROOT);
+  if (!sources.length) {
+    console.error('Found no app scripts in index.html');
     process.exit(1);
   }
-  const scriptStartLine = html.slice(0, match.index).split('\n').length;
-  const source = match[1];
+  const { text: source, where } = concatSources(sources);
 
   const eslint = new ESLint({ overrideConfigFile: path.join(ROOT, 'eslint.config.mjs') });
-  const results = await eslint.lintText(source, { filePath: 'index.html.inline.js' });
+  const results = await eslint.lintText(source, { filePath: 'app.js' });
 
   let errorCount = 0, warningCount = 0;
   for (const result of results) {
     for (const msg of result.messages) {
-      const realLine = scriptStartLine + msg.line;
+      const at = where(msg.line);
       const sev = msg.severity === 2 ? 'error' : 'warning';
       if (msg.severity === 2) errorCount++; else warningCount++;
-      console.log(`index.html:${realLine}:${msg.column} ${sev} ${msg.message} (${msg.ruleId})`);
+      console.log(`${at.file}:${at.line}:${msg.column} ${sev} ${msg.message} (${msg.ruleId})`);
     }
   }
 

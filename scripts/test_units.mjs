@@ -29,6 +29,7 @@
 import { chromium } from 'playwright';
 import { createServer } from 'http';
 import { readFile, mkdir } from 'fs/promises';
+import { appSources } from './app_sources.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -1114,7 +1115,7 @@ async function main() {
 
   // The GAINPATH MATH section must stay free of DOM access, storage writes and
   // UI, so it can be tested (and later moved into a module) on its own.
-  const html = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+  const html = (await appSources(ROOT)).map((x) => x.text).join('\n');
   const sec = html.split('// ═══ GAINPATH MATH —')[1]?.split('// ═══ END GAINPATH MATH ═══')[0];
   const code = (sec || '').split('\n').filter(l => !/^\s*\/\//.test(l)).join('\n');
   const banned = code.match(/\bgid\(|\bdocument\.|innerHTML|textContent|\bsave[A-Z]\w*\(|localStorage|\balert\(|\btrack\(|\bss\(|\brender[A-Z]\w*\(/g);

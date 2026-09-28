@@ -9,6 +9,7 @@
 import { chromium, webkit } from 'playwright';
 import { createServer } from 'http';
 import { readFile, readdir } from 'fs/promises';
+import { appSources } from './app_sources.mjs';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -227,6 +228,47 @@ async function main() {
   // aspect-ratio under max-height and cropped the screenshot, drifting every
   // spotlight 4–7 points, while Chromium rendered it correctly. Hence WebKit,
   // at a regular iPhone plus the iPhone Duo's short folded/unfolded viewports.
+  // The app is split into plain scripts under js/ (v2.9.0). Every file must be
+  // loaded by index.html with ?v=<APP_VERSION> — a new version then gets new
+  // URLs, so a phone can never mix a fresh index.html with a stale cached
+  // file — and precached in sw.js under exactly that URL, or the app can't
+  // boot offline.
+  const html = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+  const swSrc = await readFile(path.join(ROOT, 'sw.js'), 'utf8');
+  const allSrc = (await appSources(ROOT)).map((x) => x.text).join('\n');
+  const ver = (allSrc.match(/const APP_VERSION='([^']+)'/) || [])[1];
+  let jsFiles = [];
+  try { jsFiles = (await readdir(path.join(ROOT, 'js'))).filter((f) => f.endsWith('.js')); } catch { /* no js/ yet */ }
+  for (const f of jsFiles) {
+    const url = `js/${f}?v=${ver}`;
+    if (!html.includes(`<script src="${url}"></script>`)) issues.push(`index.html does not load ${url}`);
+    if (!swSrc.includes(`'./${url}'`)) issues.push(`sw.js SHELL_URLS does not precache ./${url}`);
+  }
+  for (const m of html.matchAll(/<script src="(js\/[^"]+)"/g)) {
+    if (!m[1].endsWith(`?v=${ver}`)) issues.push(`${m[1]} should end in ?v=${ver} (APP_VERSION)`);
+  }
+
+  // Offline boot: with the service worker installed, an offline reload must
+  // bring the app back with no errors. A shell file missing from SHELL_URLS
+  // fails here, not on someone's phone in a basement gym.
+  const cb = await chromium.launch();
+  const octx = await cb.newContext({ viewport: { width: 390, height: 844 } });
+  await octx.route('https://gainpath-analytics.jedmangubat.workers.dev/**', (r) => r.fulfill({ status: 204 }));
+  const op = await octx.newPage();
+  const oerr = [];
+  op.on('pageerror', (e) => oerr.push(String(e)));
+  await op.goto(`http://localhost:${PORT}/index.html`);
+  // Straight offline after install: the first load's scripts were fetched
+  // before the worker existed, so only the install-time precache can serve them.
+  await op.evaluate(() => navigator.serviceWorker.ready);
+  await octx.setOffline(true);
+  const reloadErr = await op.reload().then(() => null, (e) => String(e).split('\n')[0]);
+  const off = reloadErr ? { reloadErr } : await op.evaluate(() => ({ ob: !!document.querySelector('#s-ob.active'), fn: typeof obNext === 'function' && typeof suggestWeight === 'function' && typeof renderEx === 'function' }))
+    .catch((e) => ({ err: String(e) }));
+  if (!off.ob || !off.fn) issues.push(`offline reload did not boot the app: ${JSON.stringify(off)}`);
+  oerr.forEach((e) => issues.push('offline boot: ' + e));
+  await cb.close();
+
   const wk = await webkit.launch();
   for (const [w, h] of [[390, 844], [466, 678], [890, 626]]) {
     const ctx = await wk.newContext({ viewport: { width: w, height: h }, serviceWorkers: 'block' });
