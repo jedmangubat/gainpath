@@ -1,0 +1,42 @@
+/* Shared style for the static guide pages. Same Kinetic palette and
+   self-hosted fonts as the app and privacy.html; no scripts. */
+@font-face{font-family:'Archivo';font-style:normal;font-weight:500 900;font-display:swap;src:url('../fonts/archivo-latin-var.woff2') format('woff2')}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('../fonts/space-grotesk-latin-var.woff2') format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/space-mono-latin-400.woff2') format('woff2')}
+:root{--bg:#0C1512;--card:#141F1A;--bdr:#22332A;--txt:#F0EFE8;--txt2:#8FA39A;--accent:#C6F24E;--accent-ink:#0C1512}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;font-size:17px;-webkit-text-size-adjust:100%}
+main{max-width:680px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 20px) 16px 56px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;margin-bottom:28px}
+.top a{color:var(--txt2);text-decoration:none}
+.brand{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.02em;color:var(--txt)!important}
+.brand span{color:var(--accent)}
+h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:30px;letter-spacing:-.01em;line-height:1.15}
+.sub{color:var(--txt2);margin-top:10px;font-size:18px}
+h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;margin:34px 0 10px}
+p+p{margin-top:12px}
+ul,ol{padding-left:22px;margin-top:10px}
+li{margin-top:6px}
+ul+p,ol+p,table+p,.card+p{margin-top:14px}
+a{color:var(--accent)}
+strong{color:var(--txt)}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-top:16px}
+.card p:first-child{font-weight:600}
+.num{white-space:nowrap}
+code,.num{font-family:'Space Mono',monospace;font-size:15px}
+code{background:var(--bdr);padding:1px 6px;border-radius:5px}
+.tbl{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bdr);vertical-align:top}
+th{color:var(--txt2);font-weight:600}
+.cta{margin-top:40px;padding:20px 16px;border-radius:12px;background:var(--card);border:1px solid var(--bdr)}
+.cta p{color:var(--txt2);font-size:15px}
+.btn{display:inline-block;margin-top:14px;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none;padding:12px 18px;border-radius:10px}
+.more{margin-top:32px;font-size:15px}
+.more h2{font-size:16px;text-transform:uppercase;letter-spacing:.02em;color:var(--txt2)}
+.src{color:var(--txt2);font-size:14px;margin-top:28px}
+.guide-list{list-style:none;padding:0}
+.guide-list li{margin-top:12px}
+.guide-list a{display:block;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--txt)}
+.guide-list a strong{display:block;font-size:17px}
+.guide-list a span{color:var(--txt2);font-size:15px}

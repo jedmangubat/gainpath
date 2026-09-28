@@ -2,7 +2,7 @@
 
 **A free workout tracker that suggests your next weight and keeps every workout on your phone.** No account, no ads, no subscription.
 
-🔗 **[Open the app](https://jedmangubat.github.io/gainpath)** · [Privacy](https://jedmangubat.github.io/gainpath/privacy.html) · [Changelog](CHANGELOG.md)
+🔗 **[Open the app](https://jedmangubat.github.io/gainpath)** · [Lifting guides](https://jedmangubat.github.io/gainpath/guides/) · [Privacy](https://jedmangubat.github.io/gainpath/privacy.html) · [Changelog](CHANGELOG.md)
 
 If it's been useful to you, consider [☕ supporting development via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com).
 

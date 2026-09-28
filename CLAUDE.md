@@ -221,6 +221,22 @@ Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on com
   `.log`, which used to swallow that slack. **Adding anything to this row means
   re-running `npm run visual-check`**, which fails on overflow, on a clipped
   input value, and on rows that aren't all one line.
+- **The lifting guides (`guides/*.html`, v2.9.0) describe the app's real
+  math — keep them in step with it.** Each page explains a rule from the
+  `GAINPATH MATH` section (starting estimates, RIR progression steps, Epley,
+  plate snapping, break easing) and quotes worked examples computed by those
+  functions. Changing a formula, ratio or step size there means re-running the
+  affected example through the real function and updating the page in the same
+  pass. Cite research only where `docs/superpowers/plans/2026-09-25-lift-sync.md`
+  grades it as a study; call heuristics heuristics. Pages are plain HTML +
+  `guides/guides.css`, with no scripts and no analytics. A new guide must also go into
+  `guides/index.html` and `sitemap.xml`; `visual-check` fails otherwise, and
+  on missing meta/OG tags, broken links or sideways scroll at 390px. The site
+  is a GitHub *project* page, so `robots.txt` would be ignored (crawlers only
+  read it at the host root); submit `sitemap.xml` in Search Console instead.
+  The share image `images/branding/share.png` (1200x630) is rendered from
+  HTML with Playwright, not generated, and it must not claim more than
+  `privacy.html` does ("your workouts stay on your phone", not "your data").
 - **Keep this file current.** Whenever a standing convention changes, or a new
   one is established (e.g. a new file location rule, a new workflow step), update
   this CLAUDE.md to reflect it. Don't update it for one-off task details — only

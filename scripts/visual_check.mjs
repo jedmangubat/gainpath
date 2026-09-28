@@ -8,7 +8,7 @@
 
 import { chromium, webkit } from 'playwright';
 import { createServer } from 'http';
-import { readFile } from 'fs/promises';
+import { readFile, readdir } from 'fs/promises';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -24,7 +24,7 @@ function startServer() {
     const server = createServer(async (req, res) => {
       try {
         const reqPath = decodeURIComponent(req.url.split('?')[0]);
-        const filePath = path.join(ROOT, reqPath === '/' ? '/index.html' : reqPath);
+        const filePath = path.join(ROOT, reqPath.endsWith('/') ? reqPath + 'index.html' : reqPath);
         const data = await readFile(filePath);
         res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath)] || 'application/octet-stream' });
         res.end(data);
@@ -247,6 +247,57 @@ async function main() {
     if (bad.length) issues.push(`WebKit ${w}x${h}: tutorial screenshot is not 390:844, spotlights drift — ${bad.slice(0, 3).join('; ')}`);
     await ctx.close();
   }
+
+  // Guide pages (guides/*.html) are what search engines and link previews see,
+  // so each must load cleanly on an iPhone-width WebKit, fit without sideways
+  // scrolling, carry its search/share tags, link back to the app, and have no
+  // broken same-site links. The sitemap and the guides hub must list every one.
+  const guideFiles = (await readdir(path.join(ROOT, 'guides'))).filter((f) => f.endsWith('.html'));
+  const sitemap = await readFile(path.join(ROOT, 'sitemap.xml'), 'utf8');
+  const hub = await readFile(path.join(ROOT, 'guides', 'index.html'), 'utf8');
+  const png = await readFile(path.join(ROOT, 'images', 'branding', 'share.png'));
+  if (png.readUInt32BE(16) !== 1200 || png.readUInt32BE(20) !== 630) issues.push('share.png must be 1200x630');
+  const gctx = await wk.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+  const checked = new Set();
+  for (const f of guideFiles) {
+    const rel = 'guides/' + f;
+    if (f !== 'index.html' && !hub.includes(`href="${f}"`)) issues.push(`guides/index.html does not link ${f}`);
+    const url = 'https://jedmangubat.github.io/gainpath/guides/' + (f === 'index.html' ? '' : f);
+    if (!sitemap.includes(`<loc>${url}</loc>`)) issues.push(`sitemap.xml is missing ${url}`);
+    const p = await gctx.newPage();
+    const errs = [];
+    p.on('pageerror', (e) => errs.push(String(e)));
+    p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+    await p.goto(`http://localhost:${PORT}/${rel}`);
+    await p.evaluate(() => document.fonts.ready);
+    const g = await p.evaluate(() => ({
+      overflow: document.documentElement.scrollWidth - innerWidth,
+      title: document.title,
+      desc: (document.querySelector('meta[name=description]') || {}).content || '',
+      canon: (document.querySelector('link[rel=canonical]') || {}).href || '',
+      og: ['og:title', 'og:description', 'og:image', 'og:url'].filter((k) => !document.querySelector(`meta[property="${k}"]`)),
+      toApp: [...document.querySelectorAll('a')].some((a) => a.getAttribute('href') === '../'),
+      links: [...document.querySelectorAll('a[href]')].map((a) => a.href).filter((h) => h.startsWith(location.origin)),
+      h1: document.querySelectorAll('h1').length
+    }));
+    errs.forEach((e) => issues.push(`${rel}: ${e}`));
+    if (g.overflow > 0) issues.push(`${rel} scrolls sideways by ${g.overflow}px at 390px`);
+    if (!g.title || g.desc.length < 70 || g.desc.length > 200) issues.push(`${rel}: title or description missing/out of range (${g.desc.length} chars)`);
+    if (!g.canon.startsWith('https://jedmangubat.github.io/gainpath/')) issues.push(`${rel}: bad canonical ${g.canon}`);
+    if (g.og.length) issues.push(`${rel}: missing ${g.og.join(', ')}`);
+    if (!g.toApp) issues.push(`${rel}: no link to the app`);
+    if (g.h1 !== 1) issues.push(`${rel}: expected one h1, got ${g.h1}`);
+    for (const h of g.links) {
+      const u = h.split('#')[0];
+      if (checked.has(u)) continue;
+      checked.add(u);
+      const r = await p.request.get(u);
+      if (!r.ok()) issues.push(`${rel}: broken link ${u.replace(`http://localhost:${PORT}`, '')}`);
+    }
+    await p.screenshot({ path: path.join(OUT_DIR, 'guide-' + f.replace('.html', '.png')), fullPage: true });
+    await p.close();
+  }
+  await gctx.close();
   await wk.close();
   server.close();
 

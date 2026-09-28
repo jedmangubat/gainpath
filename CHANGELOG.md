@@ -89,6 +89,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   page, precached for offline use, that says only what the code supports. It is
   linked from Settings and the README. There is **no opt-out for the usage
   counts yet**, and both places say so plainly.
+- **Lifting guides (`guides/`) and search/share tags.** Seven short static
+  pages answer questions the app already solves: starting weight, dumbbell vs
+  barbell, when to add weight, reps in reserve, estimated one-rep max, plate
+  math, and coming back after a break. Each explains the rule GainPath itself
+  uses, and every worked example was computed by the app's real functions
+  (e.g. bench 80 kg × 8 at 3–4 reps left → incline 57.5 kg, dumbbell press
+  25 kg per hand). Research is cited only where
+  `docs/superpowers/plans/2026-09-25-lift-sync.md` already grades it as a
+  study, and heuristics are called heuristics. The pages are plain HTML with a
+  shared `guides.css`, no scripts, and link back to the app. `index.html` gets
+  a descriptive title, a meta description, a canonical URL, Open Graph/Twitter
+  tags, a 1200x630 `images/branding/share.png`, and `SoftwareApplication`
+  JSON-LD (price 0, no rating). `sitemap.xml` lists every public page.
+  `visual-check` now loads every guide in WebKit at 390px and fails on page
+  errors, sideways scrolling, missing tags, a missing app link, broken links,
+  or a guide the hub or sitemap doesn't list.
+
 ### Fixed
 - **Installed-app colours now match the dark theme.** `manifest.json`
   `theme_color`/`background_color` were still the pre-v2.0 light `#EDEBE3`, so
