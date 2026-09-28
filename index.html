@@ -1302,17 +1302,6 @@ textarea{resize:vertical;min-height:100px}
 <script src="js/workout.js?v=2.9.0"></script>
 <script src="js/climb.js?v=2.9.0"></script>
 <script src="js/data-safety.js?v=2.9.0"></script>
-<script>
-load();requestPersist();idbInit();applyTheme();applyLang();OB.step=1;obDots();
-if(CFG.setup){
-  accentColor();
-  if(!restoreInProgress()){
-    refreshHome();ss('home');
-    if(cmpVer(CFG.lastSeenVersion,WHATS_NEW_VERSION)<0)showWhatsNew();
-  }
-}else{ss('ob');}
-
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
-</script>
+<script src="js/main.js?v=2.9.0"></script>
 </body>
 </html>

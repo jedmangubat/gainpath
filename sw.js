@@ -36,7 +36,8 @@ const SHELL_URLS = [
   './js/day-edit.js?v=2.9.0',
   './js/workout.js?v=2.9.0',
   './js/climb.js?v=2.9.0',
-  './js/data-safety.js?v=2.9.0'
+  './js/data-safety.js?v=2.9.0',
+  './js/main.js?v=2.9.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
