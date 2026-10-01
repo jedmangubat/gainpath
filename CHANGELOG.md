@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.9.1] - 2026-10-01
+
 ### Added
 - **`scripts/fb_post.py --video`** (dev tooling, nothing the app ships): uploads
   an mp4 to the Page's `/videos` endpoint on `graph-video.facebook.com`, with

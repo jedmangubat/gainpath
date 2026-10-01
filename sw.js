@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v44';
+const CACHE_NAME = 'gainpath-v45';
 const CDN_URLS = [
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
@@ -22,23 +22,23 @@ const SHELL_URLS = [
   './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2',
   // App code: plain scripts under js/, in index.html's load order. The ?v= is
   // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
-  './js/boot.js?v=2.9.0',
-  './js/exercises.js?v=2.9.0',
-  './js/exercise-text.js?v=2.9.0',
-  './js/state.js?v=2.9.0',
-  './js/i18n.js?v=2.9.0',
-  './js/storage.js?v=2.9.0',
-  './js/ui-core.js?v=2.9.0',
-  './js/onboarding.js?v=2.9.0',
-  './js/math.js?v=2.9.0',
-  './js/history.js?v=2.9.0',
-  './js/settings.js?v=2.9.0',
-  './js/day-edit.js?v=2.9.0',
-  './js/workout.js?v=2.9.0',
-  './js/climb.js?v=2.9.0',
-  './js/photos.js?v=2.9.0',
-  './js/data-safety.js?v=2.9.0',
-  './js/main.js?v=2.9.0'
+  './js/boot.js?v=2.9.1',
+  './js/exercises.js?v=2.9.1',
+  './js/exercise-text.js?v=2.9.1',
+  './js/state.js?v=2.9.1',
+  './js/i18n.js?v=2.9.1',
+  './js/storage.js?v=2.9.1',
+  './js/ui-core.js?v=2.9.1',
+  './js/onboarding.js?v=2.9.1',
+  './js/math.js?v=2.9.1',
+  './js/history.js?v=2.9.1',
+  './js/settings.js?v=2.9.1',
+  './js/day-edit.js?v=2.9.1',
+  './js/workout.js?v=2.9.1',
+  './js/climb.js?v=2.9.1',
+  './js/photos.js?v=2.9.1',
+  './js/data-safety.js?v=2.9.1',
+  './js/main.js?v=2.9.1'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
