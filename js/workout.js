@@ -12,8 +12,11 @@ function startDay(k,exList){
   ST.sd=exWithWU.map(ex=>{
     const saved=getSavedWeight(ex.name,ex.note==='bodyweight');
     let w=ex.plannedW!==undefined?ex.plannedW:(saved!==undefined?carriedWeight(ex):(ex.note==='bodyweight'?0:(CFG.startingWeights==='ai'?getAIEstimatedWeight(ex):defaultW(ex))));
-    if(deload&&ex.note!=='bodyweight'&&w>0)w=Math.max(0,Math.round(w*0.7*2)/2);
-    return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false};
+    // Tagged only when lightened, so the logged session can be skipped as a
+    // carry-over/progression source (carrySessions) instead of sticking at −30%.
+    const dl=deload&&ex.note!=='bodyweight'&&w>0;
+    if(dl)w=Math.max(0,Math.round(w*0.7*2)/2);
+    return{sets:buildSets(ex,w),ex:ex,firstTime:saved===undefined,wSet:false,deload:dl||undefined};
   });
   if(deload){CFG.deloadActive=false;saveCFG();}
   ST.mwQueue=[...new Set(exWithWU.filter(ex=>ex.machine&&ST.mw[mwKey(ex.name)]===undefined).map(ex=>mwKey(ex.name)))];
@@ -405,7 +408,7 @@ function submitExFeel(feel){
 function finishWo(){clearInterval(ST.et);clearInterval(ST.rt);ST.pendingRec=buildRec();releaseWakeLock();healthSyncTrigger('end');ss('feel');saveInProgress();}
 function buildRec(){
   const dayName=getDayName(ST.day);const done=ST.sd.reduce((a,item)=>a+item.sets.filter(s=>s.done).length,0);const now=new Date();
-  return{day:ST.day,dayName,date:now.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),dk:dkey(now),mk:mkey(now),dur:fmt(ST.es),sets:done,feel:null,note:null,exercises:ST.sd.map(item=>({name:item.ex.name,exFeel:item.exFeel||null,note:item.userNote||null,sets:item.sets.map(s=>({w:s.w,r:s.r,done:s.done,t:s.t}))}))};
+  return{day:ST.day,dayName,date:now.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),dk:dkey(now),mk:mkey(now),dur:fmt(ST.es),sets:done,feel:null,note:null,exercises:ST.sd.map(item=>({name:item.ex.name,exFeel:item.exFeel||null,note:item.userNote||null,deload:item.deload,sets:item.sets.map(s=>({w:s.w,r:s.r,done:s.done,t:s.t}))}))};
 }
 function submitFeel(feel){
   const rec=ST.pendingRec;rec.feel=feel;rec.note=(gid('feel-note-inp').value||'').trim()||null;gid('feel-note-inp').value='';

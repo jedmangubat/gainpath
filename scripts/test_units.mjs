@@ -893,6 +893,17 @@ async function main() {
     ST.history = oldSess(70);
     check('break: 10 weeks off → 15% lighter', breakSuggest(rowFull, 100), { newW: 85, weeks: 10 });
     check('break: own history still sets the planned weight', plannedFor(rowFull).w, 100);
+    // The break is for the body part, not the one lift: rows 6 weeks ago but
+    // pulldowns (also back) last week means the back was never detrained.
+    const backSess = (d, name) => ({ dk: ago(d), date: 'd', exercises: [lift(name, 50, 10, 'good')] });
+    ST.history = [...oldSess(42), backSess(7, 'Lat pulldown')];
+    check('break: same body part trained last week → no chip', breakSuggest(rowFull, 100), null);
+    ST.history = [...oldSess(70), backSess(35, 'Lat pulldown')];
+    check('break: weeks count from the body part\'s last session', breakSuggest(rowFull, 100), { newW: 90, weeks: 5 });
+    ST.history = [...oldSess(42), backSess(7, 'Flat barbell bench press')];
+    check('break: another body part trained recently doesn\'t count', breakSuggest(rowFull, 100), { newW: 90, weeks: 6 });
+    ST.history = [...oldSess(42), { dk: ago(7), date: 'd', exercises: [{ name: 'Lat pulldown', exFeel: null, sets: [{ done: true, t: 'w', w: 20, r: 10 }, { done: false, t: 'x', w: 50, r: 10 }] }] }];
+    check('break: warm-ups or unlogged sets on the body part don\'t count', breakSuggest(rowFull, 100), { newW: 90, weeks: 6 });
 
     // ── Unit switch converts every stored weight (it used to just relabel).
     CFG.unit = 'kg';
@@ -1103,6 +1114,38 @@ async function main() {
     check('math/fallback: farmers carry lands on a real dumbbell (15), bench on a 2.5 step (35)', [getAIEstimatedWeight(M.farmers), getAIEstimatedWeight(M.bench)], [15, 35]);
     CFG.sex = 'female'; CFG.bw = 60;
     check('math/fallback: small dumbbells keep 1kg resolution (women DB press 6kg)', getAIEstimatedWeight(poolEx('Bench dumbbell chest press')), 6);
+    reset();
+
+    // ── Deload sessions, pyramid carry, dumbbell steps (fixed 2026-10-01).
+    // A deload session (−30%) is tagged deload:true per exercise when logged
+    // and skipped by carry-over, progression and the stall check.
+    const dl = (w, exFeel) => { const s = one('Barbell row', w, 5, exFeel); s.exercises[0].deload = true; return s; };
+    ST.sd = [{ ex: M.row, deload: true, exFeel: 'easy', sets: [{ done: true, t: 'x', w: 70, r: 5 }] }, { ex: M.latpd, exFeel: 'good', sets: [{ done: true, t: 'x', w: 50, r: 10 }] }];
+    ST.day = 'pull'; ST.es = 0;
+    const rec = buildRec();
+    check('deload: the logged session tags deloaded exercises only', [rec.exercises[0].deload, rec.exercises[1].deload], [true, undefined]);
+    ST.sd = []; ST.day = null;
+    ST.history = [one('Barbell row', 100, 5, 'good'), dl(70, 'easy')];
+    check('deload: the next session starts back at the pre-deload weight', plannedFor(M.row).w, 100);
+    check('deload: the easy deload rating doesn\'t drive the next suggestion', suggestWeight(M.row, 100), { feel: 'good', delta: 2.5, newW: 102.5 });
+    ST.history = [dl(70, 'easy')];
+    check('deload: only a deload logged → it is still the carried weight', plannedFor(M.row).w, 70);
+    CFG.deloadActive = false; CFG.deloadDismissedAtLen = 0;
+    ST.history = [one('Barbell row', 100, 5, 'good'), dl(70, 'easy'), one('Barbell row', 100, 5, 'good')];
+    check('deload: a deload session isn\'t counted as a strength stall', checkDeload(), false);
+    ST.history = [one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard')];
+    check('stall: holding the same weight (as the 1–2 RIR rule says) isn\'t a stall', checkDeload(), false);
+    ST.history = [one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard'), one('Barbell row', 97.5, 5, 'hard')];
+    check('stall: a drop below the first of three sessions still is', checkDeload(), true);
+    // Pyramid climbs one increment per set; the base set is what carries over.
+    CFG.setStyle = 'pyramid';
+    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'hard', sets: [100, 105, 110].map((w, i) => ({ done: true, t: 'x', w, r: 12 - 2 * i })) }] }];
+    check('pyramid: next session starts at the same base (100), not last top set', plannedFor(M.row).w, 100);
+    reset();
+    ST.history = [one('Dumbbell lunge', 20, 10, 'easy')];
+    check('steps: dumbbell lunge 5+ reps left → +2.5kg a hand like other dumbbell lifts', suggestWeight(EXPOOL['Dumbbell lunge'], 20), { feel: 'easy', delta: 2.5, newW: 22.5 });
+    ST.history = [one('Barbell row', 100, 5, 'easy')];
+    check('steps: barbell back lifts keep the 5kg step', suggestWeight(M.row, 100), { feel: 'easy', delta: 5, newW: 105 });
     reset();
 
     ST.history = savedHist;

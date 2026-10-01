@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **`scripts/fb_post.py --video`** (dev tooling, nothing the app ships): uploads
+  an mp4 to the Page's `/videos` endpoint on `graph-video.facebook.com`, with
+  the caption as the video `description` and an optional `--title`. It works
+  with `--schedule` and is still a dry run unless `--yes`. Added to schedule
+  the launch video.
+
+### Fixed
+- **The "back after a break" chip counted weeks per exercise, not per body
+  part.** Skip barbell rows for 6 weeks while doing pulldowns every week and
+  rows still offered "It's been 6 weeks — ease back in at −10%", though your
+  back was never off. `breakSuggest()` now counts from the last logged work set
+  for any exercise of the same muscle group (warm-ups and unlogged sets don't
+  count), and the chip says "since you last trained this body part" (en/ja/ko).
+  The break guide says the same.
+
+- **A deload stuck at −30%.** "Deload next session" lightens that session's
+  weights, but the session was then logged like any other, so the next one
+  started 30% light too and the easy deload ratings proposed raises from there.
+  Lightened exercises are now logged with `deload:true` and skipped for
+  carry-over and next-weight suggestions (`carrySessions()`); the session after
+  a deload starts from the last normal one. Deloads logged before this update
+  aren't tagged, so they still carry once.
+- **The deload banner re-fired from a deload, or from holding weight.** The
+  stall check counted the deload session as a drop, and counted three sessions
+  at the same weight as a stall, which is what the 1–2 reps-left rule asks you
+  to do. Deload sessions are now skipped, and a stall needs the latest session
+  to fall below the first of the three.
+- **Pyramid sets raised themselves every session.** The top set was carried as
+  the next base, so the pyramid climbed two increments per session with no
+  Apply tap. The base (lightest work set) now carries over.
+- **Dumbbell leg and back lifts got the 5kg barbell step per hand.** An "easy"
+  20kg lunge suggested 25kg a hand. Dumbbell lifts now use 2.5kg (5 lb) like
+  other dumbbell lifts; the increase-weight guide says so.
+
 ## [2.9.0] - 2026-09-28
 
 ### Added

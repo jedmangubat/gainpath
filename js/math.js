@@ -41,9 +41,18 @@ function buildSets(ex,savedW){
 // Day-granularity only (dk, not a precise timestamp): changing the
 // preference and logging a different rep count for the same exercise later
 // the same calendar day is the one edge case this can't distinguish.
+// Sessions that logged this exercise, minus deload ones (Deload next session,
+// −30%, tagged deload:true per exercise): a planned light day is never carried
+// forward, so the session after it resumes from the last normal one. If a
+// deload is all there is, it is used.
+function carrySessions(exName){
+  const all=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
+  const live=all.filter(h=>!h.exercises.find(e=>e.name===exName).deload);
+  return live.length?live:all;
+}
 function getSavedReps(exName){
   const meta=EXPOOL[exName];if(meta&&meta.holdSecs)return undefined;
-  const hist=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
+  const hist=carrySessions(exName);
   if(!hist.length)return undefined;
   const session=hist[hist.length-1];
   if(CFG.prefRepsChangedAt&&session.dk&&session.dk<=CFG.prefRepsChangedAt)return undefined;
@@ -52,7 +61,7 @@ function getSavedReps(exName){
   return ws.length?ws[0].r:undefined;
 }
 function getSavedWeight(exName,isBW){
-  const hist=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
+  const hist=carrySessions(exName);
   if(!hist.length)return undefined;
   const last=hist[hist.length-1].exercises.find(e=>e.name===exName);
   if(!last)return undefined;
@@ -62,11 +71,15 @@ function getSavedWeight(exName,isBW){
 // Last session's weight, re-targeted when the rep target has since changed
 // (Settings preference or a day-plan rep count): 60kg×10 → ~68.5kg×5, using the
 // same Epley rep↔1RM relation as e1rm() (reps capped at 15, beyond which the
-// formula overestimates). Pyramid, bodyweight and timed holds are left as-is.
+// formula overestimates). Bodyweight and timed holds are left as-is. Pyramid
+// carries its base (lightest work set): carrying the top set raised the whole
+// pyramid two increments every session with no Apply tap.
 function carriedWeight(ex){
   const isBW=ex.note==='bodyweight',saved=getSavedWeight(ex.name,isBW);
-  if(saved===undefined||isBW||ex.holdSecs||isPyramidEx(ex))return saved;
-  const last=lastSessionEx(ex.name),top=last&&(last.sets||[]).find(s=>s.done&&s.t!=='w'&&s.w===saved);
+  if(saved===undefined||isBW||ex.holdSecs)return saved;
+  const last=lastSessionEx(ex.name);
+  if(isPyramidEx(ex)){const xs=last?(last.sets||[]).filter(s=>s.done&&s.t==='x'&&s.w>0):[];return xs.length?Math.min(...xs.map(s=>s.w)):saved;}
+  const top=last&&(last.sets||[]).find(s=>s.done&&s.t!=='w'&&s.w===saved);
   const r=ex.plannedR||getSavedReps(ex.name)||CFG.prefReps;
   if(!top||!(top.r>0)||top.r===r)return saved;
   const w=saved*(1+Math.min(top.r,15)/30)/(1+Math.min(r,15)/30);
@@ -77,10 +90,15 @@ function carriedWeight(ex){
 // with losses growing after that. No primary source pins the size precisely,
 // so this is a conservative easing (−10% for 4–8 weeks, −15% beyond) offered as
 // an Apply/Dismiss chip — the old weight stays unless the user taps Apply.
+// The break is the body part's, not the lift's: rows skipped for 6 weeks
+// while pulldowns were trained weekly is no break, so the weeks count from the
+// last session with a logged work set for any exercise of the same mg.
 function breakSuggest(ex,curW){
   if(ex.note==='bodyweight'||ex.holdSecs||!(curW>0))return null;
-  const hist=exHistory(ex.name);if(!hist.length)return null;
-  const dk=ST.history[hist[hist.length-1].idx].dk;if(!dk)return null;
+  if(!exHistory(ex.name).length)return null;
+  const mg=ex.mg||(EXPOOL[ex.name]||{}).mg;let dk=null;
+  ST.history.forEach(h=>{if(h.dk&&!(dk&&h.dk<=dk)&&(h.exercises||[]).some(e=>(e.name===ex.name||(mg&&(EXPOOL[e.name]||{}).mg===mg))&&(e.sets||[]).some(s=>s.done&&s.t!=='w')))dk=h.dk;});
+  if(!dk)return null;
   const weeks=Math.floor((dkDay(dkey(new Date()))-dkDay(dk))/7);
   if(weeks<4)return null;
   const newW=roundToGymWeight(ex,Math.round(curW*(weeks>=8?.85:.9)*2)/2,'down');
@@ -303,10 +321,12 @@ function getAIEstimatedWeight(ex){
 function e1rm(w,r){if(w<=0||r<=0)return 0;return Math.round(w*(1+r/30)*2)/2;}
 function sessionVolume(rec){return(rec.exercises||[]).reduce((a,ex)=>a+(ex.sets||[]).filter(s=>s.done&&s.t!=='w'&&s.w>0).reduce((b,s)=>b+s.w*s.r,0),0);}
 function fmtVol(v,unit){const u=unit||'';return v>=1000?(Math.round(v/100)/10)+'k'+(u?' '+u:''):String(Math.round(v))+u;}
-function exHistory(name){const out=[];ST.history.forEach((h,idx)=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');if(ws.length)out.push({idx,date:h.date,exFeel:ex.exFeel,note:ex.note||null,sets:ws});});return out;}
-function lastSessionEx(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex)return ex;}return null;}
+function exHistory(name){const out=[];ST.history.forEach((h,idx)=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');if(ws.length)out.push({idx,date:h.date,exFeel:ex.exFeel,note:ex.note||null,deload:!!ex.deload,sets:ws});});return out;}
+function lastSessionEx(name){const hist=carrySessions(name);return hist.length?hist[hist.length-1].exercises.find(e=>e.name===name):null;}
 function lastNoteForExercise(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex&&ex.note)return ex.note;}return null;}
-function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg);return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}
+// The 5kg step is for barbell/machine lower-body and back lifts; a dumbbell is
+// per hand, so +5kg a hand (a 25% jump on a 20kg lunge) is too much.
+function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg)&&equipRank(ex)!==1;return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}
 function stepIncrement(ex,curW){
   if(equipRank(ex)===1&&curW<20)return CFG.unit==='kg'?1:2;
   return CFG.unit==='kg'?2.5:5;
@@ -318,7 +338,7 @@ function stepIncrement(ex,curW){
 // Always snapped to loadable equipment and surfaced as a one-tap Apply chip.
 function suggestWeight(ex,curW){
   if(ex.note==='bodyweight'||ex.holdSecs)return null;
-  const hist=exHistory(ex.name);if(!hist.length)return null;
+  const hist=exHistory(ex.name).filter(x=>!x.deload);if(!hist.length)return null;
   const f=hist[hist.length-1].exFeel;if(!f)return null;
   let delta=0,dir='up';
   if(f==='easy')delta=weightIncrement(ex);

@@ -156,10 +156,12 @@ function checkDeload(){
   if(recent.length<3)return false;
   if(recent.every(h=>h.feel==='hard'||h.feel==='max'))return true;
   for(const name of Object.values(PR_KEY_LIFTS)){
-    const hist=exHistory(name);
+    // Deload sessions are planned light days, not a stall. Holding the same
+    // weight is what the 1–2 RIR rule asks for, so a stall needs a real drop.
+    const hist=exHistory(name).filter(x=>!x.deload);
     if(hist.length<3)continue;
     const bests=hist.slice(-3).map(s=>Math.max(0,...s.sets.map(st=>e1rm(st.w,st.r))));
-    if(bests.every(b=>b>0)&&bests[2]<=bests[0]&&bests[1]<=bests[0])return true;
+    if(bests.every(b=>b>0)&&bests[2]<bests[0]&&bests[1]<=bests[0])return true;
   }
   return false;
 }
