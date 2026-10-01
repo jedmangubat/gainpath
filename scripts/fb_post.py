@@ -6,7 +6,7 @@ exactly what would be sent unless --yes is passed, so nothing goes public by
 accident (posts and replies are draft-then-approve, one at a time).
 
   fb_post.py check                              verify the token + Page access (read-only)
-  fb_post.py post --message-file F [--photo P] [--link URL] [--schedule WHEN] [--yes]
+  fb_post.py post --message-file F [--photo P | --video V [--title T]] [--link URL] [--schedule WHEN] [--yes]
   fb_post.py get POST_ID                        re-fetch a post (read-only)
   fb_post.py delete POST_ID [--yes]
 
@@ -29,6 +29,7 @@ PAGE_ID = "1360573253802118"  # GainPath Fitness (the Graph id, not the number i
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT = "gainpath.facebook-system-user-token", "gainpath"
 BASE = f"https://graph.facebook.com/{VERSION}"
+VIDEO_BASE = f"https://graph-video.facebook.com/{VERSION}"  # video uploads must go to this host
 
 
 def q(s):
@@ -37,12 +38,12 @@ def q(s):
                   .replace("\r", "\\r").replace("\t", "\\t")) + '"'
 
 
-def call(method, path, token, fields=None, files=None, params=None):
+def call(method, path, token, fields=None, files=None, params=None, base=BASE, max_time=120):
     """One Graph call. Returns parsed JSON; raises SystemExit with Graph's message on error."""
-    url = f"{BASE}/{path}"
+    url = f"{base}/{path}"
     if params:
         url += "?" + "&".join(f"{k}={v}" for k, v in params.items())
-    cfg = [f"url = {q(url)}", "silent", "max-time = 120", f"header = {q('Authorization: Bearer ' + token)}"]
+    cfg = [f"url = {q(url)}", "silent", f"max-time = {max_time}", f"header = {q('Authorization: Bearer ' + token)}"]
     if method != "GET":
         cfg.append(f"request = {q(method)}")
     for k, v in (fields or {}).items():
@@ -99,6 +100,8 @@ def main():
     p = sub.add_parser("post")
     p.add_argument("--message-file", required=True)
     p.add_argument("--photo")
+    p.add_argument("--video", help="mp4 to upload; the caption goes in the video description")
+    p.add_argument("--title", help="video title (optional)")
     p.add_argument("--link")
     p.add_argument("--schedule")
     p.add_argument("--yes", action="store_true", help="actually send (default is a dry run)")
@@ -120,14 +123,23 @@ def main():
         print(call("DELETE", a.post_id, pt))
     elif a.cmd == "post":
         message = open(a.message_file, encoding="utf-8").read().strip()
-        if a.photo and not os.path.isfile(a.photo):
-            sys.exit(f"Photo not found: {a.photo}")
+        if a.photo and a.video:
+            sys.exit("Use --photo or --video, not both.")
+        for f in (a.photo, a.video):
+            if f and not os.path.isfile(f):
+                sys.exit(f"File not found: {f}")
         fields, files = {"message": message}, {}
         when = None
         if a.schedule:
             ts, when = parse_when(a.schedule)
             fields.update(published="false", scheduled_publish_time=str(ts))
-        if a.photo:
+        if a.video:
+            # A video object's caption field is `description`, not `message`.
+            fields["description"] = fields.pop("message")
+            if a.title:
+                fields["title"] = a.title
+            path, files = f"{PAGE_ID}/videos", {"source": a.video}
+        elif a.photo:
             path, files = f"{PAGE_ID}/photos", {"source": a.photo}
         else:
             path = f"{PAGE_ID}/feed"
@@ -135,10 +147,18 @@ def main():
                 fields["link"] = a.link
         print("=" * 60)
         print(f"{'PUBLISH NOW' if not when else 'SCHEDULE for ' + when.isoformat()}  ->  GainPath Fitness ({PAGE_ID})")
-        print(f"endpoint: /{path}   photo: {a.photo or '-'}   link: {a.link or '-'}")
+        print(f"endpoint: /{path}   photo: {a.photo or '-'}   video: {a.video or '-'}   link: {a.link or '-'}")
+        if a.title:
+            print(f"title: {a.title}")
         print("-" * 60); print(message); print("=" * 60)
         if not a.yes:
             print("DRY RUN: nothing sent. Re-run with --yes after approval."); return
+        if a.video:
+            res = call("POST", path, pt, fields=fields, files=files, base=VIDEO_BASE, max_time=900)
+            print("Graph response:", res)
+            # The upload returns the video id; the feed post appears once Facebook publishes it.
+            print(json.dumps(call("GET", res["id"], pt, params={"fields": "title,description,published,scheduled_publish_time,permalink_url,status"}), ensure_ascii=False, indent=2))
+            return
         res = call("POST", path, pt, fields=fields, files=files)
         print("Graph response:", res)
         # Verify by re-fetching what Facebook stored. A photo call returns the *photo* id (no `message`
