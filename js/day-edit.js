@@ -344,7 +344,7 @@ function pickSwapEx(name){
 }
 
 // ═══ CUSTOM EXERCISES ═══
-const EQUIP_OPTS=[['barbell','Barbell'],['dumbbell','Dumbbell'],['machine','Machine'],['cable','Cable'],['bodyweight','Bodyweight'],['other','Other']];
+const EQUIP_OPTS=[['barbell','Barbell'],['dumbbell','Dumbbell'],['kettlebell','Kettlebell'],['machine','Machine'],['cable','Cable'],['bodyweight','Bodyweight'],['other','Other']];
 function openCustomEx(){
   ST.cexEquip='barbell';ST.cexHold=false;
   gid('cex-name').value='';gid('cex-basew').value='';gid('cex-unit').textContent=CFG.unit;

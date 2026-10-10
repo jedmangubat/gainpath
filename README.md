@@ -23,14 +23,14 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 **Training**
 - Five built-in splits: PPL / Upper-Lower, Bro Split, Alternating Legs/Push/Pull, Upper / Lower, Full Body. You can also build your own program.
 - Edit any day before or during a workout: reorder, swap, add or delete exercises, and link supersets and circuits.
-- A 221-exercise library, each with an illustrated guide, form cues and step-by-step instructions.
+- A 1,059-exercise library, each with an illustrated guide, form cues and step-by-step instructions.
 - Custom exercises for anything not in the library.
 
 **Weights**
 - Starting weights are estimated from your related lifts or, before you've logged any, from your body weight, sex and experience.
 - After each exercise you rate how many reps you had left, and the app suggests your next weight. It's always a tap to apply or dismiss, never an automatic change.
 - It suggests easing back after a break and offers a deload when you stall.
-- Every proposed weight snaps to the plates and dumbbells your gym has (Settings → My gym).
+- Every proposed weight snaps to the plates, dumbbells and kettlebells your gym has (Settings → My gym).
 - Plate calculator, machine base weights, warm-up sets, and straight or pyramid sets.
 - Switch between kg and lbs anytime. Switching back restores your exact numbers.
 

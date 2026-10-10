@@ -1,0 +1,222 @@
+muscle_group,old_gainpath_name,equipment,musclewiki_name,decision,gainpath_name_now,note
+chest,Barbell floor press,Barbell,Barbell Floor Press,already matched,Barbell floor press,
+chest,Barbell pullover,Barbell,Barbell Pullover,already matched,Barbell pullover,
+chest,Bench dumbbell chest press,Dumbbell,Dumbbell Bench Press,renamed,Dumbbell bench press,
+chest,Cable chest fly,Cable,Cable Pec Fly,renamed,Cable pec fly,
+chest,Cable crossover,Cable,Cable Decline Chest Fly,renamed,Cable decline chest fly,high-to-low; confirm
+chest,Cable low-to-high fly,Cable,Cable Incline Chest Fly,renamed,Cable incline chest fly,confirm
+chest,Chest dips,Bodyweight,Parallel Bar Dips,kept ours (closest MuscleWiki name not accepted),Chest dips,they have one dip; already used for our Tricep dips
+chest,Decline barbell bench press,Barbell,Barbell Decline Bench Press,renamed,Barbell decline bench press,
+chest,Decline dumbbell fly,Dumbbell,Dumbbell Decline Chest Fly,renamed,Dumbbell decline chest fly,
+chest,Decline dumbbell press,Dumbbell,Dumbbell Decline Bench Press,renamed,Dumbbell decline bench press,
+chest,Decline push-ups,Bodyweight,Decline Push Up,renamed,Decline push-up,
+chest,Dumbbell floor press,Dumbbell,Dumbbell Floor Press,already matched,Dumbbell floor press,
+chest,Dumbbell fly,Dumbbell,Dumbbell Chest Fly,renamed,Dumbbell chest fly,
+chest,Dumbbell pullover,Dumbbell,Dumbbell Pullover,already matched,Dumbbell pullover,
+chest,Flat barbell bench press,Barbell,Barbell Bench Press,renamed,Barbell bench press,
+chest,Incline barbell chest press,Barbell,Barbell Incline Bench Press,renamed,Barbell incline bench press,
+chest,Incline bench dumbbell press,Dumbbell,Dumbbell Incline Bench Press,renamed,Dumbbell incline bench press,
+chest,Incline dumbbell fly,Dumbbell,Dumbbell Incline Chest Fly,renamed,Dumbbell incline chest fly,
+chest,Machine chest fly,Machine,Machine Pec Fly,renamed,Machine pec fly,
+chest,Machine chest press,Machine,Machine Chest Press,already matched,Machine chest press,
+chest,Machine-assisted dip,Machine,Machine Assisted Parallel Bar Dips,renamed,Machine assisted parallel bar dips,
+chest,Neutral-grip dumbbell press,Dumbbell,Dumbbell Neutral Bench Press,renamed,Dumbbell neutral bench press,
+chest,Push-ups,Bodyweight,Push Up,renamed,Push-up,
+chest,Single-arm cable fly,Cable,Cable Standing Single Arm Chest Fly,renamed,Cable standing single-arm chest fly,
+chest,Smith machine bench press,Machine,Smith Machine Bench Press,already matched,Smith machine bench press,
+chest,Smith machine incline press,Machine,Smith Machine Incline Bench Press,renamed,Smith machine incline bench press,
+chest,Wide-grip push-ups,Bodyweight,,kept ours (not on MuscleWiki),Wide-grip push-ups,no wide push-up
+back,Barbell row,Barbell,Barbell Bent Over Row,renamed,Barbell bent over row,
+back,Cable pullover,Cable,Cable Rope Pullover,renamed,Cable rope pullover,
+back,Chest-supported dumbbell row,Dumbbell,Dumbbell Laying Incline Row,renamed,Dumbbell laying incline row,
+back,Chest-supported machine row,Machine,Machine Neutral Row,kept ours (closest MuscleWiki name not accepted),Chest-supported machine row,not sure which of their machine rows is chest-supported
+back,Chin-ups,Bodyweight,Chin Ups,already matched,Chin-ups,
+back,Incline dumbbell row,Dumbbell,Dumbbell Laying Incline Row,kept ours (closest MuscleWiki name not accepted),Incline dumbbell row,same match as our Chest-supported dumbbell row (duplicate on our side)
+back,Inverted row,Bodyweight,Inverted Row,already matched,Inverted row,
+back,Kroc row,Dumbbell,,kept ours (not on MuscleWiki),Kroc row,not listed
+back,Lat pulldown,Machine,Machine Pulldown,renamed,Machine pulldown,
+back,Machine high row,Machine,,kept ours (not on MuscleWiki),Machine high row,not listed
+back,Machine pullover,Machine,Machine Pullover,already matched,Machine pullover,
+back,Machine-assisted pull-up,Machine,Machine Assisted Pull Up,renamed,Machine assisted pull-up,
+back,Pendlay row,Other,Barbell Pronated Pendlay Row,renamed,Barbell pronated Pendlay row,
+back,Pull-ups,Bodyweight,Pull Ups,already matched,Pull-ups,
+back,Rack pull,Other,Barbell Rack Pull,renamed,Barbell rack pull,
+back,Reverse grip pulldown,Machine,Underhand Pulldown,renamed,Underhand pulldown,their page has no equipment in the name; confirm it is the cable version
+back,Scapular pull-ups,Bodyweight,,kept ours (not on MuscleWiki),Scapular pull-ups,not listed
+back,Seated cable row,Cable,Machine Seated Cable Row,renamed,Machine seated cable row,
+back,Single-arm dumbbell row,Dumbbell,Dumbbell Single Arm Row,renamed,Dumbbell single-arm row,
+back,Single-arm lat pulldown,Machine,,kept ours (not on MuscleWiki),Single-arm lat pulldown,cable version not listed (band only)
+back,Smith machine inverted row,Machine,Smith Machine Inverted Row,already matched,Smith machine inverted row,
+back,Straight arm cable pulldown,Machine,Cable Lat Prayer,kept ours (closest MuscleWiki name not accepted),Straight arm cable pulldown,"their name for it looks like ""Lat Prayer""; confirm"
+back,Superman,Bodyweight,Supermans,renamed,Supermans,
+back,T-bar row,Machine,Landmine T Bar Rows,renamed,Landmine T-bar rows,
+back,Wide-grip cable row,Cable,,kept ours (not on MuscleWiki),Wide-grip cable row,no wide-grip cable row
+back,Yates row,Other,Barbell Supinated Row,kept ours (closest MuscleWiki name not accepted),Yates row,closest
+shoulders,Arnold press,Dumbbell,Dumbbell Arnold Press,renamed,Dumbbell Arnold press,
+shoulders,Barbell overhead press,Barbell,Barbell Overhead Press,already matched,Barbell overhead press,
+shoulders,Barbell push press,Barbell,,kept ours (not on MuscleWiki),Barbell push press,dumbbell and kettlebell only
+shoulders,Barbell seated shoulder press,Barbell,,kept ours (not on MuscleWiki),Barbell seated shoulder press,only behind-the-neck seated
+shoulders,Barbell upright row,Barbell,Barbell Upright Row,already matched,Barbell upright row,
+shoulders,Cable front raise,Cable,Cable Bar Front Raise,renamed,Cable bar front raise,
+shoulders,Cable lateral raise,Cable,Cable Low Single Arm Lateral Raise,renamed,Cable low single-arm lateral raise,
+shoulders,Cable Y-raise,Cable,Cable Y Raise,already matched,Cable Y-raise,
+shoulders,Dumbbell front raise,Dumbbell,Dumbbell Front Raise,already matched,Dumbbell front raise,
+shoulders,Dumbbell lateral raise,Dumbbell,Dumbbell Lateral Raise,already matched,Dumbbell lateral raise,
+shoulders,Dumbbell scaption raise,Dumbbell,,kept ours (not on MuscleWiki),Dumbbell scaption raise,not listed
+shoulders,EZ bar front raise,Barbell,EZ Bar Front Raise,already matched,EZ bar front raise,
+shoulders,Landmine press,Other,Landmine Overhead Press,renamed,Landmine overhead press,
+shoulders,Machine lateral raise,Machine,Machine Standing Lateral Raise,renamed,Machine standing lateral raise,
+shoulders,Machine shoulder press,Machine,Machine Overhand Overhead Press,renamed,Machine overhand overhead press,
+shoulders,Pike push-ups,Bodyweight,Bodyweight Pike Press,renamed,Bodyweight pike press,
+shoulders,Plate-loaded shoulder press,Machine,,kept ours (not on MuscleWiki),Plate-loaded shoulder press,not listed
+shoulders,Seated dumbbell shoulder press,Dumbbell,Dumbbell Seated Overhead Press,renamed,Dumbbell seated overhead press,
+shoulders,Smith machine shoulder press,Machine,Smith Machine Seated Overhead Press,renamed,Smith machine seated overhead press,
+biceps,21s barbell curl,Barbell,,kept ours (not on MuscleWiki),21s barbell curl,"a rep scheme, not an exercise on their list"
+biceps,Barbell curl,Barbell,Barbell Curl,already matched,Barbell curl,
+biceps,Cable bicep curl,Cable,Cable Bar Curl,renamed,Cable bar curl,
+biceps,Cable rope hammer curl,Cable,Cable Rope Hammer Curl,already matched,Cable rope hammer curl,
+biceps,Cable spider curl,Cable,,kept ours (not on MuscleWiki),Cable spider curl,not listed
+biceps,Concentration curl,Dumbbell,Dumbbell Concentration Curl,renamed,Dumbbell concentration curl,
+biceps,Cross-body hammer curl,Dumbbell,,kept ours (not on MuscleWiki),Cross-body hammer curl,not listed
+biceps,Drag curl,Other,Barbell Drag Curl,renamed,Barbell drag curl,
+biceps,Dumbbell bicep curl,Dumbbell,Dumbbell Curl,renamed,Dumbbell curl,
+biceps,EZ bar curl,Barbell,EZ Bar Curl,already matched,EZ bar curl,
+biceps,Hammer curls,Dumbbell,Dumbbell Hammer Curl,renamed,Dumbbell hammer curl,
+biceps,Incline dumbbell curl,Dumbbell,Dumbbell Incline Curl,renamed,Dumbbell incline curl,
+biceps,Machine preacher curl,Machine,Machine Seated Plate Loaded Preacher Curl,renamed,Machine seated plate-loaded preacher curl,
+biceps,Plate-loaded machine bicep curl,Machine,Machine Bicep Curl,renamed,Machine bicep curl,
+biceps,Preacher curl,Other,EZ Bar Preacher Curl,renamed,EZ bar preacher curl,
+biceps,Spider curl,Dumbbell,Dumbbell Spider Curl,renamed,Dumbbell spider curl,
+biceps,Wide-grip barbell curl,Barbell,,kept ours (not on MuscleWiki),Wide-grip barbell curl,not listed
+biceps,Zottman curl,Dumbbell,Dumbbell Zottman Curl,renamed,Dumbbell Zottman curl,
+triceps,Barbell skull crusher,Barbell,Barbell Skullcrusher,already matched,Barbell skull crusher,
+triceps,Bench dips,Bodyweight,Bench Dips,already matched,Bench dips,
+triceps,Cable rope tricep extension,Cable,Cable Rope Pushdown,renamed,Cable rope pushdown,
+triceps,Cable tricep kickback,Cable,Cable Tricep Kickback,already matched,Cable tricep kickback,
+triceps,Close-grip bench press,Barbell,Barbell Close Grip Bench Press,renamed,Barbell close-grip bench press,
+triceps,Close-grip push-ups,Bodyweight,,kept ours (not on MuscleWiki),Close-grip push-ups,not listed (diamond is separate)
+triceps,Diamond push-ups,Bodyweight,Diamond Push Ups,already matched,Diamond push-ups,
+triceps,Dumbbell close-grip floor press,Dumbbell,,kept ours (not on MuscleWiki),Dumbbell close-grip floor press,not listed
+triceps,Dumbbell skull crusher,Dumbbell,Dumbbell Skullcrusher,already matched,Dumbbell skull crusher,
+triceps,Overhead cable tricep extension,Cable,Cable Rope Overhead Tricep Extension,renamed,Cable rope overhead tricep extension,
+triceps,Overhead EZ bar tricep extension,Barbell,EZ Bar Overhead Tricep Extension,renamed,EZ bar overhead tricep extension,
+triceps,Seated machine tricep extension,Machine,Machine Tricep Pushdown,kept ours (closest MuscleWiki name not accepted),Seated machine tricep extension,or machine-overhead-tricep-extension; depends on the machine
+triceps,Single-arm dumbbell overhead tricep extension,Dumbbell,Dumbbell Single Arm Overhead Tricep Extension,renamed,Dumbbell single-arm overhead tricep extension,
+triceps,Single-arm tricep kickback,Dumbbell,Dumbbell Tricep Kickback,renamed,Dumbbell tricep kickback,
+triceps,Tricep dips,Bodyweight,Parallel Bar Dips,renamed,Parallel bar dips,
+triceps,Triceps pushdown,Cable,Cable Bar Pushdown,renamed,Cable bar pushdown,
+forearms,Barbell reverse curl,Barbell,Barbell Reverse Curl,already matched,Barbell reverse curl,
+forearms,Cable reverse wrist curl,Cable,Cable Wrist Extension,renamed,Cable wrist extension,
+forearms,Cable wrist curl,Cable,Cable Wrist Curl,already matched,Cable wrist curl,
+forearms,Dead hang,Bodyweight,Dead Hang,already matched,Dead hang,
+forearms,Dumbbell finger curl,Dumbbell,,kept ours (not on MuscleWiki),Dumbbell finger curl,not listed
+forearms,Dumbbell reverse wrist curl,Dumbbell,Dumbbell Wrist Extension,renamed,Dumbbell wrist extension,
+forearms,Dumbbell wrist curl,Dumbbell,Dumbbell Wrist Curl,already matched,Dumbbell wrist curl,
+forearms,Farmers carry,Dumbbell,Dumbbell Farmer Walk,renamed,Dumbbell farmer walk,
+forearms,Reverse EZ bar curl,Barbell,EZ Bar Reverse Curl,renamed,EZ bar reverse curl,
+rear_delts,Bench-supported seated reverse fly,Dumbbell,Dumbbell Seated Rear Delt Fly,renamed,Dumbbell seated rear delt fly,
+rear_delts,Bent-over dumbbell reverse fly,Dumbbell,Dumbbell Rear Delt Fly,renamed,Dumbbell rear delt fly,
+rear_delts,Cable face pull,Cable,Cable Bar Face Pull,kept ours (closest MuscleWiki name not accepted),Cable face pull,"theirs is bar, seated-rope or kneeling-rope; no standing rope version"
+rear_delts,Cable reverse fly,Cable,Cable High Reverse Fly,renamed,Cable high reverse fly,
+rear_delts,Cross-cable reverse fly,Cable,Cable High Reverse Fly,kept ours (closest MuscleWiki name not accepted),Cross-cable reverse fly,same match as our Cable reverse fly (duplicate on our side)
+rear_delts,Incline bench dumbbell rear delt fly,Dumbbell,Dumbbell Laying Rear Delt Fly,renamed,Dumbbell laying rear delt fly,several chest-supported variants; pick one
+rear_delts,Machine rear delt fly,Machine,Machine Reverse Fly,renamed,Machine reverse fly,
+rear_delts,Prone dumbbell Y-raise,Dumbbell,,kept ours (not on MuscleWiki),Prone dumbbell Y-raise,not listed
+traps,Barbell high pull,Barbell,Barbell High Pull,already matched,Barbell high pull,
+traps,Barbell shrug,Barbell,Barbell Shrug,already matched,Barbell shrug,
+traps,Cable shrug,Cable,Cable 30 Degree Shrug,kept ours (closest MuscleWiki name not accepted),Cable shrug,or cable-silverback-shrug; no plain cable shrug
+traps,Dumbbell high pull,Dumbbell,,kept ours (not on MuscleWiki),Dumbbell high pull,not listed
+traps,Dumbbell shrug,Dumbbell,Dumbbell Shrug,already matched,Dumbbell shrug,
+traps,Plate-loaded shrug,Machine,Machine Standing Shrug,renamed,Machine standing shrug,confirm
+traps,Smith machine shrug,Machine,,kept ours (not on MuscleWiki),Smith machine shrug,no Smith shrug
+quads,Barbell back squat,Barbell,Barbell Squat,renamed,Barbell squat,
+quads,Barbell front squat,Barbell,Barbell Front Squat Olympic,renamed,Barbell front squat Olympic,they split it by grip (olympic / bodybuilding / straps)
+quads,Barbell step-up,Barbell,Barbell Step Up,already matched,Barbell step-up,
+quads,Barbell walking lunge,Barbell,,kept ours (not on MuscleWiki),Barbell walking lunge,not listed
+quads,Belt squat,Machine,Machine Belt Squat,renamed,Machine belt squat,
+quads,Bodyweight squat,Bodyweight,Bodyweight Squat,already matched,Bodyweight squat,
+quads,Box squat,Other,Barbell Pause Box Squat,kept ours (closest MuscleWiki name not accepted),Box squat,theirs is a pause box squat
+quads,Bulgarian split squat,Dumbbell,Bulgarian Split Squat,already matched,Bulgarian split squat,
+quads,Dumbbell front squat,Dumbbell,Dumbbell Front Rack Squat,renamed,Dumbbell front rack squat,
+quads,Dumbbell lunge,Dumbbell,Dumbbell Forward Lunge,renamed,Dumbbell forward lunge,
+quads,Dumbbell reverse lunge,Dumbbell,Dumbbell Reverse Lunge,already matched,Dumbbell reverse lunge,
+quads,Dumbbell step-up,Dumbbell,Dumbbell Step Up,already matched,Dumbbell step-up,
+quads,Dumbbell sumo squat,Dumbbell,Dumbbell Sumo Squat,already matched,Dumbbell sumo squat,
+quads,Goblet squat,Dumbbell,Dumbbell Goblet Squat,renamed,Dumbbell goblet squat,
+quads,Hack squat,Machine,Machine Hack Squat,renamed,Machine hack squat,
+quads,Heel-elevated dumbbell squat,Dumbbell,Dumbbell Heels Up Goblet Squat,renamed,Dumbbell heels-up goblet squat,
+quads,Jump squat,Bodyweight,Jump Squats,renamed,Jump squats,
+quads,Leg extension,Machine,Machine Leg Extension,renamed,Machine leg extension,
+quads,Leg press,Machine,Machine Leg Press,renamed,Machine leg press,
+quads,Pendulum squat,Machine,Machine Pendulum Squat,renamed,Machine pendulum squat,
+quads,Smith machine squat,Machine,Smith Machine Squat,already matched,Smith machine squat,
+quads,Vertical leg press,Machine,Vertical Leg Press,already matched,Vertical leg press,
+quads,Walking lunge,Dumbbell,Lunge Walking,kept ours (closest MuscleWiki name not accepted),Walking lunge,theirs sits in the rehab group
+quads,Wall sit,Bodyweight,Wall Sit,already matched,Wall sit,
+hamstrings,Back extension,Bodyweight,Machine Back Extension,kept ours (closest MuscleWiki name not accepted),Back extension,we also have the 45-degree one; confirm which is which
+hamstrings,Barbell deadlift,Barbell,Barbell Deadlift,already matched,Barbell deadlift,
+hamstrings,Barbell good morning,Barbell,Barbell High Bar Good Morning,renamed,Barbell high-bar good morning,they split high-bar / low-bar
+hamstrings,Cable pull-through,Cable,Cable Pull Through,already matched,Cable pull-through,
+hamstrings,Dumbbell Romanian deadlift,Dumbbell,Dumbbell Romanian Deadlift,already matched,Dumbbell Romanian deadlift,
+hamstrings,Dumbbell sumo deadlift,Dumbbell,,kept ours (not on MuscleWiki),Dumbbell sumo deadlift,not listed
+hamstrings,Lying hamstring curl,Machine,Machine Hamstring Curl,renamed,Machine hamstring curl,
+hamstrings,Romanian deadlift,Barbell,Barbell Romanian Deadlift,renamed,Barbell Romanian deadlift,
+hamstrings,Seated hamstring curl,Machine,Machine Seated Leg Curl,renamed,Machine seated leg curl,
+hamstrings,Single-leg dumbbell RDL,Dumbbell,Dumbbell Single Leg Stiff Leg Deadlift,renamed,Dumbbell single-leg stiff-leg deadlift,closest
+hamstrings,Smith machine Romanian deadlift,Machine,Smith Machine Romanian Deadlift,already matched,Smith machine Romanian deadlift,
+hamstrings,Standing machine hamstring curl,Machine,Machine Standing Hamstring Curl,renamed,Machine standing hamstring curl,
+hamstrings,Stiff-leg deadlift,Barbell,Barbell Stiff Leg Deadlifts,renamed,Barbell stiff-leg deadlifts,
+hamstrings,Sumo deadlift,Barbell,Barbell Sumo Deadlift,renamed,Barbell sumo deadlift,
+glutes,45-degree hip extension machine,Machine,Machine 45 Degree Back Extension,renamed,Machine 45-degree back extension,
+glutes,B-stance barbell hip thrust,Barbell,,kept ours (not on MuscleWiki),B-stance barbell hip thrust,barbell staggered version not listed
+glutes,Barbell glute bridge,Barbell,Barbell Glute Bridge,already matched,Barbell glute bridge,
+glutes,Barbell hip thrust,Barbell,Barbell Hip Thrust,already matched,Barbell hip thrust,
+glutes,Cable glute kickback,Cable,Cable Standing Glute Kickback,renamed,Cable standing glute kickback,
+glutes,Curtsy lunge,Dumbbell,Curtsy Lunge,already matched,Curtsy lunge,
+glutes,Donkey kicks,Bodyweight,Kickbacks,kept ours (closest MuscleWiki name not accepted),Donkey kicks,confirm
+glutes,Dumbbell hip thrust,Dumbbell,Dumbbell Hip Thrust,already matched,Dumbbell hip thrust,
+glutes,Dumbbell single-leg hip thrust,Dumbbell,Dumbbell Single Leg Hip Thrust,already matched,Dumbbell single-leg hip thrust,
+glutes,Frog pump,Bodyweight,,kept ours (not on MuscleWiki),Frog pump,not listed
+glutes,Glute bridge,Bodyweight,Glute Bridge,already matched,Glute bridge,
+glutes,Machine hip thrust,Machine,Machine Hip Thrust,already matched,Machine hip thrust,
+glutes,Single-leg glute bridge,Bodyweight,Single Leg Glute Bridge,already matched,Single-leg glute bridge,
+glutes,Smith machine hip thrust,Machine,Smith Machine Hip Thrust,already matched,Smith machine hip thrust,
+glutes,Standing plate-loaded glute kickback,Machine,Machine Glute Kickback,renamed,Machine glute kickback,
+calves,Barbell standing calf raise,Barbell,Barbell Calf Raises,renamed,Barbell calf raises,
+calves,Donkey calf raise machine,Machine,Machine Donkey Calf Raise,renamed,Machine donkey calf raise,
+calves,Dumbbell seated calf raise,Dumbbell,Dumbbell Seated Calf Raise,already matched,Dumbbell seated calf raise,
+calves,Dumbbell standing calf raise,Dumbbell,Dumbbell Calf Raise,renamed,Dumbbell calf raise,
+calves,Hack squat calf raise,Machine,,kept ours (not on MuscleWiki),Hack squat calf raise,no hack-squat calf raise
+calves,Leg press calf raise,Machine,Machine Horizontal Leg Press Calf Raise,renamed,Machine horizontal leg press calf raise,
+calves,Plate-loaded standing calf raise,Machine,Machine Plate Loaded Calf Raise,renamed,Machine plate-loaded calf raise,
+calves,Seated calf raise,Machine,Machine Seated Calf Raises,renamed,Machine seated calf raises,
+calves,Single-leg bodyweight calf raise,Bodyweight,Bodyweight Single Leg Calf Raise,renamed,Bodyweight single-leg calf raise,
+calves,Single-leg dumbbell calf raise,Dumbbell,Dumbbell Single Leg Calf Raise,renamed,Dumbbell single-leg calf raise,
+calves,Smith machine standing calf raise,Machine,Smith Machine Calf Raise,renamed,Smith machine calf raise,
+calves,Standing bodyweight calf raise,Bodyweight,Calf Raises,renamed,Calf raises,
+adductors,Cable hip adduction,Cable,Cable Standing Hip Adduction,renamed,Cable standing hip adduction,
+adductors,Machine adduction,Machine,Machine Hip Adduction,renamed,Machine hip adduction,
+adductors,Side-lying dumbbell hip adduction,Dumbbell,Adductor Leg Raise Side Lying,kept ours (closest MuscleWiki name not accepted),Side-lying dumbbell hip adduction,theirs is unweighted
+adductors,Sumo squat hold,Bodyweight,,kept ours (not on MuscleWiki),Sumo squat hold,not listed
+abductors,Cable hip abduction,Cable,Cable Standing Hip Abduction,renamed,Cable standing hip abduction,
+abductors,Clamshells,Bodyweight,Clamshells 2 Side Lying,kept ours (closest MuscleWiki name not accepted),Clamshells,they have four numbered variants
+abductors,Machine abduction,Machine,Machine Hip Abduction,renamed,Machine hip abduction,
+abductors,Side-lying leg raise,Bodyweight,Abductor Leg Raise Side Lying,renamed,Abductor leg raise side lying,
+abductors,Standing hip abduction,Bodyweight,Bodyweight Hip Abduction,renamed,Bodyweight hip abduction,
+core,Ab wheel rollout,Bodyweight,Barbell Roll Outs,kept ours (closest MuscleWiki name not accepted),Ab wheel rollout,no ab-wheel version
+core,Bicycle crunch,Bodyweight,Bicycle Crunch,already matched,Bicycle crunch,
+core,Cable crunch,Cable,Cable Rope Kneeling Crunch,renamed,Cable rope kneeling crunch,
+core,Cable woodchopper,Cable,Cable Wood Chopper,renamed,Cable wood chopper,
+core,Captains chair leg raise,Bodyweight,,kept ours (not on MuscleWiki),Captains chair leg raise,not listed
+core,Decline sit-ups,Bodyweight,,kept ours (not on MuscleWiki),Decline sit-ups,no decline sit-up
+core,Dumbbell side bend,Dumbbell,Dumbbell Side Bend,already matched,Dumbbell side bend,
+core,Hanging leg raise,Bodyweight,Hanging Knee Raises,kept ours (closest MuscleWiki name not accepted),Hanging leg raise,they only list the bent-knee version
+core,Hollow body hold,Bodyweight,Hollow Hold,renamed,Hollow hold,
+core,Leg raise,Bodyweight,Laying Leg Raises,renamed,Laying leg raises,
+core,Machine seated crunch,Machine,Machine Crunch,renamed,Machine crunch,
+core,Mountain climbers,Bodyweight,Mountain Climber,renamed,Mountain climber,
+core,Plank,Bodyweight,Forearm Plank,renamed,Forearm plank,
+core,Russian twist,Bodyweight,Bodyweight Russian Twist,renamed,Bodyweight Russian twist,
+core,Side plank,Bodyweight,Elbow Side Plank,renamed,Elbow side plank,
+core,V-ups,Bodyweight,,kept ours (not on MuscleWiki),V-ups,not listed
+core,Weighted sit-up,Other,Plate Situp,renamed,Plate sit-up,

@@ -117,43 +117,124 @@ function breakSuggest(ex,curW){
 // bodyweight moves are absent: plate-loaded leverage and sled tare vary too
 // much to convert at all.
 const LIFT_REL={
-  'Flat barbell bench press':['press_h',1,'b'],'Decline barbell bench press':['press_h',1,'b'],'Incline barbell chest press':['press_h',.8,'b'],
-  'Barbell floor press':['press_h',.9,'b'],'Close-grip bench press':['press_h',.88,'b'],
-  'Bench dumbbell chest press':['press_h',.39,'d'],'Decline dumbbell press':['press_h',.39,'d'],'Incline bench dumbbell press':['press_h',.31,'d'],
-  'Neutral-grip dumbbell press':['press_h',.37,'d'],'Dumbbell floor press':['press_h',.36,'d'],'Dumbbell close-grip floor press':['press_h',.32,'d'],
-  'Dumbbell fly':['press_h',.17,'d',1],'Incline dumbbell fly':['press_h',.15,'d',1],'Decline dumbbell fly':['press_h',.17,'d',1],
+  'Barbell bench press':['press_h',1,'b'],'Barbell decline bench press':['press_h',1,'b'],'Barbell incline bench press':['press_h',.8,'b'],
+  'Barbell floor press':['press_h',.9,'b'],'Barbell close-grip bench press':['press_h',.88,'b'],
+  'Dumbbell bench press':['press_h',.39,'d'],'Dumbbell decline bench press':['press_h',.39,'d'],'Dumbbell incline bench press':['press_h',.31,'d'],
+  'Dumbbell neutral bench press':['press_h',.37,'d'],'Dumbbell floor press':['press_h',.36,'d'],'Dumbbell close-grip floor press':['press_h',.32,'d'],
+  'Dumbbell chest fly':['press_h',.17,'d',1],'Dumbbell incline chest fly':['press_h',.15,'d',1],'Dumbbell decline chest fly':['press_h',.17,'d',1],
   'Barbell overhead press':['press_v',1,'b'],'Barbell seated shoulder press':['press_v',.95,'b'],'Barbell push press':['press_v',1.2,'b'],
-  'Seated dumbbell shoulder press':['press_v',.4,'d'],'Arnold press':['press_v',.35,'d'],
-  'Barbell back squat':['squat',1,'b'],'Box squat':['squat',.95,'b'],'Barbell front squat':['squat',.8,'b'],
-  'Barbell walking lunge':['squat',.45,'b'],'Barbell step-up':['squat',.4,'b'],'Goblet squat':['squat',.3,'d'],'Dumbbell sumo squat':['squat',.3,'d'],
-  'Dumbbell front squat':['squat',.25,'d'],'Heel-elevated dumbbell squat':['squat',.25,'d'],'Bulgarian split squat':['squat',.2,'d'],
-  'Dumbbell lunge':['squat',.2,'d'],'Walking lunge':['squat',.2,'d'],'Dumbbell reverse lunge':['squat',.2,'d'],'Dumbbell step-up':['squat',.18,'d'],
-  'Barbell deadlift':['hinge',1,'b'],'Sumo deadlift':['hinge',1,'b'],'Rack pull':['hinge',1.1,'b'],'Romanian deadlift':['hinge',.7,'b'],
-  'Stiff-leg deadlift':['hinge',.65,'b'],'Barbell good morning':['hinge',.35,'b'],'Dumbbell Romanian deadlift':['hinge',.3,'d'],
-  'Dumbbell sumo deadlift':['hinge',.35,'d'],'Single-leg dumbbell RDL':['hinge',.15,'d'],
-  'Barbell row':['row',1,'b'],'Pendlay row':['row',.9,'b'],'Yates row':['row',1.05,'b'],'Single-arm dumbbell row':['row',.5,'d'],
-  'Kroc row':['row',.55,'d'],'Chest-supported dumbbell row':['row',.4,'d'],'Incline dumbbell row':['row',.4,'d'],
-  'Barbell curl':['curl',1,'b',1],'EZ bar curl':['curl',1,'b',1],'Wide-grip barbell curl':['curl',.95,'b',1],'Drag curl':['curl',.8,'b',1],
-  'Preacher curl':['curl',.85,'b',1],'Barbell reverse curl':['curl',.7,'b',1],'Reverse EZ bar curl':['curl',.7,'b',1],
-  'Dumbbell bicep curl':['curl',.45,'d',1],'Hammer curls':['curl',.5,'d',1],'Cross-body hammer curl':['curl',.48,'d',1],
-  'Incline dumbbell curl':['curl',.38,'d',1],'Concentration curl':['curl',.42,'d',1],'Spider curl':['curl',.38,'d',1],'Zottman curl':['curl',.4,'d',1],
-  'Barbell skull crusher':['tri_ext',1,'b',1],'Overhead EZ bar tricep extension':['tri_ext',.9,'b',1],'Dumbbell skull crusher':['tri_ext',.4,'d',1],
-  'Single-arm dumbbell overhead tricep extension':['tri_ext',.3,'d',1],
+  'Dumbbell seated overhead press':['press_v',.4,'d'],'Dumbbell Arnold press':['press_v',.35,'d'],
+  'Barbell squat':['squat',1,'b'],'Box squat':['squat',.95,'b'],'Barbell front squat Olympic':['squat',.8,'b'],
+  'Barbell walking lunge':['squat',.45,'b'],'Barbell step-up':['squat',.4,'b'],'Dumbbell goblet squat':['squat',.3,'d'],'Dumbbell sumo squat':['squat',.3,'d'],
+  'Dumbbell front rack squat':['squat',.25,'d'],'Dumbbell heels-up goblet squat':['squat',.25,'d'],'Bulgarian split squat':['squat',.2,'d'],
+  'Dumbbell forward lunge':['squat',.2,'d'],'Walking lunge':['squat',.2,'d'],'Dumbbell reverse lunge':['squat',.2,'d'],'Dumbbell step-up':['squat',.18,'d'],
+  'Barbell deadlift':['hinge',1,'b'],'Barbell sumo deadlift':['hinge',1,'b'],'Barbell rack pull':['hinge',1.1,'b'],'Barbell Romanian deadlift':['hinge',.7,'b'],
+  'Barbell stiff-leg deadlifts':['hinge',.65,'b'],'Barbell high-bar good morning':['hinge',.35,'b'],'Dumbbell Romanian deadlift':['hinge',.3,'d'],
+  'Dumbbell sumo deadlift':['hinge',.35,'d'],'Dumbbell single-leg stiff-leg deadlift':['hinge',.15,'d'],
+  'Barbell bent over row':['row',1,'b'],'Barbell pronated Pendlay row':['row',.9,'b'],'Yates row':['row',1.05,'b'],'Dumbbell single-arm row':['row',.5,'d'],
+  'Kroc row':['row',.55,'d'],'Dumbbell laying incline row':['row',.4,'d'],'Incline dumbbell row':['row',.4,'d'],
+  'Barbell curl':['curl',1,'b',1],'EZ bar curl':['curl',1,'b',1],'Wide-grip barbell curl':['curl',.95,'b',1],'Barbell drag curl':['curl',.8,'b',1],
+  'EZ bar preacher curl':['curl',.85,'b',1],'Barbell reverse curl':['curl',.7,'b',1],'EZ bar reverse curl':['curl',.7,'b',1],
+  'Dumbbell curl':['curl',.45,'d',1],'Dumbbell hammer curl':['curl',.5,'d',1],'Cross-body hammer curl':['curl',.48,'d',1],
+  'Dumbbell incline curl':['curl',.38,'d',1],'Dumbbell concentration curl':['curl',.42,'d',1],'Dumbbell spider curl':['curl',.38,'d',1],'Dumbbell Zottman curl':['curl',.4,'d',1],
+  'Barbell skull crusher':['tri_ext',1,'b',1],'EZ bar overhead tricep extension':['tri_ext',.9,'b',1],'Dumbbell skull crusher':['tri_ext',.4,'d',1],
+  'Dumbbell single-arm overhead tricep extension':['tri_ext',.3,'d',1],
   'Barbell shrug':['shrug',1,'b'],'Dumbbell shrug':['shrug',.45,'d'],
   'Barbell upright row':['upright',1,'b'],'Barbell high pull':['upright',1.1,'b'],'Dumbbell high pull':['upright',.45,'d'],
   'Barbell hip thrust':['thrust',1,'b'],'Barbell glute bridge':['thrust',.9,'b'],'B-stance barbell hip thrust':['thrust',.6,'b'],
   'Dumbbell hip thrust':['thrust',.35,'d'],'Dumbbell single-leg hip thrust':['thrust',.2,'d'],
   'Dumbbell lateral raise':['raise',1,'d',1],'Dumbbell front raise':['raise',1.1,'d',1],'Dumbbell scaption raise':['raise',1,'d',1],
-  'Bent-over dumbbell reverse fly':['raise',.9,'d',1],'Incline bench dumbbell rear delt fly':['raise',.9,'d',1],
-  'Bench-supported seated reverse fly':['raise',.9,'d',1],'Prone dumbbell Y-raise':['raise',.5,'d',1],
-  'Barbell standing calf raise':['calf',1,'b'],'Dumbbell standing calf raise':['calf',.35,'d'],'Single-leg dumbbell calf raise':['calf',.2,'d'],
-  'Cable chest fly':['press_h',.15,'c',1],'Cable crossover':['press_h',.15,'c',1],'Cable low-to-high fly':['press_h',.12,'c',1],'Single-arm cable fly':['press_h',.12,'c',1],
-  'Lat pulldown':['row',.9,'c'],'Reverse grip pulldown':['row',.9,'c'],'Seated cable row':['row',.9,'c'],'Wide-grip cable row':['row',.85,'c'],
-  'Single-arm lat pulldown':['row',.45,'c'],'Straight arm cable pulldown':['row',.4,'c',1],'Cable pullover':['row',.35,'c',1],'Cable face pull':['row',.35,'c',1],
-  'Cable lateral raise':['raise',.8,'c',1],'Cable front raise':['raise',.9,'c',1],'Cable Y-raise':['raise',.5,'c',1],'Cable reverse fly':['raise',.9,'c',1],'Cross-cable reverse fly':['raise',.9,'c',1],
-  'Cable bicep curl':['curl',.9,'c',1],'Cable rope hammer curl':['curl',.85,'c',1],'Cable spider curl':['curl',.7,'c',1],
-  'Triceps pushdown':['tri_ext',1.1,'c',1],'Cable rope tricep extension':['tri_ext',.9,'c',1],'Overhead cable tricep extension':['tri_ext',.9,'c',1],'Cable tricep kickback':['tri_ext',.25,'c',1],
+  'Dumbbell rear delt fly':['raise',.9,'d',1],'Dumbbell laying rear delt fly':['raise',.9,'d',1],
+  'Dumbbell seated rear delt fly':['raise',.9,'d',1],'Prone dumbbell Y-raise':['raise',.5,'d',1],
+  'Barbell calf raises':['calf',1,'b'],'Dumbbell calf raise':['calf',.35,'d'],'Dumbbell single-leg calf raise':['calf',.2,'d'],
+  'Cable pec fly':['press_h',.15,'c',1],'Cable decline chest fly':['press_h',.15,'c',1],'Cable incline chest fly':['press_h',.12,'c',1],'Cable standing single-arm chest fly':['press_h',.12,'c',1],
+  'Machine pulldown':['row',.9,'c'],'Underhand pulldown':['row',.9,'c'],'Machine seated cable row':['row',.9,'c'],'Wide-grip cable row':['row',.85,'c'],
+  'Single-arm lat pulldown':['row',.45,'c'],'Straight arm cable pulldown':['row',.4,'c',1],'Cable rope pullover':['row',.35,'c',1],'Cable face pull':['row',.35,'c',1],
+  'Cable low single-arm lateral raise':['raise',.8,'c',1],'Cable bar front raise':['raise',.9,'c',1],'Cable Y-raise':['raise',.5,'c',1],'Cable high reverse fly':['raise',.9,'c',1],'Cross-cable reverse fly':['raise',.9,'c',1],
+  'Cable bar curl':['curl',.9,'c',1],'Cable rope hammer curl':['curl',.85,'c',1],'Cable spider curl':['curl',.7,'c',1],
+  'Cable bar pushdown':['tri_ext',1.1,'c',1],'Cable rope pushdown':['tri_ext',.9,'c',1],'Cable rope overhead tricep extension':['tri_ext',.9,'c',1],'Cable tricep kickback':['tri_ext',.25,'c',1],
   'Cable shrug':['shrug',.8,'c'],'Cable pull-through':['hinge',.25,'c'],
+  // 'k' = kettlebell (ratio per bell, or the one bell for two-hand holds):
+  // the matching dumbbell lift's ratio, since no kettlebell comparison study
+  // is graded yet. Two-way, treated as a dumbbell: it is estimated from and
+  // feeds barbell, dumbbell and other kettlebell lifts, and gets a sync chip.
+  // 'K' = a kettlebell lift that is a target only (never a source, no sync
+  // chip): what limits it is grip or balance (bottoms-up, Z press, Larsen,
+  // guillotine, long lever, single-leg, cossack, curtsy, step-up, half
+  // kneeling, kickstand) or it is several lifts in one (thruster, clean and
+  // press, jerk, push press), so its number says little about plain strength.
+  // Swings, snatches, carries, core and wrist moves have no entry at all.
+  // 'D' = the same target-only rule for the dumbbell lifts added with the
+  // MuscleWiki catalogue; the dumbbell lifts above keep type 'd'.
+  // 'B' = the same again for barbell lifts from that catalogue (Zercher,
+  // single-leg, cossack, curtsy, step-up, Olympic lifts...), treated as 'b'.
+  'Kettlebell goblet squat':['squat',.3,'k'],'Kettlebell Romanian deadlift':['hinge',.3,'k'],'Kettlebell sumo deadlift':['hinge',.35,'k'],'Kettlebell single-arm row':['row',.5,'k'],'Kettlebell floor press':['press_h',.36,'k'],'Kettlebell single-arm press':['press_h',.34,'k'],'Kettlebell upright row':['upright',.6,'k'],'Kettlebell curl':['curl',.75,'k',1],'Kettlebell overhead tricep extension':['tri_ext',.8,'k',1],
+  'Kettlebell deadlift single':['hinge',.35,'k'],'Kettlebell suitcase deadlift':['hinge',.25,'k'],'Kettlebell single-leg deadlift':['hinge',.15,'K'],'Kettlebell box squat':['squat',.3,'k'],'Kettlebell front rack squat':['squat',.25,'k'],'Kettlebell cossack squat':['squat',.15,'K'],'Kettlebell reverse lunge':['squat',.25,'k'],'Kettlebell lateral lunge':['squat',.2,'k'],'Kettlebell step-up':['squat',.18,'K'],'Kettlebell calf raise':['calf',.35,'k'],
+  'Kettlebell glute bridge':['thrust',.3,'k'],'Kettlebell hip thrust':['thrust',.35,'k'],'Kettlebell bench press':['press_h',.39,'k'],'Kettlebell incline bench press':['press_h',.31,'k'],'Kettlebell floor fly':['press_h',.17,'k',1],'Kettlebell seated overhead press':['press_v',.4,'k'],'Kettlebell push press':['press_v',.45,'K'],'Kettlebell Z press':['press_v',.33,'K'],'Kettlebell front raise':['raise',1.6,'k',1],
+  'Kettlebell single-arm floor press':['press_h',.34,'k'],'Kettlebell single-arm chest press':['press_h',.37,'k'],'Kettlebell pec fly':['press_h',.17,'k',1],'Kettlebell single-arm lateral raise':['raise',.9,'k',1],'Kettlebell shrug':['shrug',.45,'k'],'Kettlebell row':['row',.4,'k'],'Kettlebell gorilla row':['row',.45,'k'],'Kettlebell rear delt row':['row',.35,'k'],'Kettlebell single-arm rear delt fly':['raise',.8,'k',1],'Kettlebell drag curl':['curl',.65,'k',1],
+  'Kettlebell concentration curl':['curl',.4,'k',1],'Kettlebell preacher curl':['curl',.7,'k',1],'Kettlebell reverse curl':['curl',.5,'k',1],'Kettlebell goblet curl':['curl',.65,'k',1],'Kettlebell skull crusher':['tri_ext',.7,'k',1],'Kettlebell Tate press':['tri_ext',.3,'k',1],
+  'Kettlebell thruster':['press_v',.38,'K'],'Kettlebell clean and press':['press_v',.38,'K'],'Kettlebell goblet good morning':['hinge',.2,'k'],'Kettlebell staggered deadlift':['hinge',.25,'k'],
+  'Kettlebell bottoms-up overhead press':['press_v',.25,'K'],'Kettlebell bottoms-up single-arm overhead press':['press_v',.25,'K'],'Kettlebell kneeling bottoms-up overhead press':['press_v',.22,'K'],'Kettlebell single-arm Z press':['press_v',.3,'K'],'Kettlebell alternating Z press':['press_v',.33,'K'],'Kettlebell single-arm push press':['press_v',.42,'K'],'Kettlebell long-lever lateral raise':['raise',.6,'K',1],'Kettlebell incline shrug':['shrug',.35,'k'],'Kettlebell shrug single':['shrug',.7,'k'],'Kettlebell silverback shrug':['shrug',.35,'k'],
+  'Kettlebell upright row single':['upright',.3,'k'],'Kettlebell single-arm Pendlay row':['row',.45,'k'],'Kettlebell single-arm row on bench':['row',.5,'k'],'Kettlebell alternating row':['row',.4,'k'],'Kettlebell row single':['row',.7,'k'],'Kettlebell rear delt row double':['row',.25,'k'],'Kettlebell single-arm rear delt row':['row',.28,'k'],'Kettlebell single-arm curl':['curl',.45,'k',1],'Kettlebell single-arm reverse curl':['curl',.3,'k',1],'Kettlebell decline skull crusher':['tri_ext',.7,'k',1],
+  'Kettlebell Larsen press':['press_h',.33,'K'],'Kettlebell single-arm Larsen press':['press_h',.3,'K'],'Kettlebell guillotine bench press':['press_h',.28,'K'],'Kettlebell high incline bench press':['press_h',.27,'k'],'Kettlebell single-arm incline chest press':['press_h',.29,'k'],'Kettlebell single-arm floor fly':['press_h',.15,'k',1],'Kettlebell single-arm chest fly':['press_h',.15,'k',1],
+  'Kettlebell alternating curtsy lunge':['squat',.2,'K'],'Kettlebell alternating forward lunge':['squat',.2,'k'],'Kettlebell alternating lateral lunge':['squat',.2,'k'],'Kettlebell alternating reverse lunge':['squat',.2,'k'],'Kettlebell alternating single-arm thruster':['press_v',.35,'K'],'Kettlebell assisted Bulgarian split squat':['squat',.2,'K'],'Kettlebell chest press single':['press_h',.6,'k'],'Kettlebell clean and jerk':['press_v',.45,'K'],'Kettlebell conventional deadlift double':['hinge',.35,'k'],
+  'Kettlebell deficit reverse lunge':['squat',.22,'k'],'Kettlebell figure-four hip thrust':['thrust',.18,'K'],'Kettlebell forward lunge double':['squat',.2,'k'],'Kettlebell front rack cossack squat':['squat',.12,'K'],'Kettlebell front rack curtsy lunge double':['squat',.15,'K'],'Kettlebell front rack deficit reverse lunge':['squat',.17,'k'],'Kettlebell front rack forward lunge double':['squat',.17,'k'],'Kettlebell front rack lateral lunge double':['squat',.15,'k'],'Kettlebell front rack reverse lunge double':['squat',.17,'k'],
+  'Kettlebell front rack single-arm lateral lunge':['squat',.15,'k'],'Kettlebell front rack step-up':['squat',.15,'K'],'Kettlebell front rack step-up knee drive':['squat',.13,'K'],'Kettlebell goblet calf raise':['calf',.5,'k'],'Kettlebell goblet cossack squat':['squat',.15,'K'],'Kettlebell half-kneeling goblet Romanian deadlift':['hinge',.15,'K'],'Kettlebell half-kneeling Romanian deadlift':['hinge',.15,'K'],'Kettlebell hang clean and jerk':['press_v',.45,'K'],'Kettlebell hang clean and press':['press_v',.38,'K'],
+  'Kettlebell hang squat clean and jerk':['press_v',.4,'K'],'Kettlebell heels-up goblet squat':['squat',.25,'k'],'Kettlebell incline guillotine bench press':['press_h',.22,'K'],'Kettlebell lateral lunge single':['squat',.2,'k'],'Kettlebell silverback shrug single':['shrug',.6,'k'],'Kettlebell single-arm calf raise':['calf',.35,'k'],
+  'Kettlebell single-arm clean and jerk':['press_v',.42,'K'],'Kettlebell single-arm clean and press':['press_v',.35,'K'],'Kettlebell single-arm curtsy lunge':['squat',.18,'K'],'Kettlebell single-arm forward lunge':['squat',.2,'k'],'Kettlebell single-arm front rack step-up':['squat',.15,'K'],'Kettlebell single-arm front rack step-up knee drive':['squat',.13,'K'],'Kettlebell single-arm hang clean and jerk':['press_v',.42,'K'],'Kettlebell single-arm hang clean and press':['press_v',.35,'K'],
+  'Kettlebell single-arm high incline chest press':['press_h',.25,'k'],'Kettlebell single-arm reverse lunge':['squat',.2,'k'],'Kettlebell single-arm step-up balance':['squat',.15,'K'],'Kettlebell single-arm step-up knee drive':['squat',.15,'K'],'Kettlebell single-arm thruster':['press_v',.35,'K'],'Kettlebell single-leg calf raise':['calf',.2,'K'],'Kettlebell single-leg glute bridge':['thrust',.15,'K'],'Kettlebell single-leg hip thrust':['thrust',.2,'K'],'Kettlebell single-leg single-arm calf raise':['calf',.2,'K'],
+  'Kettlebell squat clean and jerk':['press_v',.4,'K'],'Kettlebell staggered deadlift single':['hinge',.3,'k'],'Kettlebell standing tricep extension':['tri_ext',.8,'k',1],'Kettlebell step-up double':['squat',.18,'K'],
+  'Kettlebell single-arm front rack forward lunge':['squat',.17,'k'],'Kettlebell single-arm front rack reverse lunge':['squat',.17,'k'],
+  'Kettlebell kickstand squat':['squat',.22,'K'],
+  'Dumbbell alternating Arnold press':['press_v',.35,'d'],'Dumbbell alternating forward lunge':['squat',.2,'d'],'Dumbbell alternating lateral lunge':['squat',.18,'d'],'Dumbbell alternating overhead press':['press_v',.38,'d'],'Dumbbell alternating Pendlay row':['row',.4,'d'],'Dumbbell alternating rear delt fly':['raise',.9,'d',1],'Dumbbell alternating reverse lunge':['squat',.2,'d'],'Dumbbell alternating single-arm thruster':['press_v',.35,'D'],'Dumbbell alternating Z press':['press_v',.33,'D'],'Dumbbell bent-arm lateral raise':['raise',1.3,'d',1],
+  'Dumbbell box squat':['squat',.22,'d'],'Dumbbell clean and press':['press_v',.38,'D'],'Dumbbell cossack squat':['squat',.15,'D'],'Dumbbell curtsy deficit lunge':['squat',.18,'D'],'Dumbbell decline guillotine bench press':['press_h',.28,'D'],'Dumbbell decline neutral bench press':['press_h',.37,'d'],
+  'Dumbbell decline single-arm bench press':['press_h',.37,'d'],'Dumbbell decline skull crusher':['tri_ext',.4,'d',1],'Dumbbell decline squeeze press':['press_h',.3,'d'],'Dumbbell deficit reverse lunge':['squat',.2,'d'],'Dumbbell drag curl':['curl',.38,'d',1],'Dumbbell feet-elevated glute bridge':['thrust',.25,'d'],'Dumbbell feet-elevated single-leg glute bridge':['thrust',.13,'D'],
+  'Dumbbell feet-elevated figure-four glute bridge':['thrust',.13,'D'],'Dumbbell feet-elevated staggered glute bridge':['thrust',.18,'D'],'Dumbbell figure-four glute bridge':['thrust',.15,'D'],'Dumbbell figure-four hip thrust':['thrust',.18,'D'],'Dumbbell figure-four heels-elevated hip thrust':['thrust',.15,'D'],'Dumbbell heels-elevated hip thrust':['thrust',.3,'d'],'Dumbbell single-leg heels-elevated hip thrust':['thrust',.17,'D'],'Dumbbell staggered hip thrust':['thrust',.25,'D'],'Dumbbell glute bridge':['thrust',.3,'d'],'Dumbbell single-leg glute bridge':['thrust',.15,'D'],
+  'Dumbbell staggered glute bridge':['thrust',.22,'D'],'Dumbbell flat preacher curl':['curl',.33,'d',1],'Dumbbell floor fly':['press_h',.17,'d',1],'Dumbbell front rack cossack squat':['squat',.12,'D'],'Dumbbell front rack curtsy deficit lunge':['squat',.15,'D'],'Dumbbell front rack deficit reverse lunge':['squat',.17,'d'],'Dumbbell front rack step-up':['squat',.15,'D'],'Dumbbell front rack step-up knee drive':['squat',.13,'D'],'Dumbbell full front raise':['raise',.8,'D',1],'Dumbbell full lateral raise':['raise',.8,'D',1],
+  'Dumbbell goblet alternating curtsy lunge':['squat',.2,'D'],'Dumbbell goblet Bulgarian split squat':['squat',.25,'d'],'Dumbbell goblet cossack squat':['squat',.15,'D'],'Dumbbell goblet curtsy deficit lunge':['squat',.18,'D'],'Dumbbell goblet curtsy lunge':['squat',.2,'D'],'Dumbbell goblet deficit reverse lunge':['squat',.22,'d'],'Dumbbell goblet forward lunge':['squat',.25,'d'],'Dumbbell goblet good morning':['hinge',.2,'d'],'Dumbbell goblet lateral lunge':['squat',.2,'d'],'Dumbbell goblet reverse lunge':['squat',.25,'d'],
+  'Dumbbell goblet side step-up':['squat',.18,'D'],'Dumbbell goblet split squat':['squat',.25,'d'],'Dumbbell goblet step-up':['squat',.2,'D'],'Dumbbell guillotine bench press':['press_h',.28,'D'],'Dumbbell guillotine incline bench press':['press_h',.22,'D'],'Dumbbell half-kneeling goblet Romanian deadlift':['hinge',.15,'D'],'Dumbbell half-kneeling Romanian deadlift':['hinge',.15,'D'],'Dumbbell half-kneeling overhead press':['press_v',.33,'D'],'Dumbbell half-kneeling single-arm overhead press':['press_v',.3,'D'],
+  'Dumbbell bench-braced flat curl':['curl',.35,'d',1],'Dumbbell bench-braced hammer flat curl':['curl',.4,'d',1],'Dumbbell bench-braced reverse flat curl':['curl',.25,'d',1],'Dumbbell bench-braced incline curl':['curl',.33,'d',1],'Dumbbell bench-braced hammer incline curl':['curl',.38,'d',1],'Dumbbell bench-braced reverse incline curl':['curl',.23,'d',1],'Dumbbell single-arm bench-braced flat curl':['curl',.35,'d',1],'Dumbbell single-arm bench-braced hammer flat curl':['curl',.4,'d',1],'Dumbbell single-arm bench-braced reverse flat curl':['curl',.25,'d',1],'Dumbbell single-arm bench-braced incline curl':['curl',.33,'d',1],
+  'Dumbbell single-arm bench-braced hammer incline curl':['curl',.38,'d',1],'Dumbbell single-arm bench-braced reverse incline curl':['curl',.23,'d',1],'Dumbbell bench-braced single-arm overhead tricep extension':['tri_ext',.28,'d',1],'Dumbbell Bayesian lateral raise':['raise',.8,'d',1],'Dumbbell standing Bayesian lateral raise':['raise',.95,'d',1],'Dumbbell cross-body Romanian deadlift':['hinge',.2,'D'],'Dumbbell incline skullover':['tri_ext',.35,'d',1],'Dumbbell high incline skullover':['tri_ext',.33,'d',1],
+  'Dumbbell rolling tricep extension':['tri_ext',.35,'d',1],'Dumbbell knee lawnmower row':['row',.45,'d'],'Dumbbell single-arm row knee':['row',.45,'d'],'Dumbbell kneeling single-arm row':['row',.5,'d'],'Dumbbell row bilateral':['row',.42,'d'],'Dumbbell supinated row':['row',.42,'d'],'Dumbbell lateral lunge reach':['squat',.15,'D'],'Dumbbell laying curl':['curl',.33,'d',1],'Dumbbell offset squat':['squat',.2,'D'],
+  'Dumbbell Y press':['press_v',.28,'D'],'Dumbbell seated Y press':['press_v',.28,'D'],'Dumbbell six-way lateral raise':['raise',.6,'D',1],'Dumbbell hang clean and press':['press_v',.38,'D'],'Dumbbell head-on-bench rear delt fly':['raise',.9,'d',1],'Dumbbell heels-up narrow goblet squat':['squat',.23,'d'],'Dumbbell high incline bench press':['press_h',.27,'d'],
+  'Dumbbell incline front raise':['raise',.8,'d',1],'Dumbbell incline hammer curl':['curl',.42,'d',1],'Dumbbell incline reverse curl':['curl',.25,'d',1],'Dumbbell incline skull crusher':['tri_ext',.4,'d',1],'Dumbbell incline twisting curl':['curl',.38,'d',1],'Dumbbell incline Zottman curl':['curl',.33,'d',1],'Dumbbell internally rotated chest fly':['press_h',.15,'d',1],'Dumbbell internally rotated floor fly':['press_h',.15,'d',1],'Dumbbell internally rotated incline chest fly':['press_h',.13,'d',1],
+  'Dumbbell internally rotated rear delt fly':['raise',.85,'d',1],'Dumbbell internally rotated single-arm floor fly':['press_h',.13,'d',1],'Dumbbell kickstand squat':['squat',.22,'D'],'Dumbbell Larsen press':['press_h',.33,'D'],'Dumbbell laying 30-degree shrug':['shrug',.3,'d'],'Dumbbell laying incline lateral raise':['raise',.7,'d',1],'Dumbbell laying reverse fly':['raise',.9,'d',1],'Dumbbell laying reverse fly internally rotated':['raise',.85,'d',1],'Dumbbell laying row':['row',.4,'d'],
+  'Dumbbell laying silverback shrug':['shrug',.3,'d'],'Dumbbell neutral alternating overhead press':['press_v',.38,'d'],'Dumbbell neutral high incline bench press':['press_h',.26,'d'],'Dumbbell neutral incline bench press':['press_h',.3,'d'],'Dumbbell neutral overhead press':['press_v',.38,'d'],'Dumbbell neutral seated overhead press':['press_v',.4,'d'],'Dumbbell overhead press':['press_v',.38,'d'],
+  'Dumbbell overhead squat':['squat',.12,'D'],'Dumbbell overhead tricep extension':['tri_ext',.6,'d',1],'Dumbbell Pendlay row':['row',.4,'d'],'Dumbbell preacher curl':['curl',.38,'d',1],'Dumbbell push press':['press_v',.45,'D'],'Dumbbell rear delt row':['row',.28,'d'],'Dumbbell renegade row':['row',.3,'D'],'Dumbbell reverse curl':['curl',.28,'d',1],'Dumbbell reverse-grip bench press':['press_h',.3,'d'],
+  'Dumbbell seated Arnold press':['press_v',.35,'d'],'Dumbbell seated bent-arm lateral raise':['raise',1.3,'d',1],'Dumbbell seated curl':['curl',.43,'d',1],'Dumbbell seated full lateral raise':['raise',.8,'D',1],'Dumbbell seated hammer curl':['curl',.48,'d',1],'Dumbbell seated overhead tricep extension':['tri_ext',.6,'d',1],'Dumbbell seated rear delt row':['row',.28,'d'],'Dumbbell seated reverse curl':['curl',.27,'d',1],'Dumbbell seated shrug':['shrug',.43,'d'],
+  'Dumbbell seated single-arm Arnold press':['press_v',.33,'d'],'Dumbbell seated single-arm curl':['curl',.43,'d',1],'Dumbbell seated single-arm full lateral raise':['raise',.8,'D',1],
+  'Dumbbell seated single-arm hammer curl':['curl',.48,'d',1],'Dumbbell seated single-arm lateral raise':['raise',.95,'d',1],'Dumbbell seated single-arm reverse curl':['curl',.27,'d',1],'Dumbbell seated single-arm Zottman curl':['curl',.38,'d',1],'Dumbbell seated Zottman curl':['curl',.38,'d',1],
+  'Dumbbell side step-up':['squat',.16,'D'],'Dumbbell silverback shrug':['shrug',.35,'d'],'Dumbbell single-arm Arnold press':['press_v',.33,'d'],'Dumbbell single-arm chest press':['press_h',.37,'d'],'Dumbbell single-arm press':['press_h',.33,'d'],'Dumbbell alternating single-arm press':['press_h',.33,'d'],'Dumbbell decline alternating single-arm press':['press_h',.33,'d'],
+  'Dumbbell single-arm clean and press':['press_v',.35,'D'],'Dumbbell single-arm hang clean and press':['press_v',.35,'D'],'Dumbbell single-arm floor fly':['press_h',.15,'d',1],'Dumbbell single-arm front rack step-up':['squat',.15,'D'],'Dumbbell single-arm front rack step-up knee drive':['squat',.13,'D'],'Dumbbell single-arm full lateral raise':['raise',.8,'D',1],'Dumbbell single-arm hammer curl':['curl',.5,'d',1],'Dumbbell single-arm high incline chest press':['press_h',.25,'d'],'Dumbbell single-arm incline chest press':['press_h',.29,'d'],'Dumbbell single-arm incline curl':['curl',.38,'d',1],
+  'Dumbbell single-arm incline hammer curl':['curl',.42,'d',1],'Dumbbell single-arm incline reverse curl':['curl',.25,'d',1],'Dumbbell single-arm incline skull crusher':['tri_ext',.38,'d',1],'Dumbbell single-arm incline twisting curl':['curl',.38,'d',1],'Dumbbell single-arm Larsen press':['press_h',.3,'D'],'Dumbbell single-arm lateral raise':['raise',1,'d',1],'Dumbbell single-arm neutral overhead press':['press_v',.36,'d'],'Dumbbell single-arm overhead press':['press_v',.36,'d'],'Dumbbell single-arm Pendlay row':['row',.45,'d'],'Dumbbell single-arm preacher curl':['curl',.38,'d',1],
+  'Dumbbell single-arm pullover':['row',.22,'D'],'Dumbbell single-arm push press':['press_v',.42,'D'],'Dumbbell single-arm rear delt row':['row',.28,'d'],'Dumbbell single-arm seated overhead tricep extension':['tri_ext',.3,'d',1],'Dumbbell single-arm skull crusher':['tri_ext',.38,'d',1],'Dumbbell single-arm spider curl':['curl',.38,'d',1],'Dumbbell single-arm step-up':['squat',.2,'D'],'Dumbbell single-arm step-up knee drive':['squat',.17,'D'],'Dumbbell step-up knee drive':['squat',.16,'D'],
+  'Dumbbell single-arm thruster':['press_v',.35,'D'],'Dumbbell single-arm upright row':['upright',.3,'d'],'Dumbbell single-arm Z press':['press_v',.3,'D'],'Dumbbell single-leg single-arm deadlift':['hinge',.15,'D'],'Dumbbell split squat':['squat',.2,'d'],'Dumbbell squeeze press':['press_h',.3,'d'],'Dumbbell staggered deadlift':['hinge',.25,'d'],'Dumbbell standing single-arm curl':['curl',.45,'d',1],
+  'Dumbbell standing single-arm reverse curl':['curl',.28,'d',1],'Dumbbell standing single-arm twisting curl':['curl',.45,'d',1],'Dumbbell twisting curl':['curl',.45,'d',1],'Dumbbell Tate press':['tri_ext',.3,'d',1],'Dumbbell thruster':['press_v',.38,'D'],'Dumbbell upright row':['upright',.3,'d'],'Dumbbell Z press':['press_v',.33,'D'],'Dumbbell assisted Bulgarian split squat':['squat',.2,'D'],
+  'Barbell low-bar squat':['squat',1,'b'],'Barbell front squat bodybuilding':['squat',.75,'b'],'Barbell heels-up back squat':['squat',.9,'b'],'Barbell heels-up front squat':['squat',.75,'b'],'Barbell Zercher squat':['squat',.65,'B'],'Barbell kickstand squat':['squat',.55,'B'],'Barbell cossack squat':['squat',.3,'B'],'Barbell split squat':['squat',.45,'b'],'Barbell Bulgarian split squat':['squat',.4,'b'],
+  'Barbell forward lunge':['squat',.45,'b'],'Barbell reverse lunge':['squat',.45,'b'],'Barbell lateral lunge':['squat',.35,'b'],'Barbell curtsy lunge':['squat',.35,'B'],'Barbell deficit lunge':['squat',.4,'b'],'Barbell curtsy deficit lunge':['squat',.3,'B'],'Barbell front rack deficit lunge':['squat',.33,'B'],'Barbell Zercher deficit lunge':['squat',.3,'B'],'Barbell side step-up':['squat',.33,'B'],'Barbell step-up knee drive':['squat',.33,'B'],
+  'Barbell front rack step-up':['squat',.33,'B'],'Barbell front rack step-up knee drive':['squat',.3,'B'],'Barbell feet-elevated glute bridge':['thrust',.7,'b'],'Barbell feet-elevated single-leg glute bridge':['thrust',.35,'B'],'Barbell feet-elevated figure-four glute bridge':['thrust',.35,'B'],'Barbell feet-elevated staggered glute bridge':['thrust',.5,'B'],'Barbell figure-four hip thrust':['thrust',.4,'B'],'Barbell figure-four heels-elevated hip thrust':['thrust',.35,'B'],'Barbell heels-elevated hip thrust':['thrust',.85,'b'],'Barbell single-leg hip thrust':['thrust',.45,'B'],
+  'Barbell single-leg heels-elevated hip thrust':['thrust',.4,'B'],'Barbell block conventional deadlift':['hinge',1.05,'b'],'Barbell deficit conventional deadlift':['hinge',.85,'b'],'Barbell snatch-grip deadlift':['hinge',.8,'b'],'Barbell snatch-grip Romanian deadlift':['hinge',.6,'b'],'Barbell Jefferson deadlift':['hinge',.6,'B'],'Barbell reverse deadlift':['squat',.6,'B'],'Barbell staggered deadlift':['hinge',.45,'B'],'Barbell single-leg deadlift':['hinge',.3,'B'],
+  'Barbell low-bar good morning':['hinge',.38,'b'],'Barbell Zercher good morning':['hinge',.3,'B'],'Barbell supinated Pendlay row':['row',.9,'b'],'Barbell 30-degree shrug':['shrug',.8,'b'],'Barbell behind-the-back shrug':['shrug',.8,'b'],'Barbell behind-the-back 30-degree shrug':['shrug',.65,'b'],'Barbell silverback shrug':['shrug',.7,'b'],
+  'Barbell front raise':['raise',2,'B',1],'Barbell full front raise':['raise',1.5,'B',1],'Barbell seated full front raise':['raise',1.4,'B',1],'Barbell behind-the-neck press':['press_v',.8,'B'],'Barbell behind-the-neck seated overhead press':['press_v',.78,'B'],'Barbell Bradford press':['press_v',.6,'B'],'Barbell Z press':['press_v',.7,'B'],'Barbell high incline bench press':['press_h',.7,'b'],'Barbell guillotine incline bench press':['press_h',.55,'B'],
+  'Barbell guillotine high incline bench press':['press_h',.48,'B'],'Barbell reverse-grip bench press':['press_h',.8,'b'],'Barbell decline close-grip bench press':['press_h',.88,'b'],'Barbell hooklying bench press':['press_h',.85,'B'],'Barbell Larsen bench press':['press_h',.85,'B'],'Barbell JM press':['tri_ext',1.3,'B',1],'Barbell overhead tricep extension':['tri_ext',.9,'b',1],
+  'Barbell seated calf raise':['calf',.5,'b'],'Barbell toes-up calf raise':['calf',.9,'b'],'Barbell thruster':['press_v',.85,'B'],'Barbell clean and press':['press_v',.9,'B'],'Barbell hang clean and press':['press_v',.9,'B'],'Barbell clean and jerk':['press_v',1,'B'],'Barbell split jerk':['press_v',1.05,'B'],
+  'Barbell snatch-grip high pull':['upright',1.1,'B'],
+  'EZ bar close-grip curl':['curl',.95,'b',1],'EZ bar Cuban press':['press_v',.3,'B'],'EZ bar drag curl':['curl',.8,'b',1],'EZ bar overhead press':['press_v',.9,'b'],'EZ bar reverse preacher curl':['curl',.55,'b',1],'EZ bar reverse spider curl':['curl',.5,'b',1],'EZ bar Romanian deadlift':['hinge',.6,'b'],'EZ bar shrug':['shrug',.8,'b'],'EZ bar spider curl':['curl',.7,'b',1],'EZ bar upright row':['upright',.95,'b'],
+  'EZ bar Zercher squat':['squat',.5,'B'],'Trap bar deficit deadlift':['hinge',.95,'b'],'Trap bar reverse lunge':['squat',.45,'b'],'Trap bar Romanian deadlift':['hinge',.75,'b'],'Trap bar shrug':['shrug',1,'b'],'Trap bar single-leg deadlift':['hinge',.3,'B'],'Trap bar split squat':['squat',.45,'b'],'Trap bar squat':['hinge',.95,'b'],'Trap bar staggered Romanian deadlift':['hinge',.5,'B'],'Smith machine close-grip bench press':['press_h',.78,'s'],
+  'Smith machine drag curl':['curl',.8,'s',1],'Smith machine guillotine bench press':['press_h',.5,'s'],'Smith machine narrow-stance squat':['squat',.85,'s'],'Smith machine overhand row':['row',.9,'s'],'Smith machine underhand row':['row',.95,'s'],'Smith machine reverse lunge':['squat',.45,'s'],'Smith machine seated calf raise':['calf',.5,'s'],'Smith machine single-leg hip thrust':['thrust',.45,'s'],'Smith machine skull crusher':['tri_ext',.9,'s',1],'Smith machine split squat':['squat',.45,'s'],
+  'Plate deficit push-up':['press_h',.88,'w',0,.64],
+  'Smith machine push-up':['press_h',.8,'w',0,.5],'Smith machine staggered deadlift':['hinge',.45,'s'],'Smith machine sumo Romanian deadlift':['hinge',.7,'s'],'Smith machine upright row':['upright',.9,'s'],
+  'Machine assisted chin-up':['row',1.1,'w',0,.9],'Machine assisted narrow pull-up':['row',1.05,'w',0,.9],'Machine assisted neutral chin-up':['row',1.1,'w',0,.9],'Machine cable V-bar pushdown':['tri_ext',1.1,'c',1],
+  'Cable bar Romanian deadlift':['hinge',.3,'c'],
+  'Cable elevated deadlift':['hinge',.3,'c'],
+  'Cable bench chest fly':['press_h',.15,'c',1],'Cable bench press':['press_h',.22,'c'],'Cable decline bench chest fly':['press_h',.15,'c',1],'Cable decline bench press':['press_h',.22,'c'],'Cable incline bench press':['press_h',.18,'c'],'Cable single-arm bench chest fly':['press_h',.15,'c',1],'Cable single-arm bench press':['press_h',.22,'c'],'Cable single-arm decline bench chest fly':['press_h',.15,'c',1],'Cable decline single-arm bench press':['press_h',.22,'c'],'Cable single-arm incline bench press':['press_h',.18,'c'],
+  'Cable single-arm incline chest fly':['press_h',.12,'c',1],'Cable chest press':['press_h',.22,'c'],'Cable standing decline chest press':['press_h',.22,'c'],'Cable standing incline chest press':['press_h',.18,'c'],'Cable standing single-arm chest press':['press_h',.22,'c'],'Cable standing single-arm incline chest fly':['press_h',.12,'c',1],'Cable standing single-arm incline chest press':['press_h',.18,'c'],'Cable braced single-arm chest fly':['press_h',.12,'c',1],'Cable braced single-arm chest press':['press_h',.22,'c'],
+  'Cable incline fly around':['press_h',.12,'c',1],'Cable kayak row':['row',.4,'c',1],'Cable pull in':['row',.45,'c'],'Cable pull around':['row',.45,'c'],'Cable kneeling bilateral pull in':['row',.45,'c'],
+  'Cable kneeling straight-arm pull in':['row',.3,'c',1],'Cable standing bilateral pull in':['row',.45,'c'],'Cable standing bilateral straight-arm pull in':['row',.3,'c',1],'Cable straight-arm pull in':['row',.3,'c',1],'Cable single-arm lat prayer':['row',.3,'c',1],'Cable bent-over bar pullover':['row',.4,'c',1],'Cable row bar standing row':['row',.8,'c'],'Cable single-arm neutral-grip row':['row',.45,'c'],'Cable single-arm underhand-grip row':['row',.45,'c'],'Cable supinating row':['row',.45,'c'],
+  'Cable single-arm rear delt row':['row',.3,'c',1],'Cable standing single-arm cross rear delt row':['raise',.8,'c',1],'Cable silverback shrug':['shrug',.6,'c'],'Cable single-arm 30-degree shrug':['shrug',.35,'c'],'Cable leaning single-arm skullover':['tri_ext',.35,'c',1],'Cable behind-the-back lateral raise':['raise',.8,'c',1],'Cable low bilateral lateral raise':['raise',.8,'c',1],'Cable rope front raise':['raise',.9,'c',1],'Cable rope mid lateral raise':['raise',.8,'c',1],'Cable overhead press':['press_v',.2,'c'],
+  'Cable upright row':['upright',.7,'c'],'Cable bilateral cross upright row':['upright',.3,'c'],'Cable high single-arm rear delt fly':['raise',.9,'c',1],'Cable rope kneeling face pull':['row',.35,'c',1],'Cable seated rope face pull':['row',.35,'c',1],'Cable single-arm face pull':['row',.2,'c',1],'Cable bar reverse-grip curl':['curl',.6,'c',1],'Cable bilateral Bayesian curl':['curl',.35,'c',1],'Cable single-arm Bayesian curl':['curl',.35,'c',1],'Cable high Bayesian curl':['curl',.35,'c',1],
+  'Cable seated Bayesian curl':['curl',.35,'c',1],'Cable high single-arm rolling curl':['curl',.3,'c',1],'Cable bilateral cross curl':['curl',.3,'c',1],'Cable bilateral high curl':['curl',.3,'c',1],'Cable single-arm hammer curl':['curl',.4,'c',1],'Cable single-arm reverse curl':['curl',.3,'c',1],'Cable twisting curl':['curl',.4,'c',1],'Cable bar reverse-grip pushdown':['tri_ext',.8,'c',1],'Cable bar rolling pushdown':['tri_ext',1,'c',1],'Cable bar skull crusher':['tri_ext',.8,'c',1],
+  'Cable bent-over single-arm overhead tricep extension':['tri_ext',.35,'c',1],'Cable bilateral cross skull crusher':['tri_ext',.3,'c',1],'Cable cross pushdown':['tri_ext',.35,'c',1],'Cable overhead tricep press':['tri_ext',.8,'c',1],'Cable single-arm cross pushdown':['tri_ext',.35,'c',1],'Cable single-arm overhead tricep extension':['tri_ext',.4,'c',1],'Cable single-arm pushdown':['tri_ext',.45,'c',1],'Cable single-arm skull crusher':['tri_ext',.35,'c',1],
   // 'w' = upper-body bodyweight move, a source only. 5th field = share of body
   // weight moved: push-up ≈64%, feet-elevated ≈70% (Ebben 2011, force plate);
   // pull-ups/dips ≈90% (body minus the arms, ExRx segment data); inverted row
@@ -162,19 +243,19 @@ const LIFT_REL={
   // assists (−), and 'assist weight' exercises log the assistance as positive.
   // Lower-body bodyweight moves are absent: the body is moved in the barbell
   // version too, so bodyweight squat reps say nothing about external load.
-  'Push-ups':['press_h',1,'w',0,.64],'Wide-grip push-ups':['press_h',1,'w',0,.64],'Decline push-ups':['press_h',1,'w',0,.7],
+  'Push-up':['press_h',1,'w',0,.64],'Wide-grip push-ups':['press_h',1,'w',0,.64],'Decline push-up':['press_h',1,'w',0,.7],
   'Diamond push-ups':['press_h',.88,'w',0,.64],'Close-grip push-ups':['press_h',.88,'w',0,.64],
-  'Chest dips':['press_h',1.15,'w',0,.9],'Tricep dips':['press_h',1.1,'w',0,.9],'Machine-assisted dip':['press_h',1.15,'w',0,.9],
-  'Pike push-ups':['press_v',1,'w',0,.7],
-  'Pull-ups':['row',1.05,'w',0,.9],'Chin-ups':['row',1.1,'w',0,.9],'Machine-assisted pull-up':['row',1.05,'w',0,.9],
+  'Chest dips':['press_h',1.15,'w',0,.9],'Parallel bar dips':['press_h',1.1,'w',0,.9],'Machine assisted parallel bar dips':['press_h',1.15,'w',0,.9],
+  'Bodyweight pike press':['press_v',1,'w',0,.7],
+  'Pull-ups':['row',1.05,'w',0,.9],'Chin-ups':['row',1.1,'w',0,.9],'Machine assisted pull-up':['row',1.05,'w',0,.9],
   'Inverted row':['row',.9,'w',0,.65],'Smith machine inverted row':['row',.9,'w',0,.65],
   // 's' = Smith machine: one shared guided bar (same mwKey tare), so Smith↔Smith
   // converts with high confidence. Cotterman 2005: Smith bench 1RM ≈ 0.95×free
   // −6.8kg (≈.87–.89 at typical loads) → .88; Smith squat ≈ free for men
   // (higher for women) → 1. Other Smith ratios assume the free-weight ratio.
-  'Smith machine bench press':['press_h',.88,'s'],'Smith machine incline press':['press_h',.7,'s'],'Smith machine squat':['squat',1,'s'],
-  'Smith machine shoulder press':['press_v',.9,'s'],'Smith machine Romanian deadlift':['hinge',.7,'s'],'Smith machine hip thrust':['thrust',1,'s'],
-  'Smith machine shrug':['shrug',1,'s'],'Smith machine standing calf raise':['calf',1,'s']
+  'Smith machine bench press':['press_h',.88,'s'],'Smith machine incline bench press':['press_h',.7,'s'],'Smith machine squat':['squat',1,'s'],
+  'Smith machine seated overhead press':['press_v',.9,'s'],'Smith machine Romanian deadlift':['hinge',.7,'s'],'Smith machine hip thrust':['thrust',1,'s'],
+  'Smith machine shrug':['shrug',1,'s'],'Smith machine calf raise':['calf',1,'s']
 };
 // Pattern-to-pattern norms (reference a ≈ k × reference b), used only when the
 // target's own pattern has no evidence at all: OHP ≈ 0.55–0.75 of bench, row ≈
@@ -222,15 +303,15 @@ function stabCurve(refE,from,to){
 // another down. Returns {w,e,src,cross} (w unsnapped) or null.
 function liftEstimate(ex,reps){
   const me=LIFT_REL[ex.name];if(!me||me[2]==='w'||ex.note==='bodyweight'||ex.holdSecs)return null;
-  const [fam,ratio,eq,iso]=me;
+  const [fam,ratio,eq,iso]=me;const eqS=eq==='B'?'b':/[kD]/i.test(eq)?'d':eq;
   const fromFam=(f,k,cross)=>{
     let best=null;
     Object.keys(LIFT_REL).forEach(n=>{
-      const r=LIFT_REL[n];if(n===ex.name||r[0]!==f||(r[2]==='c'&&eq!=='c'))return;
+      const r=LIFT_REL[n];if(n===ex.name||r[0]!==f||(r[2]==='c'&&eq!=='c')||/[KDB]/.test(r[2]))return;
       const s=liftStrength(n);if(!s)return;
       const refE=s.e/r[1]*k;
       const conf=(eq==='c'?(r[2]==='c'?.85:.75):r[2]==='w'?.85:r[2]===eq?.95:(r[2]==='s'||eq==='s')?.85:.9)*((r[3]?1:0)!==(iso?1:0)?.85:1)*(cross?.85:1);
-      const e=refE*ratio*stabCurve(refE,r[2],eq)*conf;
+      const e=refE*ratio*stabCurve(refE,r[2]==='k'?'d':r[2],eqS)*conf;
       if(!best||e>best.e)best={e,src:n,cross};
     });
     if(!best&&!cross){
@@ -240,7 +321,7 @@ function liftEstimate(ex,reps){
         const seq=sd[2]||'b';
         if(logged||sd[0]!==f||!kl||!(kl.w>0)||(seq==='c'&&eq!=='c'))return;
         const refE=kl.w*(1+Math.min(kl.r||1,12)/30)*sd[1];
-        const e=refE*ratio*stabCurve(refE,seq,eq)*(eq==='c'?(seq==='c'?.85:.75):eq==='b'?.95:.9);
+        const e=refE*ratio*stabCurve(refE,seq,eqS)*(eq==='c'?(seq==='c'?.85:.75):eq==='b'?.95:.9);
         if(!best||e>best.e)best={e,src:null,cross:false};
       });
     }
@@ -267,11 +348,18 @@ function estReps(ex){return isPyramidEx(ex)?12:(ex.plannedR||CFG.prefReps);}
 // set 1–2 reps left or failure (then it's a genuine weak point), the proposal
 // is a raise, and it wasn't dismissed (it returns once the estimate rises 10%+).
 function syncSuggest(ex,curW,reps){
-  if(!LIFT_REL[ex.name]||/[cw]/.test(LIFT_REL[ex.name][2])||ex.note==='bodyweight'||ex.holdSecs)return null;
+  if(!LIFT_REL[ex.name]||/[cwKDB]/.test(LIFT_REL[ex.name][2])||ex.note==='bodyweight'||ex.holdSecs)return null;
   const hist=exHistory(ex.name);if(!hist.length)return null;
   const f=hist[hist.length-1].exFeel;if(f==='hard'||f==='max')return null;
   const own=liftStrength(ex.name),est=liftEstimate(ex,reps);
-  if(!own||!est||own.e>=est.e*.75)return null;
+  // The chip shows when this lift's own strength is below 75% of what related
+  // lifts imply; 85% once it hasn't been done for 4+ weeks, because its own
+  // number is then old evidence and the related lifts are fresh. Not 90%: the
+  // comparison itself is only good to about ±13% (rep-to-1RM ±5%, day-to-day
+  // 1RM 4%, lift-to-lift ratios ~10%), so a 10% gap is mostly noise.
+  let dk=null;hist.forEach(s=>{const d=ST.history[s.idx].dk;if(d&&!(dk&&d<=dk))dk=d;});
+  const stale=dk&&dkDay(dkey(new Date()))-dkDay(dk)>=28;
+  if(!own||!est||own.e>=est.e*(stale?.85:.75))return null;
   const newW=snapEstimate(ex,est.w);if(!(newW>curW))return null;
   const dis=(CFG.syncDismiss||{})[ex.name];if(dis&&newW<dis*1.1)return null;
   return{newW,src:est.src};
@@ -294,7 +382,7 @@ function defaultW(ex){const b=ex.baseW||0;if(CFG.unit!=='lbs'||ex.custom||!b)ret
 // dumbbell for dumbbell lifts, else a 2.5kg / 5lb step (then snapped to owned gear).
 function fallbackSnap(ex,w){
   const step=CFG.unit==='lbs'?5:2.5;
-  if(equipRank(ex)===1)return nearestIn(DUMBBELLS[CFG.unit]||DUMBBELLS.kg,w);
+  if(isHandWeight(ex))return nearestIn(equipRank(ex)===6?handOwned(ex):handRack(ex),w);
   return Math.max(step,Math.round(w/step)*step);
 }
 function getAIEstimatedWeight(ex){
@@ -326,9 +414,9 @@ function lastSessionEx(name){const hist=carrySessions(name);return hist.length?h
 function lastNoteForExercise(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex&&ex.note)return ex.note;}return null;}
 // The 5kg step is for barbell/machine lower-body and back lifts; a dumbbell is
 // per hand, so +5kg a hand (a 25% jump on a 20kg lunge) is too much.
-function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg)&&equipRank(ex)!==1;return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}
+function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg)&&!isHandWeight(ex);return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}
 function stepIncrement(ex,curW){
-  if(equipRank(ex)===1&&curW<20)return CFG.unit==='kg'?1:2;
+  if(isHandWeight(ex)&&curW<20)return CFG.unit==='kg'?1:2;
   return CFG.unit==='kg'?2.5:5;
 }
 // Propose next-session weight from the last-set reps-left rating (RIR):
@@ -375,7 +463,7 @@ function convertUnitData(from,to){
   // between convert fresh. A converted value that two different originals
   // share (e.g. 225 and 225.1 lb → 102.1 kg) isn't memoised, it just converts.
   const memo=CFG.unitMemo&&CFG.unitMemo.from===to&&CFG.unitMemo.to===from?CFG.unitMemo:null;
-  const next={from,to,w:{},db:{},pl:{}};
+  const next={from,to,w:{},db:{},pl:{},kb:{}};
   const cv=w=>{
     if(typeof w!=='number'||!w)return w;
     const back=memo&&memo.w[w],out=typeof back==='number'?back:Math.round(w*f*10)/10,k=String(out);
@@ -385,7 +473,7 @@ function convertUnitData(from,to){
   const cvGear=(list,std,key)=>{
     const out=new Set();
     list.forEach(d=>{
-      const back=memo&&memo[key][d];
+      const back=memo&&memo[key]&&memo[key][d];
       (Array.isArray(back)?back:[nearestIn(std,d*f)]).forEach(c=>{out.add(c);const m=next[key][c]=next[key][c]||[];if(!m.includes(d))m.push(d);});
     });
     return[...out].sort((a,b)=>a-b);
@@ -403,6 +491,7 @@ function convertUnitData(from,to){
   if(CFG.dumbbellMax)CFG.dumbbellMax=cv(CFG.dumbbellMax);
   const pl={};cvGear(Object.keys(CFG.gymPlates||{}).filter(d=>CFG.gymPlates[d]>0).map(Number),PLATES[to],'pl').forEach(d=>{pl[d]=1;});CFG.gymPlates=pl;
   CFG.gymDumbbells=cvGear(CFG.gymDumbbells||[],DUMBBELLS[to],'db');
+  CFG.gymKettlebells=cvGear(CFG.gymKettlebells||[],KETTLEBELLS[to],'kb');
   if(ST.day){(ST.sd||[]).forEach(it=>{cvSets(it.sets);if(it.ex&&it.ex.plannedW!==undefined)it.ex.plannedW=cv(it.ex.plannedW);});if(ST.pendingRec)cvExs(ST.pendingRec.exercises);}
   if(ST.editDay)(ST.editList||[]).forEach(e=>{if(e.plannedW!==undefined)e.plannedW=cv(e.plannedW);});
   CFG.unitMemo=next;CFG.unit=to;return true;
@@ -415,6 +504,26 @@ const DUMBBELLS={
   kg:[1,2,3,4,5,6,7,8,9,10,12.5,15,17.5,20,22.5,25,27.5,30,32.5,35,37.5,40,45,50,55,60],
   lbs:[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,140,150]
 };
+// Kettlebell sets differ by gym: the classic cast sizes go in 2kg steps to
+// 24kg then 4kg steps, but many racks carry every even kilo, and pound sets
+// differ by brand (5-lb steps, or kg sizes relabelled 18, 26, 35, 44, 53...).
+// So "My gym" offers every even kilo from 4 to 50, or every whole pound from
+// 5 to 110, to tick; KETTLEBELLS_STD is what counts as owned when nothing is
+// ticked.
+const KETTLEBELLS={
+  kg:Array.from({length:24},(_,i)=>i*2+4),
+  lbs:Array.from({length:106},(_,i)=>i+5)
+};
+const KETTLEBELLS_STD={kg:[4,6,8,10,12,14,16,18,20,22,24,28,32,36,40,44,48],lbs:[5,10,15,20,25,30,35,40,45,50,53,60,62,70,80,88,97,106]};
+// The standard sizes for this exercise's kind of hand weight, and the ones
+// the user owns ("My gym"). Kettlebells only exist in the standard sizes, so
+// with none ticked every standard size counts as owned; dumbbells with none
+// ticked stay unrestricted (empty list).
+function handRack(ex){const t=equipRank(ex)===6?KETTLEBELLS:DUMBBELLS;return t[CFG.unit]||t.kg;}
+function handOwned(ex){
+  const kb=equipRank(ex)===6,own=((kb?CFG.gymKettlebells:CFG.gymDumbbells)||[]).slice().sort((a,b)=>a-b);
+  return kb&&!own.length?(KETTLEBELLS_STD[CFG.unit]||KETTLEBELLS_STD.kg).slice():own;
+}
 function gymHasPlateInventory(){return Object.values(CFG.gymPlates||{}).some(n=>n>0);}
 function calcPlates(perSide){
   const denoms=PLATES[CFG.unit]||PLATES.kg;
@@ -436,9 +545,8 @@ function calcPlates(perSide){
 function roundToGymWeight(ex,w,dir){
   if(w<=0||ex.note==='bodyweight'||ex.holdSecs)return w;
   dir=dir||'nearest';
-  const isDB=equipRank(ex)===1;
-  if(isDB){
-    const owned=(CFG.gymDumbbells||[]).slice().sort((a,b)=>a-b);
+  if(isHandWeight(ex)){
+    const owned=handOwned(ex);
     if(!owned.length)return w;
     if(dir==='up'){const hit=owned.find(d=>d>=w-1e-6);return hit!==undefined?hit:owned[owned.length-1];}
     if(dir==='down'){for(let i=owned.length-1;i>=0;i--)if(owned[i]<=w+1e-6)return owned[i];return owned[0];}

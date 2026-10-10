@@ -133,6 +133,8 @@ function restoreInProgress(){
   let wip;
   try{wip=JSON.parse(localStorage.getItem('gp_wip')||'null');}catch(e){wip=null;}
   if(!wip||(!wip.day&&!wip.editDay))return false;
+  // An in-progress workout saved before the v2.10 renames still carries old names.
+  {const rn=exRenamer();renameExList(wip.sd,rn);renameExList(wip.editList,rn);if(wip.pendingRec)renameExList(wip.pendingRec.exercises,rn);if(Array.isArray(wip.mwQueue))wip.mwQueue=wip.mwQueue.map(rn);if(wip.mwCurrent)wip.mwCurrent=rn(wip.mwCurrent);}
   if(wip.day){
     requestWakeLock();
     ST.day=wip.day;ST.exi=wip.exi;ST.sd=wip.sd;ST.t0=wip.t0;ST.pendingRec=wip.pendingRec;

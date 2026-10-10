@@ -2,7 +2,7 @@
 // A plain script (not a module) sharing one global scope with the other
 // js/ files; index.html sets the load order. Map: docs/index-section-map.md
 function allExNames(){const s=new Set();Object.values(EX).forEach(arr=>{if(Array.isArray(arr))arr.forEach(e=>s.add(e.name));});return[...s].sort();}
-const PR_KEY_LIFTS={chest:'Flat barbell bench press',back:'Barbell row',quads:'Barbell back squat',shoulders:'Barbell overhead press'};
+const PR_KEY_LIFTS={chest:'Barbell bench press',back:'Barbell bent over row',quads:'Barbell squat',shoulders:'Barbell overhead press'};
 // Lifts with at least one logged working set at a real weight — exactly what
 // drawChart() can plot — most-logged first. Offering only fixed bellwether
 // lifts left anyone who trains other movements staring at an empty chart.

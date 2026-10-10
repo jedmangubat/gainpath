@@ -46,7 +46,7 @@ function healthSyncTrigger(phase){
 let OB={firstName:'',lang:'en',sex:'',unit:'kg',exp:'',freq:0,split:'',keyLifts:{},step:1};
 const OB_STEPS=3;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();mergeCustomExercises();syncBW(true);}catch(e){}}
+function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();if(migrateExNames()){recomputePRs();saveCFG();saveData();}mergeCustomExercises();syncBW(true);}catch(e){}}
 // One-time migration: CFG.name used to be a single field; split it into
 // firstName/lastName on first load so the greeting can address just the first name.
 function migrateName(){

@@ -1,0 +1,188 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Archivo';src:url('archivo-latin-var.woff2') format('woff2');font-weight:500 900}
+@font-face{font-family:'Space Grotesk';src:url('space-grotesk-latin-var.woff2') format('woff2');font-weight:400 700}
+@font-face{font-family:'Space Mono';src:url('space-mono-latin-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'Space Mono';src:url('space-mono-latin-700.woff2') format('woff2');font-weight:700}
+:root{--base:#0C1512;--surf:#141F1A;--card:#18251F;--line:#22332A;--lime:#C6F24E;--ink:#0C1512;--txt:#F0EFE8;--txt2:#8FA39A}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--base)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--base);font-family:'Space Grotesk',sans-serif;color:var(--txt)}
+#topo{position:absolute;inset:-200px;opacity:.55}
+#glow{position:absolute;width:1400px;height:1400px;border-radius:50%;background:radial-gradient(circle,rgba(198,242,78,.13),rgba(198,242,78,0) 62%);left:700px;top:-160px}
+.abs{position:absolute}
+.disp{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:-.02em;line-height:.95}
+.mono{font-family:'Space Mono',monospace}
+/* hook */
+#q{left:0;right:0;top:330px;text-align:center;font-size:64px;color:var(--txt2)}
+#q .cur{display:inline-block;width:4px;height:62px;background:var(--lime);vertical-align:-8px;margin-left:6px}
+#ans{left:0;right:0;top:450px;text-align:center;font-size:260px;color:var(--lime)}
+/* phones */
+.phone{position:absolute;width:435px;height:908px;border-radius:62px;background:#050907;border:2px solid #22332A;padding:14px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(198,242,78,.05)}
+.screen{position:relative;width:407px;height:880px;border-radius:48px;overflow:hidden;background:var(--base)}
+.screen img{position:absolute;left:0;top:0;width:407px;height:880px}
+.ripple{position:absolute;border-radius:50%;border:4px solid var(--lime);pointer-events:none}
+.dot{position:absolute;border-radius:50%;background:rgba(198,242,78,.35);pointer-events:none}
+.ring{position:absolute;border:4px solid var(--lime);border-radius:18px;pointer-events:none}
+.mask{position:absolute;background:#18251F}
+/* side text */
+.side{left:170px;width:760px}
+.h{font-size:92px;color:var(--txt)}
+.h em{font-style:normal;color:var(--lime)}
+.sub{font-size:34px;color:var(--txt2);line-height:1.3;margin-top:28px}
+.brand{display:flex;align-items:center;gap:22px}
+.brand img{width:84px;height:84px;border-radius:20px}
+.brand span{font-family:'Archivo';font-weight:900;font-size:46px;letter-spacing:.01em;color:var(--txt)}
+.lab{font-size:22px;letter-spacing:.14em;color:var(--lime);text-transform:uppercase;margin-bottom:26px}
+/* outro */
+.no{left:0;right:0;text-align:center;font-size:130px}
+#url{display:inline-block;background:var(--lime);color:var(--ink);font-family:'Space Mono';font-weight:700;font-size:40px;padding:18px 36px;border-radius:999px}
+</style></head>
+<body><div id="stage">
+<svg id="topo" width="2320" height="1480"><defs><pattern id="tp" width="220" height="140" patternUnits="userSpaceOnUse"><path d="M-10 24 Q45 4 110 24 T230 24" stroke="#22332A" stroke-width="1.4" fill="none"/><path d="M-10 74 Q45 54 110 74 T230 74" stroke="#22332A" stroke-width="1.4" fill="none"/><path d="M-10 118 Q45 98 110 118 T230 118" stroke="#22332A" stroke-width="1.4" fill="none"/></pattern></defs><rect width="2320" height="1480" fill="url(#tp)"/></svg>
+<div id="glow"></div>
+
+<!-- 1 hook -->
+<div id="q" class="abs mono"><span id="qt"></span><span class="cur" id="cur"></span></div>
+<div id="ans" class="abs disp">77.5kg</div>
+
+<!-- side texts -->
+<div id="t2" class="abs side" style="top:300px">
+  <div class="brand" id="t2b"><img src="logo.png"><span>GAINPATH</span></div>
+  <div class="h disp" id="t2h" style="margin-top:56px"><div id="t2h1">Suggests your</div><div id="t2h2"><em>next weight.</em></div></div>
+  <div class="sub" id="t2s">A free workout tracker.</div>
+</div>
+<div id="t3" class="abs side" style="top:330px">
+  <div class="lab mono" id="t3l">Your call</div>
+  <div class="h disp"><div id="t3h1">Apply or</div><div id="t3h2"><em>dismiss.</em></div></div>
+  <div class="sub" id="t3s">Snapped to the plates your gym has.</div>
+</div>
+<div id="t4" class="abs side" style="top:330px">
+  <div class="lab mono" id="t4l">After each exercise</div>
+  <div class="h disp"><div id="t4h1">Rate the reps</div><div id="t4h2"><em>you had left.</em></div></div>
+  <div class="sub" id="t4s">Next time's weight comes from it.</div>
+</div>
+<div id="t5" class="abs side" style="top:330px;width:640px">
+  <div class="lab mono" id="t5l">Climb &amp; PRs</div>
+  <div class="h disp"><div id="t5h1">Watch every</div><div id="t5h2"><em>lift climb.</em></div></div>
+  <div class="sub" id="t5s">Estimated 1RM, PRs and badges.<br>All automatic.</div>
+</div>
+
+<!-- phone A (workout / rest) -->
+<div class="phone" id="pA"><div class="screen" id="sA">
+  <img id="i-sug" src="wo-sug.png"><img id="i-app" src="wo-applied.png"><img id="i-log" src="wo-logged.png">
+  <img id="i-rest" src="rest.png"><img id="i-rated" src="rest-rated.png">
+  <img id="i-climb" src="climb.png"><div class="mask" id="cmask"></div>
+  <div class="ring" id="ring"></div>
+  <div class="dot" id="dot"></div><div class="ripple" id="rip"></div>
+</div></div>
+<!-- phone B (PRs) -->
+<div class="phone" id="pB"><div class="screen"><img src="prs.png"></div></div>
+
+<!-- 6 outro -->
+<div id="n1" class="abs no disp" style="top:250px">No account.</div>
+<div id="n2" class="abs no disp" style="top:400px">No ads.</div>
+<div id="n3" class="abs no disp" style="top:550px;color:var(--lime)">No subscription.</div>
+<div id="o2" class="abs" style="left:0;right:0;top:250px;text-align:center">
+  <div class="brand" id="o2b" style="justify-content:center"><img src="logo.png" style="width:110px;height:110px;border-radius:26px"><span style="font-size:64px">GAINPATH</span></div>
+  <div class="h disp" id="o2h" style="font-size:96px;margin-top:60px">Your workouts stay<br><em>on your phone.</em></div>
+  <div id="o2u" style="margin-top:60px"><span id="url">jedmangubat.github.io/gainpath</span></div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const p=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3);            // ease out cubic
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c=1.5;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+const K=407/390; // app px -> screen px
+function S(el,o){const s=$(el).style;for(const k in o)s[k]=o[k];}
+// in/out envelope: fade+rise in over [a,a+d], out over [b,b+d2]
+function io(el,t,a,b,d=.35,d2=.25,rise=40){
+  const i=eo(p(t,a,a+d)),o=eio(p(t,b,b+d2));
+  S(el,{opacity:i*(1-o),transform:`translateY(${(1-i)*rise-o*30}px)`});
+}
+function tap(t,t0,x,y){ // x,y in app coords
+  const d=t-t0; const cx=x*K,cy=y*K;
+  if(d<-.25||d>.6){S('rip',{opacity:0});S('dot',{opacity:0});return false;}
+  const pre=p(t,t0-.25,t0); // finger approach: dot shrinks in
+  const r=d<0?40-pre*12:28+eo(p(d,0,.5))*60;
+  const op=d<0?pre*.9:(1-p(d,0,.5));
+  S('rip',{left:cx-r+'px',top:cy-r+'px',width:2*r+'px',height:2*r+'px',opacity:d<0?0:op});
+  const dr=d<0?30:30*(1-p(d,0,.3));
+  S('dot',{left:cx-dr+'px',top:cy-dr+'px',width:2*dr+'px',height:2*dr+'px',opacity:d<0?pre:op});
+  return true;
+}
+function show(id,o){S(id,{opacity:o});}
+window.render=function(t){
+  // background drift
+  S('topo',{transform:`translate(${-t*9}px,${-t*4}px)`});
+  S('glow',{transform:`translate(${Math.sin(t*.4)*60}px,${Math.cos(t*.3)*40}px)`});
+
+  // ---- 1 hook 0–3
+  const q='What do I lift today?';const n=Math.floor(cl((t-.25)/1.0)*q.length);
+  $('qt').textContent=q.slice(0,n);
+  const o1=eio(p(t,2.7,2.95));
+  S('q',{opacity:(t<.1?t/.1:1)*(1-o1),transform:`translateY(${-o1*40}px)`});
+  S('cur',{opacity:(n<q.length||Math.floor(t*2.5)%2===0)?1:0});
+  const a=p(t,1.5,1.72);
+  S('ans',{opacity:(a>0?1:0)*(1-o1),transform:`scale(${1.35-.35*back(a)}) translateY(${-o1*40}px)`});
+
+  // ---- phone A position
+  let ax=1250,ay=86,ar=0,as=1,aop=1;
+  const inA=eo(p(t,3.0,3.55));
+  ax+= (1-inA)*420; aop=inA;
+  // scene 5: shift left
+  const s5=eio(p(t,13.4,13.9)); ax-= s5*240; ar=-s5*3;
+  const z=1+.3*eio(p(t,4.2,4.8))-.3*eio(p(t,7.2,7.7));
+  // exit 16.1–16.45
+  const ex=eio(p(t,16.1,16.45)); ay+=ex*140; aop*=1-ex;
+  S('pA',{left:ax+'px',top:ay+'px',opacity:aop,transform:`rotate(${ar}deg) scale(${as*z})`,transformOrigin:'219px 497px'});
+  const inB=eo(p(t,13.55,14.1));
+  S('pB',{left:(1450+(1-inB)*400)+'px',top:(86+24+ex*140)+'px',opacity:inB*(1-ex),transform:`rotate(${3*inB}deg) scale(.95)`,zIndex:1});
+  S('pA',{zIndex:2});
+
+  // screens inside A
+  show('i-sug',1);
+  show('i-app',t>=6.92?1:0);
+  show('i-log',t>=8.72?1:0);
+  // rest screen pushes in from right 10.0–10.35
+  const rp=eio(p(t,10.0,10.35));
+  S('i-rest',{opacity:t>=10?1:0,transform:`translateX(${(1-rp)*407}px)`});
+  S('i-rated',{opacity:t>=11.52?1:0});
+  const cp=eio(p(t,13.4,13.75));
+  S('i-climb',{opacity:t>=13.4?1:0,transform:`translateX(${(1-cp)*407}px)`});
+  // chart draw: mask over plot area slides right
+  const w=eio(p(t,13.85,15.0));
+  const mx=60*K,my=362*K,mw=316*K,mh=180*K;
+  S('cmask',{opacity:t>=13.4?1:0,left:(mx+w*mw)+'px',top:my+'px',width:(mw*(1-w)+2)+'px',height:mh+'px',transform:`translateX(${(1-cp)*407}px)`});
+
+  // chip ring pulse 4.1–6.9
+  const rg=p(t,4.1,4.45), rgo=p(t,6.75,6.95);
+  const pad=6+Math.sin(Math.max(0,t-4.45)*6)*3;
+  S('ring',{left:(33*K-pad)+'px',top:(415*K-pad)+'px',width:(324*K+2*pad)+'px',height:(97*K+2*pad)+'px',opacity:eo(rg)*(1-rgo)});
+
+  // taps
+  tap(t,6.85,76,487)||tap(t,8.0,302,438)||tap(t,8.62,302,494)||tap(t,11.45,278,418);
+
+  // ---- side texts
+  io('t2b',t,3.2,5.72); io('t2h1',t,3.35,5.75); io('t2h2',t,3.5,5.78); io('t2s',t,3.75,5.8);
+  S('t2',{opacity:t<3||t>6.2?0:1});
+  io('t3l',t,6.05,9.72); io('t3h1',t,6.12,9.75); io('t3h2',t,6.25,9.78); io('t3s',t,7.4,9.8);
+  S('t3',{opacity:t<6||t>10.2?0:1});
+  io('t4l',t,10.1,13.2); io('t4h1',t,10.18,13.23); io('t4h2',t,10.3,13.26); io('t4s',t,11.7,13.28);
+  S('t4',{opacity:t<10||t>13.6?0:1});
+  io('t5l',t,13.6,16.05); io('t5h1',t,13.68,16.08); io('t5h2',t,13.8,16.1); io('t5s',t,14.3,16.12);
+  S('t5',{opacity:t<13.5||t>16.5?0:1});
+
+  // ---- 6 outro
+  const nIn=(el,a0)=>{const x=back(p(t,a0,a0+.3));const o=eio(p(t,19.0,19.25));S(el,{opacity:cl(p(t,a0,a0+.12))*(1-o),transform:`translateY(${(1-x)*50-o*40}px) scale(${.92+.08*x})`});};
+  nIn('n1',16.6);nIn('n2',17.1);nIn('n3',17.6);
+  io('o2b',t,19.35,99,.4); io('o2h',t,19.5,99,.4); io('o2u',t,19.8,99,.4);
+  const up=back(p(t,19.8,20.15));S('url',{transform:`scale(${.9+.1*up})`,display:'inline-block'});
+};
+window.ready=async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));return true;};
+</script>
+</body></html>

@@ -20,7 +20,7 @@
 
 import { chromium, webkit, devices } from 'playwright';
 import { createServer } from 'http';
-import { readFile, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -51,15 +51,15 @@ function bigUser(seedW) {
   for (let i = 0; i < 400; i++) {
     const d = new Date(Date.UTC(2025, 0, 1) + i * 2 * 864e5).toISOString().slice(0, 10);
     history.push({ day: 'push', dayName: 'Push', date: d, dk: d, mk: d.slice(0, 7), dur: '48m', sets: 6, feel: 'good', exercises: [
-      { name: 'Flat barbell bench press', exFeel: 'good', sets: [{ done: true, t: 'w', w: 95, r: 12 }, { done: true, t: 'x', w: seedW + (i % 20) * 5, r: 8 }, { done: true, t: 'x', w: seedW + (i % 20) * 5, r: 7 }] },
+      { name: 'Barbell bench press', exFeel: 'good', sets: [{ done: true, t: 'w', w: 95, r: 12 }, { done: true, t: 'x', w: seedW + (i % 20) * 5, r: 8 }, { done: true, t: 'x', w: seedW + (i % 20) * 5, r: 7 }] },
       { name: 'My cable thing', exFeel: 'hard', note: 'custom note', sets: [{ done: true, t: 'x', w: 42.5, r: 12 }] },
-      { name: 'Hack squat', exFeel: 'easy', sets: [{ done: true, t: 'x', w: 180, r: 10 }] }
+      { name: 'Machine hack squat', exFeel: 'easy', sets: [{ done: true, t: 'x', w: 180, r: 10 }] }
     ] });
   }
   const cfg = { name: 'Big Lbs', firstName: 'Big', lastName: 'Lbs', sex: 'male', setup: true, unit: 'lbs', bw: 187.4, exp: 'advanced', goal: 'strength',
     split: 'pplul', freq: 5, warmup: true, wuReps: 10, prefReps: 8, prefRest: 120, prefSets: 3, startingWeights: 'ai', keyLifts: { chest: { w: 225, r: 5 } },
     customExercises: [{ name: 'My cable thing', mg: 'chest', baseW: 40, custom: true, equip: 'cable' }], gymDumbbells: [5, 10, 25, 50, 75, 100], gymPlates: { 45: 1, 25: 1, 10: 1, 5: 1, 2.5: 1 },
-    dayPlan: { push: { 'Flat barbell bench press': { w: 235, r: 5 } } }, unitMemo: { from: 'kg', to: 'lbs', w: { '220.5': 100 }, db: {}, pl: {} }, lang: 'en', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true };
+    dayPlan: { push: { 'Barbell bench press': { w: 235, r: 5 } } }, unitMemo: { from: 'kg', to: 'lbs', w: { '220.5': 100 }, db: {}, pl: {} }, lang: 'en', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true };
   const bw = [{ dk: '2025-01-01', date: 'Jan 1, 2025', w: 190.2, waist: 34, arms: null }, { dk: '2026-06-01', date: 'Jun 1, 2026', w: 187.4, waist: null, arms: 15.5 }];
   return { cfg, history, bw, mw: { 'Hack squat': 75, 'Smith machine': 20 } };
 }
@@ -228,10 +228,57 @@ async function main() {
   check('restore on a fresh device (onboarding): every record identical', core(after) === core(before), firstDiff(before, after));
   check('restore: lbs unit, custom exercise, gear, day plan and unit memo survive',
     after.cfg.unit === 'lbs' && after.cfg.customExercises[0].name === 'My cable thing' && JSON.stringify(after.cfg.gymDumbbells) === JSON.stringify(user.cfg.gymDumbbells) &&
-    after.cfg.dayPlan.push['Flat barbell bench press'].w === 235 && after.cfg.unitMemo.w['220.5'] === 100);
-  const prBench = after.prs['Flat barbell bench press'];
+    after.cfg.dayPlan.push['Barbell bench press'].w === 235 && after.cfg.unitMemo.w['220.5'] === 100);
+  const prBench = after.prs['Barbell bench press'];
   check('restore: PRs are rebuilt from history (not trusted from the file)', prBench && prBench.w === 185 + 19 * 5, prBench);
   await cB.close();
+
+  // ── 1b. v2.10 exercise renames: data saved under the old names follows the rename.
+  const oldUser = bigUser(185); oldUser.history = oldUser.history.slice(0, 6);
+  oldUser.history.forEach(h => { h.exercises[0].name = 'Flat barbell bench press'; h.exercises[2].name = 'Hack squat'; h.exercises.push({ name: 'Leg press', exFeel: 'good', sets: [{ done: true, t: 'x', w: 300, r: 10 }] }); });
+  // The user's own exercise happens to carry an old built-in name: it must be left alone.
+  oldUser.cfg.customExercises.push({ name: 'Leg press', mg: 'quads', baseW: 100, custom: true, equip: 'machine' });
+  oldUser.cfg.customDays = { push: ['Flat barbell bench press', 'Lat pulldown', 'My cable thing'] };
+  oldUser.cfg.dayPlan = { push: { 'Flat barbell bench press': { w: 235, r: 5 } } };
+  oldUser.cfg.syncDismiss = { 'Lat pulldown': 100 };
+  oldUser.mw = { 'Hack squat': 75, 'Plate-loaded standing calf raise': 40, 'Smith machine': 20 };
+  const renamedOK = (s) => {
+    const names = new Set(s.history.flatMap(h => h.exercises.map(e => e.name)));
+    return names.has('Barbell bench press') && names.has('Machine hack squat') && names.has('Leg press') && !names.has('Flat barbell bench press') && !names.has('Hack squat') &&
+      JSON.stringify(s.cfg.customDays.push) === JSON.stringify(['Barbell bench press', 'Machine pulldown', 'My cable thing']) &&
+      s.cfg.dayPlan.push['Barbell bench press'].w === 235 && !('Flat barbell bench press' in s.cfg.dayPlan.push) &&
+      s.cfg.syncDismiss['Machine pulldown'] === 100 && !('Lat pulldown' in s.cfg.syncDismiss) &&
+      s.mw['Hack squat'] === 75 && s.mw['Machine plate-loaded calf raise'] === 40 && !('Plate-loaded standing calf raise' in s.mw) && s.mw['Smith machine'] === 20 &&
+      s.prs['Barbell bench press'] && s.prs['Machine hack squat'] && s.prs['Leg press'] && !s.prs['Flat barbell bench press'] && !s.prs['Hack squat'];
+  };
+  let [cR, r1] = await ctx();
+  await seed(r1, oldUser);
+  const ren = await stored(r1);
+  check('renames: history, custom days, day plan, sync chip, machine bases and PRs move to the new names', renamedOK(ren), JSON.stringify({ d: ren.cfg.customDays, p: ren.cfg.dayPlan, mw: ren.mw, prs: Object.keys(ren.prs) }));
+  check('renames: sets, feel and notes are untouched', ren.history.length === 6 && ren.history[0].exercises[0].sets.length === 3 && ren.history[0].exercises[1].note === 'custom note');
+  await r1.reload(); await r1.waitForSelector('#s-home.active');
+  check('renames: a second load changes nothing', core(await stored(r1)) === core(ren));
+  check('renames: an in-progress workout and day edit are renamed on resume', await r1.evaluate(() => {
+    const rn = exRenamer(), sd = [{ ex: { name: 'Lat pulldown' }, sets: [] }, { ex: { name: 'My cable thing' }, sets: [] }], list = [{ name: 'Hack squat' }];
+    renameExList(sd, rn); renameExList(list, rn);
+    return sd[0].ex.name === 'Machine pulldown' && sd[1].ex.name === 'My cable thing' && list[0].name === 'Machine hack squat' && rn('Leg press') === 'Leg press';
+  }));
+  check('renames: every built-in exercise still has its image file', await r1.evaluate(async () => {
+    const miss = [];
+    for (const n of Object.keys(EXPOOL)) { if (EXPOOL[n].custom) continue; const r = await fetch('images/exercises/' + exSlug(EX_OLD_NAME[n] || n) + (EXPOOL[n].webp ? '.webp' : '.png'), { method: 'HEAD' }); if (!r.ok) miss.push(n); }
+    return miss.length ? miss.join(', ') : true;
+  }) === true);
+  await cR.close();
+  // A backup made before the renames restores under the new names.
+  const oldFile = path.join(OUT, 'old-names.json');
+  await writeFile(oldFile, JSON.stringify({ cfg: oldUser.cfg, history: oldUser.history, prs: {}, mw: oldUser.mw, bw: oldUser.bw, exported: new Date().toISOString(), version: '2.0' }));
+  let [cS, r2] = await ctx();
+  await r2.goto(URL0);
+  await r2.waitForSelector('#ob-import-file', { state: 'attached' });
+  await r2.setInputFiles('#ob-import-file', oldFile);
+  await r2.waitForSelector('#s-home.active');
+  check('renames: a backup made under the old names restores under the new ones', renamedOK(await stored(r2)));
+  await cS.close();
 
   // ── 2. Restoring over existing data: confirm, keep a copy, undo.
   const other = bigUser(100); other.history = other.history.slice(0, 12);

@@ -1,0 +1,105 @@
+musclewiki_name,plan,reason,gainpath_name
+Barbell 30 Degree Shrug,generate,,Barbell 30-degree shrug
+Barbell Banded Back Squat,hold,Needs resistance bands (Band group not decided yet),
+Barbell Banded Deadlift,hold,Needs resistance bands (Band group not decided yet),
+Barbell Banded Front Squat,hold,Needs resistance bands (Band group not decided yet),
+Barbell Banded Romanian Deadlift,hold,Needs resistance bands (Band group not decided yet),
+Barbell Banded Split Squat,hold,Needs resistance bands (Band group not decided yet),
+Barbell Behind The Back 30 Degree Shrug,generate,,Barbell behind-the-back 30-degree shrug
+Barbell Behind The Back Shrug,generate,,Barbell behind-the-back shrug
+Barbell Behind The Back Wrist Curl,generate,,Barbell behind-the-back wrist curl
+Barbell Behind The Neck Press,generate,,Barbell behind-the-neck press
+Barbell Behind The Neck Seated Overhead Press,generate,,Barbell behind-the-neck seated overhead press
+Barbell Block Conventional Deadlift,generate,,Barbell block conventional deadlift
+Barbell Bradford Press,generate,,Barbell Bradford press
+Barbell Bulgarian Split Squat,generate,,Barbell Bulgarian split squat
+Barbell Calf Jump,drop,A fast calf raise that never leaves the floor: same picture as Barbell calf raises,
+Barbell Clean And Jerk,generate,,Barbell clean and jerk
+Barbell Clean And Press,generate,,Barbell clean and press
+Barbell Coan Deadlift,hold,MuscleWiki describes it word for word like a plain deadlift; what makes it a Coan deadlift is not explained,
+Barbell Conventional Pause Deadlift,drop,"Same movement and picture as Barbell deadlift, only the tempo differs",
+Barbell Cossack Squat,generate,,Barbell cossack squat
+Barbell Curtsy Deficit Lunge,generate,,Barbell curtsy deficit lunge
+Barbell Curtsy Lunge,generate,,Barbell curtsy lunge
+Barbell Decline Close Grip Bench Press,generate,,Barbell decline close-grip bench press
+Barbell Deficit Conventional Deadlift,generate,,Barbell deficit conventional deadlift
+Barbell Deficit Lunge,generate,,Barbell deficit lunge
+Barbell Feet Elevated Figure Four Glute Bridge,generate,,Barbell feet-elevated figure-four glute bridge
+Barbell Feet Elevated Glute Bridge,generate,,Barbell feet-elevated glute bridge
+Barbell Feet Elevated Single Leg Glute Bridge,generate,,Barbell feet-elevated single-leg glute bridge
+Barbell Feet Elevated Staggered Glute Bridge,generate,,Barbell feet-elevated staggered glute bridge
+Barbell Figure Four Heels Elevated Hip Thrust,generate,,Barbell figure-four heels-elevated hip thrust
+Barbell Figure Four Hip Thrust,generate,,Barbell figure-four hip thrust
+Barbell Forward Lunge,generate,,Barbell forward lunge
+Barbell Front Rack Deficit Lunge,generate,,Barbell front rack deficit lunge
+Barbell Front Rack Step Up,generate,,Barbell front rack step-up
+Barbell Front Rack Step Up Knee Drive,generate,,Barbell front rack step-up knee drive
+Barbell Front Raise,generate,,Barbell front raise
+Barbell Front Squat Bodybuilding,generate,,Barbell front squat bodybuilding
+Barbell Front Squat With Straps,drop,"Same movement as the front squat, only a grip aid differs",
+Barbell Full Front Raise,generate,,Barbell full front raise
+Barbell Guillotine High Incline Bench Press,generate,,Barbell guillotine high incline bench press
+Barbell Guillotine Incline Bench Press,generate,,Barbell guillotine incline bench press
+Barbell Hang Clean And Press,generate,,Barbell hang clean and press
+Barbell Heels Elevated Hip Thrust,generate,,Barbell heels-elevated hip thrust
+Barbell Heels Up Back Squat,generate,,Barbell heels-up back squat
+Barbell Heels Up Front Squat,generate,,Barbell heels-up front squat
+Barbell High Bar Squat,drop,Already in the app as Barbell squat,
+Barbell High Incline Bench Press,generate,,Barbell high incline bench press
+Barbell Hooklying Bench Press,generate,,Barbell hooklying bench press
+Barbell J M Press,generate,,Barbell JM press
+Barbell Jefferson Deadlift,generate,,Barbell Jefferson deadlift
+Barbell Kickstand Squat,generate,,Barbell kickstand squat
+Barbell Landmine Row,hold,MuscleWiki's steps do not separate it from the existing Landmine T-bar rows,
+Barbell Landmine Side Bend,generate,,Barbell landmine side bend
+Barbell Landmine Sissy Squat,generate,,Barbell landmine sissy squat
+Barbell Larsen Bench Press,generate,,Barbell Larsen bench press
+Barbell Lateral Lunge,generate,,Barbell lateral lunge
+Barbell Laying Triceps Extensions,drop,Already in the app as Barbell skull crusher (lowered to the forehead),
+Barbell Long Landmine Row,hold,MuscleWiki's steps are the same as its Landmine Row apart from the grip,
+Barbell Low Bar Good Morning,generate,,Barbell low-bar good morning
+Barbell Low Bar Squat,generate,,Barbell low-bar squat
+Barbell Meadows Row,generate,,Barbell Meadows row
+Barbell Muscle Snatch,generate,,Barbell muscle snatch
+Barbell Overhead Tricep Extension,generate,,Barbell overhead tricep extension
+Barbell Pause Squat,drop,"Same movement and picture as Barbell squat, only the tempo differs",
+Barbell Power Snatch,generate,,Barbell power snatch
+Barbell Pronated Row,drop,Already in the app as Barbell bent over row,
+Barbell Quad Stomp,hold,"Held for kettlebells and dumbbells too. MuscleWiki: bar on the back, front foot on a plate, lean onto it and lower until calf meets hamstring",
+Barbell Reverse Deadlift,generate,,Barbell reverse deadlift
+Barbell Reverse Grip Bench Press,generate,,Barbell reverse-grip bench press
+Barbell Reverse Lunge,generate,,Barbell reverse lunge
+Barbell Seated Calf Raise,generate,,Barbell seated calf raise
+Barbell Seated Full Front Raise,generate,,Barbell seated full front raise
+Barbell Shoulder Extension,generate,,Barbell shoulder extension
+Barbell Side Step Up,generate,,Barbell side step-up
+Barbell Silverback Shrug,generate,,Barbell silverback shrug
+Barbell Single Leg Deadlift,generate,,Barbell single-leg deadlift
+Barbell Single Leg Heels Elevated Hip Thrust,generate,,Barbell single-leg heels-elevated hip thrust
+Barbell Single Leg Hip Thrust,generate,,Barbell single-leg hip thrust
+Barbell Situp,generate,,Barbell sit-up
+Barbell Snatch,generate,,Barbell snatch
+Barbell Snatch Grip Deadlift,generate,,Barbell snatch-grip deadlift
+Barbell Snatch Grip High Pull,generate,,Barbell snatch-grip high pull
+Barbell Snatch Grip Romanian Deadlift,generate,,Barbell snatch-grip Romanian deadlift
+Barbell Spinal Jefferson Curl,generate,,Barbell spinal Jefferson curl
+Barbell Split Jerk,generate,,Barbell split jerk
+Barbell Split Squat,generate,,Barbell split squat
+Barbell Spoto Press,drop,A bench press paused just above the chest: same picture as Barbell bench press,
+Barbell Staggered Deadlift,generate,,Barbell staggered deadlift
+Barbell Step Up Balance,drop,Same picture as the existing Barbell step-up (the trailing foot stays off the box),
+Barbell Step Up Knee Drive,generate,,Barbell step-up knee drive
+Barbell Suitcase Carry,generate,,Barbell suitcase carry
+Barbell Suitcase Deadlift,generate,,Barbell suitcase deadlift
+Barbell Sumo Pause Deadlift,drop,"Same movement and picture as Barbell sumo deadlift, only the tempo differs",
+Barbell Supinated Pendlay Row,generate,,Barbell supinated Pendlay row
+Barbell Tap Pause Squat,drop,Squat down to tap a box: already in the app as Box squat,
+Barbell Thruster,generate,,Barbell thruster
+Barbell Toes Up Calf Raise,generate,,Barbell toes-up calf raise
+Barbell Tricep Guillotine Press,hold,"Held for dumbbells too. MuscleWiki: lying, lower the bar to the neck by bending the elbows; not clearly different from the guillotine bench press in a picture",
+Barbell Wrist Curl,generate,,Barbell wrist curl
+Barbell Wrist Extension,generate,,Barbell wrist extension
+Barbell Z Press,generate,,Barbell Z press
+Barbell Zercher Deficit Lunge,generate,,Barbell Zercher deficit lunge
+Barbell Zercher Good Morning,generate,,Barbell Zercher good morning
+Barbell Zercher Squat,generate,,Barbell Zercher squat

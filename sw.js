@@ -1,7 +1,11 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
 // any cache not matching the current name.
-const CACHE_NAME = 'gainpath-v45';
+const CACHE_NAME = 'gainpath-v46';
+// Exercise images that are not precached (the .webp ones added after v2.9)
+// are fetched the first time they are shown and kept here. This cache is not
+// tied to CACHE_NAME, so a release doesn't make phones download them again.
+const IMG_CACHE = 'gainpath-img-v1';
 const CDN_URLS = [
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
@@ -293,7 +297,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME && n !== IMG_CACHE).map((n) => caches.delete(n))))
       .then(() => self.clients.claim())
   );
 });
@@ -317,7 +321,8 @@ self.addEventListener('fetch', (event) => {
   if (sameOrigin && req.destination === 'image') {
     event.respondWith(
       caches.match(req).then((cached) => cached || fetch(req).then((res) => {
-        if (res.ok) caches.open(CACHE_NAME).then((c) => c.put(req, res.clone()));
+        const onDemand = url.pathname.includes('/images/exercises/') && url.pathname.endsWith('.webp');
+        if (res.ok) caches.open(onDemand ? IMG_CACHE : CACHE_NAME).then((c) => c.put(req, res.clone()));
         return res;
       }))
     );

@@ -6,6 +6,126 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Kettlebells are their own equipment in My gym.** Settings → My gym has a
+  section of its own, "Kettlebells owned" (every even kilo from 4 to 50, or every
+  whole pound from 5 to 110, since sets differ by gym and brand), stored as
+  `CFG.gymKettlebells`. A kettlebell exercise now snaps its suggested weights
+  and its +/- buttons to the kettlebells you ticked, not to your dumbbells.
+  With none ticked it uses the standard kettlebell sizes, since kettlebells
+  don't come in between (dumbbells with none ticked stay unrestricted, as
+  before). Switching kg/lb converts the ticked sizes and switches back exactly.
+- **164 kettlebell exercises.** MuscleWiki's kettlebell catalogue is added
+  under its own names (swings, goblet squats, cleans, presses, snatches,
+  carries, lunges, rows and more), each with its own
+  three-panel illustration and with tips and step-by-step instructions in
+  English, Japanese and Korean. They live in the exercise picker only (no
+  built-in program uses them). 12 of MuscleWiki's kettlebell entries are left
+  out because the movement couldn't be confirmed from the name:
+  `docs/musclewiki-held-back.md`.
+- **Kettlebell lifts take part in the related-lift estimates**, treated like
+  dumbbells (`LIFT_REL` type `'k'`, the matching dumbbell ratio or slightly
+  under it): a first kettlebell lift starts from your barbell, dumbbell or
+  other kettlebell lifts on a real kettlebell size, your kettlebell numbers
+  feed your barbell and dumbbell estimates in return, and a kettlebell lift
+  that has fallen far behind its related lifts gets the same Apply/Dismiss
+  sync chip. 50 kettlebell lifts are targets only (type `'K'`): the ones
+  limited by grip or balance (bottoms-up, Z press, Larsen, guillotine, long
+  lever, single-leg, cossack, curtsy, step-up, half kneeling, kickstand) and
+  the combined lifts (thruster, clean and press, jerk, push press). A light
+  number there doesn't mean you are weak, so it never drives another lift.
+  Swings, snatches, carries, core and wrist moves start from their default.
+- **More dumbbell exercises from MuscleWiki's catalogue** (230), each with its own three-panel illustration and with
+  tips and step-by-step instructions in English, Japanese and Korean. Names
+  follow the app's hyphenated style (`single-arm`, `step-up`). Plain lifts join
+  the related-lift estimates like the existing dumbbell lifts (`LIFT_REL` type
+  `'d'`); the ones limited by balance or made of several lifts (Z press,
+  thruster, clean and press, single-leg and curtsy work) are targets only
+  (new type `'D'`, the dumbbell twin of `'K'`; 66 of them, 133 are `'d'`): they get a starting weight but
+  never drive another lift and get no sync chip. Left out, with reasons:
+  `docs/musclewiki-dumbbell-plan.csv`.
+- **More barbell exercises from MuscleWiki's catalogue** (83): low-bar,
+  Zercher and heels-up squats, lunges and step-ups, deficit, block,
+  snatch-grip, Jefferson and suitcase deadlifts, feet-elevated bridges and
+  single-leg hip thrusts, shrug and press variations, wrist work and the
+  Olympic lifts, each with its own three-panel illustration and with tips and
+  step-by-step instructions in English, Japanese and Korean. Plain lifts join
+  the related-lift estimates like the existing barbell lifts (`LIFT_REL` type
+  `'b'`, 28 of them). The ones limited by balance, mobility or technique
+  (Zercher, single-leg, cossack, curtsy, step-up, behind-the-neck, Z press,
+  Larsen, guillotine, JM press, thruster, clean and press, jerk) are targets
+  only (new type `'B'`, the barbell twin of `'K'` and `'D'`; 41 of them): they
+  get a starting weight but never drive another lift and get no sync chip.
+  Snatches, carries, core and wrist moves start from their default. Left out,
+  with reasons: `docs/musclewiki-barbell-plan.csv`.
+- **More exercises from the rest of MuscleWiki's catalogue** (361: EZ bar 11,
+  trap bar 8, Smith machine 21, weight plate 51, landmine 49, machine 30,
+  cable 111, bodyweight 80), each with its own three-panel illustration and
+  with tips and step-by-step instructions in English, Japanese and Korean. EZ
+  bar and trap bar lifts join the related-lift estimates as barbell lifts
+  (`'b'`, or target-only `'B'` for the Zercher squat, Cuban press, single-leg
+  and staggered ones); trap bar entries carry `equip:'barbell'` so they sort
+  and load like a barbell. Smith machine lifts use the Smith type `'s'`.
+  Weight-plate and landmine exercises are labelled "Other" (`equip:'other'`)
+  and start from their default, like the existing Landmine overhead press.
+  Cable entries carry `equip:'cable'` so names such as "Cable hamstring curl"
+  are not mistaken for a machine or a barbell lift; cable presses, flys, rows,
+  raises, curls and triceps lifts get a one-way cable estimate (`'c'`), core
+  moves none. The bodyweight additions (lunges, single-leg squats, Nordic
+  curl, feet-elevated bridges, push-up and chin-up variants, core work, and
+  20 plyometric and conditioning moves such as box jumps, burpees and jump
+  rope) start with no weight and take no related-lift estimate; the planks,
+  hanging L-sit, jump rope and butt kick are timed, and the weighted push-up,
+  chin-up, pull-up and forearm plank log the added weight. Left out, with
+  reasons: `docs/musclewiki-held-back.md`.
+- **"Kettlebell" is its own label in the exercise lists**, sorted straight
+  after Dumbbell, and a choice when you add a custom exercise. An exercise
+  with "kettlebell" in its name used to be labelled Dumbbell. A custom
+  exercise you saved as Dumbbell stays Dumbbell.
+- **`marketing/` folder for Facebook graphics** (dev-side only, the app never
+  loads it): the Page cover (`facebook-cover.html` over `facebook-cover-art.png`,
+  rendered to `facebook-cover.jpg`), the "Home Screen in 4 taps" post graphic
+  and caption, and `render.mjs`, which renders either HTML file to an image
+  with the app's own fonts. `brag-output/` holds the launch video and its
+  sources.
+
+### Changed
+- **The catch-up chip now also covers a lift you haven't done for a while.**
+  Before, "your related lifts say you can lift more" appeared only when a
+  lift's own strength was below 75% of what its related lifts imply. When the
+  lift hasn't been done for 4 or more weeks (and its body part was still being
+  trained, so the "back after a break" chip doesn't apply), the line is now
+  85%. Example: skip the dumbbell bench for five weeks while your barbell
+  bench goes up, and coming back at 22.5 kg a hand you're offered 30 kg. It is
+  still an Apply/Dismiss chip, a lift rated 1–2 or 0 reps left last time never
+  gets it, and lifts done within the last 4 weeks behave exactly as before.
+  85% rather than 90% because comparing two lifts is only accurate to about
+  ±13%; the sources are in `docs/superpowers/plans/2026-09-25-lift-sync.md`.
+- **118 built-in exercises are renamed to the names MuscleWiki uses**, so the
+  list reads equipment-first and matches what people search for ("Flat barbell
+  bench press" is now "Barbell bench press", "Lat pulldown" is "Machine
+  pulldown", "Leg press" is "Machine leg press"). The other 103 keep their
+  names: 57 already matched and 46 have no clear MuscleWiki equivalent. The
+  full list is `EX_RENAMES` in `js/exercises.js`; the matching is recorded in
+  `docs/exercise-inventory.csv`.
+- **Saved data follows the rename.** `migrateExNames()` runs on every load, on
+  every restore and when an in-progress workout resumes: logged sessions,
+  custom days, day plans, dismissed sync chips and machine base weights move to
+  the new names, and PRs are rebuilt. A backup made before the rename restores
+  under the new names. An exercise you created yourself is never renamed, even
+  if it shares an old built-in name. The hack squat machine's base weight stays
+  saved under "Hack squat", shared with the hack squat calf raise as before.
+- Exercise images keep their original file names (`EX_OLD_NAME`), so the
+  update doesn't make phones download them again.
+- **New exercise images are cached the first time they are shown, not at
+  install.** An exercise marked `webp:true` loads
+  `images/exercises/<slug>.webp` (about 50 KB, against 1.2 MB for the older
+  PNGs), and the service worker keeps it in its own `gainpath-img-v1` cache,
+  which a release doesn't clear. The 222 existing PNGs are still precached as
+  before. An exercise whose picture you have never opened shows the
+  placeholder if you first open it offline. No exercise uses this yet; it is
+  the groundwork for the kettlebell set. `CACHE_NAME` is now `gainpath-v46`.
+
 ## [2.9.1] - 2026-10-01
 
 ### Added

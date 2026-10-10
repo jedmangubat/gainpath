@@ -19,7 +19,7 @@ function stepWeight(i,delta){
   // value instead of back to the dumbbell you started from. Step to the
   // actual next/previous owned weight instead, so up-then-down always
   // round-trips.
-  const owned=equipRank(ex)===1?(CFG.gymDumbbells||[]).slice().sort((a,b)=>a-b):null;
+  const owned=isHandWeight(ex)?handOwned(ex):null;
   if(owned&&owned.length){
     const next=delta>0?owned.find(d=>d>dispW+1e-6):owned.slice().reverse().find(d=>d<dispW-1e-6);
     updSet(i,next!==undefined?next:(delta>0?owned[owned.length-1]:owned[0]));
@@ -271,8 +271,8 @@ function badgeSvg(id,locked){return'<svg viewBox="0 0 64 64" class="bdg'+(locked
 // Volume thresholds are stated in kg; a lbs user gets the equivalent in their
 // own unit, since logged weights are already in whatever unit they set.
 function bdgVolT(kg){return CFG.unit==='lbs'?Math.round(kg*2.2):kg;}
-const BDG_BW_LIFTS=['Barbell back squat','Flat barbell bench press','Barbell deadlift'];
-const BDG_DBL_LIFTS=['Barbell back squat','Barbell deadlift'];
+const BDG_BW_LIFTS=['Barbell squat','Barbell bench press','Barbell deadlift'];
+const BDG_DBL_LIFTS=['Barbell squat','Barbell deadlift'];
 const BDG_ALLROUND=['chest','back','shoulders','quads','hamstrings'];
 // `a` is the accumulator recomputeBadges() carries forward through history.
 const BADGES=[

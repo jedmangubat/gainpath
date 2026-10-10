@@ -94,11 +94,21 @@ their own phone. Protect existing data first.
   fails otherwise). Never silently change a formula's behaviour; an unapproved
   bug gets a `known('Bn', …)` check plus a CHANGELOG "Known issues" line.
 - **Every proposed weight is snapped** through `roundToGymWeight(ex,w,dir)`
-  (`up`, `down` for deloads) to the user's gear.
+  (`up`, `down` for deloads) to the user's gear. Dumbbells and kettlebells are
+  separate racks: test with `isHandWeight(ex)`, read `handOwned(ex)`/
+  `handRack(ex)`, never `CFG.gymDumbbells` directly. Kettlebell is `equipRank` 6
+  (display order comes from `EQUIP_ORDER`).
 - **Starting weights:** `liftEstimate()` via `LIFT_REL`. A new free-weight or
   cable exercise needs a `LIFT_REL` entry. Cables are one-way (never a source
   for free weights, no sync chip). Upper-body bodyweight moves are sources only.
-  No lower-body bodyweight moves or plate-loaded machines. Related lifts only
+  No lower-body bodyweight moves or plate-loaded machines. Kettlebell lifts are
+  type `'k'` (two-way, treated as a dumbbell, the matching dumbbell ratio or a
+  little under) or `'K'` (target only, no sync chip: lifts limited by grip or
+  balance, and combined lifts like thrusters and clean and press); swings,
+  snatches, carries, core and wrist moves get no entry. Dumbbell lifts added
+  from the MuscleWiki catalogue follow the same split: `'d'`, or `'D'` (target
+  only) for the unstable and combined ones; barbell lifts from that catalogue
+  are `'b'` or `'B'` (target only) by the same rule. Related lifts only
   raise a lift, via the `syncSuggest()` chip; a lift's own history wins.
 - Body weight: read `curBW()`, never `CFG.bw`; end `ST.bw` writes with
   `syncBW()` (or `setWeighIn()`). Next session's weight: `carriedWeight()`.
@@ -135,8 +145,12 @@ their own phone. Protect existing data first.
 
 ## Content
 
-- **Exercise images:** `images/exercises/<name-lowercased-hyphenated>.png`,
-  listed in `EX_IMAGE_URLS` (`sw.js`) with a `CACHE_NAME` bump. Never add an
+- **Exercise images:** new ones are `images/exercises/<slug>.webp`
+  (1774×887, `cwebp -q 80`) with `webp:true` on the `EX` entry; the service
+  worker caches them on first view in `IMG_CACHE`, so they are **not** added
+  to `EX_IMAGE_URLS` and need no `CACHE_NAME` bump. The original PNGs stay
+  precached in `EX_IMAGE_URLS`; a renamed exercise keeps its old file through
+  `EX_OLD_NAME`, never a file rename. Never add an
   exercise to `EX` before its image exists; stage batches in an image-prompts
   `.txt` at the repo root (delete it when shipped). New exercises also get
   `EX_TIPS` (~6) and `EX_INSTRUCTIONS` (~5); assistance lifts get `noPR:true`.

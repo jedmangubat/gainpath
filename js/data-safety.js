@@ -64,7 +64,7 @@ function applyBackup(data){
   if(data.history)ST.history=data.history.filter(h=>h&&typeof h==='object'&&!Array.isArray(h));
   if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
   if(data.bw)ST.bw=data.bw.filter(e=>e&&typeof e==='object'&&!Array.isArray(e));
-  syncProgramMeta();migrateDkTz();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
+  syncProgramMeta();migrateDkTz();migrateExNames();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
 }
 function restoreDone(msg){refreshHome();ss('home');renderBackupStatus();const st=gid('ex-st');if(st){st.textContent=msg;setTimeout(()=>{st.textContent='';},4000);}}
 // Restoring replaces everything, so: confirm when there is data to lose, and
@@ -145,7 +145,7 @@ function renderHomeBanners(){
 // Waits for the first logged workout so a new user's first screen is just "pick a day".
 function checkGymNudge(){
   if(!CFG.setup||CFG.gymNudgeDismissed||!ST.history.length)return false;
-  return !gymHasPlateInventory()&&!(CFG.gymDumbbells||[]).length;
+  return !gymHasPlateInventory()&&!(CFG.gymDumbbells||[]).length&&!(CFG.gymKettlebells||[]).length;
 }
 function openGymSettings(){openSettings();ss('setequip');}
 function dismissGymNudge(){CFG.gymNudgeDismissed=true;saveCFG();renderHomeBanners();}

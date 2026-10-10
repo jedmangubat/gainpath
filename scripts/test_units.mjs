@@ -72,10 +72,10 @@ const HISTORY = [
         { done: true, t: 'x', w: 100, r: 10 },
         { done: false, t: 'x', w: 999, r: 99 }
       ] },
-      { name: 'Machine-assisted pull-up', exFeel: 'right', sets: [
+      { name: 'Machine assisted pull-up', exFeel: 'right', sets: [
         { done: true, t: 'x', w: 200, r: 5 }
       ] },
-      { name: 'Plank', exFeel: 'right', sets: [
+      { name: 'Forearm plank', exFeel: 'right', sets: [
         { done: true, t: 'x', w: 0, r: 45 }
       ] }
     ]
@@ -94,7 +94,7 @@ const HISTORY = [
 // ST.history rather than trusting whatever gp_p already holds.
 const STALE_PRS = {
   'Bench press': { w: 999, r: 1, date: 'Jan 1, 2020' },
-  'Machine-assisted pull-up': { w: 500, r: 1, date: 'Jan 1, 2020' }
+  'Machine assisted pull-up': { w: 500, r: 1, date: 'Jan 1, 2020' }
 };
 
 async function main() {
@@ -149,17 +149,17 @@ async function main() {
     check('recomputePRs ignores warm-up/not-done sets and keeps the higher session',
       ST.prs['Bench press'], { w: 105, r: 6, date: '2026-07-08' });
     check('recomputePRs drops noPR exercises even if a stale cache had one',
-      ST.prs['Machine-assisted pull-up'], undefined);
+      ST.prs['Machine assisted pull-up'], undefined);
     check('recomputePRs counts zero weight for holdSecs exercises',
-      ST.prs['Plank'], { w: 0, r: 45, date: '2026-07-01' });
+      ST.prs['Forearm plank'], { w: 0, r: 45, date: '2026-07-01' });
 
     // chkPR — must apply the same rules during live-session PR detection
     check('chkPR rejects noPR exercises regardless of weight',
-      chkPR('Machine-assisted pull-up', 999, 1, false), false);
+      chkPR('Machine assisted pull-up', 999, 1, false), false);
     check('chkPR rejects zero weight when allowZeroW is false',
-      chkPR('Plank', 0, 60, false), false);
+      chkPR('Forearm plank', 0, 60, false), false);
     check('chkPR accepts zero weight for holdSecs when allowZeroW is true',
-      chkPR('Plank', 0, 60, true), true);
+      chkPR('Forearm plank', 0, 60, true), true);
     check('chkPR beats an existing PR on higher weight',
       chkPR('Bench press', 110, 4, false), true);
     check('chkPR after beating it reflects the new weight in ST.prs',
@@ -168,25 +168,25 @@ async function main() {
     // ── suggestWeight — RIR autoregulation. These read ST.history via
     // exHistory(), so swap in a controlled history per case. Leave the gym
     // inventory empty so roundToGymWeight is a no-op and deltas are exact.
-    // 'Barbell row' (mg:back) gives a full increment of 5kg and a small step of
+    // 'Barbell bent over row' (mg:back) gives a full increment of 5kg and a small step of
     // 2.5kg, so 'easy' and 'good' are distinguishable.
     CFG.unit = 'kg'; CFG.gymDumbbells = []; CFG.gymPlates = {};
-    const rowEx = { name: 'Barbell row', mg: 'back' };
+    const rowEx = { name: 'Barbell bent over row', mg: 'back' };
     const mkSess = (name, exFeel, w) => ({ date: 'd', exercises: [{ name, exFeel, sets: [{ done: true, t: 'x', w, r: 8 }] }] });
 
-    ST.history = [mkSess('Barbell row', 'easy', 50)];
+    ST.history = [mkSess('Barbell bent over row', 'easy', 50)];
     check('suggestWeight: 5+ reps left → +full increment (5kg)',
       suggestWeight(rowEx, 50), { feel: 'easy', delta: 5, newW: 55 });
-    ST.history = [mkSess('Barbell row', 'good', 50)];
+    ST.history = [mkSess('Barbell bent over row', 'good', 50)];
     check('suggestWeight: 3–4 reps left → +small step (2.5kg)',
       suggestWeight(rowEx, 50), { feel: 'good', delta: 2.5, newW: 52.5 });
-    ST.history = [mkSess('Barbell row', 'hard', 50)];
+    ST.history = [mkSess('Barbell bent over row', 'hard', 50)];
     check('suggestWeight: 1–2 reps left → hold (no suggestion)',
       suggestWeight(rowEx, 50), null);
-    ST.history = [mkSess('Barbell row', 'max', 50)];
+    ST.history = [mkSess('Barbell bent over row', 'max', 50)];
     check('suggestWeight: single failure → hold',
       suggestWeight(rowEx, 50), null);
-    ST.history = [mkSess('Barbell row', 'max', 50), mkSess('Barbell row', 'max', 50)];
+    ST.history = [mkSess('Barbell bent over row', 'max', 50), mkSess('Barbell bent over row', 'max', 50)];
     check('suggestWeight: two failures in a row → deload',
       suggestWeight(rowEx, 50), { feel: 'max', delta: -5, newW: 45 });
 
@@ -205,6 +205,38 @@ async function main() {
       roundToGymWeight(dbEx, 15, 'up'), 10);
     check('roundToGymWeight nearest (default dir): closest owned',
       roundToGymWeight(dbEx, 6.4), 6);
+
+    // Kettlebells are their own rack, separate from dumbbells: a kettlebell
+    // lift never snaps to an owned dumbbell and a dumbbell lift never to a
+    // kettlebell. With none ticked, the standard cast sizes are the rack.
+    const kbEx = { name: 'Kettlebell goblet squat', mg: 'quads' };
+    CFG.gymKettlebells = [8, 16, 24];
+    check('kettlebell exercises are their own equipment group (rank 6, label Kettlebell)',
+      [equipRank(kbEx), EQUIP_LABELS[equipRank(kbEx)], equipRank(dbEx), equipRank({ name: 'Dumbbell goblet squat' }), equipRank({ name: 'My swing', equip: 'kettlebell' })],
+      [6, 'Kettlebell', 1, 1, 6]);
+    check('roundToGymWeight: kettlebell snaps to owned kettlebells, not the dumbbells 1–10',
+      [roundToGymWeight(kbEx, 9, 'up'), roundToGymWeight(kbEx, 15, 'down'), roundToGymWeight(kbEx, 30, 'up')], [16, 8, 24]);
+    check('roundToGymWeight: a dumbbell lift ignores owned kettlebells',
+      roundToGymWeight(dbEx, 7.5, 'up'), 8);
+    CFG.gymKettlebells = [];
+    check('roundToGymWeight: no kettlebells ticked → the standard sizes (25 → 28 up, 24 down)',
+      [roundToGymWeight(kbEx, 25, 'up'), roundToGymWeight(kbEx, 25, 'down'), roundToGymWeight(kbEx, 16, 'up')], [28, 24, 16]);
+    check('equipSort lists kettlebell straight after dumbbell, before machine and cable',
+      [{ name: 'Machine row', machine: true }, { name: 'Cable row' }, kbEx, dbEx, { name: 'Barbell row' }].sort(equipSort).map(e => equipRank(e)), [0, 1, 6, 2, 3]);
+    CFG.unit = 'kg'; CFG.gymKettlebells = [8, 16, 24]; delete CFG.unitMemo;
+    convertUnitData('kg', 'lbs'); const kbLb = CFG.gymKettlebells.slice(); convertUnitData('lbs', 'kg');
+    check('convertUnitData: owned kettlebells convert to lb sizes and back exactly',
+      [kbLb, CFG.gymKettlebells], [[18, 35, 53], [8, 16, 24]]);
+    check('kettlebells in kg: every even kilo 4–50 can be ticked (26 and 30 included), and a ticked 26 is used',
+      [KETTLEBELLS.kg.length, KETTLEBELLS.kg[0], KETTLEBELLS.kg[23], (CFG.gymKettlebells = [16, 26, 30], roundToGymWeight(kbEx, 25, 'up')), roundToGymWeight(kbEx, 29, 'down')], [24, 4, 50, 26, 26]);
+    CFG.unit = 'lbs'; CFG.gymKettlebells = [];
+    check('kettlebells in lb: every whole pound 5–110 can be ticked; none ticked → the standard lb sizes',
+      [KETTLEBELLS.lbs.length, KETTLEBELLS.lbs[0], KETTLEBELLS.lbs[105], roundToGymWeight(kbEx, 51, 'up'), roundToGymWeight(kbEx, 51, 'down')], [106, 5, 110, 53, 50]);
+    CFG.gymKettlebells = [18, 26, 35];
+    check('kettlebells in lb: ticked whole-pound sizes are what a lift snaps to',
+      [roundToGymWeight(kbEx, 20, 'up'), roundToGymWeight(kbEx, 30, 'down')], [26, 26]);
+    CFG.unit = 'kg';
+    CFG.gymKettlebells = []; delete CFG.unitMemo;
 
     // Plates: user owns a 20/10/5 set (per pair); loadable per-side totals are
     // multiples of 5 on a 20kg bar. Snap up/down to the true next-loadable.
@@ -266,7 +298,7 @@ async function main() {
     const ids = () => Object.keys(ST.badges).sort();
     CFG.unit = 'kg'; CFG.freq = 5; CFG.restDays = []; CFG.restWeeks = []; ST.bw = [];
 
-    ST.history = [bSess('2026-03-02', [bEx('Flat barbell bench press', 60, 5)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell bench press', 60, 5)])];
     recomputeBadges();
     check('badges: one session earns First Rep and First Flag only',
       ids(), ['first_flag', 'first_rep']);
@@ -276,18 +308,18 @@ async function main() {
     // Ten Deep must stamp the 10th session's date, not the newest session's —
     // this is the whole point of replaying history chronologically.
     ST.history = Array.from({ length: 12 }, (_, i) =>
-      bSess(`2026-03-${String(2 + i).padStart(2, '0')}`, [bEx('Flat barbell bench press', 60, 5)]));
+      bSess(`2026-03-${String(2 + i).padStart(2, '0')}`, [bEx('Barbell bench press', 60, 5)]));
     recomputeBadges();
     check('badges: Ten Deep is stamped with the 10th session, not the latest',
       ST.badges.ten_deep, { dk: '2026-03-11' });
 
     // Perfect Week: CFG.freq sessions inside one Monday-week.
     CFG.freq = 3;
-    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-04', [bEx('Barbell row', 50, 5)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell bent over row', 50, 5)]), bSess('2026-03-04', [bEx('Barbell bent over row', 50, 5)])];
     recomputeBadges();
     check('badges: Perfect Week stays locked below the weekly target',
       ST.badges.perfect_week, undefined);
-    ST.history.push(bSess('2026-03-06', [bEx('Barbell row', 50, 5)]));
+    ST.history.push(bSess('2026-03-06', [bEx('Barbell bent over row', 50, 5)]));
     recomputeBadges();
     check('badges: Perfect Week unlocks when CFG.freq is met in one week',
       ST.badges.perfect_week, { dk: '2026-03-06' });
@@ -300,15 +332,15 @@ async function main() {
 
     // Back on Track: a 14-day gap counts, 13 does not.
     CFG.freq = 5;
-    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-15', [bEx('Barbell row', 50, 5)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell bent over row', 50, 5)]), bSess('2026-03-15', [bEx('Barbell bent over row', 50, 5)])];
     recomputeBadges();
     check('badges: a 13-day gap is not Back on Track', ST.badges.back_on_track, undefined);
-    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)]), bSess('2026-03-16', [bEx('Barbell row', 50, 5)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell bent over row', 50, 5)]), bSess('2026-03-16', [bEx('Barbell bent over row', 50, 5)])];
     recomputeBadges();
     check('badges: a 14-day gap earns Back on Track', ST.badges.back_on_track, { dk: '2026-03-16' });
 
     // Ten Tonne threshold follows CFG.unit — 10,000 kg but 22,000 lb.
-    const bigSet = (w, r) => ({ name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'x', w, r }] });
+    const bigSet = (w, r) => ({ name: 'Barbell bent over row', exFeel: 'good', sets: [{ done: true, t: 'x', w, r }] });
     ST.history = [bSess('2026-03-02', [bigSet(100, 150)])]; // 15,000 units
     CFG.unit = 'kg'; recomputeBadges();
     check('badges: 15,000 units clears the 10,000 kg threshold', !!ST.badges.ten_tonne, true);
@@ -318,7 +350,7 @@ async function main() {
 
     // Bodyweight badges need a weigh-in, then compare against it.
     ST.bw = [];
-    ST.history = [bSess('2026-03-02', [bEx('Barbell back squat', 90, 3)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell squat', 90, 3)])];
     recomputeBadges();
     check('badges: Bodyweight Club stays locked with no weigh-in logged',
       ST.badges.bodyweight_club, undefined);
@@ -332,8 +364,8 @@ async function main() {
     // Warm-ups and noPR exercises must not feed PR-event badges.
     ST.bw = [];
     ST.history = [bSess('2026-03-02', [
-      { name: 'Machine-assisted pull-up', exFeel: 'good', sets: [{ done: true, t: 'x', w: 200, r: 5 }] },
-      { name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'w', w: 40, r: 10 }] }
+      { name: 'Machine assisted pull-up', exFeel: 'good', sets: [{ done: true, t: 'x', w: 200, r: 5 }] },
+      { name: 'Barbell bent over row', exFeel: 'good', sets: [{ done: true, t: 'w', w: 40, r: 10 }] }
     ])];
     recomputeBadges();
     check('badges: warm-ups and noPR lifts never produce a First Flag',
@@ -341,7 +373,7 @@ async function main() {
 
     // streakEndingAt is the shared definition — asking it about the current
     // week must agree with streak() itself.
-    ST.history = [bSess('2026-03-02', [bEx('Barbell row', 50, 5)])];
+    ST.history = [bSess('2026-03-02', [bEx('Barbell bent over row', 50, 5)])];
     check('streakEndingAt agrees with streak() for the current week',
       streakEndingAt(weekDayMap(ST.history), dkey(startOfWeek(new Date())), true), streak());
 
@@ -463,12 +495,12 @@ async function main() {
     // known — it must not discard a weight planned before the workout started.
     ST.history = []; ST.mw = {};
     openDayEdit('legs');
-    const hackIdx = ST.editList.findIndex(e => e.name === 'Hack squat');
+    const hackIdx = ST.editList.findIndex(e => e.name === 'Machine hack squat');
     updPlannedEx(hackIdx, 'w', '120');
     commitDayEdit();
-    ST.mwCurrent = 'Hack squat'; gid('mw-inp').value = '0'; saveMW(true);
+    ST.mwCurrent = 'Machine hack squat'; gid('mw-inp').value = '0'; saveMW(true);
     check('the machine base-weight prompt keeps the weight planned before Start',
-      ST.sd.find(it => it.ex.name === 'Hack squat').sets.filter(s => s.t !== 'w').map(s => s.w),
+      ST.sd.find(it => it.ex.name === 'Machine hack squat').sets.filter(s => s.t !== 'w').map(s => s.w),
       [120, 120, 120]);
 
     // ── A Settings rep-target change must immediately apply to exercises
@@ -555,7 +587,7 @@ async function main() {
     // A custom rep target has to reach the workout like any preset does.
     CFG.prefReps = 21; ST.history = [];
     check('a custom preferred-reps value is what a fresh exercise is built with',
-      buildSets({ name: 'Barbell row', mg: 'back', baseW: 40 }, 40).map(s => s.r), [21, 21, 21]);
+      buildSets({ name: 'Barbell bent over row', mg: 'back', baseW: 40 }, 40).map(s => s.r), [21, 21, 21]);
 
     // ── Day-edit weight/rep/set overrides must survive backing out without
     // starting the workout ("save it for the day"), not just an immediate
@@ -697,7 +729,7 @@ async function main() {
     check('plate calc: barbell exercise defaults to the 20kg bar',
       plateBarFor({ name: 'Barbell bench press' }, 80), '20');
     check('plate calc: machine after a barbell uses its saved base weight, not 20',
-      plateBarFor({ name: 'Hack squat', machine: true }, 111), '38.5');
+      plateBarFor({ name: 'Machine hack squat', machine: true }, 111), '38.5');
     check('plate calc: barbell after a machine goes back to the 20kg bar',
       plateBarFor({ name: 'Barbell bench press' }, 80), '20');
 
@@ -705,15 +737,15 @@ async function main() {
     check('mwKey: Smith machine exercises share one key',
       [mwKey('Smith machine squat'), mwKey('Smith machine bench press'), mwKey('Smith machine Romanian deadlift')],
       ['Smith machine', 'Smith machine', 'Smith machine']);
-    check('mwKey: Hack squat and Hack squat calf raise share one key',
-      [mwKey('Hack squat'), mwKey('Hack squat calf raise')], ['Hack squat', 'Hack squat']);
+    check('mwKey: Machine hack squat and Hack squat calf raise share one key (still saved as "Hack squat")',
+      [mwKey('Machine hack squat'), mwKey('Hack squat calf raise'), mwKey('Hack squat')], ['Hack squat', 'Hack squat', 'Hack squat']);
     check('mwKey: other machines stay per-exercise',
-      [mwKey('Leg extension'), mwKey('Machine hip thrust'), mwKey('Plate-loaded standing calf raise')],
-      ['Leg extension', 'Machine hip thrust', 'Plate-loaded standing calf raise']);
-    ST.mw = { 'Smith machine squat': 20, 'Smith machine shrug': 15, 'Hack squat calf raise': 38.5, 'Leg extension': 5 };
+      [mwKey('Machine leg extension'), mwKey('Machine hip thrust'), mwKey('Machine plate-loaded calf raise')],
+      ['Machine leg extension', 'Machine hip thrust', 'Machine plate-loaded calf raise']);
+    ST.mw = { 'Smith machine squat': 20, 'Smith machine shrug': 15, 'Hack squat calf raise': 38.5, 'Machine leg extension': 5 };
     migrateMW();
     check('migrateMW folds per-exercise entries into the shared key (first value wins), leaves others',
-      Object.fromEntries(Object.entries(ST.mw).sort()), { 'Hack squat': 38.5, 'Leg extension': 5, 'Smith machine': 20 });
+      Object.fromEntries(Object.entries(ST.mw).sort()), { 'Hack squat': 38.5, 'Machine leg extension': 5, 'Smith machine': 20 });
     ST.mw = { 'Smith machine': 22, 'Smith machine squat': 20 };
     migrateMW();
     check('migrateMW never overwrites an existing shared value', ST.mw, { 'Smith machine': 22 });
@@ -751,13 +783,13 @@ async function main() {
     const tdk = dkey(new Date());
     const sess = (...exs) => ({ dk: tdk, date: 'd', exercises: exs });
     const lift = (name, w, r, exFeel) => ({ name, exFeel, sets: [{ done: true, t: 'x', w, r }] });
-    const dbPress = EXPOOL['Bench dumbbell chest press'], incDb = EXPOOL['Incline bench dumbbell press'];
-    const machPress = EXPOOL['Machine chest press'], dbOhp = EXPOOL['Seated dumbbell shoulder press'];
+    const dbPress = EXPOOL['Dumbbell bench press'], incDb = EXPOOL['Dumbbell incline bench press'];
+    const machPress = EXPOOL['Machine chest press'], dbOhp = EXPOOL['Dumbbell seated overhead press'];
 
     ST.history = [];
     check('lift sync: no related history → unchanged baseW×experience fallback',
       getAIEstimatedWeight(dbPress), 15);
-    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard'))];
+    ST.history = [sess(lift('Barbell bench press', 80, 8, 'hard'))];
     const flatEst = getAIEstimatedWeight(dbPress), incEst = getAIEstimatedWeight(incDb);
     check('lift sync: 80kg×8 barbell bench → first DB press is 20–30kg per hand, not 10',
       flatEst >= 20 && flatEst <= 30, true);
@@ -768,18 +800,18 @@ async function main() {
     check('lift sync: no pressing-overhead history → cross-pattern estimate from bench, flagged as cross',
       !!crossEst && crossEst.cross === true && getAIEstimatedWeight(dbOhp) >= 10 && getAIEstimatedWeight(dbOhp) <= 20, true);
 
-    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard')), sess(lift('Bench dumbbell chest press', 10, 10, 'good'))];
+    ST.history = [sess(lift('Barbell bench press', 80, 8, 'hard')), sess(lift('Dumbbell bench press', 10, 10, 'good'))];
     check('lift sync: own history still sets the planned weight (never silently overwritten)',
       plannedFor(dbPress).w, 10);
     const sync = syncSuggest(dbPress, 10, 10);
     check('lift sync: DB press logged at 10kg with 3–4 reps left → sync chip proposes ≥20kg from the bench',
-      !!sync && sync.newW >= 20 && sync.src === 'Flat barbell bench press', true);
-    CFG.syncDismiss = { 'Bench dumbbell chest press': sync ? sync.newW : 0 };
+      !!sync && sync.newW >= 20 && sync.src === 'Barbell bench press', true);
+    CFG.syncDismiss = { 'Dumbbell bench press': sync ? sync.newW : 0 };
     check('lift sync: a dismissed sync suggestion stays dismissed at the same estimate', syncSuggest(dbPress, 10, 10), null);
     CFG.syncDismiss = {};
-    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard')), sess(lift('Bench dumbbell chest press', 10, 10, 'hard'))];
+    ST.history = [sess(lift('Barbell bench press', 80, 8, 'hard')), sess(lift('Dumbbell bench press', 10, 10, 'hard'))];
     check('lift sync: rated 1–2 reps left → the user\'s own rating wins, no chip', syncSuggest(dbPress, 10, 10), null);
-    ST.history = [sess(lift('Flat barbell bench press', 40, 8, 'hard')), sess(lift('Bench dumbbell chest press', 30, 8, 'good'))];
+    ST.history = [sess(lift('Barbell bench press', 40, 8, 'hard')), sess(lift('Dumbbell bench press', 30, 8, 'good'))];
     check('lift sync: a weaker related lift never pulls a stronger one down', syncSuggest(dbPress, 30, 8), null);
 
     ST.history = [];
@@ -787,41 +819,115 @@ async function main() {
     const seedEst = getAIEstimatedWeight(dbPress);
     check('lift sync: onboarding baseline seeds the estimate when nothing is logged', seedEst >= 17.5 && seedEst < flatEst, true);
     CFG.keyLifts = { chest: { w: 200, r: 1 } };
-    ST.history = [sess(lift('Flat barbell bench press', 60, 8, 'max'))];
+    ST.history = [sess(lift('Barbell bench press', 60, 8, 'max'))];
     check('lift sync: logged lifts supersede the onboarding baseline', getAIEstimatedWeight(dbPress) < seedEst, true);
     CFG.keyLifts = {};
 
     // Cables: estimated from free weights and other cables (lower
     // confidence, stacks differ between stations), but a cable number never
     // feeds a free-weight estimate, and cable lifts never get a sync chip.
-    const cableCurl = EXPOOL['Cable bicep curl'], cableRow = EXPOOL['Seated cable row'], dbRow = EXPOOL['Single-arm dumbbell row'];
+    const cableCurl = EXPOOL['Cable bar curl'], cableRow = EXPOOL['Machine seated cable row'], dbRow = EXPOOL['Dumbbell single-arm row'];
     ST.history = [];
     const cableCurlFallback = getAIEstimatedWeight(cableCurl), dbRowFallback = getAIEstimatedWeight(dbRow);
     ST.history = [sess(lift('Barbell curl', 40, 8, 'hard'))];
     const cc = getAIEstimatedWeight(cableCurl);
     check('cable sync: 40kg×8 barbell curl → first cable curl estimated from it (20–35kg)', cc >= 20 && cc <= 35 && liftEstimate(cableCurl, 10).src === 'Barbell curl', true);
-    ST.history = [sess(lift('Lat pulldown', 60, 10, 'good'))];
-    check('cable sync: lat pulldown estimates a first seated cable row', liftEstimate(cableRow, 10) && liftEstimate(cableRow, 10).src, 'Lat pulldown');
+    ST.history = [sess(lift('Machine pulldown', 60, 10, 'good'))];
+    check('cable sync: lat pulldown estimates a first seated cable row', liftEstimate(cableRow, 10) && liftEstimate(cableRow, 10).src, 'Machine pulldown');
     check('cable sync: a cable number never feeds a free-weight estimate', getAIEstimatedWeight(dbRow), dbRowFallback);
+    // A lift that hasn't been done for 4+ weeks (while its body part kept being
+    // trained, so no break chip) gets the catch-up chip at a smaller gap: its
+    // own strength below 85% of what related lifts imply, instead of 75%.
+    const dbBench = EXPOOL['Dumbbell bench press'], dAgo = d => dkey(new Date(Date.now() - d * 864e5));
+    const old = (d, ...exs) => ({ dk: dAgo(d), date: 'd', exercises: exs });
+    CFG.gymDumbbells = []; CFG.syncDismiss = {};
+    const staleChip = (d, w) => { ST.history = [old(d, lift('Dumbbell bench press', w, 10, 'good')), sess(lift('Barbell bench press', 100, 5, 'good'))]; return syncSuggest(dbBench, w, 10); };
+    check('stale sync: own strength at ~78% of the estimate, done this week → no chip (75% line)', staleChip(0, 22.5), null);
+    check('stale sync: the same lift last done 3 weeks ago → still no chip', staleChip(21, 22.5), null);
+    check('stale sync: the same lift last done 5 weeks ago → catch-up chip from the bench press (85% line)',
+      (c => !!c && c.newW > 22.5 && c.newW <= 32.5 && c.src)(staleChip(35, 22.5)), 'Barbell bench press');
+    check('stale sync: 5 weeks ago but own strength at ~89% of the estimate → no chip', staleChip(35, 26), null);
+    check('stale sync: far behind (below 75%) still gets the chip whether stale or not', [!!staleChip(0, 15), !!staleChip(35, 15)], [true, true]);
+    ST.history = [old(35, lift('Dumbbell bench press', 22.5, 10, 'hard')), sess(lift('Barbell bench press', 100, 5, 'good'))];
+    check('stale sync: a last session rated 1–2 reps left still blocks the chip', syncSuggest(dbBench, 22.5, 10), null);
+
+    // Kettlebells: two-way, like dumbbells. A plain kettlebell lift ('k') is
+    // estimated from and feeds barbell, dumbbell and other kettlebell lifts,
+    // lands on a real kettlebell size and gets a sync chip. A lift limited by
+    // grip or balance, or several lifts in one ('K'), is a target only.
+    const kbGoblet = EXPOOL['Kettlebell goblet squat'], kbRack = EXPOOL['Kettlebell front rack squat'], dbGoblet = EXPOOL['Dumbbell goblet squat'], kbCossack = EXPOOL['Kettlebell cossack squat'];
+    ST.history = []; CFG.gymKettlebells = [];
+    const dbGobletFallback = getAIEstimatedWeight(dbGoblet);
+    ST.history = [sess(lift('Barbell squat', 100, 5, 'good'))];
+    const kg1 = getAIEstimatedWeight(kbGoblet);
+    check('kettlebell sync: 100kg×5 squat → first goblet squat estimated from it, on a standard kettlebell size (16–28kg)',
+      [kg1 >= 16 && kg1 <= 28, KETTLEBELLS_STD.kg.includes(kg1), liftEstimate(kbGoblet, 10).src], [true, true, 'Barbell squat']);
+    ST.history = [sess(lift('Kettlebell goblet squat', 32, 10, 'good'))];
+    check('kettlebell sync: a kettlebell lift estimates another kettlebell lift', liftEstimate(kbRack, 10) && liftEstimate(kbRack, 10).src, 'Kettlebell goblet squat');
+    const fromKb = getAIEstimatedWeight(dbGoblet), sq = liftEstimate(EXPOOL['Barbell squat'], 5);
+    check('kettlebell sync: a 32kg×10 goblet squat feeds the dumbbell goblet squat (25–32.5kg) and the barbell squat (90–125kg)',
+      [fromKb >= 25 && fromKb <= 32.5, liftEstimate(dbGoblet, 10).src, sq && sq.src, sq && sq.w >= 90 && sq.w <= 125], [true, 'Kettlebell goblet squat', 'Kettlebell goblet squat', true]);
+    ST.history = [sess(lift('Kettlebell cossack squat', 24, 10, 'good'))];
+    check('kettlebell sync: a balance-limited kettlebell lift (cossack squat) never feeds another lift',
+      [getAIEstimatedWeight(dbGoblet), liftEstimate(EXPOOL['Barbell squat'], 5), liftEstimate(kbGoblet, 10)], [dbGobletFallback, null, null]);
+    ST.history = [sess(lift('Kettlebell goblet squat', 8, 10, 'good'), lift('Kettlebell cossack squat', 4, 10, 'good')), sess(lift('Barbell squat', 140, 5, 'good'))];
+    const chip = syncSuggest(kbGoblet, 8, 10);
+    check('kettlebell sync: a plain kettlebell lift gets the sync chip, a target-only one does not',
+      [!!chip && chip.newW > 8 && chip.src, syncSuggest(kbCossack, 4, 10)], ['Barbell squat', null]);
+    check('kettlebell sync: target-only lifts are the unstable or combined ones',
+      [Object.keys(LIFT_REL).filter(n => LIFT_REL[n][2] === 'K').length, Object.keys(LIFT_REL).filter(n => LIFT_REL[n][2] === 'k').length, LIFT_REL['Kettlebell bottoms-up overhead press'][2], LIFT_REL['Kettlebell bench press'][2]], [50, 82, 'K', 'k']);
+    // Dumbbell lifts added with the MuscleWiki catalogue: plain ones are type
+    // 'd' like the existing dumbbell lifts; unstable or combined ones ('D')
+    // get a starting weight but never feed another lift and get no sync chip.
+    const dbZ = EXPOOL['Dumbbell alternating Z press'], dbAltOhp = EXPOOL['Dumbbell alternating overhead press'], dbSeated = EXPOOL['Dumbbell seated overhead press'];
+    ST.history = [sess(lift('Barbell overhead press', 60, 5, 'good'))];
+    check('dumbbell target-only: a Z press is estimated from the barbell overhead press', liftEstimate(dbZ, 10) && liftEstimate(dbZ, 10).src, 'Barbell overhead press');
+    ST.history = [sess(lift('Dumbbell alternating Z press', 30, 10, 'good'))];
+    check('dumbbell target-only: a Z press never feeds another lift', [liftEstimate(dbSeated, 10), liftEstimate(EXPOOL['Barbell overhead press'], 5)], [null, null]);
+    ST.history = [sess(lift('Dumbbell alternating overhead press', 20, 10, 'good'))];
+    check('dumbbell target-only: a plain new dumbbell lift does feed others', liftEstimate(dbSeated, 10) && liftEstimate(dbSeated, 10).src, 'Dumbbell alternating overhead press');
+    ST.history = [sess(lift('Dumbbell alternating Z press', 4, 10, 'good'), lift('Dumbbell alternating overhead press', 4, 10, 'good')), sess(lift('Barbell overhead press', 80, 5, 'good'))];
+    check('dumbbell target-only: no sync chip for the Z press, a chip for the plain press',
+      [syncSuggest(dbZ, 4, 10), !!syncSuggest(dbAltOhp, 4, 10)], [null, true]);
+    // Barbell lifts added with the MuscleWiki catalogue: plain ones are type
+    // 'b'; the ones limited by balance, mobility or technique ('B') get a
+    // starting weight but never feed another lift and get no sync chip.
+    const bbZer = EXPOOL['Barbell Zercher squat'], bbLow = EXPOOL['Barbell low-bar squat'], bbSquat = EXPOOL['Barbell squat'];
+    ST.history = [sess(lift('Barbell squat', 100, 5, 'good'))];
+    check('barbell target-only: a Zercher squat is estimated from the barbell squat, below it',
+      [liftEstimate(bbZer, 5) && liftEstimate(bbZer, 5).src, liftEstimate(bbZer, 5).w < liftEstimate(bbLow, 5).w], ['Barbell squat', true]);
+    ST.history = [sess(lift('Barbell Zercher squat', 80, 5, 'good'))];
+    check('barbell target-only: a Zercher squat never feeds another lift', [liftEstimate(bbSquat, 5), liftEstimate(bbLow, 5)], [null, null]);
+    ST.history = [sess(lift('Barbell low-bar squat', 100, 5, 'good'))];
+    check('barbell target-only: a plain new barbell lift does feed others', liftEstimate(bbSquat, 5) && liftEstimate(bbSquat, 5).src, 'Barbell low-bar squat');
+    ST.history = [sess(lift('Barbell Zercher squat', 20, 5, 'good'), lift('Barbell low-bar squat', 20, 5, 'good')), sess(lift('Barbell squat', 140, 5, 'good'))];
+    check('barbell target-only: no sync chip for the Zercher squat, a chip for the low-bar squat',
+      [syncSuggest(bbZer, 20, 5), !!syncSuggest(bbLow, 20, 5)], [null, true]);
+    check('new barbell exercises: every one with a webp image has tips and instructions in en/ja/ko',
+      Object.values(EXPOOL).filter(e => /^Barbell /.test(e.name) && e.webp && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
+    check('new dumbbell exercises: every one with a webp image has tips and instructions in en/ja/ko',
+      Object.values(EXPOOL).filter(e => /^Dumbbell /.test(e.name) && e.webp && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
+    check('kettlebell exercises: every one has an image flag, tips and instructions in en/ja/ko',
+      Object.values(EXPOOL).filter(e => /^Kettlebell /.test(e.name) && !(e.webp && EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
     ST.history = [];
     CFG.keyLifts = { lat: { w: 60, r: 8 } };
     check('cable sync: onboarding lat pulldown seeds cable pulls only',
       [getAIEstimatedWeight(cableRow) >= 40, getAIEstimatedWeight(dbRow)], [true, dbRowFallback]);
     CFG.keyLifts = {};
-    ST.history = [sess(lift('Barbell curl', 60, 8, 'hard')), sess(lift('Cable bicep curl', 10, 10, 'good'))];
+    ST.history = [sess(lift('Barbell curl', 60, 8, 'hard')), sess(lift('Cable bar curl', 10, 10, 'good'))];
     check('cable sync: cable lifts never get a sync chip (ballpark only)', syncSuggest(cableCurl, 10, 10), null);
     check('cable sync: fallback still used with no related data', cableCurlFallback > 0, true);
 
     // Upper-body bodyweight moves count as sources: load = share of body
     // weight (at that session's date) + added weight, or − assistance.
-    const pulldown = EXPOOL['Lat pulldown'], goblet = EXPOOL['Goblet squat'];
+    const pulldown = EXPOOL['Machine pulldown'], goblet = EXPOOL['Dumbbell goblet squat'];
     ST.history = [];
     ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80;
     const gobletFallback = getAIEstimatedWeight(goblet);
-    ST.history = [sess(lift('Push-ups', 0, 15, 'good'))];
+    ST.history = [sess(lift('Push-up', 0, 15, 'good'))];
     const pu80 = getAIEstimatedWeight(dbPress);
     check('bodyweight sync: 15 push-ups at 80kg body weight → first DB press 15–25kg, from Push-ups',
-      pu80 >= 15 && pu80 <= 25 && liftEstimate(dbPress, 10).src === 'Push-ups', true);
+      pu80 >= 15 && pu80 <= 25 && liftEstimate(dbPress, 10).src === 'Push-up', true);
     ST.bw = [{ dk: '2026-01-01', w: 110 }];
     check('bodyweight sync: a heavier lifter doing the same push-ups gets a heavier estimate', getAIEstimatedWeight(dbPress) > pu80, true);
     ST.bw = [{ dk: '2026-01-01', w: 80 }];
@@ -830,13 +936,13 @@ async function main() {
     check('bodyweight sync: 8 pull-ups at 80kg → lat pulldown estimated from them (40–50kg)', pull >= 40 && pull <= 50 && liftEstimate(pulldown, 10).src === 'Pull-ups', true);
     ST.history = [sess(lift('Pull-ups', 10, 8, 'hard'))];
     check('bodyweight sync: added weight on pull-ups raises the estimate', getAIEstimatedWeight(pulldown) > pull, true);
-    ST.history = [sess(lift('Machine-assisted pull-up', 30, 8, 'hard'))];
+    ST.history = [sess(lift('Machine assisted pull-up', 30, 8, 'hard'))];
     check('bodyweight sync: assisted pull-ups subtract the assistance', getAIEstimatedWeight(pulldown) < pull, true);
-    ST.history = [{ dk: '2026-03-01', date: 'd', exercises: [lift('Push-ups', 0, 15, 'good')] }];
+    ST.history = [{ dk: '2026-03-01', date: 'd', exercises: [lift('Push-up', 0, 15, 'good')] }];
     ST.bw = [{ dk: '2026-01-01', w: 60 }, { dk: '2026-06-01', w: 110 }];
-    const atDate = liftStrength('Push-ups').e;
+    const atDate = liftStrength('Push-up').e;
     ST.bw = [{ dk: '2026-01-01', w: 60 }];
-    check('bodyweight sync: uses the weigh-in at the session date, not today\'s', Math.abs(liftStrength('Push-ups').e - atDate) < 1e-9, true);
+    check('bodyweight sync: uses the weigh-in at the session date, not today\'s', Math.abs(liftStrength('Push-up').e - atDate) < 1e-9, true);
     ST.bw = [{ dk: '2026-01-01', w: 80 }];
     ST.history = [sess(lift('Bodyweight squat', 0, 20, 'easy'))];
     check('bodyweight sync: lower-body bodyweight moves don\'t feed barbell/dumbbell estimates', getAIEstimatedWeight(goblet), gobletFallback);
@@ -844,10 +950,10 @@ async function main() {
     // ── Smith machine: one shared bar, so Smith lifts convert between each
     // other with high confidence and to/from free weights with medium.
     ST.bw = []; CFG.bw = 75;
-    const smithInc = EXPOOL['Smith machine incline press'];
-    ST.history = [sess(lift('Flat barbell bench press', 80, 8, 'hard'))];
+    const smithInc = EXPOOL['Smith machine incline bench press'];
+    ST.history = [sess(lift('Barbell bench press', 80, 8, 'hard'))];
     const smFromBar = liftEstimate(smithInc, 10);
-    check('smith sync: barbell bench estimates a first Smith incline press', !!smFromBar && smFromBar.src === 'Flat barbell bench press' && getAIEstimatedWeight(smithInc) >= 40, true);
+    check('smith sync: barbell bench estimates a first Smith incline press', !!smFromBar && smFromBar.src === 'Barbell bench press' && getAIEstimatedWeight(smithInc) >= 40, true);
     ST.history = [sess(lift('Smith machine bench press', 80, 8, 'hard'))];
     check('smith sync: Smith bench → Smith incline is more confident than barbell → Smith incline', liftEstimate(smithInc, 10).e > smFromBar.e, true);
 
@@ -864,16 +970,16 @@ async function main() {
 
     // ── Sex-appropriate defaults for exercises swapped in from the pool.
     CFG.sex = 'female';
-    check('pool: women get the women\'s program default for a swapped-in lift', poolEx('Bench dumbbell chest press').baseW, 10);
-    check('pool: the shared EXPOOL entry is not mutated', EXPOOL['Bench dumbbell chest press'].baseW, 25);
-    ST.editDay = 'push'; ST.editList = []; ST.swapIdx = null; pickSwapEx('Bench dumbbell chest press');
+    check('pool: women get the women\'s program default for a swapped-in lift', poolEx('Dumbbell bench press').baseW, 10);
+    check('pool: the shared EXPOOL entry is not mutated', EXPOOL['Dumbbell bench press'].baseW, 25);
+    ST.editDay = 'push'; ST.editList = []; ST.swapIdx = null; pickSwapEx('Dumbbell bench press');
     check('pool: pickSwapEx uses the sex-appropriate default', ST.editList[0].baseW, 10);
     clearEditState(); CFG.sex = 'male';
-    check('pool: men keep the men\'s default', poolEx('Bench dumbbell chest press').baseW, 25);
+    check('pool: men keep the men\'s default', poolEx('Dumbbell bench press').baseW, 25);
 
     // ── Rep-target change re-targets the carried weight via e1RM.
-    const rowFull = EXPOOL['Barbell row'];
-    ST.history = [sess(lift('Barbell row', 60, 10, 'hard'))];
+    const rowFull = EXPOOL['Barbell bent over row'];
+    ST.history = [sess(lift('Barbell bent over row', 60, 10, 'hard'))];
     CFG.prefReps = 10; CFG.prefRepsChangedAt = null;
     check('rep carry: same reps → same weight', plannedFor(rowFull).w, 60);
     CFG.prefReps = 5; CFG.prefRepsChangedAt = tdk;
@@ -885,7 +991,7 @@ async function main() {
 
     // ── Long break → ease-back-in chip, never an automatic change.
     const ago = (d) => { const x = new Date(); x.setDate(x.getDate() - d); return dkey(x); };
-    const oldSess = (d) => [{ dk: ago(d), date: 'd', exercises: [lift('Barbell row', 100, 5, 'good')] }];
+    const oldSess = (d) => [{ dk: ago(d), date: 'd', exercises: [lift('Barbell bent over row', 100, 5, 'good')] }];
     ST.history = oldSess(14);
     check('break: 2 weeks off → no chip', breakSuggest(rowFull, 100), null);
     ST.history = oldSess(42);
@@ -896,27 +1002,27 @@ async function main() {
     // The break is for the body part, not the one lift: rows 6 weeks ago but
     // pulldowns (also back) last week means the back was never detrained.
     const backSess = (d, name) => ({ dk: ago(d), date: 'd', exercises: [lift(name, 50, 10, 'good')] });
-    ST.history = [...oldSess(42), backSess(7, 'Lat pulldown')];
+    ST.history = [...oldSess(42), backSess(7, 'Machine pulldown')];
     check('break: same body part trained last week → no chip', breakSuggest(rowFull, 100), null);
-    ST.history = [...oldSess(70), backSess(35, 'Lat pulldown')];
+    ST.history = [...oldSess(70), backSess(35, 'Machine pulldown')];
     check('break: weeks count from the body part\'s last session', breakSuggest(rowFull, 100), { newW: 90, weeks: 5 });
-    ST.history = [...oldSess(42), backSess(7, 'Flat barbell bench press')];
+    ST.history = [...oldSess(42), backSess(7, 'Barbell bench press')];
     check('break: another body part trained recently doesn\'t count', breakSuggest(rowFull, 100), { newW: 90, weeks: 6 });
-    ST.history = [...oldSess(42), { dk: ago(7), date: 'd', exercises: [{ name: 'Lat pulldown', exFeel: null, sets: [{ done: true, t: 'w', w: 20, r: 10 }, { done: false, t: 'x', w: 50, r: 10 }] }] }];
+    ST.history = [...oldSess(42), { dk: ago(7), date: 'd', exercises: [{ name: 'Machine pulldown', exFeel: null, sets: [{ done: true, t: 'w', w: 20, r: 10 }, { done: false, t: 'x', w: 50, r: 10 }] }] }];
     check('break: warm-ups or unlogged sets on the body part don\'t count', breakSuggest(rowFull, 100), { newW: 90, weeks: 6 });
 
     // ── Unit switch converts every stored weight (it used to just relabel).
     CFG.unit = 'kg';
-    ST.history = [sess(lift('Barbell row', 100, 5, 'good'))]; recomputePRs();
-    ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80; ST.mw = { 'Hack squat': 40 };
+    ST.history = [sess(lift('Barbell bent over row', 100, 5, 'good'))]; recomputePRs();
+    ST.bw = [{ dk: '2026-01-01', w: 80 }]; CFG.bw = 80; ST.mw = { 'Machine hack squat': 40 };
     CFG.gymDumbbells = [10, 20]; CFG.gymPlates = { 20: 1, 1.25: 1 }; CFG.keyLifts = { chest: { w: 100, r: 5 } };
-    CFG.dayPlan = { push: { 'Barbell row': { w: 50, r: 8 } } };
+    CFG.dayPlan = { push: { 'Barbell bent over row': { w: 50, r: 8 } } };
     openSettings(); setSettingUnit('lbs');
     check('units kg→lbs: history, PRs, weigh-ins, profile, machine base',
-      [ST.history[0].exercises[0].sets[0].w, ST.prs['Barbell row'].w, ST.bw[0].w, CFG.bw, ST.mw['Hack squat'], CFG.unit],
+      [ST.history[0].exercises[0].sets[0].w, ST.prs['Barbell bent over row'].w, ST.bw[0].w, CFG.bw, ST.mw['Machine hack squat'], CFG.unit],
       [220.5, 220.5, 176.4, 176.4, 88.2, 'lbs']);
     check('units kg→lbs: gear maps to real sizes, baseline and day plan convert',
-      [CFG.gymDumbbells, Object.keys(CFG.gymPlates).map(Number).sort((a, b) => a - b), CFG.keyLifts.chest.w, CFG.dayPlan.push['Barbell row'].w],
+      [CFG.gymDumbbells, Object.keys(CFG.gymPlates).map(Number).sort((a, b) => a - b), CFG.keyLifts.chest.w, CFG.dayPlan.push['Barbell bent over row'].w],
       [[20, 45], [2.5, 45], 220.5, 110.2]);
     check('units kg→lbs: Settings body-weight field shows the converted value', gid('set-bw').value, '176.4');
     collectSettingsFields();
@@ -948,8 +1054,8 @@ async function main() {
       out.push({ name: `[${id}] ${name}`, pass: JSON.stringify(actual) === JSON.stringify(expected), actual, expected, known: id });
     };
     const M = {
-      dbPress: EXPOOL['Bench dumbbell chest press'], bench: EXPOOL['Flat barbell bench press'], row: EXPOOL['Barbell row'],
-      plank: EXPOOL['Plank'], pushups: EXPOOL['Push-ups'], pullups: EXPOOL['Pull-ups'], farmers: EXPOOL['Farmers carry'], latpd: EXPOOL['Lat pulldown']
+      dbPress: EXPOOL['Dumbbell bench press'], bench: EXPOOL['Barbell bench press'], row: EXPOOL['Barbell bent over row'],
+      plank: EXPOOL['Forearm plank'], pushups: EXPOOL['Push-up'], pullups: EXPOOL['Pull-ups'], farmers: EXPOOL['Dumbbell farmer walk'], latpd: EXPOOL['Machine pulldown']
     };
     const reset = () => {
       CFG.unit = 'kg'; CFG.sex = 'male'; CFG.bw = 75; CFG.exp = 'intermediate'; CFG.prefReps = 10; CFG.prefRepsChangedAt = null;
@@ -960,15 +1066,15 @@ async function main() {
 
     // ── Zero / missing history: every formula degrades to "no opinion".
     reset();
-    check('math/no history: getSavedWeight & getSavedReps are undefined', [getSavedWeight('Barbell row'), getSavedReps('Barbell row')], [undefined, undefined]);
+    check('math/no history: getSavedWeight & getSavedReps are undefined', [getSavedWeight('Barbell bent over row'), getSavedReps('Barbell bent over row')], [undefined, undefined]);
     check('math/no history: carriedWeight is undefined (caller falls back to the estimate)', carriedWeight(M.row), undefined);
     check('math/no history: suggestWeight, breakSuggest, syncSuggest all null', [suggestWeight(M.row, 60), breakSuggest(M.row, 60), syncSuggest(M.dbPress, 20, 10)], [null, null, null]);
-    check('math/no history: liftStrength and liftEstimate null', [liftStrength('Barbell row'), liftEstimate(M.dbPress, 10)], [null, null]);
+    check('math/no history: liftStrength and liftEstimate null', [liftStrength('Barbell bent over row'), liftEstimate(M.dbPress, 10)], [null, null]);
     check('math/no history: estimate = baseW × intermediate 0.6 × bwScale 1', getAIEstimatedWeight(M.row), 30);
-    ST.history = [{ date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'good', sets: [{ done: true, t: 'x', w: 100, r: 5 }] }] }];
+    ST.history = [{ date: 'd', exercises: [{ name: 'Barbell bent over row', exFeel: 'good', sets: [{ done: true, t: 'x', w: 100, r: 5 }] }] }];
     check('math/legacy session without dk: breakSuggest stays silent instead of guessing', breakSuggest(M.row, 100), null);
-    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'good', sets: [{ done: false, t: 'x', w: 100, r: 5 }, { done: true, t: 'w', w: 50, r: 10 }] }] }];
-    check('math/only warm-ups or unfinished sets logged: counts as no history', [getSavedWeight('Barbell row'), suggestWeight(M.row, 60), liftStrength('Barbell row')], [undefined, null, null]);
+    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell bent over row', exFeel: 'good', sets: [{ done: false, t: 'x', w: 100, r: 5 }, { done: true, t: 'w', w: 50, r: 10 }] }] }];
+    check('math/only warm-ups or unfinished sets logged: counts as no history', [getSavedWeight('Barbell bent over row'), suggestWeight(M.row, 60), liftStrength('Barbell bent over row')], [undefined, null, null]);
 
     // ── Missing / bad profile values never produce NaN.
     reset();
@@ -983,9 +1089,9 @@ async function main() {
 
     // ── Very light and very heavy lifters.
     reset();
-    ST.history = [one('Flat barbell bench press', 20, 5, 'max')];
+    ST.history = [one('Barbell bench press', 20, 5, 'max')];
     const lightEst = getAIEstimatedWeight(M.dbPress);
-    ST.history = [one('Flat barbell bench press', 220, 5, 'easy')];
+    ST.history = [one('Barbell bench press', 220, 5, 'easy')];
     const heavyEst = getAIEstimatedWeight(M.dbPress);
     check('math/light lifter (20kg×5 bench to failure) → small but non-zero DB press, on a 2.5 step', [lightEst > 0 && lightEst <= 10, lightEst % 2.5], [true, 0]);
     check('math/heavy lifter (220kg×5 bench) → DB press 50–75kg per hand', heavyEst >= 50 && heavyEst <= 75, true);
@@ -994,12 +1100,12 @@ async function main() {
     CFG.bw = 40; const bwLight = bwScale(); CFG.bw = 200; const bwHeavy = bwScale();
     check('math/bwScale clamps to 0.75–1.25× for extreme body weights', [bwLight, bwHeavy], [0.75, 1.25]);
     reset();
-    ST.history = [one('Barbell row', 60, 30, 'good')]; CFG.prefReps = 1; CFG.prefRepsChangedAt = tdk;
+    ST.history = [one('Barbell bent over row', 60, 30, 'good')]; CFG.prefReps = 1; CFG.prefRepsChangedAt = tdk;
     check('math/rep re-target caps logged reps at 15 (60×30 → 1-rep target is 87, not 116)', carriedWeight(M.row), 87);
 
     // ── Women's defaults.
     reset(); CFG.sex = 'female'; CFG.bw = 60;
-    check('math/women: pool default 10kg, estimate = 10 × 0.6 at the 60kg reference', [poolEx('Bench dumbbell chest press').baseW, getAIEstimatedWeight(poolEx('Bench dumbbell chest press'))], [10, 6]);
+    check('math/women: pool default 10kg, estimate = 10 × 0.6 at the 60kg reference', [poolEx('Dumbbell bench press').baseW, getAIEstimatedWeight(poolEx('Dumbbell bench press'))], [10, 6]);
     CFG.bw = 75;
     check('math/women: bwScale uses exponent 0.5 against a 60kg reference', Math.round(bwScale() * 1000) / 1000, Math.round(Math.pow(75 / 60, 0.5) * 1000) / 1000);
     CFG.sex = 'male';
@@ -1008,23 +1114,23 @@ async function main() {
     // ── Bodyweight-only users.
     reset();
     ST.history = [{ dk: tdk, date: 'd', exercises: [
-      { name: 'Push-ups', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 20 }] },
-      { name: 'Plank', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 60 }] }] }];
+      { name: 'Push-up', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 20 }] },
+      { name: 'Forearm plank', exFeel: 'good', sets: [{ done: true, t: 'x', w: 0, r: 60 }] }] }];
     check('math/bodyweight-only: push-ups plan 0kg and get no weight suggestion', [plannedFor(M.pushups).w, suggestWeight(M.pushups, 0), breakSuggest(M.pushups, 0)], [0, null, null]);
     check('math/bodyweight-only: timed holds plan 0kg and are never snapped to gear', [plannedFor(M.plank).w, roundToGymWeight(M.plank, 7, 'up')], [0, 7]);
-    check('math/bodyweight-only: push-ups still seed a first DB press', liftEstimate(M.dbPress, 10).src, 'Push-ups');
+    check('math/bodyweight-only: push-ups still seed a first DB press', liftEstimate(M.dbPress, 10).src, 'Push-up');
     check('math/bodyweight moves are sources only (never estimated themselves)', liftEstimate(M.pullups, 10), null);
 
     // ── RIR progression in lbs.
     reset(); CFG.unit = 'lbs';
-    ST.history = [one('Barbell row', 135, 8, 'easy')];
+    ST.history = [one('Barbell bent over row', 135, 8, 'easy')];
     check('math/lbs: 5+ reps left on a back lift → +10 lb', suggestWeight(M.row, 135), { feel: 'easy', delta: 10, newW: 145 });
-    ST.history = [one('Barbell row', 135, 8, 'good')];
+    ST.history = [one('Barbell bent over row', 135, 8, 'good')];
     check('math/lbs: 3–4 reps left → +5 lb', suggestWeight(M.row, 135), { feel: 'good', delta: 5, newW: 140 });
     check('math/lbs: estimates snap to a 5 lb step when no gear is set', snapEstimate(M.dbPress, 33), 35);
     CFG.bw = 165.3465;
     check('math/lbs: bwScale reference is 75kg expressed in lb', Math.round(bwScale() * 1e6) / 1e6, 1);
-    ST.history = [one('Barbell row', 225, 5, 'good', ago(42))];
+    ST.history = [one('Barbell bent over row', 225, 5, 'good', ago(42))];
     check('math/lbs: 6 weeks off → 10% lighter, snapped to 0.5', breakSuggest(M.row, 225), { newW: 202.5, weeks: 6 });
 
     // ── Gear snapping with an inventory.
@@ -1039,16 +1145,16 @@ async function main() {
     // nearest real size in the new unit.
     const seedUnits = (unit, w, bw, gear) => {
       reset(); CFG.unit = unit;
-      ST.history = [{ dk: '2026-01-01', date: 'd', exercises: [{ name: 'Barbell row', plannedW: w, sets: [{ done: true, t: 'x', w, r: 5 }] }] }];
-      ST.bw = [{ dk: '2026-01-01', w: bw }]; CFG.bw = bw; ST.mw = { 'Hack squat': w };
-      CFG.keyLifts = { chest: { w, r: 5 } }; CFG.dayPlan = { push: { 'Barbell row': { w, r: 8 } } };
-      CFG.customExercises = [{ name: 'Custom', baseW: w }]; CFG.syncDismiss = { 'Barbell row': w }; CFG.dumbbellMax = w;
+      ST.history = [{ dk: '2026-01-01', date: 'd', exercises: [{ name: 'Barbell bent over row', plannedW: w, sets: [{ done: true, t: 'x', w, r: 5 }] }] }];
+      ST.bw = [{ dk: '2026-01-01', w: bw }]; CFG.bw = bw; ST.mw = { 'Machine hack squat': w };
+      CFG.keyLifts = { chest: { w, r: 5 } }; CFG.dayPlan = { push: { 'Barbell bent over row': { w, r: 8 } } };
+      CFG.customExercises = [{ name: 'Custom', baseW: w }]; CFG.syncDismiss = { 'Barbell bent over row': w }; CFG.dumbbellMax = w;
       CFG.gymDumbbells = gear.db.slice(); CFG.gymPlates = {}; gear.pl.forEach(p => { CFG.gymPlates[p] = 1; });
     };
     const unitSnap = () => ({
       history: ST.history[0].exercises[0].sets[0].w, plannedW: ST.history[0].exercises[0].plannedW, weighIn: ST.bw[0].w, profileBw: CFG.bw,
-      machineBase: ST.mw['Hack squat'], keyLift: CFG.keyLifts.chest.w, dayPlan: CFG.dayPlan.push['Barbell row'].w,
-      customBaseW: CFG.customExercises[0].baseW, syncDismiss: CFG.syncDismiss['Barbell row'], dumbbellMax: CFG.dumbbellMax
+      machineBase: ST.mw['Machine hack squat'], keyLift: CFG.keyLifts.chest.w, dayPlan: CFG.dayPlan.push['Barbell bent over row'].w,
+      customBaseW: CFG.customExercises[0].baseW, syncDismiss: CFG.syncDismiss['Barbell bent over row'], dumbbellMax: CFG.dumbbellMax
     });
     const gearSnap = () => ({ dumbbells: CFG.gymDumbbells.slice(), plates: Object.keys(CFG.gymPlates).map(Number).sort((a, b) => a - b) });
     const roundTrip = (u, v, n) => { for (let i = 0; i < (n || 1); i++) { convertUnitData(u, v); convertUnitData(v, u); } };
@@ -1106,45 +1212,45 @@ async function main() {
 
     // ── Deload floor and fallback snapping.
     reset();
-    ST.history = [one('Barbell row', 2.5, 8, 'max'), one('Barbell row', 2.5, 8, 'max')];
+    ST.history = [one('Barbell bent over row', 2.5, 8, 'max'), one('Barbell bent over row', 2.5, 8, 'max')];
     check('math/deload: two failures at the lightest weight → hold, never a 0kg proposal', suggestWeight(M.row, 2.5), null);
-    ST.history = [one('Barbell row', 50, 8, 'max'), one('Barbell row', 50, 8, 'max')];
+    ST.history = [one('Barbell bent over row', 50, 8, 'max'), one('Barbell bent over row', 50, 8, 'max')];
     check('math/deload: two failures at 50kg still deload normally', suggestWeight(M.row, 50), { feel: 'max', delta: -5, newW: 45 });
     reset();
     check('math/fallback: farmers carry lands on a real dumbbell (15), bench on a 2.5 step (35)', [getAIEstimatedWeight(M.farmers), getAIEstimatedWeight(M.bench)], [15, 35]);
     CFG.sex = 'female'; CFG.bw = 60;
-    check('math/fallback: small dumbbells keep 1kg resolution (women DB press 6kg)', getAIEstimatedWeight(poolEx('Bench dumbbell chest press')), 6);
+    check('math/fallback: small dumbbells keep 1kg resolution (women DB press 6kg)', getAIEstimatedWeight(poolEx('Dumbbell bench press')), 6);
     reset();
 
     // ── Deload sessions, pyramid carry, dumbbell steps (fixed 2026-10-01).
     // A deload session (−30%) is tagged deload:true per exercise when logged
     // and skipped by carry-over, progression and the stall check.
-    const dl = (w, exFeel) => { const s = one('Barbell row', w, 5, exFeel); s.exercises[0].deload = true; return s; };
+    const dl = (w, exFeel) => { const s = one('Barbell bent over row', w, 5, exFeel); s.exercises[0].deload = true; return s; };
     ST.sd = [{ ex: M.row, deload: true, exFeel: 'easy', sets: [{ done: true, t: 'x', w: 70, r: 5 }] }, { ex: M.latpd, exFeel: 'good', sets: [{ done: true, t: 'x', w: 50, r: 10 }] }];
     ST.day = 'pull'; ST.es = 0;
     const rec = buildRec();
     check('deload: the logged session tags deloaded exercises only', [rec.exercises[0].deload, rec.exercises[1].deload], [true, undefined]);
     ST.sd = []; ST.day = null;
-    ST.history = [one('Barbell row', 100, 5, 'good'), dl(70, 'easy')];
+    ST.history = [one('Barbell bent over row', 100, 5, 'good'), dl(70, 'easy')];
     check('deload: the next session starts back at the pre-deload weight', plannedFor(M.row).w, 100);
     check('deload: the easy deload rating doesn\'t drive the next suggestion', suggestWeight(M.row, 100), { feel: 'good', delta: 2.5, newW: 102.5 });
     ST.history = [dl(70, 'easy')];
     check('deload: only a deload logged → it is still the carried weight', plannedFor(M.row).w, 70);
     CFG.deloadActive = false; CFG.deloadDismissedAtLen = 0;
-    ST.history = [one('Barbell row', 100, 5, 'good'), dl(70, 'easy'), one('Barbell row', 100, 5, 'good')];
+    ST.history = [one('Barbell bent over row', 100, 5, 'good'), dl(70, 'easy'), one('Barbell bent over row', 100, 5, 'good')];
     check('deload: a deload session isn\'t counted as a strength stall', checkDeload(), false);
-    ST.history = [one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard')];
+    ST.history = [one('Barbell bent over row', 100, 5, 'hard'), one('Barbell bent over row', 100, 5, 'hard'), one('Barbell bent over row', 100, 5, 'hard')];
     check('stall: holding the same weight (as the 1–2 RIR rule says) isn\'t a stall', checkDeload(), false);
-    ST.history = [one('Barbell row', 100, 5, 'hard'), one('Barbell row', 100, 5, 'hard'), one('Barbell row', 97.5, 5, 'hard')];
+    ST.history = [one('Barbell bent over row', 100, 5, 'hard'), one('Barbell bent over row', 100, 5, 'hard'), one('Barbell bent over row', 97.5, 5, 'hard')];
     check('stall: a drop below the first of three sessions still is', checkDeload(), true);
     // Pyramid climbs one increment per set; the base set is what carries over.
     CFG.setStyle = 'pyramid';
-    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell row', exFeel: 'hard', sets: [100, 105, 110].map((w, i) => ({ done: true, t: 'x', w, r: 12 - 2 * i })) }] }];
+    ST.history = [{ dk: tdk, date: 'd', exercises: [{ name: 'Barbell bent over row', exFeel: 'hard', sets: [100, 105, 110].map((w, i) => ({ done: true, t: 'x', w, r: 12 - 2 * i })) }] }];
     check('pyramid: next session starts at the same base (100), not last top set', plannedFor(M.row).w, 100);
     reset();
-    ST.history = [one('Dumbbell lunge', 20, 10, 'easy')];
-    check('steps: dumbbell lunge 5+ reps left → +2.5kg a hand like other dumbbell lifts', suggestWeight(EXPOOL['Dumbbell lunge'], 20), { feel: 'easy', delta: 2.5, newW: 22.5 });
-    ST.history = [one('Barbell row', 100, 5, 'easy')];
+    ST.history = [one('Dumbbell forward lunge', 20, 10, 'easy')];
+    check('steps: dumbbell lunge 5+ reps left → +2.5kg a hand like other dumbbell lifts', suggestWeight(EXPOOL['Dumbbell forward lunge'], 20), { feel: 'easy', delta: 2.5, newW: 22.5 });
+    ST.history = [one('Barbell bent over row', 100, 5, 'easy')];
     check('steps: barbell back lifts keep the 5kg step', suggestWeight(M.row, 100), { feel: 'easy', delta: 5, newW: 105 });
     reset();
 

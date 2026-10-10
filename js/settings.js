@@ -34,12 +34,14 @@ function openSettings(){
 }
 function dbId(w){return String(w).replace('.','_');}
 function renderGymSettings(){
-  ['set-gym-unit1','set-gym-unit2'].forEach(id=>{const el=gid(id);if(el)el.textContent=CFG.unit;});
+  ['set-gym-unit1','set-gym-unit2','set-gym-unit3'].forEach(id=>{const el=gid(id);if(el)el.textContent=CFG.unit;});
   const denoms=PLATES[CFG.unit]||PLATES.kg;
   gid('set-plate-inv').innerHTML=denoms.map(d=>'<button type="button" class="chip-tog'+(CFG.gymPlates[d]?' on':'')+'" id="set-plate-'+d+'" onclick="toggleSettingPlate('+d+')">'+d+CFG.unit+'</button>').join('');
   const dbList=DUMBBELLS[CFG.unit]||DUMBBELLS.kg;
   const owned=new Set(CFG.gymDumbbells||[]);
   gid('set-db-inv').innerHTML=dbList.map(w=>'<button type="button" class="chip-tog'+(owned.has(w)?' on':'')+'" id="set-db-'+dbId(w)+'" onclick="toggleSettingDB('+w+')">'+w+'</button>').join('');
+  const kbOwned=new Set(CFG.gymKettlebells||[]);
+  gid('set-kb-inv').innerHTML=(KETTLEBELLS[CFG.unit]||KETTLEBELLS.kg).map(w=>'<button type="button" class="chip-tog'+(kbOwned.has(w)?' on':'')+'" id="set-kb-'+w+'" onclick="toggleSettingKB('+w+')">'+w+'</button>').join('');
 }
 // My-gym chips write straight to CFG.gymPlates/gymDumbbells and save
 // immediately, same reasoning as the setSetting* handlers above — these are
@@ -56,6 +58,13 @@ function toggleSettingDB(w){
   const owned=new Set(CFG.gymDumbbells||[]);
   if(on)owned.add(w);else owned.delete(w);
   CFG.gymDumbbells=(DUMBBELLS[CFG.unit]||DUMBBELLS.kg).filter(x=>owned.has(x));
+  saveCFG();
+}
+function toggleSettingKB(w){
+  const on=gid('set-kb-'+w).classList.toggle('on');
+  const owned=new Set(CFG.gymKettlebells||[]);
+  if(on)owned.add(w);else owned.delete(w);
+  CFG.gymKettlebells=(KETTLEBELLS[CFG.unit]||KETTLEBELLS.kg).filter(x=>owned.has(x));
   saveCFG();
 }
 function renderMWSettings(){
@@ -120,6 +129,7 @@ function collectSettingsFields(){
   CFG.gymPlates=gymPlates;
   const dbList=DUMBBELLS[CFG.unit]||DUMBBELLS.kg;
   CFG.gymDumbbells=dbList.filter(w=>gid('set-db-'+dbId(w)).classList.contains('on'));
+  CFG.gymKettlebells=(KETTLEBELLS[CFG.unit]||KETTLEBELLS.kg).filter(w=>gid('set-kb-'+w).classList.contains('on'));
   CFG.healthSyncStartShortcut=gid('set-hs-start').value.trim()||CFG.healthSyncStartShortcut;
   CFG.healthSyncEndShortcut=gid('set-hs-end').value.trim()||CFG.healthSyncEndShortcut;
   saveCFG();

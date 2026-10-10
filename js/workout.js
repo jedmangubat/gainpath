@@ -162,7 +162,7 @@ function renderEx(){
   const tipHtml='<div style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-bulb" aria-hidden="true" style="flex-shrink:0;margin-top:1px;color:var(--accent)"></i><span>'+item.tipText+'</span></div>';
   const noteHtml=exNoteHtml(item,ex);
   const isLast=ST.exi>=ST.sd.length-1;
-  const exImg='<img src="images/exercises/'+exSlug(ex.name)+'.png" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\','+(ex.custom?1:0)+')">';
+  const exImg='<img src="images/exercises/'+exSlug(EX_OLD_NAME[ex.name]||ex.name)+(ex.webp?'.webp':'.png')+'" alt="'+ex.name+'" class="ex-img" onerror="exImgFallback(this,\''+ex.yt+'\','+(ex.custom?1:0)+')">';
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const brk=fw?breakSuggest(ex,fw.w):null;const sync=fw&&!brk?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!brk&&!sync?suggestWeight(ex,fw.w):null;

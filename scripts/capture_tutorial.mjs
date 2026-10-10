@@ -49,11 +49,11 @@ function startServer() {
 function seedHistory() {
   const days = ['push', 'pull', 'legs', 'upper', 'lower'];
   const names = {
-    push: ['Incline barbell chest press', 'Flat barbell bench press', 'Overhead press'],
-    pull: ['Barbell row', 'Lat pulldown', 'Barbell curl'],
-    legs: ['Barbell back squat', 'Romanian deadlift', 'Leg press'],
-    upper: ['Flat barbell bench press', 'Barbell row', 'Lateral raise'],
-    lower: ['Barbell back squat', 'Leg press', 'Standing calf raise'],
+    push: ['Barbell incline bench press', 'Barbell bench press', 'Overhead press'],
+    pull: ['Barbell bent over row', 'Machine pulldown', 'Barbell curl'],
+    legs: ['Barbell squat', 'Barbell Romanian deadlift', 'Machine leg press'],
+    upper: ['Barbell bench press', 'Barbell bent over row', 'Lateral raise'],
+    lower: ['Barbell squat', 'Machine leg press', 'Standing calf raise'],
   };
   const out = [];
   for (let i = 0; i < 24; i++) {
