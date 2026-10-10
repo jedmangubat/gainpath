@@ -14,7 +14,7 @@ if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.9.1';
+const APP_VERSION='2.10.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
@@ -41,7 +41,7 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.9.0';
+const WHATS_NEW_VERSION='2.10.0';
 const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4','whatsnew_item5'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){

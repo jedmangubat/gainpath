@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-10-11
+
 ### Added
 - **Kettlebells are their own equipment in My gym.** Settings → My gym has a
   section of its own, "Kettlebells owned" (every even kilo from 4 to 50, or every
@@ -123,8 +125,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   PNGs), and the service worker keeps it in its own `gainpath-img-v1` cache,
   which a release doesn't clear. The 222 existing PNGs are still precached as
   before. An exercise whose picture you have never opened shows the
-  placeholder if you first open it offline. No exercise uses this yet; it is
-  the groundwork for the kettlebell set. `CACHE_NAME` is now `gainpath-v46`.
+  placeholder if you first open it offline. `CACHE_NAME` is now `gainpath-v46`.
 
 ## [2.9.1] - 2026-10-01
 

@@ -10,13 +10,13 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ---
 
-## ✨ What's new in v2.9.0
+## ✨ What's new in v2.10.0
 
-- **Faster setup.** Three short screens: your name, your body weight and experience, and your split. Everything else has a sensible default and lives in Settings.
-- **Harder to lose your data.** A failed save now shows an alert with a one-tap backup. iPhone Safari users see a warning about the 7-day data wipe and how to avoid it.
-- **Backups you control.** Save to Files or iCloud Drive from the share sheet, choose how often to be reminded, and undo a restore.
-- **See what's shared.** Settings → Privacy lists exactly what leaves your device. Your workouts never do.
-- **Progress photos.** Climb → Body keeps dated photos on your phone, shrunk to save space. They aren't in backups, so save the ones you want to keep to your photo library.
+- **Over 1,000 exercises.** 838 new ones for kettlebell, dumbbell, barbell, cable, machine, landmine, weight plate and bodyweight, each with a three-panel illustration, form cues and steps in English, Japanese and Korean.
+- **Clearer exercise names.** 118 built-in exercises now use equipment-first names ("Barbell bench press", "Machine pulldown"). Your history, PRs and custom days move to the new names automatically.
+- **Kettlebells in My gym.** Tick the kettlebells you own and suggested weights snap to them, separately from your dumbbells.
+- **Catch up after time away from a lift.** Come back to a lift after 4 weeks or more and, if your related lifts went up, you're offered a higher weight. It's still a tap to apply or dismiss.
+- **Lighter images.** New exercise pictures are about 50 KB each and download the first time you open them, so open the ones you need before training offline.
 
 ## Features
 
@@ -42,13 +42,16 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 **Progress**
 - Charts of estimated 1RM, top weight and volume, plus muscle-group balance and body weight.
 - Automatic PRs with their full history, and 16 achievement badges.
+- Dated progress photos on Climb → Body. They stay on your phone and aren't in backups, so save the ones you want to keep to your photo library.
 - A workout calendar that lets you edit or delete past sessions.
 - A weekly streak that pauses for planned rest.
 - A monthly PDF report and a shareable session card.
 
 **Your data**
 - Everything is stored on your device, with a second verified copy in IndexedDB.
-- JSON and CSV export, restore on any device, and backup reminders.
+- A failed save shows an alert with a one-tap backup, and iPhone Safari users are warned about its 7-day data wipe and how to avoid it.
+- JSON and CSV export, backup to Files or iCloud Drive, restore on any device with undo, and backup reminders you can schedule.
+- Settings → Privacy lists exactly what leaves your device. Your workouts never do.
 - English, 日本語 and 한국어.
 - Optional Apple Watch workout start and end through Shortcuts (may not work on iOS 27).
 
