@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   barbell bench press". Both are retaken from the current app. Nothing in the
   app itself changes.
 
+### Changed
+- **`AGENTS.md` now mirrors `CLAUDE.md`.** It still described the app as a single
+  `index.html` and was missing most current conventions.
+
 ### Removed
 - **Unused files.** Nine README screenshots that nothing linked to any more
   (they showed the old five-tab layout), one exercise image no exercise used

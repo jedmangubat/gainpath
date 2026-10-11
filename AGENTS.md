@@ -1,452 +1,228 @@
 # GainPath — Project Instructions
 
-GainPath is a fitness tracking web app. The app itself is a single `index.html`
-file with no build process and no runtime dependencies — no bundler, no
-framework. Everything (markup, CSS, JS) lives in that one file, and that's
-deliberate; don't introduce a build step for the app to consume `package.json`.
+> This file mirrors `CLAUDE.md` for tools that read `AGENTS.md`. Change both together.
 
-There is a dev-only `package.json` (Playwright + ESLint, see below) used purely
-for local tooling — it never touches what ships in `index.html`.
+A fitness-tracking PWA with real users whose only copy of their data is on
+their own phone. Protect existing data first.
 
-**GainPath is not an "AI" product — don't reintroduce AI branding or
-positioning.** An "AI coaching" feature (live Anthropic API calls) was tried and
-removed more than once, and the app was at one point marketed as "AI-powered"
-across its title, splash, onboarding, `manifest.json`, and `README.md`. All of
-that is gone. The only thing that ever looked like "AI" is the starting-weight
-estimate, which is a plain deterministic formula (`getAIEstimatedWeight` in
-`index.html`) over body stats, experience, and strength baseline — describe it
-as an estimate, never as AI. The function name and the `startingWeights:'ai'` /
-`sw-ai` identifiers are kept only for saved-config compatibility; they are not
-user-facing and are not a license to call the feature "AI" in copy. Note the app
-is a PWA: user-facing branding also lives in `manifest.json` (`name`) and the
-service worker `sw.js` (bump `CACHE_NAME` when the cached shell changes).
+## Structure
 
-**Visual identity (as of v2.0.1): "Kinetic" — dark-only.** The app renders a
-single dark theme (near-black moss `#0C1512` base, one electric-lime accent
-`#C6F24E`, Archivo display / Space Grotesk body / Space Mono for numerals).
-There is **no light theme and no dark-mode toggle** — `applyTheme()` and
-`accentColor()` are pinned to dark, and `<html data-theme="dark">` is hard-set,
-so don't reintroduce a light palette or a toggle without an explicit request.
-Semantic tokens: on-surface text is `--txt`/`--txt2`/`--txt3`; text that sits
-**on** the lime accent is `--accent-ink` (never `#fff` on `--accent`/lime, which
-fails contrast in dark). The bottom tabs are **Train · Days · Climb · PRs**
-(keys `nav_workouts`/`nav_calendar`/`nav_climb`/`nav_prs`); the
-streak card + install banner only show on the Train tab (see `stab()`).
-As of v2.3.0 there is **no Save/Export tab** — the monthly PDF report and
-backup/restore live in Settings → Reports & backup (`s-setdata`, opened by
-`openDataSettings()`), so don't reintroduce a fifth tab for them. The Climb
-tab is a three-way segment (Strength / Balance / Body, `chSeg()` +
-`renderChSeg()`) that renders **only the visible segment** — a Chart.js
-canvas measured inside a `display:none` parent comes out 0px wide, so any
-new segment must draw on the way in, never all at once up front. Per-exercise
-session history lives on the **Days** tab, not Climb.
+- **No build step, no framework, no runtime dependencies.** `index.html` holds
+  markup and CSS; the code is `js/*.js`, plain `<script src>` tags at the end of
+  `<body>`. `package.json` is dev tooling only.
+- **The js/ files are plain scripts, not ES modules — keep it that way.** They
+  share one global scope: inline `onclick=""` handlers call ~150 top-level
+  functions by name, `CFG`/`ST`/`OB`/`TUT` are reassigned from several files,
+  and the tests reach in by name. Modules break all three.
+- **Load order is dependency order** (`index.html` tag list; each file's role is
+  in `docs/index-section-map.md`). Functions only hoist within their own file,
+  so code that runs at load may only use earlier files or its own. Put new code
+  in the file that owns the feature; never re-add an inline `<script>`.
+- **Adding a js file:** tag `js/<name>.js?v=<APP_VERSION>` in `index.html` and
+  `'./js/<name>.js?v=<APP_VERSION>'` in `SHELL_URLS` (`sw.js`). Every release
+  bumps every `?v=` with `APP_VERSION`, so a phone never pairs a new
+  `index.html` with a stale script. `visual-check` enforces both and boots the
+  app offline from the precache.
+- **A CDN must never be able to break the app.** Chart.js, jsPDF and EmailJS are
+  used lazily or guarded at the call site, never touched at the top level of a
+  file: a load-time `ReferenceError` strands users on a dead onboarding screen.
+  Prefer self-hosting (fonts and icons already are).
 
-## Coding discipline
+## Product rules
 
-Adapted from `multica-ai/andrej-karpathy-skills` (Karpathy's observations on common LLM coding pitfalls). These are general defaults, not GainPath-specific — merge with everything else in this file.
+- **Not an AI product.** Never call anything "AI" in copy, `manifest.json`,
+  README or the title. `getAIEstimatedWeight` and `startingWeights:'ai'`/`sw-ai`
+  are legacy identifiers kept for saved configs; the feature is an "estimate".
+- **Dark-only "Kinetic" theme.** `#0C1512` base, lime `#C6F24E`, Archivo /
+  Space Grotesk / Space Mono. No light theme or toggle. Text on lime is
+  `--accent-ink`, never `#fff`.
+- **Tabs are Train · Days · Climb · PRs.** No fifth tab: PDF report and backup
+  live in Settings → Reports & backup (`openDataSettings()`). Streak card and
+  install banner show on Train only (`stab()`). Per-exercise history is on Days.
+- **Climb renders only the visible segment** (`chSeg`/`renderChSeg`): a chart
+  drawn in a `display:none` parent is 0px wide. Charts need ≥2 points (else a
+  "start here"/"starting point" card), open on 30 days via `chWindow()`, and
+  the Strength picker comes from logged lifts (`chLifts()`).
+- **First run is three steps** (name + sex; unit, body weight, experience,
+  optional known lifts; days/week + split). Only add a question that changes a
+  calculation before the first workout. New preferences go in Settings; hold
+  any Home nudge until `ST.history` is non-empty (like `checkGymNudge()`).
+- **Suggestions are never automatic.** Every proposed weight change is an
+  Apply/Dismiss chip. Don't wire any rating into a weight change without a tap.
+- **The rating after each exercise is reps in reserve** (5+ / 3–4 / 1–2 / 0).
+  Stored keys stay `easy`/`good`/`hard`/`max`; labels live in `RIR_META`/
+  `FEEL_OPTS`, separate from session-level `FEEL_META` — don't merge them.
+  `suggestWeight()`: 5+ → full step, 3–4 → small step, 1–2 → hold, `max` twice
+  → deload.
 
-- **Think before coding.** State assumptions explicitly. If multiple interpretations exist, name them rather than silently picking one. Stop and ask when something's unclear instead of guessing.
-- **Simplicity first.** Minimum code for the actual request — no speculative config/flexibility, no abstractions for single-use code, no error handling for scenarios that can't happen (single-file app, no framework, no build step).
-- **Surgical changes.** Touch only what the task requires. Don't refactor or restyle adjacent code while fixing something else; match the existing dense inline-script style even where you'd write it differently. Remove imports/variables your own change orphaned; leave pre-existing dead code alone unless asked.
-- **Goal-driven execution.** Turn a task into a verifiable check before starting — "fix the bug" → reproduce it (ideally as a `test:units` case), then fix and re-run. State a brief step→verify plan for multi-step work.
+## Data and storage
 
-## Standing workflow rules
+- **Never swallow a storage error.** User-data writes go through `lsSave(k,v)`
+  and end in `saveOK()` / `saveFailed()` (raises `#save-alert`). Rescue paths
+  (`exportData`) work from memory, not from a successful write.
+- **localStorage is what the app reads; IndexedDB `gainpath` is a verified
+  mirror.** `idbRecover()` is the only IDB read (when `gp_cfg` is missing).
+  Keep the `pre-idb-2.9.0` backup until at least v2.11. Switching reads to IDB
+  is a separate future step.
+- **Anything that erases user data calls `idbClear()` and `photoClear()`**, or
+  the data comes back.
+- **Progress photos** (`js/photos.js`) live only in IndexedDB `gainpath-photos`
+  (`photos` = metadata + thumbnail, `full` = image; one transaction for both),
+  never in the mirror or `backupPayload()`. Store **ArrayBuffers, never Blobs**
+  (WebKit refuses Blobs). Decide "Not saved" with an explicit `failed` flag,
+  not by whether an error exists (WebKit can fail with `null`). The card must
+  keep saying photos aren't backed up.
+- **Restore = `validateBackup()` → `applyBackup()`**: ask before replacing,
+  keep `gp_pre_restore` for Undo, stop if it can't be stored, recompute PRs and
+  badges. Extend `test:data` whenever backup, restore or storage changes.
+- **Mid-workout edits are session-only.** `openMidWorkoutEdit()` rebuilds only
+  `ST.sd`; its branches in `commitDayEdit()`/`closeDayEdit()` must not write
+  `CFG.customDays`/`dayLinks`/`dayPlan`. Pre-start day edits do persist.
+- **PRs and badges are derived caches.** Anything that changes or removes a
+  logged session calls `recomputePRs()` **and** `recomputeBadges()`. Keep
+  `chkPR()` in sync with `recomputePRs()` (skip warm-ups; zero weight counts
+  only for timed holds; skip `noPR` exercises). Badges: add to `BADGES` +
+  `BDG_GLYPH` (inline SVG; locked = `.lock` class, no second asset) +
+  `bdg_<id>_name`/`_cond` in all three languages; weekly logic goes through
+  `streakEndingAt()`/`weekTarget()`.
+- **`ss('home')` renders Home itself** (`refreshHome()`); don't move that back
+  to callers. New screens that cache rendered state render on the way in.
+- **iPhone warning:** `isIOS() && !isStandalone()` shows the "could be deleted"
+  banner; tests hide it by seeding `gp_ios_warn_dismissed` with a recent date.
 
-- **Every code change must include a corresponding `CHANGELOG.md` entry** under
-  today's date, describing what changed and why.
-- **Write clear, descriptive git commit messages.** Never generic ones like
-  "update files" or "fix stuff" — explain what changed and why.
-- **Pushing is allowed, but only after explicit confirmation from the user for
-  that specific push.** After committing, ask "Ready to push — push now?"
-  (or similar) and wait for a yes before running `git push origin main`.
-  Never push proactively/silently, and a prior approval doesn't carry over to
-  a later commit — confirm each time.
-- **Version bumps must be tagged and released, not just pushed.** When a commit
-  bumps the version (the `(vX.Y.Z)` in its message + the new `CHANGELOG.md`
-  entry), then once the user approves that push, also create and push the
-  matching annotated tag (`git tag -a vX.Y.Z` → `git push origin vX.Y.Z`) and
-  publish the GitHub release (`gh release create vX.Y.Z` with the version's
-  CHANGELOG notes) in the same step — no separate request needed beyond the
-  push approval. This keeps GitHub's Releases page in sync with shipped code;
-  it previously drifted (releases sat at v1.1.1 while `main` was at v1.2.6
-  because the v1.2.x commits were pushed but never tagged).
-- **Exercise images** live in `images/exercises/`, named lowercase with hyphens
-  matching the exact exercise `name` field in the `EX` object in `index.html`
-  (e.g. `"Hack squat"` → `images/exercises/hack-squat.png`). These are
-  precached for offline use by the service worker: `sw.js` holds an
-  `EX_IMAGE_URLS` list of every file in `images/exercises/`. **When you add or
-  remove an exercise image, update `EX_IMAGE_URLS` in `sw.js` to match and bump
-  `CACHE_NAME`** — otherwise new images won't be part of the offline precache
-  (they'll still cache on-demand when viewed online, but not offline-first).
-  A built-in exercise whose image fails to load shows a neutral placeholder;
-  only `custom:true` exercises fall back to a YouTube-search "Tutorial" link
-  (`exImgFallback` branches on `custom`).
-- **Icons are a self-hosted subset — adding one is two steps, not one.**
-  `fonts/tabler-icons.css` + `fonts/tabler-icons-subset.woff2` hold only the
-  ~65 Tabler glyphs the app actually uses, cut from the upstream webfont with
-  `pyftsubset` (see the regeneration note in the CSS header; the upstream GSUB
-  table is malformed, so `--drop-tables+=GSUB,GPOS` is required). Writing a new
-  `ti-*` class in markup is **not** enough — a glyph that isn't in the subset
-  renders as an empty box, silently and only at runtime. Re-subset with the new
-  codepoint, append its rule to the CSS, and bump `CACHE_NAME`. Both files are
-  in `SHELL_URLS`, deliberately: they were on a CDN until v2.1.1, where only
-  the stylesheet was precached and the font it referenced was not, so every
-  icon in the app became a box offline. Verify a new icon actually renders
-  (measure its width with the font loaded) rather than trusting the class name
-  — `ti-dumbbell` shipped blank for months because it doesn't exist in Tabler
-  2.47.0.
-- **Exercise images are generated through the Gemini image API, not a chat UI
-  (switched 2026-08-19).** `scripts/gen_exercise_image.py <slug> <brief-file>
-  [refs...]` calls `gemini-3-pro-image` and writes an exact 1774x887 PNG into
-  the gitignored `scripts/.gen/`, appending every call to
-  `scripts/.gen/spend.tsv`. It is a **paid** API (~$0.14/image) billed to the
-  prepaid Gemini key shared with the `YouTube Shorts` project
-  (`secrets/gemini-api-key.txt` there; override with `GEMINI_API_KEY_FILE`) —
-  so it spends real money and that pool is shared, ask before batch runs.
-  Two things make it beat pasting briefs into free ChatGPT, which was rejecting
-  ~6 of 7: **approved images are passed as reference inputs**, which is what
-  finally held the locked character/skin-tone/wardrobe that drifted constantly
-  before, and the 2K output is centre-cropped to 2:1 so the canvas is never
-  letterboxed. What it does *not* fix is pose and joint geometry — that still
-  needs the same per-image human review, so write corrective notes as explicit
-  geometry ("the shin drops downward so the shoe sits lower than the knee")
-  rather than naming the exercise. Keep appending to the batch's spend ledger
-  in the image-prompts `.txt`.
-- **Never add an exercise to the `EX` object without its image already in place.**
-  When proposing/adding a batch of new exercises, stage them in a dedicated
-  image-prompts `.txt` at the repo root (self-contained, paste-ready prompt per
-  exercise — see the v1.7.0 batch's format in git history) until every image is
-  generated and saved into `images/exercises/`; delete the prompts file once the
-  batch ships. New exercises also get `EX_TIPS` (~6 cues) and `EX_INSTRUCTIONS`
-  (~5 steps) entries in the same pass. Exercises whose logged weight means
-  assistance (lower = stronger, e.g. Machine-assisted pull-up) get `noPR:true`
-  so PR logic skips them.
-- **Check `README.md` on every change, update it only if there's a need.** Not a
-  mandatory edit like `CHANGELOG.md` — but if a change makes an existing README
-  claim stale/inaccurate, or adds something user-facing worth documenting, fix it
-  in the same pass rather than letting it drift (this has already happened more
-  than once: a features list described AI behavior that never worked, a "how to
-  use" step overstated what was automatic).
-- **README "What's new" section.** A notable user-facing change (new feature,
-  visual refresh, etc.) gets a `## ✨ What's new in vX.Y.Z` section added right
-  after the intro (above `## Features`), describing it in user-facing terms.
-  When the *next* version bump ships, fold that section's bullets into the
-  permanent `## Features` list (merge into the relevant existing subsection, or
-  add a new one) and delete the "What's new" section — replacing it with a
-  fresh one for the new version if that release also warrants one. Only one
-  "What's new" section should exist at a time. **Bug-fix-only releases don't
-  enumerate their fixes in the README** — no new "What's new" section for
-  them; at most a general line like "bug fixes and stability improvements" if
-  one is warranted. The detailed list always lives in `CHANGELOG.md`. In a
-  mixed release, features get bullets and fixes get one general line
-  (headline-worthy fixes can be named briefly).
-- **In-app "What's New" and the persistent tutorial (added v1.10.0) need the
-  same upkeep as the README's "What's new" section — don't let them go
-  stale.** `WHATS_NEW_ITEMS` (near the top of `index.html`'s script, next to
-  `APP_VERSION`) drives a one-time bottom-sheet shown to returning users.
-  **The sheet is gated on `WHATS_NEW_VERSION`, not `APP_VERSION`** — it's the
-  version `WHATS_NEW_ITEMS` actually describes, and it shows only when
-  `cmpVer(CFG.lastSeenVersion, WHATS_NEW_VERSION) < 0`. On a release that
-  ships user-facing news, bump `WHATS_NEW_VERSION` to the new version and
-  rewrite `WHATS_NEW_ITEMS` + its `whatsnew_item*` strings in all three
-  languages (mirror the README bullets, condensed). On a **bug-fix-only**
-  release, bump `APP_VERSION` alone and leave `WHATS_NEW_VERSION` where it
-  is — upgraders then correctly see no sheet, instead of last version's
-  announcement re-headed with the new number (this shipped broken in v2.0.2;
-  fixed in v2.0.3). The
-  tutorial (`#s-tutorial`, `TUT_TOTAL` steps, functions prefixed `tut*`) is
-  a spotlight-on-screenshot walkthrough shown once after onboarding
-  (skippable) and reachable anytime from Settings → How to use.
-  **Never regenerate a tutorial screenshot without re-measuring its spotlight**
-  — the highlight rectangles are percentages of the screenshot, so a fresh
-  capture leaves them pointing at whatever used to be in that spot. This
-  already happened once (v2.4.0 rebuilt all twelve steps: half the screenshots
-  predated the v2.x refresh, and the Reports & backup step highlighted a row
-  ~38 percentage points below the one its tooltip described).
-  `npm run capture:tutorial` (`scripts/capture_tutorial.mjs`) is the only
-  supported way to do it: it drives the real app to each screen, screenshots
-  at exactly 390x844 (`.tut-ss-wrap` is `aspect-ratio:390/844` with
-  `object-fit:cover`, so any other ratio crops and shifts every coordinate),
-  and measures the target element's rect from the same DOM in the same pass.
-  The wrap must get that ratio from an explicit **width** (height derived by
-  `aspect-ratio`) — never from `max-height`: WebKit, the only engine on iPhone,
-  doesn't carry a max-height across the ratio, so until v2.6.4 it cropped every
-  screenshot and drifted every spotlight 4–7 points while Chromium looked
-  fine. `visual-check` gates this in WebKit.
-  Add a step by adding an entry to its `STEPS` array, then regenerating. If a new
-  feature needs a "how to use it" explanation (not just a changelog bullet),
-  add a step to the tutorial rather than leaving it frozen at whatever it
-  covered when first built — bump `TUT_TOTAL` and add the step to
-  `capture_tutorial.mjs`'s `STEPS` array rather than hand-writing coordinates.
-  The capture seeds a dismissed "Add to Home Screen" banner
-  (`gp_a2hs_dismissed`) and a recent `gp_last_export`; without both, the
-  banner or the backup nudge shifts every element below it and silently
-  invalidates the coordinates measured from that capture.
-- **README screenshots go stale — regenerate them when the UI changes
-  visually.** The images under `images/screenshots/` are real captures of the
-  app, referenced by `README.md`. A visual-only change (redesign, restyled
-  component, new screen) should regenerate the affected screenshots via a
-  throwaway Playwright script (seed realistic localStorage state, click
-  through to each screen, screenshot at `deviceScaleFactor: 2`) rather than
-  leaving them showing the old look. Two gotchas hit while doing this the
-  first time: (1) `index.html` registers a service worker unconditionally, and
-  (2) screens fade in via a CSS animation on `.screen.active` — take the
-  screenshot only after both the page has settled and a short
-  (~300ms+) wait past any screen transition, or the capture shows a
-  half-rendered/washed-out frame. A third: the install banner is dismissed by
-  `gp_a2hs_dismissed === 'true'` — seeding any other value (`'1'`) leaves the
-  banner in the shot and shifts every element below it, which silently
-  invalidates spotlight coordinates measured from that capture. Seed
-  `gp_last_export` too, or the backup nudge takes the banner's place.
-- **The workout set row is width-constrained — treat it as a budget.** A
-  plate-loaded, un-logged row carries ten controls (set number, −, weight, unit,
-  +, ×, reps, plate calculator, Log, delete) and only just fits a 360px phone.
-  It is `display:flex` with `nowrap`, so it never wraps — it silently overflows
-  the card and clips the right-hand controls instead, which is how it shipped
-  broken on every phone under ~400px until v2.4.0. Two media queries carry the
-  budget: ≤400px tightens everything and hides the redundant unit label, ≤340px
-  additionally hides the plate calculator. `.wi` is deliberately elastic
-  (`flex:1 1 44px`) so long values like `137.5` get the row's spare space —
-  don't give it back a fixed width, and don't restore `margin-left:auto` on
-  `.log`, which used to swallow that slack. **Adding anything to this row means
-  re-running `npm run visual-check`**, which fails on overflow, on a clipped
-  input value, and on rows that aren't all one line.
-- **Keep this file current.** Whenever a standing convention changes, or a new
-  one is established (e.g. a new file location rule, a new workflow step), update
-  this AGENTS.md to reflect it. Don't update it for one-off task details — only
-  for conventions meant to persist across future sessions.
+## Weight math (`js/math.js`, the GAINPATH MATH section)
 
-## Data model & app conventions
+- All formulas live here: no DOM, storage writes or UI strings (`test:units`
+  fails otherwise). Never silently change a formula's behaviour; an unapproved
+  bug gets a `known('Bn', …)` check plus a CHANGELOG "Known issues" line.
+- **Every proposed weight is snapped** through `roundToGymWeight(ex,w,dir)`
+  (`up`, `down` for deloads) to the user's gear. Dumbbells and kettlebells are
+  separate racks: test with `isHandWeight(ex)`, read `handOwned(ex)`/
+  `handRack(ex)`, never `CFG.gymDumbbells` directly. Kettlebell is `equipRank` 6
+  (display order comes from `EQUIP_ORDER`).
+- **Starting weights:** `liftEstimate()` via `LIFT_REL`. A new free-weight or
+  cable exercise needs a `LIFT_REL` entry. Cables are one-way (never a source
+  for free weights, no sync chip). Upper-body bodyweight moves are sources only.
+  No lower-body bodyweight moves or plate-loaded machines. Kettlebell lifts are
+  type `'k'` (two-way, treated as a dumbbell, the matching dumbbell ratio or a
+  little under) or `'K'` (target only, no sync chip: lifts limited by grip or
+  balance, and combined lifts like thrusters and clean and press); swings,
+  snatches, carries, core and wrist moves get no entry. Dumbbell lifts added
+  from the MuscleWiki catalogue follow the same split: `'d'`, or `'D'` (target
+  only) for the unstable and combined ones; barbell lifts from that catalogue
+  are `'b'` or `'B'` (target only) by the same rule. Related lifts only
+  raise a lift, via the `syncSuggest()` chip; a lift's own history wins.
+- Body weight: read `curBW()`, never `CFG.bw`; end `ST.bw` writes with
+  `syncBW()` (or `setWeighIn()`). Next session's weight: `carriedWeight()`.
+  Built-in defaults: `defaultW(ex)`, never `ex.baseW` (baseW is kg). Pool days:
+  `poolEx()`.
+- **Unit conversion:** every stored weight field is in `convertUnitData()`
+  (`cv`/`cvGear`, 0.1 rounding, `CFG.unitMemo` for exact round trips); never a
+  bare multiply.
+- Keep the evidence table in `docs/superpowers/plans/2026-09-25-lift-sync.md`
+  current when a number changes; heuristics stay conservative.
+- Reuse `e1rm`, `sessionVolume`, `fmtVol`, `exHistory`; don't recompute inline.
+- **Dated charts plot time proportionally:** `{x: dkDay(dk), y}` data,
+  `dayLabel()`, `timeAxis()`; never a `labels:` array (even spacing). Sort
+  and dedupe by day (`ST.history` isn't in date order). No Chart.js time scale.
 
-- **PRs are derived, not authoritative.** `ST.prs` is a cache rebuilt from
-  `ST.history` by `recomputePRs()`. Any code that mutates a logged session's sets
-  or removes a session (the session editor, delete, future history tooling) MUST
-  call `recomputePRs()` afterward, or a corrected/deleted lift can leave a stale
-  PR behind. Live PR detection during a workout still uses `chkPR()`; keep the two
-  in sync (same "ignore warm-up sets, zero weight only counts for timed holds"
-  rules).
-- **The per-exercise rating is functional, not decorative.** `exFeel` is a
-  last-set **reps-in-reserve (RIR)** rating — "On your last set, how many reps
-  could you still have done?": 5+ / 3–4 / 1–2 / 0-to-failure. The stored keys are
-  still `easy`/`good`/`hard`/`max` (kept for history compatibility — do not
-  rename), but their user-facing labels live in `RIR_META` and `FEEL_OPTS`
-  (per-exercise), **separate from `FEEL_META`** which is the untouched
-  session-level "overall feel" rating (same keys, different labels — don't
-  collapse them). `exFeel` drives `suggestWeight()`: 5+ → +full increment, 3–4 →
-  +small step, 1–2 → hold, and two `max` sessions in a row → deload. Suggestions
-  are always a one-tap **Apply/Dismiss** chip — never a silent auto-change;
-  progression stays the user's explicit decision. Don't wire the rating into
-  anything that changes weights without the user tapping Apply.
-- **Weight the app proposes must be loadable from the user's gear.**
-  `suggestWeight()`, warm-up sets in `buildSets()`, and `getAIEstimatedWeight()`
-  all pass their result through `roundToGymWeight(ex, w, dir)` — `dir='up'` snaps
-  to the next-higher plate/dumbbell the user owns (Settings → My gym;
-  `CFG.gymDumbbells` / `CFG.gymPlates`), `'down'` for deloads, `'nearest'` is the
-  legacy default. It's a no-op when no inventory is configured. Never surface a
-  proposed weight (suggestion, warm-up, estimate) without snapping it.
-- **Reuse the analytics helpers** rather than recomputing inline:
-  `e1rm(w,r)` (Epley estimated 1RM), `sessionVolume(rec)` (tonnage, ignores
-  warm-ups/bodyweight), `fmtVol(v)`, and `exHistory(name)` (per-exercise past
-  sessions). Estimated 1RM and volume are shown across the Progress tab, PR list,
-  and session summary — keep their definitions single-sourced.
-- **Badges are derived, exactly like PRs.** `ST.badges` (`{id:{dk}}`) is a cache
-  rebuilt by `recomputeBadges()` from `ST.history`/`ST.bw`/`CFG`; it is never
-  persisted. **Every call site of `recomputePRs()` must also call
-  `recomputeBadges()`** — same reasoning as the PR note above. Badge conditions
-  live in the `BADGES` array and are evaluated in one chronological pass, so
-  each badge is stamped with the date it was *first* earned; add a badge by
-  adding an entry there plus a `BDG_GLYPH` drawing and `bdg_<id>_name`/`_cond`
-  strings in all three languages. Badge art is **inline SVG** (`BDG_GLYPH` +
-  `badgeSvg()`), not PNGs in `images/` — the locked state is the `.lock` class
-  on the same drawing, so never author a second "greyed" asset. Weekly/streak
-  conditions must go through `streakEndingAt()`/`weekTarget()` rather than
-  re-deriving what counts as a qualifying week.
-- **Charts over dated data plot time proportionally.** A gap between sessions
-  must render as a gap — never one equal-width slot per entry. Any new chart
-  reuses `dkDay(dk)` (whole-day index since the epoch) for its `x` values,
-  `dayLabel(n, full)` for date text, and `timeAxis(days, tickColor)` for the
-  `scales.x` config. Concretely: pass Chart.js `data:[{x,y}]` and **never** a
-  `labels:` array of date strings — that selects the category scale, which is
-  exactly the uniform-spacing bug fixed in v2.0.3. Chart.js's own `time` scale
-  is deliberately unused; it needs a date-adapter dependency the app doesn't
-  carry. Series must also be sorted chronologically and deduped by day at build
-  time — `ST.history` is append-only, so its order is not date order.
-- **`ss(id)` renders the home screen; callers don't.** `ss('home')` calls
-  `refreshHome()` itself, so no navigation path can show an unrendered home.
-  Don't "optimise" that away, and don't go back to making each caller
-  responsible: that was the v2.1.1 bug. Startup only calls `refreshHome()` on
-  the branch where `restoreInProgress()` returns false, so anyone relaunching
-  with a saved `gp_wip` got a home screen nothing had filled in, and `bnav()`
-  /`closeDayEdit()`/`cancelProgram()` all switched to it without rendering —
-  an empty Train tab, no JS error, reproducible across relaunches. The
-  `refreshHome();ss('home')` pairs still scattered around are now redundant
-  but harmless. Any *new* screen that caches rendered state should follow the
-  same shape: render on the way in, from `ss()`.
-- **A third-party CDN must never be able to break the app.** Anything loaded
-  from a CDN (`Chart.js`, `jsPDF`, EmailJS in `<head>`) is used lazily inside
-  the feature that needs it, or guarded at the call site — never dereferenced
-  at the top level of the script block. The whole app is one `<script>`, so a
-  single `ReferenceError` there stops every function from ever being defined
-  and strands the user on a dead onboarding screen (this is what
-  `emailjs.init()` did until v2.1.1). Prefer self-hosting outright, as the
-  display fonts and icons already are.
+## UI constraints
 
-## Dev tooling (optional, dev-only — `npm install` once to use)
+- **The workout set row is a width budget** (ten controls, `nowrap`, must fit
+  360px). Keep `.wi` elastic (`flex:1 1 44px`), no `margin-left:auto` on
+  `.log`, keep the ≤400px/≤340px media queries. Run `visual-check` after
+  touching it.
+- **Icons are a self-hosted subset** (`fonts/tabler-icons*.css/.woff2`). A new
+  `ti-*` needs re-subsetting with `pyftsubset` (`--drop-tables+=GSUB,GPOS`),
+  its CSS rule, a `CACHE_NAME` bump, and a check that it renders (class names
+  can be missing upstream, e.g. `ti-dumbbell`).
+- **Tutorial** (`TUT_TOTAL`, `tut*`, Settings → How to use, `#h-tour`; not
+  auto-played): regenerate screenshots and spotlights only together with
+  `npm run capture:tutorial`. New how-to-use features get a `STEPS` entry. The
+  wrap's 390:844 ratio comes from width, never `max-height` (WebKit crops).
+- **Screenshots** (README, tutorial): block the service worker, seed
+  `gp_a2hs_dismissed='true'` (exactly) and a recent `gp_last_export`, and wait
+  ≥300ms past screen transitions. Regenerate README screenshots when the UI
+  changes visually.
 
-- **`npm run visual-check`** — starts a static server, loads `index.html` in
-  headless Chromium (Playwright), screenshots the onboarding and home screens,
-  and fails if anything throws a console/page error. Screenshots land in
-  `scripts/.visual-check/` (gitignored). Use this after any UI change instead of
-  ad hoc one-off browser scripts.
-- **`npm run lint`** — extracts the inline `<script>` block from `index.html`
-  and runs ESLint (`eslint.config.js`) against it, mapping line numbers back to
-  `index.html`. Scoped to bug-catching rules only (`no-undef`, `no-unused-vars`,
-  etc.) — deliberately no stylistic/formatting rules, since the inline script's
-  dense, semicolon-chained style is intentional and Prettier would rewrite the
-  whole file. Top-level functions are only ever called from inline `onclick=""`
-  attributes, so don't be surprised they look "unused" in isolation — the config
-  already accounts for that.
-- **`scripts/process_brand_image.py`** — turns a square source logo/icon (e.g. a
-  fresh export from an image generator) into the sizes referenced from `<head>`
-  and the app chrome (`images/branding/logo.png`, `favicon-16.png`,
-  `favicon-32.png`, `apple-touch-icon.png`), stripping the generator's solid
-  canvas color to transparent and re-flattening onto an opaque brand background
-  for the alpha-intolerant `apple-touch-icon`. Requires Pillow
-  (`pip3 install -r scripts/requirements.txt`).
-- **`npm run capture:tutorial`** — regenerates every tutorial screenshot in
-  `images/tutorial/` **and** its spotlight coordinates in one pass, then prints
-  the measured boxes. See the tutorial note above for why the two must never be
-  regenerated separately.
-- **`npm run test:units`** — unit-tests GainPath's pure calculation functions
-  (`e1rm`, `sessionVolume`, `fmtVol`, `recomputePRs`, `chkPR`) against the real
-  inline script, using the same Playwright boot pattern as `visual-check`
-  (seed `localStorage`, load `index.html`, call the real `window`-scope
-  functions from `page.evaluate`) rather than reimplementing their logic in
-  the test. Guards exactly the invariants called out below under "PRs are
-  derived, not authoritative" — warm-up sets ignored, `noPR` exercises
-  excluded, zero weight only counting for `holdSecs` exercises, and
-  `chkPR`/`recomputePRs` staying in sync. Add a case here whenever one of
-  those functions changes.
-- **`npm run simulate`** (`scripts/simulate.mjs`) — a seeded, randomized
-  fuzzer, not a fixed test: it repeatedly drives real Settings and day-edit
-  interactions (through the actual window-scope functions, same boot pattern
-  as `test:units`, across both Chromium and WebKit) in random order and
-  combination — including simulated app-kill-and-relaunch mid-session via
-  `page.reload()` — and checks two persistence invariants rather than a fixed
-  set of scenarios: every Settings change must be reflected in `localStorage`
-  the instant it's made, and whatever a day-edit session ends with (Start /
-  Save-without-starting / Reset) must be exactly what re-opening that day or
-  relaunching the app shows afterward. It exists because both invariants had
-  shipped broken and undetected until a user actually hit them on a real
-  device — `test:units` guards specific known scenarios, this is for finding
-  ones nobody thought to write a scenario for. A failing run prints its seed
-  so it can be replayed exactly (`SEED=<n> npm run simulate`); add a new
-  action to `dayEditCycle`/`settingsCycle` whenever a new Settings control or
-  day-edit field is added, so the fuzzer's combination space grows with the
-  app's actual surface area instead of drifting behind it.
-- **`npm run chaos`** (`scripts/chaos.mjs`) — blind monkey/chaos testing via
-  [Gremlins.js](https://github.com/marmelab/gremlins.js), same server-boot
-  pattern as the other scripts. Where `simulate` is **semantic** (it drives
-  real window-scope functions, so it only ever catches the specific
-  invariants it was written to check), `chaos` is **blind**: it clicks,
-  taps, fills forms, and scrolls at random DOM coordinates regardless of
-  what's actually there — the class of bug a semantic fuzzer would never
-  think to try (a control tapped mid-transition, a rapid double-tap), at
-  thousands of actions per screen per run. It seeds a fresh horde on each of
-  six starting screens (`home`, `dayedit`, `wo`, `settings`, `wo-organize`,
-  `wo-cancel`) in both
-  Chromium and WebKit; a run is clean if nothing throws, since `index.html`
-  has no intentional `console.error`/`warn` calls to filter — except one
-  known-benign WebKit message ("Notification prompting can only be done
-  from a user gesture", from `Notification.requestPermission()` at
-  index.html:15864 firing on every synthetic click that reaches it, since
-  gremlins clicks aren't trusted user gestures), which is filtered out by
-  name in `runEngine()`'s console listener rather than reported as a false
-  positive every single run. **Any screen.setup added here must be wrapped
-  the way the others are** — a synchronous throw inside `page.evaluate`
-  used to crash the whole Node process instead of being recorded as a
-  failure until this was caught during initial verification; `runScreen()`'s
-  try/catch is what makes a broken setup helper degrade to one recorded
-  failure instead of aborting every remaining screen/engine. Add a new
-  entry to `SCREENS` when a new top-level screen or sheet is added, the same
-  way `simulate`'s fuzzer grows with new Settings/day-edit fields. A failing
-  run prints its seed for exact replay (`SEED=<n> npm run chaos`).
-- **`npm run ios-verify`** (`scripts/ios_verify.mjs`) — the one check
-  `chaos`/`simulate` can't do, because both run on desktop Chromium/WebKit:
-  `env(safe-area-inset-*)` only ever resolves non-zero on real iOS
-  hardware/Simulator. Drives actual Simulator Safari via Appium's XCUITest
-  driver (`appium`, `appium-xcuitest-driver`, `webdriverio` devDependencies —
-  Appium 2+'s driver manager auto-detects `appium-xcuitest-driver` from
-  `package.json`, no separate `appium driver install` needed). Needs Xcode
-  installed with a Simulator runtime downloaded
-  (`xcodebuild -downloadPlatform iOS`) and boots/reuses a named device
-  (`--device="iPhone 15"`, matching an existing `xcrun simctl` device name).
-  **This machine has only 8GB RAM** — Xcode + a booted Simulator + building/
-  launching WebDriverAgent + Appium + Node concurrently is a genuine squeeze;
-  a plain run with no automation attempted has been OS-killed for low memory
-  more than once. Close other apps before running it, expect it to be far
-  slower/less reliable than the other two scripts, and treat it as a
-  deliberate occasional check, not routine tooling. It deliberately stops at
-  a tab-mode screenshot rather than automating "Add to Home Screen" through
-  to a standalone-mode screenshot — that native Share-sheet interaction was
-  prototyped and kept failing in a *different* way each attempt (stale menu
-  state bleeding across separate script runs since `noReset:true` doesn't
-  reset Safari itself; then forcibly restarting Safari for a clean state
-  broke the remote debugger's process/PID tracking instead), which is the
-  "question the approach" signal, not "try one more fix." A real standalone
-  check is a 10-second manual step instead: with the Simulator open and this
-  script's tab loaded, tap ··· → Share → Add to Home Screen → Add, then open
-  the new icon from the Home Screen. Don't re-attempt scripting that flow
-  without a real reason — it costs a lot for a check that's already this
-  cheap by hand. The XCUITest driver's transitive deps (`extract-zip`,
-  `morgan`) carry `npm audit` advisories — unlike `gremlins.js`'s
-  `brace-expansion` one above (which had a clean non-breaking fix, already
-  applied), these two only offer major-version-downgrade fixes
-  (`appium@1.22.3`, `webdriverio@8.14.6`) that would undo the versions
-  pinned here, so they're left as-is: dev-only tooling, no untrusted input
-  ever reaches either.
-- **`npm run ios-chaos`** (`scripts/ios_chaos.mjs`) — `chaos`'s Gremlins
-  horde, but driven against real Simulator Safari via the same Appium/
-  XCUITest scaffolding as `ios-verify`, instead of desktop Chromium/WebKit.
-  `horde.unleash()` runs entirely inside the page's own JS engine via
-  internal timers — the WebDriver round-trip only happens once, to start it
-  and await the returned promise — so this is **not** slower per gremlin
-  than `chaos`'s desktop runs; what it buys is the real rendering/
-  hit-testing engine (real touch hit-testing, real viewport/safe-area
-  behavior under rapid interaction), not more volume. `chaos` stays the
-  routine, fast, dual-engine tool; this is an occasional real-Simulator
-  pass, same spirit as `ios-verify` — same 8GB-RAM caveat applies. `COUNT`
-  defaults to 2000 (matching `chaos`'s desktop default), verified clean on
-  2026-09-09 at both count=100 (600 actions) and count=2000 (12000 actions),
-  zero failures, no hang. One risk remains structurally unhandled even
-  though it didn't occur in either verification run: the `alert()` mogwai
-  patches `window.alert`/`confirm`/`prompt` so in-page JS dialogs never
-  block the horde, but a *native* iOS permission sheet (if a synthetic click
-  ever reaches `Notification.requestPermission()` in a way iOS treats as
-  gesture-eligible, unlike desktop WebKit which silently no-ops it — see the
-  same-named filter in `chaos`) would sit in front of the WebDriver session
-  with no dismiss logic here, and could hang the run.
+## Content
 
-## Codex plugins
+- **Exercise images:** new ones are `images/exercises/<slug>.webp`
+  (1774×887, `cwebp -q 80`) with `webp:true` on the `EX` entry; the service
+  worker caches them on first view in `IMG_CACHE`, so they are **not** added
+  to `EX_IMAGE_URLS` and need no `CACHE_NAME` bump. The original PNGs stay
+  precached in `EX_IMAGE_URLS`; a renamed exercise keeps its old file through
+  `EX_OLD_NAME`, never a file rename. Never add an
+  exercise to `EX` before its image exists; stage batches in an image-prompts
+  `.txt` at the repo root (delete it when shipped). New exercises also get
+  `EX_TIPS` (~6) and `EX_INSTRUCTIONS` (~5); assistance lifts get `noPR:true`.
+  A broken built-in image shows a placeholder; only `custom:true` exercises
+  fall back to a YouTube link (`exImgFallback`).
+- **Generating images** costs money: `scripts/gen_exercise_image.py` (Gemini,
+  ~$0.14/image, shared prepaid key) — ask before batch runs, pass approved
+  images as references, write corrections as explicit geometry, log spend.
+- **Lifting guides** (`guides/*.html`) quote the real math. When a formula or
+  step changes, re-run the page's examples through the real functions. Cite
+  only studies graded in the lift-sync doc. New guides go in
+  `guides/index.html` and `sitemap.xml` (`visual-check` enforces). The share
+  image must not claim more than `privacy.html`.
+- **Copy must match the code.** Check README on every change and fix stale
+  claims. `privacy.html` states only what the code does.
 
-- **`superpowers` (obra/superpowers, via the official marketplace) is
-  installed** — a general-purpose agent-methodology plugin (TDD, systematic
-  debugging, planning, subagent-driven review), not fitness-domain-specific.
-  Only `test-driven-development` and `systematic-debugging` are actively
-  adopted here (see `npm run test:units` above, and reach for the
-  `systematic-debugging` skill's 4-phase root-cause method on any gnarly bug
-  report rather than ad hoc troubleshooting).
-- **Deliberately not adopted:** turning GainPath's recurring procedures
-  (batch exercise adds, README screenshot regen, the version/tag/release
-  flow) into `.Codex/skills/` files. Superpowers' own `writing-skills` skill
-  states project-specific conventions belong in the project's instructions
-  file, not in a skill — which is exactly what this AGENTS.md already is. It
-  also requires a full pressure-tested RED-GREEN-REFACTOR cycle with
-  subagents before any new skill ships, which isn't worth the overhead for
-  internal-only documentation. Don't re-propose converting these sections
-  into skills without a genuine cross-project reuse case.
-- Also deliberately left opt-in (not adopted): `using-git-worktrees`,
-  `finishing-a-development-branch`, `requesting-code-review`,
-  `receiving-code-review` — these assume a feature-branch + PR-review
-  workflow, but GainPath commits directly to `main`. Adopting them would be a
-  workflow change, not a pure add; only pick them up if that changes.
+## Workflow
+
+- Every code change gets a `CHANGELOG.md` entry; commit messages say what and
+  why.
+- **Push only after the user approves that specific push.** A version-bump
+  push also gets its annotated tag and `gh release create` with the CHANGELOG
+  notes, in the same approved step.
+- **Every version bump follows `RELEASING.md`**; `npm run precheck` (lint →
+  test:units → test:data → visual-check) must pass first.
+- **What's new:** one README `## ✨ What's new in vX.Y.Z` section at a time,
+  folded into `## Features` at the next bump. Feature releases bump
+  `WHATS_NEW_VERSION` and rewrite `WHATS_NEW_ITEMS` + strings in en/ja/ko;
+  bug-fix-only releases bump `APP_VERSION` alone and list fixes only in the
+  CHANGELOG.
+- **Coding discipline:** state assumptions and ask when unclear; minimum code
+  for the request; surgical changes in the surrounding dense style (remove what
+  your change orphaned, leave other dead code); reproduce a bug as a test
+  before fixing it. Use the `systematic-debugging` skill for hard bugs.
+  Don't convert these conventions into `.claude/skills/`, and don't adopt the
+  branch/PR superpowers skills: GainPath commits straight to `main`.
+- Keep this file current when a convention changes; nothing task-specific.
+
+## Secrets and public actions
+
+- Secrets live in the macOS Keychain (Facebook token: service
+  `gainpath.facebook-system-user-token`, account `gainpath`). Pass them on
+  stdin, never argv; never print, echo or commit one (check length only).
+- `scripts/fb_post.py` writes only with `--yes`: show the dry run, get a yes
+  for that post, then run it. It uses `curl` because this Python has no CA
+  bundle; never disable TLS verification. `secrets/save.sh` (gitignored) saves
+  a copied token from the clipboard; run it right after Copy, and never make
+  the user copy a command while a token is on the clipboard. On a fresh clone,
+  recreate it: validate `pbpaste` against `[A-Za-z0-9_-]{100,400}`, pipe
+  `add-generic-password -U -a gainpath -s gainpath.facebook-system-user-token
+  -w <t>` into `security -i`, verify the read-back, then `pbcopy < /dev/null`.
+
+## Tools
+
+| Command | Use |
+|---|---|
+| `npm run precheck` | release gate, stops at first failure |
+| `npm run lint` | ESLint over all `js/` files as one script, errors mapped to `js/<file>:<line>`; bug rules only, no formatting |
+| `npm run test:units` | the real math/PR functions in the browser; add a case when one changes |
+| `npm run test:data` | backup/restore, save failures, IDB mirror, iPhone warning, photos (Chromium + WebKit) |
+| `npm run visual-check` | UI smoke, set-row budget, tutorial ratio (WebKit), js/?v=/precache, offline boot, guides |
+| `npm run simulate` | seeded fuzzer for Settings/day-edit persistence; extend `settingsCycle`/`dayEditCycle` with new controls |
+| `npm run chaos` | Gremlins.js on six screens, both engines; new top-level screens/sheets go in `SCREENS`, with setup inside `runScreen()`'s try/catch |
+| `npm run capture:tutorial` | tutorial screenshots + spotlight coordinates, always together |
+| `npm run ios-verify` / `ios-chaos` | real iOS Simulator via Appium; occasional only (8 GB RAM gets it killed). Check Add to Home Screen by hand, don't script it |
+| `scripts/process_brand_image.py` | square logo → `images/branding/` sizes (opaque `apple-touch-icon`); needs Pillow |
+
+The Appium deps' `npm audit` advisories are left as they are: the only fixes
+are major downgrades, and it's dev-only tooling that never sees untrusted input.
+
+Failing `simulate`/`chaos` runs print a seed: `SEED=<n> npm run …` replays it.
+Test scripts that load the app hit the production analytics worker; route it
+(`gainpath-analytics.jedmangubat.workers.dev`) when that matters.
