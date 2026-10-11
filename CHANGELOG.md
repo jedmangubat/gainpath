@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   barbell bench press". Both are retaken from the current app. Nothing in the
   app itself changes.
 
+### Removed
+- **Unused files.** Nine README screenshots that nothing linked to any more
+  (they showed the old five-tab layout), one exercise image no exercise used
+  (`bench-dumbbell-press.png`, never precached), `scripts/match_exercise_images.py`
+  (its `image-checklist.md` is long gone), the finished MuscleWiki dumbbell plan
+  and two contact sheets from the launch video. Nothing the app loads.
+
 ## [2.10.0] - 2026-10-11
 
 ### Added
