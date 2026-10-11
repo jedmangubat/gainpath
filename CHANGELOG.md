@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **README screenshots and the launch video showed the old exercise names.**
+  The rest-timer and Climb screenshots in the README and the captures inside
+  `brag-output/brag.mp4` (and its poster image) were taken before the rename to
+  MuscleWiki names, so they still said "Incline barbell chest press" and "Flat
+  barbell bench press". Both are retaken from the current app. Nothing in the
+  app itself changes.
+
 ## [2.10.0] - 2026-10-11
 
 ### Added
