@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bdg" role="img" aria-label="First Rep">
+<style>.hex{fill:#0C1512;stroke:#C6F24E;stroke-width:2.5}.gf{fill:#C6F24E}.cut{fill:#0C1512}.gs{fill:none;stroke:#C6F24E;stroke-width:6;stroke-linecap:square}.lock .hex,.lock .gs{stroke:#5C6F65}.lock .gf{fill:#5C6F65}</style>
+<path class="hex" d="M32 3L57 17v30L32 61 7 47V17Z"/><path class="gf" d="M14 25h5v18h-5zM21 20h6v28h-6zM29 31h13v6H29zM44 24h6v20h-6zM21 20l6-6v6z"/>
+</svg>

@@ -15,7 +15,7 @@
 // Writes: images/tutorial/*.png and scripts/.tutorial-coords.json
 // Usage: node scripts/capture_tutorial.mjs
 
-import { chromium } from 'playwright';
+import { chromium } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';

@@ -7,11 +7,11 @@
 |---|---|
 | `js/boot.js` | Boot constants, analytics, What's New |
 | `js/exercises.js` | Splits and machine keys, exercise database, exercise pool |
-| `js/exercise-text.js` | Exercise tips, names and instructions (en/ja/ko), ~830 KB |
-| `js/state.js` | State (`CFG`, `ST`, `load()`) |
+| `js/exercise-text.js` | Exercise tips, names and instructions (en/ja/ko), ~3.2 MB |
+| `js/state.js` | State (`CFG`, `ST`), `load()` with per-key validation (`LOAD_BAD`) |
 | `js/i18n.js` | `STRINGS`, `t()` |
-| `js/storage.js` | Migrations, saving, IndexedDB mirror, in-progress workout |
-| `js/ui-core.js` | Date/DOM helpers, `ss()` navigation, audio and timers |
+| `js/storage.js` | Migrations, per-store saving (`SAVE_FAILS`), pending-completion settling, IndexedDB mirror, in-progress workout |
+| `js/ui-core.js` | Date/DOM helpers (`locTag`, `fmtDk`, `showDate`), `ss()` navigation, on-demand libraries (`loadLib`, `vendor/`), modal manager (`modalOpen`/`modalClose`), accessible-name linking, audio and timers |
 | `js/onboarding.js` | Onboarding, tutorial |
 | `js/math.js` | GAINPATH MATH |
 | `js/history.js` | Suggestion chips, session editor, calendar, streaks, badges, Home |
@@ -20,7 +20,7 @@
 | `js/workout.js` | Start workout, plate calculator, workout screen |
 | `js/climb.js` | Climb charts, PRs, PDF report |
 | `js/photos.js` | Progress photos (own IndexedDB database, added in Phase 8) |
-| `js/data-safety.js` | Backups, restore, Home banners, nudges, feedback |
+| `js/data-safety.js` | Backups, restore, unreadable-data recovery sheet, Home banners, nudges, feedback |
 | `js/main.js` | Startup sequence and service-worker registration |
 
 The line ranges below are from the pre-split `index.html` (commit 6c5dc8b),

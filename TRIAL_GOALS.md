@@ -8,7 +8,7 @@ adjusted, not treated as fixed.
 
 Current numbers are checked against the anonymous, aggregate-only analytics
 described in `CHANGELOG.md` (see the analytics-worker `/stats` endpoint —
-`GET https://<your-worker>.workers.dev/stats?key=<your secret>` returns
+`GET https://<your-worker>.workers.dev/stats` with the header `Authorization: Bearer <your secret>` returns
 session counts, 7-day/30-day retention, per-event counts, and lead count as
 JSON).
 

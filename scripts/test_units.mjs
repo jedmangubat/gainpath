@@ -26,7 +26,7 @@
 //
 // Usage: npm run test:units
 
-import { chromium } from 'playwright';
+import { chromium } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile, mkdir } from 'fs/promises';
 import { appSources } from './app_sources.mjs';
@@ -1258,6 +1258,44 @@ async function main() {
 
     return out;
   });
+
+  // ── Translations. Every language has every key, placeholders ({n}, {w}…) match,
+  // nothing is blank, and every key the code or markup names exists. t() falls back
+  // to English silently, so a gap would otherwise only show up as English text
+  // inside Japanese or Korean screens.
+  const i18n = await page.evaluate(() => {
+    const L = ['en', 'ja', 'ko'], en = Object.keys(STRINGS.en), ph = /\{[a-zA-Z]+\}/g;
+    const missing = {}, extra = {}, badPh = [], blank = [];
+    ['ja', 'ko'].forEach((l) => { missing[l] = en.filter((k) => !(k in STRINGS[l])); extra[l] = Object.keys(STRINGS[l]).filter((k) => !(k in STRINGS.en)); });
+    en.forEach((k) => { const a = (String(STRINGS.en[k]).match(ph) || []).sort().join(); ['ja', 'ko'].forEach((l) => { if (k in STRINGS[l] && (String(STRINGS[l][k]).match(ph) || []).sort().join() !== a) badPh.push(l + ':' + k); }); });
+    L.forEach((l) => Object.keys(STRINGS[l]).forEach((k) => { if (!String(STRINGS[l][k]).trim()) blank.push(l + ':' + k); }));
+    return { missing, extra, badPh, blank, en };
+  });
+  results.push({ name: 'i18n: ja and ko have every English key', pass: !i18n.missing.ja.length && !i18n.missing.ko.length, actual: { ja: i18n.missing.ja.slice(0, 20), ko: i18n.missing.ko.slice(0, 20) }, expected: 'none missing' });
+  results.push({ name: 'i18n: ja and ko have no keys English lacks', pass: !i18n.extra.ja.length && !i18n.extra.ko.length, actual: i18n.extra, expected: 'none' });
+  results.push({ name: 'i18n: placeholders match across languages', pass: !i18n.badPh.length, actual: i18n.badPh.slice(0, 20), expected: 'none' });
+  results.push({ name: 'i18n: no blank strings', pass: !i18n.blank.length, actual: i18n.blank, expected: 'none' });
+  {
+    const have = new Set(i18n.en), used = new Map();
+    const note = (k, where) => { if (!used.has(k)) used.set(k, where); };
+    for (const src of await appSources(ROOT)) {
+      const text = src.text;
+      for (let i = text.indexOf('t('); i >= 0; i = text.indexOf('t(', i + 2)) {
+        if (/[A-Za-z0-9_$.]/.test(text[i - 1] || ' ')) continue; // part of another name (e.g. set(, exit()
+        let depth = 0, j = i + 1, end = -1;
+        for (; j < text.length && j < i + 400; j++) { if (text[j] === '(') depth++; else if (text[j] === ')' && --depth === 0) { end = j; break; } }
+        if (end < 0) continue;
+        const call = text.slice(i + 2, end);
+        for (const m of call.matchAll(/'([a-z][a-z0-9_]*)'(?!\s*\+)/g)) if (!m[1].endsWith('_')) note(m[1], src.file);
+      }
+    }
+    const html = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+    for (const m of html.matchAll(/data-i18n(?:-ph|-aria)?="([^"]+)"/g)) note(m[1], 'index.html');
+    // Only judge keys that look like translation keys and are defined for at least one language
+    // elsewhere in the code path: a missing one is reported by name.
+    const unknown = [...used].filter(([k]) => !have.has(k) && /_/.test(k)).map(([k, w]) => `${k} (${w})`);
+    results.push({ name: 'i18n: every t(\'key\') and data-i18n key in the code exists', pass: !unknown.length, actual: unknown.slice(0, 30), expected: 'none unknown' });
+  }
 
   await browser.close();
   server.close();

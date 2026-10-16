@@ -9,7 +9,7 @@ function openSettings(){
   [60,90,120].forEach(v=>gid('srest-'+v).classList.toggle('on',CFG.prefRest===v));
   [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
   ['straight','pyramid'].forEach(v=>gid('sstyle-'+v).classList.toggle('on',CFG.setStyle===v));
-  gid('sstyle-desc').textContent=CFG.setStyle==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';
+  gid('sstyle-desc').textContent=t(CFG.setStyle==='pyramid'?'st_style_pyramid':'st_style_straight');
   gid('stog-wu').classList.toggle('on',CFG.warmup);
   [1,2,3].forEach(v=>gid('swu-'+v).classList.toggle('on',CFG.wuSteps===v));
   gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';
@@ -70,8 +70,8 @@ function toggleSettingKB(w){
 function renderMWSettings(){
   const el=gid('set-mw-list');if(!el)return;
   const keys=Object.keys(ST.mw).sort();
-  if(!keys.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">No machines recorded yet — you\'ll be asked the first time you use one</div>';return;}
-  el.innerHTML=keys.map(name=>'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="flex:1;font-size:13px;color:var(--txt)">'+esc(name)+'</div><input class="inp" style="margin:0;width:70px" type="number" min="0" step="0.5" value="'+ST.mw[name]+'" onfocus="this.select()" onchange="updMWSetting('+jsArg(name)+',this.value)"><span style="font-size:13px;color:var(--txt2)">'+CFG.unit+'</span><button class="bg" onclick="removeMWSetting('+jsArg(name)+')" aria-label="Forget machine base weight"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
+  if(!keys.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">'+t('st_no_machines')+'</div>';return;}
+  el.innerHTML=keys.map(name=>'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="flex:1;font-size:13px;color:var(--txt)">'+esc(name)+'</div><input class="inp" style="margin:0;width:70px" type="number" min="0" step="0.5" value="'+ST.mw[name]+'" onfocus="this.select()" onchange="updMWSetting('+jsArg(name)+',this.value)"><span style="font-size:13px;color:var(--txt2)">'+CFG.unit+'</span><button class="bg" onclick="removeMWSetting('+jsArg(name)+')" aria-label="'+esc(t('aria_forget_mw'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
 }
 function updMWSetting(name,val){ST.mw[name]=Math.max(0,parseFloat(val)||0);saveData();}
 function removeMWSetting(name){delete ST.mw[name];saveData();renderMWSettings();}
@@ -103,16 +103,16 @@ function isValidLeadEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 async function submitLeadEmail(){
   const email=(gid('set-notify-email').value||'').trim();
   const status=gid('notify-status');
-  if(!isValidLeadEmail(email)){status.textContent='Enter a valid email address.';status.style.color='#C05A3E';return;}
-  if(!ANALYTICS_ENDPOINT||ANALYTICS_ENDPOINT.includes('YOUR-SUBDOMAIN')){status.textContent='Not available yet — try again later.';status.style.color='var(--txt2)';return;}
-  const btn=gid('notify-send-btn');btn.disabled=true;status.textContent='Sending…';status.style.color='var(--txt2)';
+  if(!isValidLeadEmail(email)){status.textContent=t('st_email_invalid');status.style.color='#C05A3E';return;}
+  if(!ANALYTICS_ENDPOINT||ANALYTICS_ENDPOINT.includes('YOUR-SUBDOMAIN')){status.textContent=t('st_not_available');status.style.color='var(--txt2)';return;}
+  const btn=gid('notify-send-btn');btn.disabled=true;status.textContent=t('fb_sending');status.style.color='var(--txt2)';
   try{
     const res=await fetch(ANALYTICS_ENDPOINT+'/lead',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({email})});
     if(!res.ok)throw new Error('failed');
     CFG.leadEmail=email;CFG.leadSubmitted=true;saveCFG();
     gid('notify-form').style.display='none';gid('notify-done').style.display='block';
   }catch(e){
-    status.textContent='Something went wrong — check your connection and try again.';status.style.color='#C05A3E';
+    status.textContent=t('st_net_error');status.style.color='#C05A3E';
   }finally{
     btn.disabled=false;
   }
@@ -138,7 +138,20 @@ function collectSettingsFields(){
 function openPrivacySettings(){let id=null;try{id=localStorage.getItem('gp_anon_id');}catch(e){}gid('privacy-anon-id').textContent=id||'—';ss('setprivacy');}
 function closeSettingsSection(){collectSettingsFields();accentColor();refreshHome();ss('settings');}
 // Erase must clear the IndexedDB mirror too, or idbRecover() would bring the data back.
-function resetApp(){if(!confirm('This will erase ALL your data. Are you sure?'))return;localStorage.clear();Promise.all([idbClear(),photoClear()]).then(()=>location.reload());}
+// Reset erases everything, including the pre-migration IndexedDB snapshot that
+// upgrades keep. localStorage is cleared LAST and only once the other stores
+// are really gone: if photo deletion is blocked (another tab) or a store can't
+// be erased, nothing is touched, so the IndexedDB mirror can't bring the data
+// back after a half-finished reset. (A blocked delete stays queued in the
+// browser and completes when the other tab closes.)
+async function resetApp(){
+  if(!confirm(t('st_reset_confirm')))return;
+  const say=m=>{const el=gid('reset-st');if(el)el.textContent=m;};say('');
+  const ph=await photoClear();
+  if(!ph.ok){say(t(ph.reason==='blocked'?'reset_blocked':'reset_failed'));return;}
+  if(!await idbErase()){say(t('reset_failed'));return;}
+  localStorage.clear();location.reload();
+}
 
 // ═══ CUSTOM PROGRAM BUILDER ═══
 const PROG_COLORS=['#29506D','#2F6B4F','#946F17','#6B4A87','#8C3A5E','#A24A2E'];
@@ -146,24 +159,24 @@ const PROG_ICONS=['ti-barbell','ti-run','ti-flame','ti-bolt','ti-heart','ti-star
 function syncProgramMeta(){if(!CFG.customProgram)return;CFG.customProgram.days.forEach((d,i)=>{DC[d.id]=d.color||PROG_COLORS[i%PROG_COLORS.length];DI[d.id]=d.icon||PROG_ICONS[i%PROG_ICONS.length];});}
 function newCustomDayId(){let max=0;const scan=arr=>{if(arr)arr.forEach(d=>{const m=/^cd_(\d+)$/.exec(d.id);if(m)max=Math.max(max,+m[1]);});};scan(CFG.customProgram&&CFG.customProgram.days);scan(ST.progDraft&&ST.progDraft.days);return'cd_'+(max+1);}
 function openProgramBuilder(){
-  ST.progDraft=CFG.customProgram?JSON.parse(JSON.stringify(CFG.customProgram)):{name:'My program',days:[]};
+  ST.progDraft=CFG.customProgram?JSON.parse(JSON.stringify(CFG.customProgram)):{name:t('st_my_program'),days:[]};
   renderProgramBuilder();ss('prog');
 }
 function renderProgramBuilder(){
   const d=ST.progDraft;if(!d)return;
   gid('prog-name').value=d.name;
   const list=gid('prog-days');
-  if(!d.days.length)list.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:16px 0">No days yet — add your first training day below.</div>';
+  if(!d.days.length)list.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:16px 0">'+t('st_no_days')+'</div>';
   else list.innerHTML=d.days.map((day,i)=>{
     const cnt=(CFG.customDays[day.id]||[]).length;
     return '<div class="de-row" style="margin-bottom:8px">'+
       '<div style="display:flex;flex-direction:column;gap:3px">'+
-        '<button class="bg" style="padding:4px 4px"'+(i===0?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',-1)" aria-label="Move up"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>'+
-        '<button class="bg" style="padding:4px 4px"'+(i===d.days.length-1?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',1)" aria-label="Move down"><i class="ti ti-chevron-down" aria-hidden="true"></i></button>'+
+        '<button class="bg" style="padding:4px 4px"'+(i===0?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',-1)" aria-label="'+esc(t('aria_move_up'))+'"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>'+
+        '<button class="bg" style="padding:4px 4px"'+(i===d.days.length-1?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',1)" aria-label="'+esc(t('aria_move_down'))+'"><i class="ti ti-chevron-down" aria-hidden="true"></i></button>'+
       '</div>'+
       '<div style="flex:1;min-width:0"><input class="inp" style="margin:0 0 4px 0" value="'+esc(day.name)+'" onchange="renameProgDay('+i+',this.value)"><div style="font-size:11px;color:var(--txt2)">'+cnt+' exercise'+(cnt===1?'':'s')+'</div></div>'+
-      '<button class="bg" onclick="openProgDayEdit('+i+')" aria-label="Edit exercises"><i class="ti ti-list-details" aria-hidden="true"></i></button>'+
-      '<button class="bg" onclick="deleteProgDay('+i+')" aria-label="Delete day"><i class="ti ti-trash" aria-hidden="true"></i></button>'+
+      '<button class="bg" onclick="openProgDayEdit('+i+')" aria-label="'+esc(t('aria_edit_ex'))+'"><i class="ti ti-list-details" aria-hidden="true"></i></button>'+
+      '<button class="bg" onclick="deleteProgDay('+i+')" aria-label="'+esc(t('aria_delete_day'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button>'+
     '</div>';
   }).join('');
   gid('prog-delete-btn').style.display=CFG.customProgram?'flex':'none';
@@ -171,7 +184,7 @@ function renderProgramBuilder(){
 function addProgDay(){const d=ST.progDraft;const i=d.days.length;d.days.push({id:newCustomDayId(),name:'Day '+String.fromCharCode(65+(i%26)),color:PROG_COLORS[i%PROG_COLORS.length],icon:PROG_ICONS[i%PROG_ICONS.length]});renderProgramBuilder();}
 function renameProgDay(i,v){const n=v.trim();if(n)ST.progDraft.days[i].name=n;}
 function moveProgDay(i,dir){const a=ST.progDraft.days,j=i+dir;if(j<0||j>=a.length)return;const t=a[i];a[i]=a[j];a[j]=t;renderProgramBuilder();}
-function deleteProgDay(i){const day=ST.progDraft.days[i];if((CFG.customDays[day.id]||[]).length&&!confirm('Delete "'+day.name+'" and its exercises?'))return;delete CFG.customDays[day.id];delete CFG.dayLinks[day.id];ST.progDraft.days.splice(i,1);saveCFG();renderProgramBuilder();}
+function deleteProgDay(i){const day=ST.progDraft.days[i];if((CFG.customDays[day.id]||[]).length&&!confirm(t('st_delete_day_confirm').replace('{name}',day.name)))return;delete CFG.customDays[day.id];delete CFG.dayLinks[day.id];ST.progDraft.days.splice(i,1);saveCFG();renderProgramBuilder();}
 function openProgDayEdit(i){
   ST.progDraft.name=gid('prog-name').value.trim()||ST.progDraft.name;
   const day=ST.progDraft.days[i];
@@ -184,15 +197,15 @@ function openProgDayEdit(i){
   ss('dayedit');renderDayEdit();
 }
 function saveProgram(){
-  const d=ST.progDraft;d.name=gid('prog-name').value.trim()||'My program';
+  const d=ST.progDraft;d.name=gid('prog-name').value.trim()||t('st_my_program');
   d.days=d.days.filter(day=>(CFG.customDays[day.id]||[]).length);
-  if(!d.days.length){alert('Add at least one day with at least one exercise before saving.');return;}
+  if(!d.days.length){alert(t('st_prog_need_day'));return;}
   CFG.customProgram=d;CFG.split='custom';syncProgramMeta();saveCFG();ST.progDraft=null;refreshHome();ss('home');
   track('program_saved');
 }
 function cancelProgram(){ST.progDraft=null;ss('home');}
 function deleteProgram(){
-  if(!confirm('Delete your custom program? Its days are removed (your logged history is kept).'))return;
+  if(!confirm(t('st_delete_prog_confirm')))return;
   if(CFG.customProgram)CFG.customProgram.days.forEach(day=>{delete CFG.customDays[day.id];delete CFG.dayLinks[day.id];});
   CFG.customProgram=null;if(CFG.split==='custom')CFG.split=SPLIT_FREQ[CFG.freq]||'pplul';
   saveCFG();ST.progDraft=null;refreshHome();ss('home');

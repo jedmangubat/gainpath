@@ -32,14 +32,59 @@ function isValidEmail(email) {
   return typeof email === 'string' && email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const MAX_BODY = 2000;
+
+// Reads at most MAX_BODY bytes. A larger declared length is refused up front,
+// and a body without one (chunked) is cut off as soon as it passes the limit,
+// so an oversized upload is never read whole. Returns {tooLarge} or {body}.
 async function readJsonBody(request) {
-  const text = await request.text();
-  if (!text || text.length > 2000) return null;
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
+  const declared = Number(request.headers.get('Content-Length'));
+  if (declared > MAX_BODY) return { tooLarge: true };
+  if (!request.body) return { body: null };
+  const reader = request.body.getReader();
+  const chunks = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > MAX_BODY) {
+      reader.cancel().catch(() => {});
+      return { tooLarge: true };
+    }
+    chunks.push(value);
   }
+  if (!size) return { body: null };
+  const bytes = new Uint8Array(size);
+  let at = 0;
+  for (const c of chunks) { bytes.set(c, at); at += c.byteLength; }
+  try {
+    return { body: JSON.parse(new TextDecoder().decode(bytes)) };
+  } catch {
+    return { body: null };
+  }
+}
+
+// Origin is one layer, not authentication: a browser always sends it on a
+// cross-origin POST and page scripts can't forge it, but curl can. It keeps
+// other websites, localhost test runs and casual noise out of the counters.
+function guard(request, origin) {
+  if (origin !== ALLOWED_ORIGIN) return new Response('forbidden', { status: 403, headers: corsHeaders(origin) });
+  return null;
+}
+
+// Optional Workers Rate Limiting binding (see wrangler.toml). Absent in tests
+// and until it is configured, in which case nothing is limited.
+async function limited(request, env, origin) {
+  if (!env.RATE_LIMIT || typeof env.RATE_LIMIT.limit !== 'function') return null;
+  const key = request.headers.get('CF-Connecting-IP') || 'unknown';
+  try {
+    const { success } = await env.RATE_LIMIT.limit({ key });
+    if (!success) return new Response('slow down', { status: 429, headers: { ...corsHeaders(origin), 'Retry-After': '60' } });
+  } catch {
+    // A failing limiter must not take the counters down.
+  }
+  return null;
 }
 
 function emptyUser(now) {
@@ -59,7 +104,10 @@ function emptyUser(now) {
 }
 
 async function handleEvent(request, env, origin) {
-  const body = await readJsonBody(request);
+  const denied = guard(request, origin) || (await limited(request, env, origin));
+  if (denied) return denied;
+  const { body, tooLarge } = await readJsonBody(request);
+  if (tooLarge) return new Response('too large', { status: 413, headers: corsHeaders(origin) });
   if (!body || !isValidAnonId(body.id) || !ALLOWED_EVENTS.has(body.event)) {
     return new Response('bad request', { status: 400, headers: corsHeaders(origin) });
   }
@@ -73,18 +121,22 @@ async function handleEvent(request, env, origin) {
 
   // Only pdf_generated needs a monthly breakdown (TRIAL_GOALS.md's "PDF
   // reports per month" bar) — every other event is reported as a lifetime
-  // total in /stats, aggregated from user records at read time.
+  // total in /stats, aggregated from user records at read time. Each PDF is its
+  // own key, counted by listing at read time: a shared read-modify-write
+  // counter loses updates when two requests overlap. (Older months used a
+  // single `count:pdf_generated:<month>` key; /stats still adds it in.)
   if (body.event === 'pdf_generated') {
-    const monthCountKey = `count:pdf_generated:${monthKey(now)}`;
-    const current = await env.EVENTS.get(monthCountKey);
-    await env.EVENTS.put(monthCountKey, String((current ? parseInt(current, 10) : 0) + 1));
+    await env.EVENTS.put(`pdf:${monthKey(now)}:${crypto.randomUUID()}`, '1');
   }
 
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
 }
 
 async function handleLead(request, env, origin) {
-  const body = await readJsonBody(request);
+  const denied = guard(request, origin) || (await limited(request, env, origin));
+  if (denied) return denied;
+  const { body, tooLarge } = await readJsonBody(request);
+  if (tooLarge) return new Response('too large', { status: 413, headers: corsHeaders(origin) });
   if (!body || !isValidEmail(body.email)) {
     return new Response('bad request', { status: 400, headers: corsHeaders(origin) });
   }
@@ -105,11 +157,20 @@ async function listAllKeys(kv, prefix) {
   return keys;
 }
 
+function safeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+// The secret travels only in an Authorization header, which URLs, browser
+// history and request logs don't record. A ?key= query is not accepted.
 async function handleStats(request, env) {
-  const url = new URL(request.url);
-  const key = url.searchParams.get('key');
-  if (!env.STATS_SECRET || key !== env.STATS_SECRET) {
-    return new Response('unauthorized', { status: 401 });
+  const bearer = /^Bearer (.+)$/.exec(request.headers.get('Authorization') || '');
+  const key = bearer ? bearer[1] : null;
+  if (!env.STATS_SECRET || !safeEqual(key, env.STATS_SECRET)) {
+    return new Response('unauthorized', { status: 401, headers: { 'Cache-Control': 'no-store' } });
   }
 
   const now = Date.now();
@@ -152,7 +213,7 @@ async function handleStats(request, env) {
 
   const currentMonth = monthKey(now);
   const pdfThisMonthRaw = await env.EVENTS.get(`count:pdf_generated:${currentMonth}`);
-  const pdfReportsThisMonth = pdfThisMonthRaw ? parseInt(pdfThisMonthRaw, 10) : 0;
+  const pdfReportsThisMonth = (pdfThisMonthRaw ? parseInt(pdfThisMonthRaw, 10) : 0) + (await listAllKeys(env.EVENTS, `pdf:${currentMonth}:`)).length;
 
   const leadKeys = await listAllKeys(env.LEADS, 'lead:');
 
@@ -175,7 +236,7 @@ async function handleStats(request, env) {
   };
 
   return new Response(JSON.stringify(stats, null, 2), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 }
 

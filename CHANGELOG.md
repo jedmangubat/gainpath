@@ -6,7 +6,102 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Visual consistency pass (audit A14).** The First Rep and First Flag badges
+  have heavier, more recognisable glyphs (the flag now carries a rising-trend
+  cut-out; it is knocked out of the card when locked, so it is still one SVG
+  with `.lock`), and Back on Track has a bolder arc so it reads at 24px. Badge
+  ids, conditions and translations are unchanged. The shared session card now
+  uses the dark Kinetic palette and the app's own fonts (system fallbacks keep
+  Japanese/Korean names drawing), and its preview image has a translated alt
+  text. The starting-weight estimate line uses a light-bulb icon instead of
+  sparkles, which read as an AI feature.
+
+### Added
+- **Keyboard and screen-reader support for sheets and the workout row.** Every
+  sheet (cancel workout, exercise info, What's New, badges, the photo viewer,
+  the unreadable-data sheet) is a named dialog: the page behind it is inert,
+  focus moves in and stays in, Escape closes it, and focus returns to what
+  opened it. Each set-row control says which set it belongs to ("Set 2: weight
+  (kg)"), with no change to the row's layout. Form labels are tied to their
+  fields, settings toggles are switches, and PR groups and session cards answer
+  Enter and Space. `npm run test:a11y` (Chromium and WebKit) covers this and the
+  Japanese and Korean screens. Still to be checked by a person: see
+  `docs/audits/2026-10-16/MANUAL-CHECKS.md`.
+- **`npm run measure:startup`** records cold-start transfer, script time, heap
+  and time to interactive (CPU 4x slower, slow 4G).
+- **Repository improvement audit.** Added the 16 October assessment, isolated
+  failure-path reproductions, validation results, an implementation prompt, and
+  four optional badge SVGs with a generated concept sheet. Production behavior
+  and existing artwork are unchanged; the data-protection findings (A01–A07)
+  are fixed under Fixed below, the rest are still open.
+
+### Changed
+- **The app starts about three times faster on a slow connection.** The tutorial
+  screenshots (about 1.5 MB) no longer download on the first visit, and Chart.js,
+  jsPDF and EmailJS are no longer loaded from a CDN in `<head>`: they are
+  self-hosted in `vendor/` (identical files) and loaded only when a chart, the
+  PDF report or the feedback form needs them, and precached for offline use. On
+  the test profile, interactive time went from 13.0 s to 4.2 s and transfer from
+  2.6 MB to 0.8 MB (`docs/audits/2026-10-16/PERF.md`). `privacy.html` no longer
+  lists cdnjs or jsDelivr.
+- **Offline cache handling is limited to GainPath's own caches and never keeps
+  an error page.** The service worker used to delete every other cache on the
+  origin and to store 404/500 responses over good cached pages and scripts. It
+  now removes only `gainpath-v<N>` / `gainpath-img-v<N>` caches, looks only in
+  those, stores only successful responses and serves the cached copy when the
+  host returns an error. `CACHE_NAME` is bumped at the next release as usual.
+- **Tests can no longer reach production services.** Every test script imports
+  Playwright through `scripts/lib/browsers.mjs`, which answers analytics-worker
+  and EmailJS requests locally. New checks: `npm run test:sw` (update from an
+  older worker, other apps' caches kept, errors never cached, offline boot,
+  a workout surviving an update; Chromium and WebKit) and `npm run test:worker`
+  (analytics worker against an in-memory store); both join `precheck`.
+- **Analytics worker (not deployed).** Event and lead requests need the app's
+  `Origin`, oversized bodies are refused without being read whole, PDF counts no
+  longer lose updates when requests overlap, and `/stats` takes its secret in an
+  `Authorization` header (a `?key=` query is refused). A per-IP rate limit is
+  enabled in `wrangler.toml` (the worker ignores it if the binding is absent).
+  Nothing about what is collected or kept has changed.
+
 ### Fixed
+- **Japanese and Korean now cover the saving, backup, restore, install, rest,
+  suggestion and feeling screens.** Failed-save and recovery messages, backup
+  and restore confirmations, the iPhone install banner and nudges, the feedback
+  form's messages, the plate calculator, the rest screen, the suggestion chip,
+  effort and session feelings, summary and share card, and the program and
+  exercise editors were hard-coded English. Display dates now follow the
+  language (stored dates are unchanged). The "Custom" split badge uses dark text
+  on lime. The Apple Watch Shortcuts guide and the PDF report body remain English.
+- **A workout whose save failed is no longer lost.** Finishing a workout while
+  storage is full kept it only in memory and deleted the in-progress copy. Now
+  the finished record is parked (`gp_done`) and the in-progress copy is kept
+  until history is really saved, then it is saved once, on the next successful
+  save or at relaunch. Each workout carries an id (`cid`), so a retry or relaunch
+  never duplicates it.
+- **The "Couldn’t save" alert no longer disappears after an unrelated save.**
+  Config, history and in-progress saves are tracked separately, and a working
+  save re-tries the ones that failed.
+- **Damaged saved data is no longer replaced by defaults.** If a stored key
+  can’t be read, GainPath keeps the original untouched, refuses to write over
+  it, and shows a recovery sheet: download the damaged data, restore a backup,
+  restore the verified second copy kept on the device (offered only when it
+  holds a readable copy of exactly those records), or start those records fresh
+  (a copy of the damaged text stays on the device).
+- **Exercise, day and program names are escaped everywhere they are shown.** A
+  custom name with an apostrophe broke the "?" instructions button, and one
+  with HTML characters was drawn as markup.
+- **Restoring a backup checks nested data first and rolls back on failure.**
+  Malformed programs, sessions or custom exercises are rejected before anything
+  changes, and a failure part-way puts the previous state back. People who have
+  set up GainPath but not logged a session yet now get the confirmation and
+  Undo too.
+- **The second copy (IndexedDB) reports failures.** A failed mirror write shows
+  a separate notice in Reports & backup instead of silently drifting, and
+  recovering from the mirror writes and re-reads everything before reloading.
+- **Reset now erases the pre-update safety snapshot as well, and says so when it
+  can’t finish** (for example another GainPath tab is holding the photos open),
+  leaving your data untouched. Upgrades still keep the snapshot.
 - **README screenshots and the launch video showed the old exercise names.**
   The rest-timer and Climb screenshots in the README and the captures inside
   `brag-output/brag.mp4` (and its poster image) were taken before the rename to

@@ -1,0 +1,22 @@
+{
+  "images": {
+    "files": 1079,
+    "bytes": 330637979
+  },
+  "js": {
+    "files": 17,
+    "bytes": 3690209
+  },
+  "scripts": {
+    "files": 15,
+    "bytes": 206710
+  },
+  "guides": {
+    "files": 9,
+    "bytes": 34657
+  },
+  "analytics-worker": {
+    "files": 6,
+    "bytes": 58865
+  }
+}

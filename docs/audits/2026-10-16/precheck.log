@@ -1,0 +1,410 @@
+
+> precheck
+> node scripts/precheck.mjs
+
+
+=== precheck 1/4: npm run lint ===
+
+No issues found.
+
+--- lint passed (0.7s) ---
+
+=== precheck 2/4: npm run test:units ===
+
+PASS  e1rm(100,10) computes Epley formula
+PASS  e1rm(0,10) is 0 for zero weight
+PASS  e1rm(100,0) is 0 for zero reps
+PASS  sessionVolume ignores warm-up and zero-weight sets
+PASS  fmtVol under 1000 rounds plainly
+PASS  fmtVol at/over 1000 uses k-suffix
+PASS  recomputePRs ignores warm-up/not-done sets and keeps the higher session
+PASS  recomputePRs drops noPR exercises even if a stale cache had one
+PASS  recomputePRs counts zero weight for holdSecs exercises
+PASS  chkPR rejects noPR exercises regardless of weight
+PASS  chkPR rejects zero weight when allowZeroW is false
+PASS  chkPR accepts zero weight for holdSecs when allowZeroW is true
+PASS  chkPR beats an existing PR on higher weight
+PASS  chkPR after beating it reflects the new weight in ST.prs
+PASS  suggestWeight: 5+ reps left → +full increment (5kg)
+PASS  suggestWeight: 3–4 reps left → +small step (2.5kg)
+PASS  suggestWeight: 1–2 reps left → hold (no suggestion)
+PASS  suggestWeight: single failure → hold
+PASS  suggestWeight: two failures in a row → deload
+PASS  roundToGymWeight up: dumbbell 6.5 → next owned (7), never 2.5-steps
+PASS  roundToGymWeight down: dumbbell 6.5 → 6
+PASS  roundToGymWeight up: exact owned weight stays
+PASS  roundToGymWeight up: above the rack → the heaviest owned
+PASS  roundToGymWeight nearest (default dir): closest owned
+PASS  kettlebell exercises are their own equipment group (rank 6, label Kettlebell)
+PASS  roundToGymWeight: kettlebell snaps to owned kettlebells, not the dumbbells 1–10
+PASS  roundToGymWeight: a dumbbell lift ignores owned kettlebells
+PASS  roundToGymWeight: no kettlebells ticked → the standard sizes (25 → 28 up, 24 down)
+PASS  equipSort lists kettlebell straight after dumbbell, before machine and cable
+PASS  convertUnitData: owned kettlebells convert to lb sizes and back exactly
+PASS  kettlebells in kg: every even kilo 4–50 can be ticked (26 and 30 included), and a ticked 26 is used
+PASS  kettlebells in lb: every whole pound 5–110 can be ticked; none ticked → the standard lb sizes
+PASS  kettlebells in lb: ticked whole-pound sizes are what a lift snaps to
+PASS  roundToGymWeight up: barbell 68 → next loadable total (70)
+PASS  roundToGymWeight down: barbell 68 → prev loadable total (60)
+PASS  roundToGymWeight up: already-loadable total is unchanged
+PASS  roundToGymWeight: no inventory configured → pass-through
+PASS  dkDay: consecutive days are 1 apart
+PASS  dkDay: spacing is the real day count, not one slot per entry
+PASS  dkDay: spans a year boundary correctly
+PASS  dayLabel: round-trips a day number back to its date
+PASS  dayLabel: full form includes the year
+PASS  timeAxis: 3-day span → axis spans the data, whole-day steps, ≤6 ticks
+PASS  timeAxis: 2-year span → still ≤6 whole-day ticks
+PASS  timeAxis: single point → padded ±1 day instead of a zero-width axis
+PASS  cmpVer: same version → 0 (sheet stays hidden)
+PASS  cmpVer: newer than the news version → 1 (already seen it)
+PASS  cmpVer: older than the news version → -1 (show the sheet)
+PASS  cmpVer: legacy "0" default is older than anything
+PASS  cmpVer: compares numerically, not lexically
+PASS  cmpVer: missing segments count as 0
+PASS  badges: one session earns First Rep and First Flag only
+PASS  badges: earned date is the session that met the condition
+PASS  badges: Ten Deep is stamped with the 10th session, not the latest
+PASS  badges: Perfect Week stays locked below the weekly target
+PASS  badges: Perfect Week unlocks when CFG.freq is met in one week
+PASS  badges: removing the qualifying session revokes the badge
+PASS  badges: a 13-day gap is not Back on Track
+PASS  badges: a 14-day gap earns Back on Track
+PASS  badges: 15,000 units clears the 10,000 kg threshold
+PASS  badges: the same 15,000 does not clear the 22,000 lb threshold
+PASS  badges: Bodyweight Club stays locked with no weigh-in logged
+PASS  badges: 90kg squat at 80kg body weight earns Bodyweight Club
+PASS  badges: 90kg squat is not yet Double Bodyweight
+PASS  badges: warm-ups and noPR lifts never produce a First Flag
+PASS  streakEndingAt agrees with streak() for the current week
+PASS  ss("home") renders the home screen it shows
+PASS  bnav("wk") renders the Train tab it opens
+PASS  bnav("cal") mid-workout leaves the workout running
+PASS  bnav("wk") mid-workout returns to the workout screen, not home
+PASS  bnav("wk") mid-workout re-highlights the Train tab
+PASS  addWorkSet appends one set
+PASS  addWorkSet clones the last work set weight/reps
+PASS  addWorkSet adds a work set, not a warm-up
+PASS  delSet refuses to remove a logged set
+PASS  delSet removes an un-logged warm-up set
+PASS  delSet always leaves at least one work set
+PASS  day edit shows the reps the workout will actually use, not the default
+PASS  committing one day-edit field does not destroy the row's other inputs
+PASS  both fields edited on one row are recorded
+PASS  the row summary still follows a changed set count without a re-render
+PASS  starting the workout uses the reps typed before Start, not last session's
+PASS  starting the workout uses the weight typed before Start
+PASS  the planned set count is honoured too
+PASS  an untouched exercise still carries last session's reps forward
+PASS  the machine base-weight prompt keeps the weight planned before Start
+PASS  unchanged: an exercise with history still carries its logged reps forward
+PASS  a Settings rep change overrides even an exercise already logged before the change
+PASS  ...so buildSets() falls through to the new preference
+PASS  a session logged after the Settings change resumes normal carry-over
+PASS  setSettingReps stamps prefRepsChangedAt
+PASS  commitRepsCustom stamps prefRepsChangedAt too
+PASS  the rep presets are 6/8/10/12/15
+PASS  Settings offers every rep preset plus Custom
+PASS  settings: picking 6 stores it and lights only that chip
+PASS  settings: picking 15 stores it and lights only that chip
+PASS  settings: a typed custom value is stored and lights Custom, no preset
+PASS  settings: a custom value comes back after reopening, derived from CFG alone
+PASS  settings: typing a preset number into Custom selects that preset chip instead
+PASS  first run is three steps
+PASS  first run no longer asks for reps, height or gear
+PASS  split suggestion follows days/week, and beginners get the bro split
+PASS  Back then Continue keeps the split the user picked
+PASS  the Custom chip and its placeholder are translated in every language
+PASS  a custom preferred-reps value is what a fresh exercise is built with
+PASS  weight/rep/set overrides survive closing the day-edit screen without starting
+PASS  the remembered plan is what the workout actually starts with
+PASS  resetting the day edit screen clears a previously remembered plan
+PASS  pre-start organizing still persists the day
+PASS  mid-workout do-now reorders the running session
+PASS  mid-workout do-now does not overwrite the organized day in CFG
+PASS  mid-workout do-now does not overwrite the organized day in localStorage
+PASS  the session order is what a relaunch would restore
+PASS  reopening the day still shows the organized order
+PASS  mid-workout delete shortens the running session
+PASS  mid-workout delete does not overwrite the organized day
+PASS  reopening the day still shows every organized exercise
+PASS  picking a Settings rep preset saves immediately, not on back-arrow tap
+PASS  a typed custom Settings value saves immediately too
+PASS  tapping a "my gym" plate chip saves immediately (feeds roundToGymWeight)
+PASS  tapping an on plate chip again removes it and saves immediately
+PASS  returning to a finished rest resumes audio before the alert fires
+PASS  the next tap after rest starts also resumes audio
+PASS  the one-shot listener does not fire a second time
+PASS  disarming on rest end removes the listener before it can fire
+PASS  plate calc: barbell exercise defaults to the 20kg bar
+PASS  plate calc: machine after a barbell uses its saved base weight, not 20
+PASS  plate calc: barbell after a machine goes back to the 20kg bar
+PASS  mwKey: Smith machine exercises share one key
+PASS  mwKey: Machine hack squat and Hack squat calf raise share one key (still saved as "Hack squat")
+PASS  mwKey: other machines stay per-exercise
+PASS  migrateMW folds per-exercise entries into the shared key (first value wins), leaves others
+PASS  migrateMW never overwrites an existing shared value
+PASS  chLifts: plottable lifts only, most-logged first
+PASS  chLifts: empty history offers nothing
+PASS  chWindow: a month or less of data shows everything, no chips
+PASS  chWindow: older data defaults to the last 30 days
+PASS  chWindow: All removes the lower bound
+PASS  lift sync: no related history → unchanged baseW×experience fallback
+PASS  lift sync: 80kg×8 barbell bench → first DB press is 20–30kg per hand, not 10
+PASS  lift sync: incline DB estimate is below flat DB estimate
+PASS  lift sync: machines are not converted from free weights (gym-specific)
+PASS  lift sync: no pressing-overhead history → cross-pattern estimate from bench, flagged as cross
+PASS  lift sync: own history still sets the planned weight (never silently overwritten)
+PASS  lift sync: DB press logged at 10kg with 3–4 reps left → sync chip proposes ≥20kg from the bench
+PASS  lift sync: a dismissed sync suggestion stays dismissed at the same estimate
+PASS  lift sync: rated 1–2 reps left → the user's own rating wins, no chip
+PASS  lift sync: a weaker related lift never pulls a stronger one down
+PASS  lift sync: onboarding baseline seeds the estimate when nothing is logged
+PASS  lift sync: logged lifts supersede the onboarding baseline
+PASS  cable sync: 40kg×8 barbell curl → first cable curl estimated from it (20–35kg)
+PASS  cable sync: lat pulldown estimates a first seated cable row
+PASS  cable sync: a cable number never feeds a free-weight estimate
+PASS  stale sync: own strength at ~78% of the estimate, done this week → no chip (75% line)
+PASS  stale sync: the same lift last done 3 weeks ago → still no chip
+PASS  stale sync: the same lift last done 5 weeks ago → catch-up chip from the bench press (85% line)
+PASS  stale sync: 5 weeks ago but own strength at ~89% of the estimate → no chip
+PASS  stale sync: far behind (below 75%) still gets the chip whether stale or not
+PASS  stale sync: a last session rated 1–2 reps left still blocks the chip
+PASS  kettlebell sync: 100kg×5 squat → first goblet squat estimated from it, on a standard kettlebell size (16–28kg)
+PASS  kettlebell sync: a kettlebell lift estimates another kettlebell lift
+PASS  kettlebell sync: a 32kg×10 goblet squat feeds the dumbbell goblet squat (25–32.5kg) and the barbell squat (90–125kg)
+PASS  kettlebell sync: a balance-limited kettlebell lift (cossack squat) never feeds another lift
+PASS  kettlebell sync: a plain kettlebell lift gets the sync chip, a target-only one does not
+PASS  kettlebell sync: target-only lifts are the unstable or combined ones
+PASS  dumbbell target-only: a Z press is estimated from the barbell overhead press
+PASS  dumbbell target-only: a Z press never feeds another lift
+PASS  dumbbell target-only: a plain new dumbbell lift does feed others
+PASS  dumbbell target-only: no sync chip for the Z press, a chip for the plain press
+PASS  barbell target-only: a Zercher squat is estimated from the barbell squat, below it
+PASS  barbell target-only: a Zercher squat never feeds another lift
+PASS  barbell target-only: a plain new barbell lift does feed others
+PASS  barbell target-only: no sync chip for the Zercher squat, a chip for the low-bar squat
+PASS  new barbell exercises: every one with a webp image has tips and instructions in en/ja/ko
+PASS  new dumbbell exercises: every one with a webp image has tips and instructions in en/ja/ko
+PASS  kettlebell exercises: every one has an image flag, tips and instructions in en/ja/ko
+PASS  cable sync: onboarding lat pulldown seeds cable pulls only
+PASS  cable sync: cable lifts never get a sync chip (ballpark only)
+PASS  cable sync: fallback still used with no related data
+PASS  bodyweight sync: 15 push-ups at 80kg body weight → first DB press 15–25kg, from Push-ups
+PASS  bodyweight sync: a heavier lifter doing the same push-ups gets a heavier estimate
+PASS  bodyweight sync: 8 pull-ups at 80kg → lat pulldown estimated from them (40–50kg)
+PASS  bodyweight sync: added weight on pull-ups raises the estimate
+PASS  bodyweight sync: assisted pull-ups subtract the assistance
+PASS  bodyweight sync: uses the weigh-in at the session date, not today's
+PASS  bodyweight sync: lower-body bodyweight moves don't feed barbell/dumbbell estimates
+PASS  smith sync: barbell bench estimates a first Smith incline press
+PASS  smith sync: Smith bench → Smith incline is more confident than barbell → Smith incline
+PASS  bw scaling: heavier → higher default, lighter → lower, reference weight unchanged
+PASS  bw scaling: clamped at 1.25× for outlier body weights (20, not the unclamped ~29)
+PASS  pool: women get the women's program default for a swapped-in lift
+PASS  pool: the shared EXPOOL entry is not mutated
+PASS  pool: pickSwapEx uses the sex-appropriate default
+PASS  pool: men keep the men's default
+PASS  rep carry: same reps → same weight
+PASS  rep carry: 60kg×10 then a 5-rep target → ~68.5kg×5
+PASS  rep carry: a higher rep target lowers the weight
+PASS  break: 2 weeks off → no chip
+PASS  break: 6 weeks off → 10% lighter
+PASS  break: 10 weeks off → 15% lighter
+PASS  break: own history still sets the planned weight
+PASS  break: same body part trained last week → no chip
+PASS  break: weeks count from the body part's last session
+PASS  break: another body part trained recently doesn't count
+PASS  break: warm-ups or unlogged sets on the body part don't count
+PASS  units kg→lbs: history, PRs, weigh-ins, profile, machine base
+PASS  units kg→lbs: gear maps to real sizes, baseline and day plan convert
+PASS  units kg→lbs: Settings body-weight field shows the converted value
+PASS  units: leaving Settings after a switch does not log a bogus weigh-in
+PASS  units lbs→kg: round-trips back
+PASS  curBW: no weigh-ins → profile value
+PASS  curBW: a weigh-in updates the profile body weight
+PASS  curBW: an older backdated weigh-in does not override the latest
+PASS  curBW: deleting the latest weigh-in falls back to the previous one
+PASS  Settings shows the latest weigh-in, not the onboarding value
+PASS  Settings body-weight edit logs today's weigh-in
+PASS  math/no history: getSavedWeight & getSavedReps are undefined
+PASS  math/no history: carriedWeight is undefined (caller falls back to the estimate)
+PASS  math/no history: suggestWeight, breakSuggest, syncSuggest all null
+PASS  math/no history: liftStrength and liftEstimate null
+PASS  math/no history: estimate = baseW × intermediate 0.6 × bwScale 1
+PASS  math/legacy session without dk: breakSuggest stays silent instead of guessing
+PASS  math/only warm-ups or unfinished sets logged: counts as no history
+PASS  math/body weight 0: bwScale is neutral and the estimate is a number
+PASS  math/body weight undefined: bwScale is neutral and the estimate is a number
+PASS  math/body weight null: bwScale is neutral and the estimate is a number
+PASS  math/body weight NaN: bwScale is neutral and the estimate is a number
+PASS  math/body weight -5: bwScale is neutral and the estimate is a number
+PASS  math/unknown experience level → intermediate multiplier
+PASS  math/experience ordering: beginner < intermediate < advanced
+PASS  math/light lifter (20kg×5 bench to failure) → small but non-zero DB press, on a 2.5 step
+PASS  math/heavy lifter (220kg×5 bench) → DB press 50–75kg per hand
+PASS  math/stabCurve: dumbbell share shrinks as strength rises
+PASS  math/stabCurve: same equipment or cable → no correction
+PASS  math/bwScale clamps to 0.75–1.25× for extreme body weights
+PASS  math/rep re-target caps logged reps at 15 (60×30 → 1-rep target is 87, not 116)
+PASS  math/women: pool default 10kg, estimate = 10 × 0.6 at the 60kg reference
+PASS  math/women: bwScale uses exponent 0.5 against a 60kg reference
+PASS  math/men: bwScale uses exponent 0.55 against a 75kg reference
+PASS  math/bodyweight-only: push-ups plan 0kg and get no weight suggestion
+PASS  math/bodyweight-only: timed holds plan 0kg and are never snapped to gear
+PASS  math/bodyweight-only: push-ups still seed a first DB press
+PASS  math/bodyweight moves are sources only (never estimated themselves)
+PASS  math/lbs: 5+ reps left on a back lift → +10 lb
+PASS  math/lbs: 3–4 reps left → +5 lb
+PASS  math/lbs: estimates snap to a 5 lb step when no gear is set
+PASS  math/lbs: bwScale reference is 75kg expressed in lb
+PASS  math/lbs: 6 weeks off → 10% lighter, snapped to 0.5
+PASS  math/plates: 61kg barbell rounds up to the next loadable total (65)
+PASS  math/plates: 61kg rounds down to 60
+PASS  math/plates: below the bar weight is returned unchanged
+PASS  math/calcPlates: 32.5 per side with 20/10/2.5 plates
+PASS  math/units: kg 100 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg 62.5 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg 57.5 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg 77.3 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg 140 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg 250 → lbs → kg returns every stored weight exactly
+PASS  math/units: kg→lbs converts at 2.20462, rounded to 0.1
+PASS  math/units: converting to the same unit is a no-op
+PASS  math/units: after one round trip, ten more change nothing (no cumulative drift)
+PASS  math/units: lbs values settle after one round trip (no cumulative drift)
+PASS  math/units: lbs 225 → kg → lbs returns every stored weight exactly
+PASS  math/units: lbs 135 → kg → lbs returns every stored weight exactly
+PASS  math/units: lbs 70 → kg → lbs returns every stored weight exactly
+PASS  math/units: lbs 137.5 → kg → lbs returns every stored weight exactly
+PASS  math/units: 1.25kg shows as 2.8 lb after a switch
+PASS  math/units: a 2-decimal kg value (1.25) survives kg → lbs → kg
+PASS  math/units: a full kg dumbbell rack + plate set survives five kg ↔ lbs round trips
+PASS  math/units: a full lbs rack survives five lbs ↔ kg round trips
+PASS  math/units: a weight edited after the switch converts fresh; untouched ones restore
+PASS  math/units: gear added after the switch converts fresh; original sizes restore
+PASS  math/units: two originals sharing one converted value (225, 225.1 → 102.1) are not memoised
+PASS  math/units: … so both convert fresh on the way back (no wrong restore)
+PASS  math/units: the memo records the direction of the last switch
+PASS  math/lbs defaults: built-in 60kg bench default → 130 lb; 25kg DB press → 55 lb
+PASS  math/lbs defaults: first-time bench estimate is ~36kg in lb (80), not 36
+PASS  math/lbs defaults: first-time DB press estimate lands on a real lb dumbbell
+PASS  math/lbs defaults: "program defaults" setting also converts
+PASS  math/lbs defaults: custom exercises keep their own (already lb) default
+PASS  math/kg defaults: unchanged for kg users
+PASS  math/deload: two failures at the lightest weight → hold, never a 0kg proposal
+PASS  math/deload: two failures at 50kg still deload normally
+PASS  math/fallback: farmers carry lands on a real dumbbell (15), bench on a 2.5 step (35)
+PASS  math/fallback: small dumbbells keep 1kg resolution (women DB press 6kg)
+PASS  deload: the logged session tags deloaded exercises only
+PASS  deload: the next session starts back at the pre-deload weight
+PASS  deload: the easy deload rating doesn't drive the next suggestion
+PASS  deload: only a deload logged → it is still the carried weight
+PASS  deload: a deload session isn't counted as a strength stall
+PASS  stall: holding the same weight (as the 1–2 RIR rule says) isn't a stall
+PASS  stall: a drop below the first of three sessions still is
+PASS  pyramid: next session starts at the same base (100), not last top set
+PASS  steps: dumbbell lunge 5+ reps left → +2.5kg a hand like other dumbbell lifts
+PASS  steps: barbell back lifts keep the 5kg step
+PASS  math section: exists and has no DOM/storage/UI calls
+
+296/296 passed.
+
+--- test:units passed (2.2s) ---
+
+=== precheck 3/4: npm run test:data ===
+
+PASS  export: file name is dated
+PASS  export: file holds all 400 sessions, weigh-ins, machine bases and cfg
+PASS  restore on a fresh device (onboarding): every record identical
+PASS  restore: lbs unit, custom exercise, gear, day plan and unit memo survive
+PASS  restore: PRs are rebuilt from history (not trusted from the file)
+PASS  renames: history, custom days, day plan, sync chip, machine bases and PRs move to the new names
+PASS  renames: sets, feel and notes are untouched
+PASS  renames: a second load changes nothing
+PASS  renames: an in-progress workout and day edit are renamed on resume
+PASS  renames: every built-in exercise still has its image file
+PASS  renames: a backup made under the old names restores under the new ones
+PASS  restore over data: cancelling the confirm changes nothing
+PASS  restore over data: accepted restore brings in the backup
+PASS  restore over data: the previous data is kept for undo
+PASS  restore over data: Undo button is shown
+PASS  undo restore: the original data is back exactly
+PASS  undo restore: the kept copy is cleared
+PASS  restore: a non-backup JSON file is rejected with a message
+PASS  save alert: hidden while saving works
+PASS  save alert: a failed save shows the alert
+PASS  save alert: Back up works while saving fails, and includes the unsaved weigh-in
+PASS  save alert: clears once a save succeeds again
+PASS  save alert: the weigh-in is saved once storage works
+PASS  reminder: 5 days since backup with a 7-day interval → no reminder
+PASS  reminder: after switching to 3 days, going back to Train shows the reminder; the setting is saved
+PASS  status: shows days since the last backup
+PASS  desktop: no iPhone warning banner or risk line
+PASS  privacy: with no ID yet, the screen shows none and does not create one
+PASS  privacy: the screen shows the exact ID the usage counter receives
+PASS  privacy.html: loads with no third-party requests and no errors
+PASS  privacy.html: no horizontal scroll at phone width
+PASS  idb/fresh user: migration verified with nothing to copy, backup snapshot written
+PASS  idb/fresh user: later saves are mirrored
+PASS  idb/large lbs user: migration verified
+PASS  idb/large lbs user: mirror matches localStorage key by key (400 sessions, custom exercise, lbs)
+PASS  idb/large lbs user: pre-migration backup holds the original data
+PASS  idb/localStorage untouched by the migration
+PASS  idb/running twice: backup and migration record are not redone
+PASS  idb/dual-write: a new weigh-in lands in both stores
+PASS  idb/recovery: after localStorage is wiped, the app comes back with all 400 sessions
+PASS  idb/reset: erased data does not come back from the mirror
+PASS  idb/partial state: re-run completes, verifies, and replaces the stale partial copy
+PASS  idb/verification failure: state failed with the reason recorded
+PASS  idb/verification failure: logged, mirroring off, localStorage unchanged, app works
+PASS  iPhone: "could be deleted" warning shows on Train
+PASS  iPhone: warning offers a backup when there is data
+PASS  iPhone: Later dismisses it
+PASS  iPhone: it returns 30 days after dismissal
+PASS  iPhone: Reports & backup shows the 7-day risk
+PASS  chromium photos: the not-backed-up notice shows where photos are added
+PASS  chromium photos: two added and confirmed
+PASS  chromium photos: downscaled to 1600px JPEG with a thumbnail
+PASS  chromium photos: grid and usage line show them
+PASS  chromium photos: still there after the app is relaunched
+PASS  chromium photos: the backup file is unchanged by photos
+PASS  chromium photos: storage full is shown as an error and nothing is added
+PASS  chromium photos: a write that aborts without an error is still shown as not saved
+PASS  chromium photos: an unreadable file is shown as an error
+PASS  chromium photos: low storage shows a warning
+PASS  chromium photos: low storage asks before adding, and No adds nothing
+PASS  chromium photos: tapping one opens it full size
+PASS  chromium photos: Save downloads a .jpg where there's no share sheet
+PASS  chromium photos: on a phone Save opens the share sheet with the JPEG
+PASS  chromium photos: delete removes it and closes the viewer
+PASS  chromium photos: Reset app erases them
+PASS  webkit photos: the not-backed-up notice shows where photos are added
+PASS  webkit photos: two added and confirmed
+PASS  webkit photos: downscaled to 1600px JPEG with a thumbnail
+PASS  webkit photos: grid and usage line show them
+PASS  webkit photos: still there after the app is relaunched
+PASS  webkit photos: the backup file is unchanged by photos
+PASS  webkit photos: storage full is shown as an error and nothing is added
+PASS  webkit photos: a write that aborts without an error is still shown as not saved
+PASS  webkit photos: an unreadable file is shown as an error
+PASS  webkit photos: low storage shows a warning
+PASS  webkit photos: low storage asks before adding, and No adds nothing
+PASS  webkit photos: tapping one opens it full size
+PASS  webkit photos: Save downloads a .jpg where there's no share sheet
+PASS  webkit photos: on a phone Save opens the share sheet with the JPEG
+PASS  webkit photos: delete removes it and closes the viewer
+PASS  webkit photos: Reset app erases them
+
+81/81 passed. Screenshots in scripts/.data-safety/
+
+--- test:data passed (21.0s) ---
+
+=== precheck 4/4: npm run visual-check ===
+
+Visual check passed. Screenshots in scripts/.visual-check/
+
+--- visual-check passed (7.6s) ---
+
+=== PRECHECK PASSED: lint → test:units → test:data → visual-check ===
+

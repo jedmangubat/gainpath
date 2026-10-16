@@ -5,11 +5,8 @@ const EMAILJS_SERVICE_ID='gainpath_service';
 const EMAILJS_TEMPLATE_ID='template_hyxqdds';
 const EMAILJS_PUBLIC_KEY='jtnxpkG1PAlGnF4LL';
 
-// Guarded: this is the first statement in the app's only script block, so an
-// unreachable CDN here used to throw before a single function ran — the whole
-// app died on a blank onboarding screen over an optional feedback form. The
-// send path is already inside a try/catch, so it just reports failure instead.
-if(window.emailjs)emailjs.init(EMAILJS_PUBLIC_KEY);
+// EmailJS is loaded (and initialised) on demand by loadLib('emailjs') in
+// js/ui-core.js, when the feedback form is sent.
 
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
@@ -56,9 +53,11 @@ function showWhatsNew(){
   gid('whatsnew-list').innerHTML=WHATS_NEW_ITEMS.map(k=>'<li>'+t(k)+'</li>').join('');
   gid('whatsnew-overlay').style.display='block';gid('whatsnew-sheet').style.display='block';
   document.body.style.overflow='hidden';
+  modalOpen('whatsnew-sheet',closeWhatsNew,{keep:['whatsnew-overlay']});
 }
 function closeWhatsNew(){
   CFG.lastSeenVersion=APP_VERSION;saveCFG();
   gid('whatsnew-overlay').style.display='none';gid('whatsnew-sheet').style.display='none';
   document.body.style.overflow='';
+  modalClose('whatsnew-sheet');
 }

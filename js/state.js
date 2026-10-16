@@ -46,7 +46,25 @@ function healthSyncTrigger(phase){
 let OB={firstName:'',lang:'en',sex:'',unit:'kg',exp:'',freq:0,split:'',keyLifts:{},step:1};
 const OB_STEPS=3;
 
-function load(){try{const c=localStorage.getItem('gp_cfg');if(c)CFG=Object.assign(CFG,JSON.parse(c));ST.history=JSON.parse(localStorage.getItem('gp_h')||'[]');ST.prs=JSON.parse(localStorage.getItem('gp_p')||'{}');ST.mw=JSON.parse(localStorage.getItem('gp_mw')||'{}');ST.bw=JSON.parse(localStorage.getItem('gp_bw')||'[]');syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();if(migrateExNames()){recomputePRs();saveCFG();saveData();}mergeCustomExercises();syncBW(true);}catch(e){}}
+// A key that can't be parsed (or has the wrong shape) is recorded in LOAD_BAD
+// with its raw text, the app runs on defaults for that key only, and lsSave()
+// refuses to write it — so a damaged original is never replaced by defaults.
+// Boot shows the recovery sheet (showLoadRecovery) for any key listed here.
+const LOAD_BAD={};
+const isPlainObj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
+const LOAD_SHAPE={gp_cfg:isPlainObj,gp_h:Array.isArray,gp_p:isPlainObj,gp_mw:isPlainObj,gp_bw:Array.isArray};
+function loadKey(k,def,ok){
+  let raw=null;try{raw=localStorage.getItem(k);}catch(e){return def;}
+  if(raw===null||raw==='')return def;
+  try{const v=JSON.parse(raw);if(ok(v))return v;}catch(e){}
+  LOAD_BAD[k]=raw;return def;
+}
+function load(){
+  const c=loadKey('gp_cfg',null,LOAD_SHAPE.gp_cfg);if(c)CFG=Object.assign(CFG,c);
+  ST.history=loadKey('gp_h',[],LOAD_SHAPE.gp_h);ST.prs=loadKey('gp_p',{},LOAD_SHAPE.gp_p);ST.mw=loadKey('gp_mw',{},LOAD_SHAPE.gp_mw);ST.bw=loadKey('gp_bw',[],LOAD_SHAPE.gp_bw);
+  try{syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();if(migrateExNames()){recomputePRs();saveCFG();saveData();}mergeCustomExercises();syncBW(true);}
+  catch(e){console.warn('[GainPath] startup migration stopped:',e&&e.message);}
+}
 // One-time migration: CFG.name used to be a single field; split it into
 // firstName/lastName on first load so the greeting can address just the first name.
 function migrateName(){

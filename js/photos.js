@@ -79,14 +79,16 @@ async function renderPhotos(){
 }
 // The full image is read when the viewer opens, so Save already holds it.
 async function openPhoto(id){
+  const trig=document.activeElement;
   const p=(PH_LIST||[]).find(x=>x.id===id);if(!p)return;
   let buf;try{buf=await phTx('full','readonly',tx=>idbReq(tx.objectStore('full').get(id)));}catch(e){buf=null;}
   if(!buf){phMsg(t('ph_err_load'),true);return;}
   closePhoto();const blob=phJpeg(buf);PH_VIEW={p,blob,url:URL.createObjectURL(blob)};
   gid('ph-view-img').src=PH_VIEW.url;gid('ph-view-date').textContent=dayLabel(dkDay(p.dk),true);
   gid('ph-view').style.display='flex';document.body.style.overflow='hidden';
+  modalOpen('ph-view',closePhoto,{trigger:trig});
 }
-function closePhoto(){if(!PH_VIEW)return;URL.revokeObjectURL(PH_VIEW.url);PH_VIEW=null;gid('ph-view').style.display='none';gid('ph-view-img').removeAttribute('src');document.body.style.overflow='';}
+function closePhoto(){if(!PH_VIEW)return;URL.revokeObjectURL(PH_VIEW.url);PH_VIEW=null;gid('ph-view').style.display='none';gid('ph-view-img').removeAttribute('src');document.body.style.overflow='';modalClose('ph-view');}
 // The share sheet is how a web page reaches the photo library (iPhone: "Save
 // Image"); it must start straight from the tap, so nothing is awaited first.
 function savePhoto(){
@@ -106,7 +108,9 @@ async function deletePhoto(){
   closePhoto();PH_LIST=null;phMsg('');renderPhotos();
 }
 function photoClear(){
-  if(!window.indexedDB)return Promise.resolve();
+  // Resolves {ok:true}, or {ok:false,reason:'blocked'|'error'} so Reset can say
+  // when another tab still holds the photo database open.
+  if(!window.indexedDB)return Promise.resolve({ok:true});
   if(PH){PH.close();PH=null;}PH_LIST=null;
-  return new Promise(res=>{try{const r=window.indexedDB.deleteDatabase(PH_DB);r.onsuccess=r.onerror=r.onblocked=()=>res();}catch(e){res();}});
+  return new Promise(res=>{try{const r=window.indexedDB.deleteDatabase(PH_DB);r.onsuccess=()=>res({ok:true});r.onerror=()=>res({ok:false,reason:'error'});r.onblocked=()=>res({ok:false,reason:'blocked'});}catch(e){res({ok:false,reason:'error'});}});
 }

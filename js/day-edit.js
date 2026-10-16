@@ -11,7 +11,7 @@
 function applyDeEditModeUI(){
   const btn=gid('de-back-btn'),icon=gid('de-back-icon'),hint=gid('de-hint');
   if(ST.editMid){
-    icon.className='ti ti-x';btn.style.color='#E24B4A';btn.setAttribute('aria-label','Cancel workout');
+    icon.className='ti ti-x';btn.style.color='#E24B4A';btn.setAttribute('aria-label',t('wo_cancel_confirm_btn'));
     hint.textContent=t('de_hint_mid');
   }else{
     icon.className='ti ti-arrow-left';btn.style.color='';btn.setAttribute('aria-label','Back');
@@ -23,7 +23,7 @@ function openDayEdit(k){
   ST.editDay=k;ST.editMid=false;ST.editProg=false;ST.editList=getEffectiveDayExercises(k).slice();
   DE_EXPANDED=null;gid('de-tit').textContent=getDayName(k);
   gid('de-reset-btn').style.display=isCustomDay(k)?'none':'';
-  gid('de-commit-btn').innerHTML='Start workout <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  gid('de-commit-btn').innerHTML=t('btn_start_workout')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>';
   applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }
@@ -32,18 +32,20 @@ function openMidWorkoutEdit(){
   gid('de-reset-btn').style.display='';
   ST.editIncludeCurrent=!!(ST.sd[ST.exi]&&!ST.sd[ST.exi].sets[0].done);
   ST.editList=(ST.editIncludeCurrent?ST.sd.slice(ST.exi):ST.sd.slice(ST.exi+1)).map(item=>item.ex);
-  gid('de-tit').textContent=getDayName(ST.day)+' — remaining exercises';
-  gid('de-commit-btn').innerHTML='Save & continue <i class="ti ti-check" aria-hidden="true"></i>';
+  gid('de-tit').textContent=t('de_remaining').replace('{name}',getDayName(ST.day));
+  gid('de-commit-btn').innerHTML=t('btn_save_continue')+' <i class="ti ti-check" aria-hidden="true"></i>';
   applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }
 function openCancelWorkoutSheet(){
   gid('cancelwo-overlay').style.display='block';gid('cancelwo-sheet').style.display='block';
   document.body.style.overflow='hidden';
+  modalOpen('cancelwo-sheet',closeCancelWorkoutSheet,{keep:['cancelwo-overlay']});
 }
 function closeCancelWorkoutSheet(){
   gid('cancelwo-overlay').style.display='none';gid('cancelwo-sheet').style.display='none';
   document.body.style.overflow='';
+  modalClose('cancelwo-sheet');
 }
 function doCancelWorkout(){
   closeCancelWorkoutSheet();
@@ -56,11 +58,13 @@ function openExNowSheet(i){
   gid('exnow-name').textContent=ST.editList[i].name;
   gid('exnow-overlay').style.display='block';gid('exnow-sheet').style.display='block';
   document.body.style.overflow='hidden';
+  modalOpen('exnow-sheet',closeExNowSheet,{keep:['exnow-overlay']});
 }
 function closeExNowSheet(){
   ST.exNowIdx=null;
   gid('exnow-overlay').style.display='none';gid('exnow-sheet').style.display='none';
   document.body.style.overflow='';
+  modalClose('exnow-sheet');
 }
 function doExNow(){
   const i=ST.exNowIdx;closeExNowSheet();
@@ -131,15 +135,15 @@ function renderDayEdit(){
     const grp=editGroupInfo(i);
     const grpLabel=grp&&grp.isFirst?'<div style="font-size:11px;font-weight:600;color:var(--accent);margin:6px 0 -2px 4px">'+(grp.size>2?'Circuit':'Superset')+' — '+grp.size+' exercises, no rest between them</div>':'';
     const linksNext=!!ex.linkNext;
-    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:var(--accent-ink)':'')+'" onclick="toggleLinkNext('+i+')" aria-label="Link with next exercise (superset/circuit)" title="Link with next exercise"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
+    const linkBtn=i<ST.editList.length-1?'<button class="bg" style="'+(linksNext?'background:var(--accent);color:var(--accent-ink)':'')+'" onclick="toggleLinkNext('+i+')" aria-label="'+esc(t('aria_link_next'))+'" title="'+esc(t('aria_link_next_t'))+'"><i class="ti ti-link" aria-hidden="true"></i></button>':'';
     const bwMode=p.w>0?'add':p.w<0?'asst':'bw';const bwLabel=bwMode==='add'?'+':bwMode==='asst'?'−':'BW';
     const weightField=p.isBW?
-      '<div class="de-detail-field"><label>Weight</label><div style="display:flex;gap:4px"><button type="button" class="bw-mode" onclick="cycleDEBWMode('+i+')">'+bwLabel+'</button>'+(bwMode!=='bw'?'<input type="number" min="0" step="0.5" value="'+Math.abs(p.w)+'" onfocus="this.select()" onchange="updDEBWMag('+i+',this.value)">':'')+'</div></div>'
-      :'<div class="de-detail-field"><label>Weight ('+CFG.unit+')</label><input type="number" min="0" step="0.5" value="'+p.w+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'w\',this.value)"></div>';
+      '<div class="de-detail-field"><label>'+t('de_weight')+'</label><div style="display:flex;gap:4px"><button type="button" class="bw-mode" onclick="cycleDEBWMode('+i+')">'+bwLabel+'</button>'+(bwMode!=='bw'?'<input type="number" min="0" step="0.5" value="'+Math.abs(p.w)+'" onfocus="this.select()" onchange="updDEBWMag('+i+',this.value)">':'')+'</div></div>'
+      :'<div class="de-detail-field"><label>'+t('de_weight')+' ('+CFG.unit+')</label><input type="number" min="0" step="0.5" value="'+p.w+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'w\',this.value)"></div>';
     const detail=expanded?
       '<div class="de-detail">'+
-        '<div class="de-detail-field"><label>Sets</label><input type="number" min="1" max="8" value="'+p.sets+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'sets\',this.value)"></div>'+
-        (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>Reps (pyramid)</label><div id="de-pyr-'+i+'" style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>Reps</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
+        '<div class="de-detail-field"><label>'+t('sum_sets')+'</label><input type="number" min="1" max="8" value="'+p.sets+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'sets\',this.value)"></div>'+
+        (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>'+t('de_reps_pyr')+'</label><div id="de-pyr-'+i+'" style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>'+t('de_reps')+'</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
         weightField+
       '</div>':'';
     const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:#fff;margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
@@ -147,10 +151,10 @@ function renderDayEdit(){
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
         (ST.editMid?'':'<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>')+
-        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+ex.name+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+esc(ex.name)+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
         linkBtn+
-        '<button class="bg" onclick="openSwap('+i+')" aria-label="Swap exercise"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
-        '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="Delete exercise"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
+        '<button class="bg" onclick="openSwap('+i+')" aria-label="'+esc(t('aria_swap_ex'))+'"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
+        '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="'+esc(t('aria_delete_ex'))+'"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
       '</div>'+detail+
     '</div>';
   }).join('');
@@ -189,7 +193,7 @@ function updDEBWMag(i,v){
   if(mag===0)renderDayEdit();else saveInProgress();
 }
 function deleteExFromEdit(i){
-  if(ST.editList.length<=1){alert('A workout needs at least one exercise.');return;}
+  if(ST.editList.length<=1){alert(t('de_need_one'));return;}
   ST.editList.splice(i,1);DE_EXPANDED=null;renderDayEdit();
 }
 function resetDayEdit(){
@@ -300,13 +304,13 @@ function rowSwipeStart(e,i){
 }
 function openSwap(i){
   ST.swapIdx=i;ST.swapPart=null;ST.swapSearch='';
-  gid('sw-tit').textContent='Swap: '+ST.editList[i].name;
+  gid('sw-tit').textContent=t('de_swap_title').replace('{name}',ST.editList[i].name);
   ss('swap');renderSwapParts();
   saveInProgress();
 }
 function openAddEx(){
   ST.swapIdx=null;ST.swapPart=null;ST.swapSearch='';
-  gid('sw-tit').textContent='Add exercise';
+  gid('sw-tit').textContent=t('btn_add_exercise');
   ss('swap');renderSwapParts();
   saveInProgress();
 }
@@ -320,10 +324,10 @@ function renderSwapParts(){
   const addCexBtn='<button class="bg" style="width:100%;justify-content:center;border:1px dashed var(--bdr);border-radius:var(--radius);padding:11px" onclick="openCustomEx()"><i class="ti ti-plus" aria-hidden="true"></i> Can\'t find it? Add a custom exercise</button>';
   if(q){
     const matches=Object.values(EXPOOL).filter(ex=>ex.name.toLowerCase().includes(q)).sort(equipSort);
-    gid('sw-parts').innerHTML=(matches.length?matches.map(swapExBtn).join(''):'<div style="font-size:13px;color:var(--txt2);text-align:center;padding:14px 0">No matching exercises</div>')+addCexBtn;
+    gid('sw-parts').innerHTML=(matches.length?matches.map(swapExBtn).join(''):'<div style="font-size:13px;color:var(--txt2);text-align:center;padding:14px 0">'+t('de_no_match')+'</div>')+addCexBtn;
     return;
   }
-  gid('sw-parts').innerHTML='<div style="font-size:13px;color:var(--txt2);margin-bottom:8px">Choose a body part</div>'+
+  gid('sw-parts').innerHTML='<div style="font-size:13px;color:var(--txt2);margin-bottom:8px">'+t('de_choose_part')+'</div>'+
     Object.keys(EXPOOL_BY_MG).sort().map(mg=>{
       const open=ST.swapPart===mg;
       const exList=open?'<div style="margin:8px 0 14px">'+
@@ -362,8 +366,8 @@ function renderCexEquip(){
 function setCexEquip(k){ST.cexEquip=k;renderCexEquip();}
 function saveCustomEx(){
   const name=gid('cex-name').value.trim();
-  if(!name){alert('Enter an exercise name.');return;}
-  if(EXPOOL[name]){alert('An exercise named "'+name+'" already exists.');return;}
+  if(!name){alert(t('cx_enter_name'));return;}
+  if(EXPOOL[name]){alert(t('cx_exists').replace('{name}',name));return;}
   const mg=gid('cex-mg').value;
   const isBW=ST.cexEquip==='bodyweight';
   const baseW=isBW?0:(parseFloat(gid('cex-basew').value)||0);
@@ -378,7 +382,7 @@ function saveCustomEx(){
   renderCustomExList();
 }
 function deleteCustomExercise(name){
-  if(!confirm('Delete custom exercise "'+name+'"? Any day currently using it will fall back to its default exercise list.'))return;
+  if(!confirm(t('cx_delete_confirm').replace('{name}',name)))return;
   CFG.customExercises=CFG.customExercises.filter(e=>e.name!==name);
   delete EXPOOL[name];
   Object.keys(EXPOOL_BY_MG).forEach(mg=>{EXPOOL_BY_MG[mg]=EXPOOL_BY_MG[mg].filter(e=>e.name!==name);});
@@ -388,6 +392,6 @@ function deleteCustomExercise(name){
 function renderCustomExList(){
   const el=gid('cex-list');if(!el)return;
   const list=CFG.customExercises||[];
-  if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:10px 0">None yet</div>';return;}
-  el.innerHTML=list.map(ex=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:7px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(ex.name)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+humanizeMG(ex.mg)+' · '+EQUIP_LABELS[equipRank(ex)]+(ex.holdSecs?' · timed hold':'')+'</div></div><button class="bg" onclick="deleteCustomExercise('+jsArg(ex.name)+')" aria-label="Delete custom exercise"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
+  if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:10px 0">'+t('cx_none')+'</div>';return;}
+  el.innerHTML=list.map(ex=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:7px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(ex.name)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+humanizeMG(ex.mg)+' · '+EQUIP_LABELS[equipRank(ex)]+(ex.holdSecs?t('cx_timed_hold'):'')+'</div></div><button class="bg" onclick="deleteCustomExercise('+jsArg(ex.name)+')" aria-label="'+esc(t('aria_delete_cex'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
 }

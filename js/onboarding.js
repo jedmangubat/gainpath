@@ -64,7 +64,7 @@ function renderSplitOpts(containerId,selectedId,onSelect){
     const btn=document.createElement('button');
     btn.className='opt-btn'+(sel?' on':'');
     btn.style.textAlign='left';btn.style.padding='12px 14px';btn.style.marginBottom='8px';
-    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+esc(CFG.customProgram.name)+' <span class="bdg" style="background:'+(sel?'rgba(255,255,255,0.25)':'var(--accent)')+';color:#fff">Custom</span></div><div style="font-size:11px;font-weight:400;color:'+(sel?'rgba(255,255,255,0.8)':'var(--txt2)')+';margin-top:3px">Your custom program — '+CFG.customProgram.days.length+' day'+(CFG.customProgram.days.length===1?'':'s')+'</div>';
+    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+esc(CFG.customProgram.name)+' <span class="bdg" style="background:'+(sel?'var(--accent-ink)':'var(--accent)')+';color:'+(sel?'var(--accent)':'var(--accent-ink)')+'">'+esc(t('ob_custom_badge'))+'</span></div><div style="font-size:11px;font-weight:400;color:'+(sel?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+(CFG.customProgram.days.length===1?t('ob_custom_day'):t('ob_custom_days').replace('{n}',CFG.customProgram.days.length))+'</div>';
     btn.onclick=()=>{renderSplitOpts(containerId,'custom',onSelect);if(onSelect)onSelect('custom');};
     el.appendChild(btn);
   }
@@ -80,8 +80,8 @@ function obDots(){
 }
 
 function obNext(step){
-  if(step===1){const fname=gid('ob-fname').value.trim();if(!fname){alert('Please enter your first name');return;}if(!OB.sex){alert('Please select your sex');return;}OB.firstName=fname;}
-  if(step===2){const bw=parseFloat(gid('ob-bw').value);if(!bw||bw<30){alert('Please enter a valid body weight');return;}if(!OB.exp){alert('Please select your experience level');return;}OB.bw=bw;OB.keyLifts={squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}};}
+  if(step===1){const fname=gid('ob-fname').value.trim();if(!fname){alert(t('os_name'));return;}if(!OB.sex){alert(t('os_sex'));return;}OB.firstName=fname;}
+  if(step===2){const bw=parseFloat(gid('ob-bw').value);if(!bw||bw<30){alert(t('os_bw'));return;}if(!OB.exp){alert(t('os_exp'));return;}OB.bw=bw;OB.keyLifts={squat:{w:parseFloat(gid('ob-sq-w').value)||0,r:parseInt(gid('ob-sq-r').value)||0},chest:{w:parseFloat(gid('ob-cp-w').value)||0,r:parseInt(gid('ob-cp-r').value)||0},lat:{w:parseFloat(gid('ob-lp-w').value)||0,r:parseInt(gid('ob-lp-r').value)||0},ohp:{w:parseFloat(gid('ob-op-w').value)||0,r:parseInt(gid('ob-op-r').value)||0}};}
   gid('ob-'+step).classList.remove('active');
   OB.step=step+1;
   gid('ob-'+OB.step).classList.add('active');
@@ -98,8 +98,8 @@ function obBack(step){gid('ob-'+step).classList.remove('active');OB.step=step-1;
 // number as if the user had typed it. The tutorial isn't auto-played; Home
 // links to it until the first workout is logged.
 function obFinish(){
-  if(!OB.freq){alert('Please select how many days per week you plan to train');return;}
-  if(!OB.split){alert('Please select a training split');return;}
+  if(!OB.freq){alert(t('os_freq'));return;}
+  if(!OB.split){alert(t('os_split'));return;}
   CFG=Object.assign({},CFG,{firstName:OB.firstName,lastName:'',name:OB.firstName,sex:OB.sex,bw:OB.bw,ht:null,bf:null,unit:OB.unit,exp:OB.exp,split:OB.split,freq:OB.freq,keyLifts:OB.keyLifts,gymPlates:{},gymDumbbells:[],setup:true,lastSeenVersion:APP_VERSION});
   saveCFG();if(OB.bw>0)setWeighIn(dkey(new Date()),OB.bw);accentColor();refreshHome();
   ss('home');

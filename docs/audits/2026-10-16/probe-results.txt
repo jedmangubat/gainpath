@@ -1,0 +1,4 @@
+REPRODUCED: saveCFG clears warning while history remains unsaved
+REPRODUCED: backup validation accepts malformed nested data
+REPRODUCED: malformed gp_h silently aborts remaining loads and leaves empty history/bodyweight in memory
+REPRODUCED: idbClear leaves backups store untouched

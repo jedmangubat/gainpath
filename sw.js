@@ -1,15 +1,60 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
-// SHELL_URLS/CDN_URLS or the caching logic below changes; activate() deletes
-// any cache not matching the current name.
+// SHELL_URLS/LIB_URLS or the caching logic below changes; activate() deletes
+// the app's own older caches (see ownsCache) and nothing else.
 const CACHE_NAME = 'gainpath-v46';
 // Exercise images that are not precached (the .webp ones added after v2.9)
 // are fetched the first time they are shown and kept here. This cache is not
 // tied to CACHE_NAME, so a release doesn't make phones download them again.
 const IMG_CACHE = 'gainpath-img-v1';
-const CDN_URLS = [
-  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js'
+// CacheStorage is shared by every app on this origin (a GitHub Pages user site
+// hosts several projects), so cleanup and lookups only ever touch the names
+// this file creates: gainpath-v<N> and gainpath-img-v<N>.
+const ownsCache = (name) => /^gainpath-(v|img-v)\d+$/.test(name);
+// Look in our own caches only, never caches.match(), which searches every cache
+// on the origin and could return another app's response for the same URL.
+async function cachedResponse(req) {
+  for (const name of [CACHE_NAME, IMG_CACHE]) {
+    const hit = await (await caches.open(name)).match(req);
+    if (hit) return hit;
+  }
+  return undefined;
+}
+// Keep a network response only if it succeeded. An error page (404/500 from the
+// host during a bad deploy) is never stored, and never replaces a good cached
+// copy: the cached one is served instead, and the error is shown only when
+// there is nothing better.
+function keepIfOk(req, res) {
+  if (res.ok) {
+    const copy = res.clone();
+    caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+    return res;
+  }
+  return cachedResponse(req).then((cached) => cached || res);
+}
+// Chart.js, jsPDF and EmailJS are loaded on demand by loadLib() (js/ui-core.js)
+// from vendor/, not at startup. Precached best-effort (like the images) so
+// charts, the PDF report and feedback also work offline; install doesn't fail
+// if one is missing, and a miss is fetched and cached on first use.
+const LIB_URLS = [
+  './vendor/chart-4.4.1.min.js',
+  './vendor/jspdf-2.5.1.min.js',
+  './vendor/emailjs-browser-4.4.1.min.js'
+];
+// The tutorial screenshots are lazy-loaded (they are not fetched until the
+// tutorial opens), so they are precached here, best-effort, to keep the tutorial
+// working offline for someone who never opened it online.
+const TUTORIAL_IMAGE_URLS = [
+  './images/tutorial/calendar.png',
+  './images/tutorial/climb.png',
+  './images/tutorial/day-editor.png',
+  './images/tutorial/home.png',
+  './images/tutorial/plate-calc.png',
+  './images/tutorial/program-builder.png',
+  './images/tutorial/prs.png',
+  './images/tutorial/reports.png',
+  './images/tutorial/rest-timer.png',
+  './images/tutorial/settings.png',
+  './images/tutorial/workout.png'
 ];
 const SHELL_URLS = [
   './', './index.html', './manifest.json', './privacy.html',
@@ -278,9 +323,12 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) =>
       cache.addAll(SHELL_URLS).then(() =>
         Promise.all([
-          // Cross-origin CDN libs need cors mode.
-          ...CDN_URLS.map((url) =>
-            fetch(url, { mode: 'cors' }).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
+          // Same-origin libraries loaded on demand (see LIB_URLS).
+          ...TUTORIAL_IMAGE_URLS.map((url) =>
+            fetch(url).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
+          ),
+          ...LIB_URLS.map((url) =>
+            fetch(url).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
           ),
           // Same-origin exercise images — best-effort so a single failure can't
           // abort install; any that miss here still cache on-demand via fetch().
@@ -297,7 +345,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME && n !== IMG_CACHE).map((n) => caches.delete(n))))
+      .then((names) => Promise.all(names.filter((n) => ownsCache(n) && n !== CACHE_NAME && n !== IMG_CACHE).map((n) => caches.delete(n))))
       .then(() => self.clients.claim())
   );
 });
@@ -310,8 +358,8 @@ self.addEventListener('fetch', (event) => {
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
-        .then((res) => { caches.open(CACHE_NAME).then((c) => c.put(req, res.clone())); return res; })
-        .catch(() => caches.match(req).then((c) => c || caches.match('./index.html')))
+        .then((res) => keepIfOk(req, res))
+        .catch(() => cachedResponse(req).then((c) => c || cachedResponse('./index.html')))
     );
     return;
   }
@@ -320,19 +368,9 @@ self.addEventListener('fetch', (event) => {
 
   if (sameOrigin && req.destination === 'image') {
     event.respondWith(
-      caches.match(req).then((cached) => cached || fetch(req).then((res) => {
+      cachedResponse(req).then((cached) => cached || fetch(req).then((res) => {
         const onDemand = url.pathname.includes('/images/exercises/') && url.pathname.endsWith('.webp');
-        if (res.ok) caches.open(onDemand ? IMG_CACHE : CACHE_NAME).then((c) => c.put(req, res.clone()));
-        return res;
-      }))
-    );
-    return;
-  }
-
-  if (CDN_URLS.includes(req.url)) {
-    event.respondWith(
-      caches.match(req).then((cached) => cached || fetch(req, { mode: 'cors' }).then((res) => {
-        if (res.ok) caches.open(CACHE_NAME).then((c) => c.put(req, res.clone()));
+        if (res.ok) { const copy = res.clone(); caches.open(onDemand ? IMG_CACHE : CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {}); }
         return res;
       }))
     );
@@ -342,8 +380,8 @@ self.addEventListener('fetch', (event) => {
   if (sameOrigin) {
     event.respondWith(
       fetch(req)
-        .then((res) => { caches.open(CACHE_NAME).then((c) => c.put(req, res.clone())); return res; })
-        .catch(() => caches.match(req))
+        .then((res) => keepIfOk(req, res))
+        .catch(() => cachedResponse(req).then((c) => c || Response.error()))
     );
   }
 });

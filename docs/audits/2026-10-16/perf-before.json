@@ -1,0 +1,98 @@
+{
+  "label": "before",
+  "at": "2026-10-16T00:57:15.436Z",
+  "runs": 5,
+  "profile": "CPU 4x slower, slow 4G (1.6 Mbps down, 150 ms RTT), gzip like GitHub Pages, cold cache, first-run user",
+  "chromium": {
+    "baseline": {
+      "interactiveMs": 13033.9,
+      "loadMs": 13037,
+      "loadEventMs": 13035.6,
+      "scriptMs": 177.6,
+      "taskMs": 1162.2,
+      "heapMB": 5.9,
+      "transferKB": 2575.6,
+      "cdnKB": 155,
+      "exerciseTextKB": 484.8,
+      "requests": 38,
+      "topResources": [
+        "485 KB  /js/exercise-text.js?v=2.10.0",
+        "325 KB  /images/tutorial/workout.png",
+        "159 KB  /images/tutorial/day-editor.png",
+        "154 KB  /images/tutorial/home.png",
+        "151 KB  /images/tutorial/settings.png",
+        "150 KB  /images/tutorial/calendar.png",
+        "142 KB  /images/tutorial/prs.png",
+        "138 KB  /images/tutorial/reports.png",
+        "126 KB  /images/tutorial/climb.png",
+        "109 KB  /images/tutorial/program-builder.png",
+        "105 KB  /images/tutorial/rest-timer.png",
+        "94 KB  /ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+        "81 KB  /images/tutorial/plate-calc.png",
+        "59 KB  /ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+      ]
+    },
+    "cdn-slow": {
+      "interactiveMs": 12487.7,
+      "loadMs": 12499,
+      "loadEventMs": 12498.6,
+      "scriptMs": 196.7,
+      "taskMs": 1184.3,
+      "heapMB": 5.9,
+      "transferKB": 2979.1,
+      "cdnKB": 558.5,
+      "exerciseTextKB": 484.8,
+      "requests": 38,
+      "topResources": [
+        "485 KB  /js/exercise-text.js?v=2.10.0",
+        "357 KB  /ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+        "325 KB  /images/tutorial/workout.png",
+        "197 KB  /ajax/libs/Chart.js/4.4.1/chart.umd.min.js",
+        "159 KB  /images/tutorial/day-editor.png",
+        "154 KB  /images/tutorial/home.png",
+        "151 KB  /images/tutorial/settings.png",
+        "150 KB  /images/tutorial/calendar.png",
+        "142 KB  /images/tutorial/prs.png",
+        "138 KB  /images/tutorial/reports.png",
+        "126 KB  /images/tutorial/climb.png",
+        "109 KB  /images/tutorial/program-builder.png",
+        "105 KB  /images/tutorial/rest-timer.png",
+        "81 KB  /images/tutorial/plate-calc.png"
+      ]
+    },
+    "no-exercise-text": {
+      "interactiveMs": 5262.6,
+      "loadMs": 10605,
+      "loadEventMs": 10603.3,
+      "scriptMs": 141.4,
+      "taskMs": 904.3,
+      "heapMB": 3.7,
+      "transferKB": 2091.2,
+      "cdnKB": 155,
+      "exerciseTextKB": 0.4,
+      "requests": 38,
+      "topResources": [
+        "325 KB  /images/tutorial/workout.png",
+        "159 KB  /images/tutorial/day-editor.png",
+        "154 KB  /images/tutorial/home.png",
+        "151 KB  /images/tutorial/settings.png",
+        "150 KB  /images/tutorial/calendar.png",
+        "142 KB  /images/tutorial/prs.png",
+        "138 KB  /images/tutorial/reports.png",
+        "126 KB  /images/tutorial/climb.png",
+        "109 KB  /images/tutorial/program-builder.png",
+        "105 KB  /images/tutorial/rest-timer.png",
+        "94 KB  /ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+        "81 KB  /images/tutorial/plate-calc.png",
+        "59 KB  /ajax/libs/Chart.js/4.4.1/chart.umd.min.js",
+        "59 KB  /images/branding/logo.png"
+      ]
+    }
+  },
+  "webkit": {
+    "baseline": {
+      "interactiveMs": 235,
+      "loadEventMs": 240
+    }
+  }
+}

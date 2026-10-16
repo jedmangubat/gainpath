@@ -19,7 +19,7 @@
 //
 // Usage: npm run simulate  [-- --iterations=300] [SEED=12345 npm run simulate]
 
-import { chromium, webkit } from 'playwright';
+import { chromium, webkit } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import path from 'path';

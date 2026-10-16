@@ -6,7 +6,7 @@
 //
 // Usage: npm run visual-check
 
-import { chromium, webkit } from 'playwright';
+import { chromium, webkit } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile, readdir } from 'fs/promises';
 import { appSources } from './app_sources.mjs';
@@ -183,7 +183,7 @@ async function main() {
   // Gate all three failure modes — step count, broken/duplicate images, and a
   // tooltip sitting on top of the thing it is pointing at.
   await page.setViewportSize({ width: 390, height: 844 });
-  const tut = await page.evaluate(() => {
+  const tut = await page.evaluate(async () => {
     showTutorial(false);
     const steps = document.querySelectorAll('#s-tutorial .ob-step').length;
     const overlaps = [], imgs = [];
@@ -192,6 +192,8 @@ async function main() {
       const step = document.getElementById('tut-' + i);
       if (!step) { overlaps.push(`#tut-${i} missing`); continue; }
       const img = step.querySelector('img');
+      // The screenshots are lazy-loaded, so give the one on screen a moment to arrive.
+      if (!img.naturalWidth) await new Promise((r) => { img.addEventListener('load', r, { once: true }); img.addEventListener('error', r, { once: true }); setTimeout(r, 4000); });
       imgs.push({ src: img.getAttribute('src'), ok: img.naturalWidth > 0 });
       const wrap = step.querySelector('.tut-ss-wrap').getBoundingClientRect();
       const tip = step.querySelector('.tut-tooltip').getBoundingClientRect();

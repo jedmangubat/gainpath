@@ -18,7 +18,7 @@
 //
 // Usage: npm run test:data   (ENGINE=webkit npm run test:data for WebKit)
 
-import { chromium, webkit, devices } from 'playwright';
+import { chromium, webkit, devices } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
@@ -198,11 +198,227 @@ async function photoTests(engine, tag, check, errors) {
   await b.close();
 }
 
+// ── Audit 2026-10-16 regressions (A01–A07). Each starts from the failure the
+// audit reproduced. Synthetic data only; scripts/lib/browsers.mjs keeps every
+// request to the analytics worker local.
+async function auditTests(engine, tag, check, errors) {
+  const browser = await engine.launch();
+  const mk = async () => {
+    const c = await browser.newContext({ acceptDownloads: true });
+    const p = await c.newPage(); p.on('pageerror', e => errors.push(`${tag} audit: ${e}`));
+    const dialogs = []; p.on('dialog', d => { dialogs.push(d.message()); d.accept(); });
+    p.dialogs = dialogs; return [c, p];
+  };
+  const finish = (p, name = 'Barbell bench press') => p.evaluate((name) => {
+    CFG.startingWeights = 'manual'; ST.day = 'push'; ST.exi = 0; ST.t0 = Date.now() - 60000;
+    ST.sd = [{ ex: { name, mg: 'chest', baseW: 20, equip: 'barbell' }, sets: [{ w: 300, r: 5, t: 'x', done: true }], sugDone: true }];
+    finishWo();
+  }, name);
+  const blockKeys = (p, keys) => p.evaluate((keys) => {
+    window.__realSet = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) { if (keys.includes(k)) throw new DOMException('full', 'QuotaExceededError'); return window.__realSet.call(this, k, v); };
+  }, keys);
+  const unblock = (p) => p.evaluate(() => { Storage.prototype.setItem = window.__realSet; });
+  const ls = (p, k) => p.evaluate((k) => localStorage.getItem(k), k);
+  const histLen = async (p) => JSON.parse(await ls(p, 'gp_h') || '[]').length;
+
+  // A01 + A02: a failed completion stays recoverable, and nothing hides the alert.
+  let [c1, p1] = await mk();
+  await seed(p1, bigUser(135));
+  const n0 = await histLen(p1);
+  await finish(p1); await blockKeys(p1, ['gp_h']);
+  await p1.evaluate(() => submitFeel('good'));
+  check(`${tag} A01: failed completion keeps a recoverable record on disk`, (await ls(p1, 'gp_done')) !== null || (await ls(p1, 'gp_wip')) !== null);
+  check(`${tag} A01: history on disk is untouched while the save fails`, await histLen(p1) === n0);
+  check(`${tag} A01: the alert is showing`, await p1.isVisible('#save-alert'));
+  await p1.evaluate(() => { saveCFG(); saveInProgress(); });
+  check(`${tag} A02: a later successful config/WIP save does not hide the alert`, await p1.isVisible('#save-alert'));
+  await unblock(p1); await p1.reload(); await p1.waitForSelector('#s-home.active');
+  check(`${tag} A01: after relaunch the finished workout is in history exactly once`, await histLen(p1) === n0 + 1);
+  check(`${tag} A01: the pending records are cleared once settled`, (await ls(p1, 'gp_done')) === null && (await ls(p1, 'gp_wip')) === null);
+  check(`${tag} A01: the alert is gone once everything is saved`, !(await p1.isVisible('#save-alert')));
+  await p1.reload(); await p1.waitForSelector('#s-home.active');
+  check(`${tag} A01: a second relaunch does not duplicate it`, await histLen(p1) === n0 + 1);
+  // Both the history and the pending record fail: the workout resumes on the feel screen.
+  await finish(p1); await blockKeys(p1, ['gp_h', 'gp_done']);
+  await p1.evaluate(() => submitFeel('good'));
+  await unblock(p1); await p1.reload(); await p1.waitForSelector('.screen.active');
+  check(`${tag} A01: with no pending record the workout resumes instead of vanishing`, await p1.evaluate(() => !!ST.pendingRec && !!ST.day) && await histLen(p1) === n0 + 1);
+  await p1.evaluate(() => { if (ST.pendingRec) submitFeel('good'); });
+  check(`${tag} A01: finishing the resumed workout saves it once`, await histLen(p1) === n0 + 2);
+  await c1.close();
+
+  // A03: each corrupt key is kept, reported, and never overwritten.
+  for (const key of ['gp_cfg', 'gp_h', 'gp_p', 'gp_mw', 'gp_bw']) {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const raw = '{"broken":' + key;
+    await p.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key, raw });
+    await p.reload(); await p.waitForTimeout(400);
+    check(`${tag} A03 ${key}: recovery sheet shows`, await p.isVisible('#load-recovery'));
+    await p.evaluate(() => { try { saveCFG(); saveData(); } catch (e) { /* locked */ } });
+    check(`${tag} A03 ${key}: the unreadable value is untouched after saves`, await ls(p, key) === raw);
+    check(`${tag} A03 ${key}: a save alert shows instead of silently dropping writes`, await p.isVisible('#save-alert'));
+    await p.click('#lr-fresh', { timeout: 1500 }).catch(() => {});
+    check(`${tag} A03 ${key}: starting fresh keeps a copy of the raw value`, await ls(p, 'gp_corrupt_' + key) === raw);
+    check(`${tag} A03 ${key}: recovery sheet closes and the key saves again`, !(await p.isVisible('#load-recovery')) && await p.evaluate((k) => { saveCFG(); saveData(); try { JSON.parse(localStorage.getItem(k)); return true; } catch (e) { return false; } }, key));
+    await c.close();
+  }
+
+  // A03: the verified mirror can restore just the unreadable keys.
+  for (const key of ['gp_h', 'gp_cfg']) {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    await p.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});
+    await p.evaluate(() => { saveCFG(); saveData(); }); await p.waitForTimeout(500);
+    const good = await ls(p, key), raw = '{"broken":' + key;
+    await p.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key, raw });
+    await p.reload(); await p.waitForTimeout(800);
+    check(`${tag} A03 mirror ${key}: the second-copy option is offered`, await p.isVisible('#lr-mirror'));
+    await p.click('#lr-mirror', { timeout: 1500 }).catch(() => {}); await p.waitForTimeout(1200);
+    check(`${tag} A03 mirror ${key}: the key is restored exactly and the app opens`, await ls(p, key) === good && !(await p.isVisible('#load-recovery')));
+    check(`${tag} A03 mirror ${key}: the damaged text is kept`, await ls(p, 'gp_corrupt_' + key) === raw);
+    await c.close();
+  }
+  // A03: no usable second copy, no offer.
+  { const [c, p] = await mk(); await seed(p, bigUser(135));
+    await p.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});
+    await p.evaluate(() => { saveData(); }); await p.waitForTimeout(500);
+    await p.evaluate(() => new Promise((res) => { const tx = IDB.transaction('kv', 'readwrite'); tx.objectStore('kv').put('{"x":', 'gp_bw'); tx.oncomplete = res; }));
+    await p.evaluate(() => localStorage.setItem('gp_bw', '{"x":')); await p.reload(); await p.waitForTimeout(1000);
+    check(`${tag} A03 mirror: shown the sheet, but a mirror with the same damage is not offered`, await p.isVisible('#load-recovery') && !(await p.isVisible('#lr-mirror')));
+    await c.close(); }
+
+  // Test isolation: production services are answered locally by scripts/lib/browsers.mjs.
+  { const [c, p] = await mk(); await p.goto(URL0);
+    const st = await p.evaluate(async () => (await fetch('https://gainpath-analytics.jedmangubat.workers.dev/e', { method: 'POST', body: '{}' })).status);
+    check(`${tag} isolation: a request to the analytics worker is answered by the test harness (204), not the network`, st === 204, st);
+    await c.close(); }
+
+  // A04: names are text, never markup or broken handlers.
+  const [c4, p4] = await mk(); await seed(p4, bigUser(135));
+  const names = ["O'Brien row", '<b id="audit-mark">Row</b>', '"Quote" & <i>amp</i>', '日本語のロウ', '한국어 로우'];
+  for (const name of names) {
+    const r = await p4.evaluate((name) => {
+      CFG.startingWeights = 'manual';
+      ST.day = 'push'; ST.exi = 0; ST.sd = [{ ex: { name, mg: 'back', baseW: 10, equip: 'cable', custom: true, yt: 'row' }, sets: [{ w: 10, r: 10, t: 'x', done: false }], sugDone: true }];
+      renderEx();
+      const bad = [...document.querySelectorAll('#ex-area [onclick]')].filter(el => { try { new Function(el.getAttribute('onclick')); return false; } catch (e) { return true; } }).length;
+      const injected = !!document.querySelector('#ex-area #audit-mark, #ex-area i:not(.ti)');
+      return { bad, injected };
+    }, name);
+    check(`${tag} A04: "${name}" renders with valid handlers and no injected markup`, r.bad === 0 && !r.injected, r);
+  }
+  await p4.evaluate(() => {
+    ST.history = []; ST.prs = {}; ST.badges = {}; ST.t0 = Date.now() - 1000;
+    ST.sd = [{ ex: { name: '<b id="audit-mark2">PR</b>', mg: 'back', baseW: 10, equip: 'cable', custom: true }, sets: [{ w: 50, r: 5, t: 'x', done: true }] }];
+    ST.day = 'push'; ST.pendingRec = buildRec(); submitFeel('good');
+  });
+  const sweep = await p4.evaluate(() => {
+    const H = '<b id="audit-x1">x</b>', out = [];
+    const bad = [{ name: H, mg: 'chest', baseW: 10, equip: 'cable', custom: true }];
+    CFG.customExercises = bad; EXPOOL[H] = bad[0];
+    ST.history = [{ day: 'push', dayName: H, date: H, dk: '2026-10-01', mk: '2026-10', dur: '1:00', sets: 1, feel: 'good', note: H, exercises: [{ name: H, exFeel: 'good', note: H, sets: [{ w: 50, r: 5, t: 'x', done: true }] }] }];
+    ST.prs = { [H]: { w: 50, r: 5, date: H, dk: '2026-10-01' } };
+    CFG.customProgram = { name: H, days: [{ id: 'cd_1', name: H }] }; CFG.customDays = { cd_1: [] };
+    ST.editDay = 'push'; ST.editList = [{ name: H, mg: 'chest', baseW: 10, equip: 'cable', custom: true }]; ST.editMid = false;
+    let seen = 0; const run = (n, f) => { try { f(); } catch (e) { out.push(n + ' threw ' + e.message); } const c = document.querySelectorAll('#audit-x1').length; if (c > seen) out.push(n + ' injected'); seen = c; };
+    run('home', () => refreshHome()); run('prs', () => renderPRs()); run('session', () => { openSession(0); });
+    run('dayedit', () => renderDayEdit()); run('customlist', () => renderCustomExList()); run('badges', () => renderBadges());
+    run('chart', () => renderChSeg()); run('program', () => { ST.progDraft = CFG.customProgram; renderProgramBuilder(); }); run('exhist', () => renderExHistory(H));
+    run('swap', () => { ST.swapIdx = null; ST.swapPart = 'chest'; ST.swapSearch = 'audit'; renderSwapParts(); });
+    run('split', () => { OB.split = 'custom'; renderSplitOpts('set-split-opts', 'custom'); });
+    return { out, injected: out.filter(x => /injected/.test(x)).length };
+  });
+  check(`${tag} A04: history, PRs, day edit, program and chart screens escape every name`, sweep.injected === 0, sweep);
+  check(`${tag} A04: summary PR stamp escapes the exercise name`, await p4.evaluate(() => !document.querySelector('#audit-mark2')));
+  await c4.close();
+
+  // A05: nested validation, rollback, and protection for a user with no sessions.
+  const [c5, p5] = await mk();
+  const cfgOnly = { ...bigUser(135), history: [] };
+  await seed(p5, cfgOnly);
+  const valid = await p5.evaluate(() => JSON.parse(JSON.stringify(backupPayload())));
+  const rejects = (mut) => p5.evaluate(({ valid, mut }) => { const d = JSON.parse(JSON.stringify(valid)); new Function('d', mut)(d); try { validateBackup(sanitizeImport(d)); return false; } catch (e) { return true; } }, { valid, mut });
+  check(`${tag} A05: customProgram.days=null is rejected`, await rejects('d.cfg.customProgram={days:null}'));
+  check(`${tag} A05: history[0].exercises as a string is rejected`, await rejects('d.history=[{exercises:"invalid"}]'));
+  check(`${tag} A05: customExercises that are not objects are rejected`, await rejects('d.cfg.customExercises=[1,2]'));
+  check(`${tag} A05: customDays as an array is rejected`, await rejects('d.cfg.customDays=[]'));
+  const rolled = await p5.evaluate(() => {
+    const before = JSON.stringify([CFG, ST.history, ST.prs, ST.mw, ST.bw]); const real = recomputeBadges;
+    recomputeBadges = () => { throw new Error('boom'); };
+    let threw = false; try { applyBackup({ cfg: { name: 'Replaced', setup: true }, history: [{ day: 'x', exercises: [] }] }); } catch (e) { threw = true; }
+    recomputeBadges = real; return { threw, same: JSON.stringify([CFG, ST.history, ST.prs, ST.mw, ST.bw]) === before };
+  });
+  check(`${tag} A05: a failure while applying rolls the live state back`, rolled.threw && rolled.same, rolled);
+  const file5 = path.join(OUT, 'audit-backup.json');
+  await writeFile(file5, JSON.stringify({ cfg: { ...cfgOnly.cfg, name: 'Imported' }, history: [], bw: [], prs: {}, mw: {}, version: '2.0' }));
+  const cfgBefore = await ls(p5, 'gp_cfg');
+  p5.dialogs.length = 0;
+  await p5.setInputFiles('#import-file', file5); await p5.waitForTimeout(500);
+  check(`${tag} A05: a configured user with no sessions is asked before replacement`, p5.dialogs.some(m => /Replace/.test(m)), p5.dialogs);
+  check(`${tag} A05: and a copy is kept for Undo`, (await ls(p5, 'gp_pre_restore')) !== null);
+  await p5.evaluate(() => undoRestore()); await p5.waitForTimeout(200);
+  check(`${tag} A05: Undo brings the configured profile back`, await p5.evaluate(() => CFG.name) === 'Big Lbs' && JSON.parse(await ls(p5, 'gp_cfg')).name === 'Big Lbs', cfgBefore && 1);
+  await c5.close();
+
+  // A06: an aborted mirror write is reported as a degraded mirror, not a failed save.
+  const [c6, p6] = await mk(); await seed(p6, bigUser(135));
+  await p6.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});
+  await p6.evaluate(() => { const put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function (v, k) { const r = put.call(this, v, k); this.transaction.abort(); return r; }; saveCFG(); });
+  await p6.waitForTimeout(500);
+  check(`${tag} A06: an aborted mirror write marks the mirror degraded`, await p6.evaluate(() => typeof MIRROR_DEGRADED !== 'undefined' && MIRROR_DEGRADED === true));
+  check(`${tag} A06: it does not raise the save alert (localStorage was saved)`, !(await p6.isVisible('#save-alert')));
+  await p6.evaluate(() => { openSettings(); openDataSettings(); });
+  check(`${tag} A06: Reports & backup says the second copy is not updating`, /second copy/i.test(await p6.textContent('#bk-status')));
+  await c6.close();
+
+  // A06: recovery that cannot write everything must not reload into a partial profile.
+  const [c7, p7] = await mk(); await seed(p7, bigUser(135));
+  await p7.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});
+  await p7.evaluate(() => { saveCFG(); saveData(); }); await p7.waitForTimeout(500);
+  await p7.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  await p7.addInitScript(() => { const s = Storage.prototype.setItem; Storage.prototype.setItem = function (k, v) { if (k === 'gp_h') throw new DOMException('full', 'QuotaExceededError'); return s.call(this, k, v); }; });
+  await p7.reload(); await p7.waitForTimeout(1200);
+  check(`${tag} A06: a failed recovery write leaves no half-restored profile`, await ls(p7, 'gp_cfg') === null);
+  check(`${tag} A06: and does not mark recovery as done`, await p7.evaluate(() => sessionStorage.getItem('gp_idb_recovered')) === null);
+  await c7.close();
+
+  // A07: Reset reports a blocked deletion, and a real Reset erases the pre-migration backup too.
+  const [c8, p8] = await mk(); await seed(p8, bigUser(135));
+  await p8.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});
+  await p8.evaluate(async () => { await phLoad(); });
+  const p8b = await c8.newPage(); await p8b.goto(URL0);
+  await p8b.evaluate(() => new Promise((res) => { const r = indexedDB.open('gainpath-photos'); r.onsuccess = () => { window.__hold = r.result; res(); }; r.onupgradeneeded = () => {}; }));
+  await p8.evaluate(() => { resetApp(); }); await p8.waitForTimeout(1200);
+  check(`${tag} A07: a blocked photo deletion keeps the data and says why`, await ls(p8, 'gp_cfg') !== null && /another GainPath tab/i.test(await p8.evaluate(() => gid('reset-st').textContent)));
+  await p8b.evaluate(() => window.__hold.close()); await p8b.close();
+  await p8.waitForTimeout(500);
+  await p8.evaluate(() => { resetApp(); }); await p8.waitForNavigation({ timeout: 8000 }).catch(() => {}); await p8.waitForTimeout(1500);
+  const left = await p8.evaluate(() => new Promise((res) => { const r = indexedDB.open('gainpath'); r.onsuccess = () => { const db = r.result; const tx = db.transaction('backups'); const q = tx.objectStore('backups').get('pre-idb-2.9.0'); q.onsuccess = () => { db.close(); res(q.result ? Object.keys(q.result.data || {}) : []); }; }; r.onerror = () => res(['error']); }));
+  check(`${tag} A07: Reset erased the pre-migration backup too`, !left.includes('gp_h') && !left.includes('gp_cfg'), left);
+  check(`${tag} A07: Reset erased the app's own data`, await p8.evaluate(() => !localStorage.getItem('gp_h')));
+  await c8.close();
+  await browser.close();
+}
+
+function printAndExit(results, errors) {
+  for (const r of results) console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}${r.pass || r.detail === undefined ? '' : '\n      ' + JSON.stringify(r.detail)}`);
+  if (errors.length) console.log('\nPage errors:\n' + errors.join('\n'));
+  const failed = results.filter(r => !r.pass).length;
+  console.log(`\n${results.length - failed}/${results.length} passed. Screenshots in scripts/.data-safety/`);
+  process.exit(failed || errors.length ? 1 : 0);
+}
+
 async function main() {
   await mkdir(OUT, { recursive: true });
   const server = await startServer();
   const results = [], errors = [];
   const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail });
+
+  if (process.env.AUDIT_ONLY) { // AUDIT_ONLY=1 node scripts/test_data_safety.mjs: just the A01–A07 regressions
+    await auditTests(chromium, 'chromium', check, errors);
+    if (process.env.ENGINE !== 'chromium') await auditTests(webkit, 'webkit', check, errors);
+    server.close(); return printAndExit(results, errors);
+  }
 
   // ENGINE=webkit runs sections 1–4 and 6 in WebKit (the iPhone engine) too.
   const browser = await (process.env.ENGINE === 'webkit' ? webkit : chromium).launch();
@@ -463,13 +679,11 @@ async function main() {
   await wk.close();
   await photoTests(chromium, 'chromium', check, errors);
   await photoTests(webkit, 'webkit', check, errors);
+  await auditTests(chromium, 'chromium', check, errors);
+  await auditTests(webkit, 'webkit', check, errors);
   server.close();
 
-  for (const r of results) console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}${r.pass || r.detail === undefined ? '' : '\n      ' + JSON.stringify(r.detail)}`);
-  if (errors.length) console.log('\nPage errors:\n' + errors.join('\n'));
-  const failed = results.filter(r => !r.pass).length;
-  console.log(`\n${results.length - failed}/${results.length} passed. Screenshots in scripts/.data-safety/`);
-  process.exit(failed || errors.length ? 1 : 0);
+  printAndExit(results, errors);
 }
 
 main();

@@ -6,3 +6,15 @@ kv_namespaces = [
   { binding = "EVENTS", id = "4cc56a3b8f1241d2979147d3da77deb9" },
   { binding = "LEADS", id = "b86189f61a5246eda0bd258b65f040a9" },
 ]
+
+# Abuse brake: the Workers Rate Limiting binding (30 requests / 60 s per IP, per
+# Cloudflare location, approximate by design). Needs wrangler >= 4.36. The worker
+# ignores the binding when it is absent, so this can be removed without code
+# changes. If `npm run deploy` rejects this block (the plan may not offer the
+# binding), comment it out again and redeploy.
+[[ratelimits]]
+name = "RATE_LIMIT"
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 30
+  period = 60

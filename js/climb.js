@@ -80,10 +80,10 @@ function renderMGBalance(){
   const curWk=dkey(startOfWeek(new Date()));
   gid('mg-week-next').disabled=ST.mgWeek>=curWk;
   const startD=new Date(ST.mgWeek+'T00:00:00');const endD=new Date(startD);endD.setDate(endD.getDate()+6);
-  gid('mg-week-lbl').textContent=ST.mgWeek===curWk?'This week':startD.toLocaleDateString('en-PH',{month:'short',day:'numeric'})+' – '+endD.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
+  gid('mg-week-lbl').textContent=ST.mgWeek===curWk?t('cl_this_week'):startD.toLocaleDateString(locTag(),{month:'short',day:'numeric'})+' – '+endD.toLocaleDateString(locTag(),{month:'short',day:'numeric'});
   const counts=weeklyMGVolume(ST.mgWeek);
   const mgs=Object.keys(counts);
-  if(!mgs.length){el.innerHTML='<div style="text-align:center;padding:1rem;font-size:13px;color:var(--txt2)">No hard sets logged this week</div>';return;}
+  if(!mgs.length){el.innerHTML='<div style="text-align:center;padding:1rem;font-size:13px;color:var(--txt2)">'+t('cl_no_hard_sets')+'</div>';return;}
   const max=Math.max(...mgs.map(mg=>counts[mg]));
   const sorted=mgs.sort((a,b)=>counts[b]-counts[a]);
   let html=sorted.map(mg=>{
@@ -123,7 +123,7 @@ function closeLogBW(){gid('bw-log-form').style.display='none';}
 function saveBWLog(){
   const dk=gid('bw-date').value||dkey(new Date());
   const w=parseFloat(gid('bw-w-inp').value);
-  if(!w||w<=0){alert('Please enter a valid weight');return;}
+  if(!w||w<=0){alert(t('cl_enter_weight'));return;}
   const waist=parseFloat(gid('bw-waist-inp').value)||null;
   const arms=parseFloat(gid('bw-arms-inp').value)||null;
   const date=new Date(dk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});
@@ -150,16 +150,17 @@ function renderBWSection(){
   if(inWin.length>=2){
   const theme=chartTheme(canvas,140);
   const bwDays=inWin.map(e=>dkDay(e.dk));
+  if(typeof Chart==='undefined'){loadLib('chart').then(renderBWSection).catch(()=>{});return;}
   ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:inWin.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?bwDays:[win.from,win.to],theme.tick)}}});
   }
   const BWCAP=8,bwOrdered=sorted.slice().reverse(),bwShown=ST.bwAll?bwOrdered:bwOrdered.slice(0,BWCAP);
   gid('bw-list').innerHTML=bwShown.map(e=>{
     const extras=[e.waist?'Waist '+e.waist+'cm':null,e.arms?'Arms '+e.arms+'cm':null].filter(Boolean).join(' · ');
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+e.w+CFG.unit+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+e.date+(extras?' · '+extras:'')+'</div></div><button class="bg" onclick="deleteBWLog('+jsArg(e.dk)+')" aria-label="Delete entry"><i class="ti ti-trash" aria-hidden="true"></i></button></div>';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(e.w)+CFG.unit+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(showDate(e.dk,e.date))+(extras?' · '+esc(extras):'')+'</div></div><button class="bg" onclick="deleteBWLog('+jsArg(e.dk)+')" aria-label="Delete entry"><i class="ti ti-trash" aria-hidden="true"></i></button></div>';
   }).join('')+moreBtn(bwOrdered.length,BWCAP,ST.bwAll,'toggleBwAll()');
 }
 function deleteBWLog(dk){
-  if(!confirm('Delete this weigh-in entry?'))return;
+  if(!confirm(t('cl_delete_bw')))return;
   ST.bw=ST.bw.filter(e=>e.dk!==dk);saveData();syncBW();renderBWSection();
 }
 function chartTheme(canvas,h){
@@ -219,11 +220,12 @@ function drawChart(){
   const first=all.length-pts.length===0;
   const pointRadius=isWaypoint.map((wp,i)=>i===0&&first?5:wp?8:4);
   const pointColor=isWaypoint.map((wp,i)=>(i>0||!first)&&wp?theme.forge:theme.accent);
+  if(typeof Chart==='undefined'){loadLib('chart').then(drawChart).catch(()=>{});return;}
   ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&(c.dataIndex>0||!first)?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?pts.map(p=>p.day):[win.from,win.to],theme.tick)}}});
 }
-function prCard(k){const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?fmt(pr.r)+' held':pr.r+' reps')+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}
+function prCard(k){const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?t('wk_held').replace('{t}',fmt(pr.r)):t('wk_reps').replace('{n}',pr.r))+(pr.w>0&&!(ex&&ex.holdSecs)?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" role="button" tabindex="0" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}
 function togglePRGroup(mg){ST.prOpenMG[mg]=!ST.prOpenMG[mg];renderPRs();}
-function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">No PRs yet!</div>';return;}const grp={};keys.sort().forEach(k=>{const ex=EXPOOL[k];const mg=(ex&&ex.mg)||'other';(grp[mg]=grp[mg]||[]).push(k);});const order=MG_LIST.filter(mg=>grp[mg]).concat(Object.keys(grp).filter(mg=>MG_LIST.indexOf(mg)<0).sort());el.innerHTML=order.map(mg=>{const list=grp[mg],open=!!ST.prOpenMG[mg];const top=list.reduce((a,b)=>{const x=ST.prs[a],y=ST.prs[b];return(y.w>x.w||(y.w===x.w&&y.r>x.r))?b:a;});const tex=EXPOOL[top],tw=(tex&&tex.note==='bodyweight')?bwWeightLabel(ST.prs[top].w):ST.prs[top].w+CFG.unit;return'<div class="pr-grp'+(open?' on':'')+'" onclick="togglePRGroup('+jsArg(mg)+')" role="button" tabindex="0" aria-expanded="'+open+'">'+'<div style="min-width:0;flex:1"><div class="pr-grp-t">'+esc(humanizeMG(mg))+'</div>'+'<div class="pr-grp-s">'+t('pr_group_top')+' '+esc(top)+' · '+tw+'</div></div>'+'<span class="pr-grp-n">'+list.length+'</span>'+'<i class="ti ti-chevron-'+(open?'up':'down')+'" aria-hidden="true" style="color:var(--txt2);font-size:17px;flex-shrink:0"></i></div>'+(open?'<div class="pr-grp-body">'+list.map(prCard).join('')+'</div>':'');}).join('');}
+function renderPRs(){const el=gid('pr-list'),keys=Object.keys(ST.prs);if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;font-size:13px;color:var(--txt2)">'+t('cl_no_prs')+'</div>';return;}const grp={};keys.sort().forEach(k=>{const ex=EXPOOL[k];const mg=(ex&&ex.mg)||'other';(grp[mg]=grp[mg]||[]).push(k);});const order=MG_LIST.filter(mg=>grp[mg]).concat(Object.keys(grp).filter(mg=>MG_LIST.indexOf(mg)<0).sort());el.innerHTML=order.map(mg=>{const list=grp[mg],open=!!ST.prOpenMG[mg];const top=list.reduce((a,b)=>{const x=ST.prs[a],y=ST.prs[b];return(y.w>x.w||(y.w===x.w&&y.r>x.r))?b:a;});const tex=EXPOOL[top],tw=(tex&&tex.note==='bodyweight')?bwWeightLabel(ST.prs[top].w):ST.prs[top].w+CFG.unit;return'<div class="pr-grp'+(open?' on':'')+'" onclick="togglePRGroup('+jsArg(mg)+')" role="button" tabindex="0" aria-expanded="'+open+'">'+'<div style="min-width:0;flex:1"><div class="pr-grp-t">'+esc(humanizeMG(mg))+'</div>'+'<div class="pr-grp-s">'+t('pr_group_top')+' '+esc(top)+' · '+tw+'</div></div>'+'<span class="pr-grp-n">'+list.length+'</span>'+'<i class="ti ti-chevron-'+(open?'up':'down')+'" aria-hidden="true" style="color:var(--txt2);font-size:17px;flex-shrink:0"></i></div>'+(open?'<div class="pr-grp-body">'+list.map(prCard).join('')+'</div>':'');}).join('');}
 function prHistoryFor(name){
   const meta=EXPOOL[name];const events=[];let best=null;
   ST.history.forEach(h=>{
@@ -240,7 +242,7 @@ function showPRHistory(name){
   const meta=EXPOOL[name];const isBW=!!(meta&&meta.note==='bodyweight');const isHold=!!(meta&&meta.holdSecs);
   const events=prHistoryFor(name);
   gid('exinfo-name').textContent=name+' \u2014 PR history';
-  gid('exinfo-list').innerHTML=events.length?events.slice().reverse().map(e=>'<li style="font-size:15px;color:var(--txt);line-height:1.6;margin-bottom:2px">'+esc(e.date)+' \u2014 '+(isBW?bwWeightLabel(e.w):isHold?fmt(e.r)+' held':e.w+CFG.unit+' \u00d7 '+e.r)+'</li>').join(''):'<li style="font-size:13px;color:var(--txt2)">No PR history yet.</li>';
+  gid('exinfo-list').innerHTML=events.length?events.slice().reverse().map(e=>'<li style="font-size:15px;color:var(--txt);line-height:1.6;margin-bottom:2px">'+esc(showDate(null,e.date))+' \u2014 '+(isBW?bwWeightLabel(e.w):isHold?fmt(e.r)+' held':e.w+CFG.unit+' \u00d7 '+e.r)+'</li>').join(''):'<li style="font-size:13px;color:var(--txt2)">'+t('cl_no_pr_hist')+'</li>';
   gid('exinfo-overlay').style.display='block';gid('exinfo-sheet').style.display='block';document.body.style.overflow='hidden';
 }
 function openDataSettings(){initExport();renderBackupStatus();ss('setdata');}
@@ -249,8 +251,9 @@ function hRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),pars
 async function genPDF(){
   const month=gid('ex-mo').value,year=gid('ex-yr').value,mk=year+'-'+month;
   const sessions=ST.history.filter(h=>h.mk===mk),st=gid('ex-st');
-  if(!sessions.length){st.textContent='No sessions for '+MN[parseInt(month)-1]+' '+year+'.';return;}
-  st.textContent='Generating...';
+  if(!sessions.length){st.textContent=t('cl_pdf_none').replace('{m}',new Date(+year,parseInt(month)-1,1).toLocaleDateString(locTag(),{year:'numeric',month:'long'}));return;}
+  st.textContent=t('cl_generating');
+  try{await loadLib('jspdf');}catch(e){st.textContent=t('lib_failed');return;}
   const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const W=210,pd=16,cW=W-pd*2;let y=pd;const mName=MN[parseInt(month)-1];
   const acRGB=[47,107,79];
@@ -279,6 +282,6 @@ async function genPDF(){
   if(gains.length){if(y>220){doc.addPage();y=pd;}doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Strength gains this month',pd,y);y+=6;gains.sort((a,b)=>b.diff-a.diff).slice(0,8).forEach(g=>{doc.setFillColor(234,243,222);doc.roundedRect(pd,y,cW,8,2,2,'F');doc.setTextColor(39,80,10);doc.setFontSize(8.5);doc.setFont('helvetica','bold');const lbl=g.name.length>32?g.name.slice(0,30)+'...':g.name;doc.text(lbl,pd+3,y+5.5);doc.setTextColor(15,110,86);doc.text('+'+g.diff+' '+CFG.unit+'  ('+g.from+'->'+g.to+' '+CFG.unit+')',W-pd-3,y+5.5,{align:'right'});y+=10;});y+=4;}
   if(prTM.length){if(y>235){doc.addPage();y=pd;}doc.setTextColor(30,30,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('New personal records',pd,y);y+=6;prTM.forEach(([name,pr])=>{doc.setFillColor(250,238,218);doc.roundedRect(pd,y,cW,8,2,2,'F');doc.setTextColor(99,56,6);doc.setFontSize(8.5);doc.setFont('helvetica','bold');const lbl=name.length>34?name.slice(0,32)+'...':name;doc.text('* '+lbl,pd+3,y+5.5);doc.setFont('helvetica','normal');const prEx=EXPOOL[name];const prIsBW=prEx&&prEx.note==='bodyweight';doc.text((prIsBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+' x '+(prEx&&prEx.holdSecs?fmt(pr.r)+' held':pr.r+' reps'),W-pd-3,y+5.5,{align:'right'});y+=10;});}
   doc.setDrawColor(220,225,235);doc.setLineWidth(0.3);doc.line(pd,285,W-pd,285);doc.setFontSize(8);doc.setTextColor(160,165,180);doc.setFont('helvetica','normal');doc.text('GainPath Workout Tracker - '+mName+' '+year,W/2,289,{align:'center'});
-  doc.save('gainpath-'+mName.toLowerCase()+'-'+year+'.pdf');st.textContent='Report saved!';setTimeout(()=>{st.textContent='';},5000);
+  doc.save('gainpath-'+mName.toLowerCase()+'-'+year+'.pdf');st.textContent=t('cl_saved');setTimeout(()=>{st.textContent='';},5000);
   track('pdf_generated');
 }

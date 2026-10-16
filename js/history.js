@@ -6,8 +6,9 @@ function dismissSync(w){CFG.syncDismiss=CFG.syncDismiss||{};CFG.syncDismiss[ST.s
 // RIR_META  = the per-exercise last-set "reps left in the tank" rating. Same
 // stored keys (easy/good/hard/max) and colors, different labels — kept as two
 // maps so relabeling the per-exercise rating never touches the session one.
-const FEEL_META={easy:{l:'Too easy',c:'#3C8464',e:'😌'},good:{l:'Just right',c:'#4A6FA5',e:'💪'},hard:{l:'Hard',c:'#A5822B',e:'🔥'},max:{l:'Too much',c:'#C05A3E',e:'😵'}};
-const RIR_META={easy:{l:'5+ reps left',c:'#3C8464',e:'😌'},good:{l:'3–4 reps left',c:'#4A6FA5',e:'💪'},hard:{l:'1–2 reps left',c:'#A5822B',e:'🔥'},max:{l:'0 — to failure',c:'#C05A3E',e:'😵'}};
+// Labels are getters over t(), so they follow the language without the stored keys changing.
+const FEEL_META={easy:{get l(){return t('feel_too_easy');},c:'#3C8464',e:'😌'},good:{get l(){return t('feel_just_right');},c:'#4A6FA5',e:'💪'},hard:{get l(){return t('feel_hard');},c:'#A5822B',e:'🔥'},max:{get l(){return t('feel_too_much');},c:'#C05A3E',e:'😵'}};
+const RIR_META={easy:{get l(){return t('rir_5plus');},c:'#3C8464',e:'😌'},good:{get l(){return t('rir_3_4');},c:'#4A6FA5',e:'💪'},hard:{get l(){return t('rir_1_2');},c:'#A5822B',e:'🔥'},max:{get l(){return t('rir_0');},c:'#C05A3E',e:'😵'}};
 function feelChip(feel){const m=RIR_META[feel];return m?'<span class="bdg" style="background:var(--bg2);color:'+m.c+'">'+m.e+' '+m.l+'</span>':'';}
 function stepWeight(i,delta){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
@@ -48,14 +49,14 @@ function renderExHistory(name){
   const el=gid('ch-hist');if(!el)return;
   const meta=EXPOOL[name];const isBW=!!(meta&&meta.note==='bodyweight');const isHold=!!(meta&&meta.holdSecs);
   const hist=exHistory(name);
-  if(!hist.length){el.innerHTML='<div style="text-align:center;padding:1.4rem 1rem;font-size:13px;color:var(--txt2)">No sessions logged yet</div>';return;}
+  if(!hist.length){el.innerHTML='<div style="text-align:center;padding:1.4rem 1rem;font-size:13px;color:var(--txt2)">'+t('hs_none')+'</div>';return;}
   const CAP=8,ordered=hist.slice().reverse(),shown=ST.histAll?ordered:ordered.slice(0,CAP);
   el.innerHTML=shown.map(s=>{
-    const setStr=s.sets.map(st=>isHold?fmt(st.r)+' held':isBW?bwWeightLabel(st.w)+(st.r?' × '+st.r:''):st.w+CFG.unit+'×'+st.r).join(' · ');
+    const setStr=s.sets.map(st=>isHold?t('wk_held').replace('{t}',fmt(st.r)):isBW?bwWeightLabel(st.w)+(st.r?' × '+st.r:''):st.w+CFG.unit+'×'+st.r).join(' · ');
     const vol=isBW||isHold?0:s.sets.reduce((a,st)=>a+(st.w>0?st.w*st.r:0),0);
     const best=isBW||isHold?0:Math.max(0,...s.sets.map(st=>e1rm(st.w,st.r)));
-    return '<div class="card" onclick="openSession('+s.idx+')" style="cursor:pointer;padding:12px 16px;margin-bottom:7px">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+s.date+'</div>'+(s.exFeel?feelChip(s.exFeel):'')+'</div>'+
+    return '<div class="card" role="button" tabindex="0" onclick="openSession('+s.idx+')" style="cursor:pointer;padding:12px 16px;margin-bottom:7px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(showDate(s.dk,s.date))+'</div>'+(s.exFeel?feelChip(s.exFeel):'')+'</div>'+
       '<div style="font-size:13px;color:var(--txt2);margin-top:4px">'+setStr+'</div>'+
       (vol>0?'<div style="font-size:11px;color:var(--txt3);margin-top:3px">Volume '+fmtVol(vol,CFG.unit)+' · Est. 1RM '+best+CFG.unit+'</div>':'')+
       (s.note?'<div style="font-size:11px;color:var(--txt3);margin-top:3px;display:flex;gap:4px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i>'+esc(s.note)+'</div>':'')+
@@ -70,25 +71,25 @@ function moreBtn(total,cap,open,fn){
   if(total<=cap)return'';
   return'<button class="bs" style="width:100%;font-size:13px;margin-top:4px" onclick="'+fn+'">'+(open?t('show_less'):t('show_all').replace('{n}',total))+'</button>';
 }
-function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=rec.date+' · '+rec.dur;renderSessionEdit();ss('session');}
+function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=showDate(rec.dk,rec.date)+' · '+rec.dur;renderSessionEdit();ss('session');}
 function renderSessionEdit(){
   const rec=ST.editSessionData;
-  gid('se-list').innerHTML='<div class="card"><label style="margin-bottom:4px">Session note</label><textarea class="inp" style="min-height:50px;margin-bottom:0" oninput="ST.editSessionData.note=this.value" placeholder="Optional">'+esc(rec.note||'')+'</textarea></div>'+
+  gid('se-list').innerHTML='<div class="card"><label style="margin-bottom:4px">'+t('hs_session_note')+'</label><textarea class="inp" style="min-height:50px;margin-bottom:0" oninput="ST.editSessionData.note=this.value" placeholder="'+esc(t('hs_optional'))+'">'+esc(rec.note||'')+'</textarea></div>'+
     rec.exercises.map((ex,ei)=>{
     const meta=EXPOOL[ex.name];const isHold=!!(meta&&meta.holdSecs);let wc=0;
     const rows=ex.sets.map((s,si)=>{
-      const isW=s.t==='w';const lbl=isW?'W':String(++wc);const repUnit=isHold?'s':'reps';
+      const isW=s.t==='w';const lbl=isW?'W':String(++wc);const repUnit=isHold?'s':t('hs_unit_reps');
       return '<div class="sr"><div class="sn'+(s.done?' d':(isW?' w':''))+'">'+lbl+'</div>'+
         '<input class="wi" type="number" min="0" step="0.5" value="'+s.w+'" onfocus="this.select()" onchange="updSessionSet('+ei+','+si+',\'w\',this.value)"><span style="font-size:11px;color:var(--txt2)">'+CFG.unit+'×</span>'+
         '<input class="ri" type="number" min="0" value="'+s.r+'" onfocus="this.select()" onchange="updSessionSet('+ei+','+si+',\'r\',this.value)"><span style="font-size:11px;color:var(--txt2)">'+repUnit+'</span></div>';
     }).join('');
     return '<div class="card"><div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:6px">'+esc(ex.name)+'</div>'+rows+
-      '<label style="margin:8px 0 4px">Note</label><textarea class="inp" style="min-height:44px;margin-bottom:0;font-size:13px" oninput="ST.editSessionData.exercises['+ei+'].note=this.value" placeholder="Optional">'+esc(ex.note||'')+'</textarea></div>';
+      '<label style="margin:8px 0 4px">'+t('hs_note')+'</label><textarea class="inp" style="min-height:44px;margin-bottom:0;font-size:13px" oninput="ST.editSessionData.exercises['+ei+'].note=this.value" placeholder="'+esc(t('hs_optional'))+'">'+esc(ex.note||'')+'</textarea></div>';
   }).join('');
 }
 function updSessionSet(ei,si,field,val){const s=ST.editSessionData.exercises[ei].sets[si];if(field==='w')s.w=parseFloat(val)||0;else s.r=parseInt(val)||0;}
 function saveSessionEdit(){const d=ST.editSessionData;d.sets=d.exercises.reduce((a,ex)=>a+ex.sets.filter(s=>s.done).length,0);ST.history[ST.editSession]=d;recomputePRs();recomputeBadges();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
-function deleteSession(){if(!confirm('Delete this session permanently? This cannot be undone.'))return;ST.history.splice(ST.editSession,1);recomputePRs();recomputeBadges();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
+function deleteSession(){if(!confirm(t('hs_delete_confirm')))return;ST.history.splice(ST.editSession,1);recomputePRs();recomputeBadges();saveData();ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
 function closeSession(){ST.editSession=null;ST.editSessionData=null;refreshHome();ss('home');}
 
 // ═══ WORKOUT CALENDAR ═══
@@ -110,14 +111,14 @@ function renderCal(){
   const minMk=ST.history.length?ST.history.reduce((a,h)=>h.mk&&h.mk<a?h.mk:a,curMk):curMk;
   const dim=new Date(Y,M,0).getDate();
   const lead=(new Date(Y,M-1,1).getDay()+6)%7;
-  let grid=['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>'<div class="cal-dow">'+d+'</div>').join('');
+  let grid=weekdayNames().map(d=>'<div class="cal-dow">'+d+'</div>').join('');
   for(let i=0;i<lead;i++)grid+='<div class="cal-d"></div>';
   for(let d=1;d<=dim;d++){
     const dk=dkey(new Date(Y,M-1,d));
     const idxs=byDay[dk];const tod=dk===todayK?' cal-tod':'';const sel=dk===ST.calSel?' cal-sel':'';
     if(idxs){
       const last=idxs[idxs.length-1],h=ST.history[last];
-      grid+='<button class="cal-d cal-on'+tod+sel+'" style="background:'+(DC[h.day]||'var(--accent)')+'" onclick="selCalDay('+jsArg(dk)+')" aria-label="View '+idxs.length+' session'+(idxs.length>1?'s':'')+' on '+esc(h.date)+'">'+d+(idxs.length>1?'<span class="cal-multi"></span>':'')+'</button>';
+      grid+='<button class="cal-d cal-on'+tod+sel+'" style="background:'+(DC[h.day]||'var(--accent)')+'" onclick="selCalDay('+jsArg(dk)+')" aria-label="'+esc(idxs.length>1?t('hs_view_many').replace('{n}',idxs.length).replace('{d}',showDate(h.dk,h.date)):t('hs_view_one').replace('{d}',showDate(h.dk,h.date)))+'">'+d+(idxs.length>1?'<span class="cal-multi"></span>':'')+'</button>';
     }
     else grid+='<div class="cal-d'+tod+'">'+d+'</div>';
   }
@@ -125,9 +126,9 @@ function renderCal(){
   if(ST.calSel&&byDay[ST.calSel]){
     const rows=byDay[ST.calSel].map(i=>{
       const h=ST.history[i];const vol=sessionVolume(h);
-      return '<button class="cal-sess" onclick="openSession('+i+')"><div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(h.dayName)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(h.dur)+(vol>0?' · '+fmtVol(vol,CFG.unit):'')+' · '+h.sets+' sets'+(h.feel&&FEEL_META[h.feel]?' · '+FEEL_META[h.feel].e+' '+FEEL_META[h.feel].l:'')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3)" aria-hidden="true"></i></button>';
+      return '<button class="cal-sess" onclick="openSession('+i+')"><div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(h.dayName)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(h.dur)+(vol>0?' · '+fmtVol(vol,CFG.unit):'')+' · '+h.sets+t('unit_sets_suffix')+(h.feel&&FEEL_META[h.feel]?' · '+FEEL_META[h.feel].e+' '+FEEL_META[h.feel].l:'')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3)" aria-hidden="true"></i></button>';
     }).join('');
-    const selDate=ST.history[byDay[ST.calSel][0]].date;
+    const selRec=ST.history[byDay[ST.calSel][0]],selDate=showDate(selRec.dk,selRec.date);
     dayPanel='<div class="cal-day-panel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:var(--txt)">'+esc(selDate)+'</span><button class="bg" style="padding:4px 8px" onclick="selCalDay('+jsArg(ST.calSel)+')" aria-label="Close day view"><i class="ti ti-x" aria-hidden="true"></i></button></div>'+rows+'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Tap a session to view, fix, or delete it.</div></div>';
   }
   const monthSessions=Object.values(byDay).flat().map(i=>ST.history[i]);
@@ -137,7 +138,7 @@ function renderCal(){
   const legend=types.length?'<div class="cal-foot">'+types.map(t=>'<span class="cal-leg"><span class="cal-dot" style="background:'+(DC[t]||'var(--accent)')+'"></span>'+esc(getDayName(t))+'</span>').join('')+'</div>':'';
   el.innerHTML='<div class="cal-wrap"><div class="cal-head">'+
     '<button class="cal-nav" onclick="calNav(-1)" aria-label="Previous month"'+(cur<=minMk?' disabled':'')+'><i class="ti ti-chevron-left" aria-hidden="true"></i></button>'+
-    '<div class="cal-tit">'+MN[M-1]+' '+Y+'</div>'+
+    '<div class="cal-tit">'+new Date(Y,M-1,1).toLocaleDateString(locTag(),{year:'numeric',month:'long'})+'</div>'+
     '<button class="cal-nav" onclick="calNav(1)" aria-label="Next month"'+(cur>=curMk?' disabled':'')+'><i class="ti ti-chevron-right" aria-hidden="true"></i></button>'+
     '</div><div class="cal-grid">'+grid+'</div>'+dayPanel+stats+legend+'</div>';
 }
@@ -194,11 +195,11 @@ function markTodayRestDay(){addRestDay(dkey(new Date()));renderRestSettings();re
 function markThisWeekRest(){addRestWeek(dkey(startOfWeek(new Date())));renderRestSettings();refreshHome();}
 function renderRestSettings(){
   const el=gid('set-rest-list');if(!el)return;
-  const days=(CFG.restDays||[]).map(dk=>({type:'day',key:dk,label:new Date(dk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}));
-  const weeks=(CFG.restWeeks||[]).map(wk=>({type:'week',key:wk,label:'Week of '+new Date(wk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}));
+  const days=(CFG.restDays||[]).map(dk=>({type:'day',key:dk,label:fmtDk(dk)}));
+  const weeks=(CFG.restWeeks||[]).map(wk=>({type:'week',key:wk,label:t('hs_week_of').replace('{d}',fmtDk(wk))}));
   const items=days.concat(weeks).sort((a,b)=>b.key.localeCompare(a.key));
-  if(!items.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">None marked</div>';return;}
-  el.innerHTML=items.map(it=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--txt)">'+esc(it.label)+(it.type==='week'?' (full week)':'')+'</span><button class="bg" onclick="'+(it.type==='day'?'removeRestDay':'removeRestWeek')+'('+jsArg(it.key)+');renderRestSettings();refreshHome()" aria-label="Remove"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
+  if(!items.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:8px 0">'+t('hs_none_marked')+'</div>';return;}
+  el.innerHTML=items.map(it=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--txt)">'+esc(it.label)+(it.type==='week'?t('hs_full_week'):'')+'</span><button class="bg" onclick="'+(it.type==='day'?'removeRestDay':'removeRestWeek')+'('+jsArg(it.key)+');renderRestSettings();refreshHome()" aria-label="'+esc(t('aria_remove'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
 }
 function getSplitDays(){
   if(CFG.split==='custom'&&CFG.customProgram&&CFG.customProgram.days.length)return CFG.customProgram.days.map(d=>d.id);
@@ -249,15 +250,15 @@ function bdgTxt(s,size,y){return'<text x="32" y="'+y+'" text-anchor="middle" fon
 function bdgBar(){return'<rect class="gf" x="15" y="21" width="4.4" height="12" rx="1.5"/><rect class="gf" x="44.6" y="21" width="4.4" height="12" rx="1.5"/><rect class="gf" x="20.5" y="24.6" width="23" height="4.8" rx="1.6"/>';}
 function bdgFlag(x,y,h,pw){return'<rect class="gf" x="'+x+'" y="'+y+'" width="2.8" height="'+h+'" rx="1.3"/><polygon class="gf" points="'+(x+3)+','+(y+.5)+' '+(x+3+pw)+','+(y+5)+' '+(x+3)+','+(y+9.5)+'"/>';}
 const BDG_GLYPH={
-  first_rep:'<rect class="gf" x="16" y="26.5" width="5" height="13" rx="1.6"/><rect class="gf" x="43" y="26.5" width="5" height="13" rx="1.6"/><rect class="gf" x="22" y="30.5" width="20" height="5" rx="1.6"/>',
+  first_rep:'<rect class="gf" x="14" y="25" width="5" height="18" rx="1.6"/><path class="gf" d="M21.6 20h4.8a1.6 1.6 0 0 1 1.6 1.6V46.4a1.6 1.6 0 0 1-1.6 1.6h-4.8a1.6 1.6 0 0 1-1.6-1.6V21.6A1.6 1.6 0 0 1 21.6 20z"/><rect class="gf" x="28" y="29.5" width="14" height="5" rx="1.6"/><rect class="gf" x="44" y="24" width="6" height="20" rx="1.6"/>',
   ten_deep:bdgTxt('10',21,40),
   half_century:bdgTxt('50',21,40),
   century:bdgTxt('100',17,39),
   perfect_week:'<polyline class="gs" points="21,33 29,41 44,24" stroke-width="4.6"/>',
   chain_four:'<rect class="gf" x="19" y="37" width="5" height="8" rx="1.6"/><rect class="gf" x="26" y="32" width="5" height="13" rx="1.6"/><rect class="gf" x="33" y="27" width="5" height="18" rx="1.6"/><rect class="gf" x="40" y="22" width="5" height="23" rx="1.6"/>',
   twelve_weeks:bdgTxt('12',21,40),
-  back_on_track:'<path class="gs" d="M45 32a13 13 0 1 1-4.2-9.6" stroke-width="3.4"/><polygon class="gf" points="47.5,13 48.5,25.5 36.5,22"/>',
-  first_flag:'<rect class="gf" x="22.5" y="18" width="3.2" height="28" rx="1.4"/><polygon class="gf" points="26.5,19 44,24.5 26.5,30"/>',
+  back_on_track:'<path class="gs" d="M45 32a13 13 0 1 1-4.2-9.6" stroke-width="4.4"/><polygon class="gf" points="47.5,13 48.5,25.5 36.5,22"/>',
+  first_flag:'<rect class="gf" x="20" y="16" width="4" height="34" rx="1.4"/><rect class="gf" x="27" y="17" width="21" height="21" rx="2"/><path class="cut" d="M30 33l7-6 5 2 6-6v6l-6 6-5-2-7 6z"/>',
   ten_flags:bdgFlag(15,28,17,9)+bdgFlag(29,20,25,9)+bdgFlag(43,25,20,9),
   bodyweight_club:bdgBar()+bdgTxt('1×',15,48),
   double_bodyweight:bdgBar()+bdgTxt('2×',15,48),
@@ -333,7 +334,7 @@ function recomputeBadges(){
   ST.badges=earned;
 }
 function badgeCount(){return Object.keys(ST.badges||{}).length;}
-function badgeDate(dk){return new Date(dk+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});}
+function badgeDate(dk){return fmtDk(dk);}
 function renderBadges(){
   const grid=gid('bdg-grid');if(!grid)return;
   const earned=ST.badges||{};
@@ -361,8 +362,9 @@ function showBadge(id){
   if(got){meta.style.color='var(--accent)';meta.textContent=t('badge_earned_on')+' '+badgeDate(got.dk);}
   else{meta.style.color='var(--txt3)';meta.textContent=(b.needsBW&&!(ST.bw||[]).length)?t('badge_locked_hint_bw'):t('badge_locked');}
   gid('bdg-overlay').style.display='block';gid('bdg-sheet').style.display='block';document.body.style.overflow='hidden';
+  modalOpen('bdg-sheet',closeBadge,{keep:['bdg-overlay']});
 }
-function closeBadge(){gid('bdg-overlay').style.display='none';gid('bdg-sheet').style.display='none';document.body.style.overflow='';}
+function closeBadge(){gid('bdg-overlay').style.display='none';gid('bdg-sheet').style.display='none';document.body.style.overflow='';modalClose('bdg-sheet');}
 function refreshHome(){
   accentColor();renderHomeBanners();
   tickNum(gid('h-str'),streak());

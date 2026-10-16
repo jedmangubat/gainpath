@@ -21,10 +21,23 @@ their own phone. Protect existing data first.
   bumps every `?v=` with `APP_VERSION`, so a phone never pairs a new
   `index.html` with a stale script. `visual-check` enforces both and boots the
   app offline from the precache.
-- **A CDN must never be able to break the app.** Chart.js, jsPDF and EmailJS are
-  used lazily or guarded at the call site, never touched at the top level of a
-  file: a load-time `ReferenceError` strands users on a dead onboarding screen.
-  Prefer self-hosting (fonts and icons already are).
+- **Nothing external is needed to start, and no library blocks parsing.**
+  Chart.js, jsPDF and EmailJS live in `vendor/` (versioned file names, hashes in
+  `vendor/README.md`) and load on demand through `loadLib(name)`; call sites
+  guard with `typeof Chart` / `window.jspdf` or `await loadLib(...)`, never use
+  them at the top level of a file, and `sw.js` precaches them (`LIB_URLS`). No
+  `<script src="http…">` in `index.html`; `test:a11y` checks.
+- **Sheets go through `modalOpen(id,closeFn,opts)` / `modalClose(id)`** in
+  `js/ui-core.js` (inert background, focus in, Tab trap, Escape, focus back); a
+  new sheet or dialog needs `role`, `aria-labelledby` and those two calls, and an
+  entry in `test:a11y`'s `SHEETS`.
+- **Operational text goes through `t()` in en, ja and ko**: alerts, `confirm()`s,
+  banners, status lines, and every `aria-label` (build them with `t()` plus
+  `{n}`/`{w}` placeholders). `test:units` fails on a missing key, a missing
+  language or a mismatched placeholder. Show dates with `fmtDk()`/`showDate()`;
+  stored dates (`dk`, `mk`, `record.date`, PR and weigh-in `date`, CSV) stay as
+  they are. Out of scope: the PDF body (Helvetica can't draw ja/ko) and exercise
+  data.
 
 ## Product rules
 
@@ -56,14 +69,27 @@ their own phone. Protect existing data first.
 ## Data and storage
 
 - **Never swallow a storage error.** User-data writes go through `lsSave(k,v)`
-  and end in `saveOK()` / `saveFailed()` (raises `#save-alert`). Rescue paths
-  (`exportData`) work from memory, not from a successful write.
+  and end in `saveOK(group)` / `saveFailed(group)` (raises `#save-alert`;
+  groups `cfg`/`data`/`wip`/`lock` fail and clear independently, so one
+  successful save never hides another's failure). Rescue paths (`exportData`)
+  work from memory, not from a successful write.
+- **A finished workout is never lost to a failed save.** `submitFeel()` keeps
+  `gp_wip` and parks the record in `gp_done` if `saveData()` fails;
+  `settlePendingDone()` saves it later. History records carry `cid` (the
+  workout start time), so retries never duplicate.
+- **A stored key that can't be read is never overwritten.** `load()` records it
+  in `LOAD_BAD`, `lsSave()` refuses to write it, and the recovery sheet
+  (`showLoadRecovery()`) offers download / restore / start fresh (which keeps
+  the raw text in `gp_corrupt_<key>`).
 - **localStorage is what the app reads; IndexedDB `gainpath` is a verified
   mirror.** `idbRecover()` is the only IDB read (when `gp_cfg` is missing).
-  Keep the `pre-idb-2.9.0` backup until at least v2.11. Switching reads to IDB
-  is a separate future step.
-- **Anything that erases user data calls `idbClear()` and `photoClear()`**, or
-  the data comes back.
+  Keep the `pre-idb-2.9.0` backup through upgrades until at least v2.11; only
+  a confirmed Reset erases it. A failed mirror write sets `MIRROR_DEGRADED`
+  (shown in Reports & backup) and is never a save failure. Switching reads to
+  IDB is a separate future step.
+- **Anything that erases user data calls `idbErase()` and `photoClear()`** (not
+  `idbClear()`, which spares the `backups` store), or the data comes back.
+  `resetApp()` clears localStorage last, only after both succeeded.
 - **Progress photos** (`js/photos.js`) live only in IndexedDB `gainpath-photos`
   (`photos` = metadata + thumbnail, `full` = image; one transaction for both),
   never in the mirror or `backupPayload()`. Store **ArrayBuffers, never Blobs**
@@ -175,7 +201,7 @@ their own phone. Protect existing data first.
   push also gets its annotated tag and `gh release create` with the CHANGELOG
   notes, in the same approved step.
 - **Every version bump follows `RELEASING.md`**; `npm run precheck` (lint →
-  test:units → test:data → visual-check) must pass first.
+  test:units → test:data → test:a11y → test:sw → test:worker → visual-check) must pass first.
 - **What's new:** one README `## ✨ What's new in vX.Y.Z` section at a time,
   folded into `## Features` at the next bump. Feature releases bump
   `WHATS_NEW_VERSION` and rewrite `WHATS_NEW_ITEMS` + strings in en/ja/ko;
@@ -210,6 +236,9 @@ their own phone. Protect existing data first.
 | `npm run precheck` | release gate, stops at first failure |
 | `npm run lint` | ESLint over all `js/` files as one script, errors mapped to `js/<file>:<line>`; bug rules only, no formatting |
 | `npm run test:units` | the real math/PR functions in the browser; add a case when one changes |
+| `npm run test:a11y` | keyboard-driven checks: every sheet (name, focus, Tab trap, inert background, Escape, focus return), unique set-row control names in en/ja/ko, nameless controls (Chromium + WebKit) |
+| `npm run test:sw` | service-worker update from an older worker, foreign caches kept, error responses never cached, offline boot, workout survives an update (Chromium + WebKit) |
+| `npm run test:worker` | analytics worker (in-memory KV, synthetic data; never contacts Cloudflare) |
 | `npm run test:data` | backup/restore, save failures, IDB mirror, iPhone warning, photos (Chromium + WebKit) |
 | `npm run visual-check` | UI smoke, set-row budget, tutorial ratio (WebKit), js/?v=/precache, offline boot, guides |
 | `npm run simulate` | seeded fuzzer for Settings/day-edit persistence; extend `settingsCycle`/`dayEditCycle` with new controls |
@@ -222,5 +251,6 @@ The Appium deps' `npm audit` advisories are left as they are: the only fixes
 are major downgrades, and it's dev-only tooling that never sees untrusted input.
 
 Failing `simulate`/`chaos` runs print a seed: `SEED=<n> npm run …` replays it.
-Test scripts that load the app hit the production analytics worker; route it
-(`gainpath-analytics.jedmangubat.workers.dev`) when that matters.
+Test scripts import Playwright from `scripts/lib/browsers.mjs`, which answers
+requests to the analytics worker and EmailJS locally; never import `playwright`
+directly in a new script.

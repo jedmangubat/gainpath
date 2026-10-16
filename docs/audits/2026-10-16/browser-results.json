@@ -1,0 +1,10 @@
+{
+  "apostropheBreaksInstructions": true,
+  "customNameInterpretedAsHTML": true,
+  "failedFinish": {
+    "historyInMemory": 1,
+    "historyOnDisk": null,
+    "recoveryOnDisk": null,
+    "saveAlert": true
+  }
+}

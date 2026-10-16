@@ -29,9 +29,6 @@
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GainPath","applicationCategory":"HealthApplication","operatingSystem":"Web, iOS, Android","url":"https://jedmangubat.github.io/gainpath/","description":"Free workout tracker that suggests your next weight and keeps every workout on your phone.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="fonts/tabler-icons.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
 <style>
 /* Self-hosted Kinetic Athletic fonts (latin subset) — bundled locally instead
    of loaded from fonts.googleapis.com so the reskinned design renders fully
@@ -235,6 +232,7 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .bdg.lock{--fg:none;--ink:var(--lock-fg);--line:var(--lock-line)}
 .bdg .hex{fill:var(--fg);stroke:var(--line);stroke-width:2.4;stroke-linejoin:round}
 .bdg .gf{fill:var(--ink)}
+.bdg .cut{fill:var(--fg)}
 .bdg .gs{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
 .bdg text{font-family:var(--font-mono);font-weight:700;fill:var(--ink);letter-spacing:-.5px}
 .bdg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 8px;margin-bottom:6px}
@@ -432,7 +430,7 @@ textarea{resize:vertical;min-height:100px}
         <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="h-gr"></div>
       </div>
     </div>
-    <button class="bg" style="padding:8px 8px" onclick="openSettings()" aria-label="Settings"><i class="ti ti-settings" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" style="padding:8px 8px" onclick="openSettings()" aria-label="Settings" data-i18n-aria="aria_settings"><i class="ti ti-settings" style="font-size:20px" aria-hidden="true"></i></button>
   </div>
   <div class="streak-hero" id="hm-streak">
     <div class="streak-hero-l">
@@ -456,7 +454,7 @@ textarea{resize:vertical;min-height:100px}
     <div id="h-cal"></div>
     <h2 style="margin-top:22px" data-i18n="session_history_title">Session history</h2>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="hist_hint">Pick an exercise to see every session you have logged for it.</div>
-    <select id="ch-hist-sel" onchange="pickExHistory(this.value)"></select>
+    <select id="ch-hist-sel" aria-label="Exercise" data-i18n-aria="aria_exercise" onchange="pickExHistory(this.value)"></select>
     <div id="ch-hist"></div>
   </div>
   <div id="p-ch" style="display:none">
@@ -475,7 +473,7 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div id="ch-has">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="progress_hint">Pick any lift you've logged — most-trained first — to see how it's climbing.</div>
-    <select id="ch-sel" onchange="drawChart()"></select>
+    <select id="ch-sel" aria-label="Exercise" data-i18n-aria="aria_exercise" onchange="drawChart()"></select>
     <select id="ch-metric" onchange="drawChart()">
       <option value="w" data-i18n="metric_max_weight">Max weight</option>
       <option value="e" selected data-i18n="metric_e1rm">Estimated 1RM</option>
@@ -490,9 +488,9 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div id="ch-seg-balance" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <button class="cal-nav" onclick="mgWeekNav(-1)" aria-label="Previous week"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+      <button class="cal-nav" onclick="mgWeekNav(-1)" aria-label="Previous week" data-i18n-aria="aria_prev_week"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
       <div style="font-size:13px;color:var(--txt2)" id="mg-week-lbl"></div>
-      <button class="cal-nav" id="mg-week-next" onclick="mgWeekNav(1)" aria-label="Next week"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+      <button class="cal-nav" id="mg-week-next" onclick="mgWeekNav(1)" aria-label="Next week" data-i18n-aria="aria_next_week"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
     </div>
     <div class="card" id="mg-balance"></div>
     </div>
@@ -549,7 +547,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- DAY EDIT -->
 <div id="s-dayedit" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" id="de-back-btn" onclick="deBack()" aria-label="Back"><i class="ti ti-arrow-left" id="de-back-icon" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" id="de-back-btn" onclick="deBack()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" id="de-back-icon" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="de-tit"></div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="de-hint-wrap"><i class="ti ti-hand-grab" aria-hidden="true"></i> <span id="de-hint">Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</span></div>
@@ -563,23 +561,23 @@ textarea{resize:vertical;min-height:100px}
 
 <!-- CANCEL WORKOUT CONFIRMATION -->
 <div id="cancelwo-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeCancelWorkoutSheet()"></div>
-<div id="cancelwo-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+<div id="cancelwo-sheet" role="alertdialog" aria-modal="true" aria-labelledby="cancelwo-title" aria-describedby="cancelwo-body" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="text-align:center;margin-bottom:18px">
     <i class="ti ti-alert-triangle" style="font-size:32px;color:#E24B4A" aria-hidden="true"></i>
-    <div class="tt" style="font-size:19px;font-weight:800;margin-top:10px;color:var(--txt)" data-i18n="wo_cancel_title">Cancel this workout?</div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:8px;line-height:1.5" data-i18n="wo_cancel_body">All progress from this session — every set you've logged — will be lost. This can't be undone.</div>
+    <div id="cancelwo-title" class="tt" style="font-size:19px;font-weight:800;margin-top:10px;color:var(--txt)" data-i18n="wo_cancel_title">Cancel this workout?</div>
+    <div id="cancelwo-body" style="font-size:13px;color:var(--txt2);margin-top:8px;line-height:1.5" data-i18n="wo_cancel_body">All progress from this session — every set you've logged — will be lost. This can't be undone.</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center;background:#E24B4A;color:#fff" onclick="doCancelWorkout()" data-i18n="wo_cancel_confirm_btn">Cancel workout</button>
-  <button class="bs" style="width:100%;justify-content:center;margin-top:10px" onclick="closeCancelWorkoutSheet()" data-i18n="wo_cancel_keep_btn">Keep training</button>
+  <button class="bs" data-autofocus style="width:100%;justify-content:center;margin-top:10px" onclick="closeCancelWorkoutSheet()" data-i18n="wo_cancel_keep_btn">Keep training</button>
 </div>
 
 <!-- DO EXERCISE NOW -->
 <div id="exnow-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeExNowSheet()"></div>
-<div id="exnow-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+<div id="exnow-sheet" role="dialog" aria-modal="true" aria-labelledby="exnow-title" aria-describedby="exnow-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="text-align:center;margin-bottom:18px">
     <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
     <div id="exnow-name" style="font-size:17px;font-weight:700;margin-top:10px;color:var(--txt)"></div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:6px" data-i18n="wo_jump_title">Jump to this exercise now?</div>
+    <div id="exnow-title" style="font-size:13px;color:var(--txt2);margin-top:6px" data-i18n="wo_jump_title">Jump to this exercise now?</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center" onclick="doExNow()" data-i18n="wo_jump_do_btn">Do it now</button>
   <button class="bs" style="width:100%;justify-content:center;margin-top:10px" onclick="closeExNowSheet()" data-i18n="wo_jump_back_btn">Go back</button>
@@ -588,7 +586,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- CUSTOM PROGRAM BUILDER -->
 <div id="s-prog" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="cancelProgram()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="cancelProgram()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="custom_program_title">Custom program</div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="custom_program_hint">Build your own training days from scratch. Name each day, then tap the list icon to add exercises (supersets, sets, reps and weights all work the same as any day).</div>
@@ -604,7 +602,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SWAP EXERCISE -->
 <div id="s-swap" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="closeSwap()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSwap()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="sw-tit" data-i18n="swap_exercise_title">Swap exercise</div>
   </div>
   <input class="inp" id="sw-search" type="text" placeholder="Search exercises…" data-i18n-ph="ph_search_exercises" oninput="ST.swapSearch=this.value;renderSwapParts()" style="margin-bottom:12px">
@@ -614,7 +612,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- CUSTOM EXERCISE -->
 <div id="s-customex" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="closeCustomEx()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeCustomEx()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="add_custom_ex_title">Add custom exercise</div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="custom_ex_hint">For a machine or movement your gym has that isn't in the built-in list. No bundled image — it'll link out to a YouTube search instead.</div>
@@ -627,7 +625,7 @@ textarea{resize:vertical;min-height:100px}
     <div id="cex-equip" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px"></div>
     <div id="cex-weight-wrap">
       <label data-i18n="typical_start_weight_label">Typical starting weight (<span id="cex-unit">kg</span>)<span style="font-weight:400;color:var(--txt3)" data-i18n="per_hand_dumbbell">— per hand if dumbbell</span></label>
-      <input class="inp" id="cex-basew" type="number" min="0" step="0.5" placeholder="e.g. 20">
+      <input class="inp" id="cex-basew" type="number" min="0" step="0.5" placeholder="e.g. 20" data-i18n-ph="ph_eg_20">
     </div>
     <div class="toggle-row">
       <div><div style="font-size:15px;font-weight:500;color:var(--txt)" data-i18n="timed_hold_label">Timed hold</div><div style="font-size:11px;color:var(--txt2)" data-i18n="timed_hold_sub">Measured in seconds held, not reps (e.g. plank)</div></div>
@@ -644,7 +642,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS -->
 <div id="s-settings" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="ss('home')"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="ss('home')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="settings_title">Settings</div>
   </div>
   <label data-i18n="lang_label">Language</label>
@@ -666,16 +664,17 @@ textarea{resize:vertical;min-height:100px}
   <button class="day-btn" onclick="ss('setabout')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-list-details" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_about">About</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_about_sub">Version and what's new</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
   <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()" data-i18n="btn_reset_app">Reset app</button>
+  <div id="reset-st" role="status" style="margin-top:8px;font-size:13px;color:var(--alert-txt);text-align:center"></div>
 </div>
 
 <!-- SETTINGS: PROFILE -->
 <div id="s-setprofile" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_profile">Profile</div>
   </div>
   <div class="card">
-    <label>Name</label>
+    <label data-i18n="set_name_label">Name</label>
     <div class="g2">
       <input class="inp" id="set-fname" type="text" placeholder="First name" autocomplete="given-name" data-i18n-ph="ph_first_name">
       <input class="inp" id="set-lname" type="text" placeholder="Last name" autocomplete="family-name" data-i18n-ph="ph_last_name">
@@ -689,7 +688,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: PREFERENCES -->
 <div id="s-setprefs" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_prefs">Preferences</div>
   </div>
   <div class="card">
@@ -730,7 +729,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: EQUIPMENT -->
 <div id="s-setequip" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_gym">My gym</div>
   </div>
   <div class="card">
@@ -750,7 +749,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: MACHINE BASE WEIGHTS -->
 <div id="s-setmachines" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_machines">Machine base weights</div>
   </div>
   <div class="card">
@@ -762,7 +761,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: PLANNED REST -->
 <div id="s-setrestplan" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_restplan">Planned rest</div>
   </div>
   <div class="card">
@@ -778,7 +777,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: APPLE WATCH SYNC -->
 <div id="s-setwatch" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_watch">Apple Watch sync</div>
   </div>
   <div class="card">
@@ -820,7 +819,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: ABOUT -->
 <div id="s-setabout" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_about">About</div>
   </div>
   <div class="card">
@@ -839,7 +838,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: PRIVACY — plain-language summary of privacy.html; keep the two in sync -->
 <div id="s-setprivacy" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_privacy">Privacy</div>
   </div>
   <div class="card">
@@ -863,7 +862,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: NOTIFY ON NATIVE APP LAUNCH -->
 <div id="s-setnotify" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="closeSettingsSection()"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_notify">Native app updates</div>
   </div>
   <div class="card">
@@ -887,14 +886,14 @@ textarea{resize:vertical;min-height:100px}
 <!-- SETTINGS: DATA & REPORTS -->
 <div id="s-setdata" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="ss('settings')"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="ss('settings')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_data">Reports &amp; backup</div>
   </div>
     <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
     <div style="display:flex;gap:8px;margin-bottom:14px">
-      <select id="ex-mo" style="margin-bottom:0;flex:1"></select>
-      <select id="ex-yr" style="margin-bottom:0;width:90px"></select>
+      <select id="ex-mo" aria-label="Month" data-i18n-aria="aria_month" style="margin-bottom:0;flex:1"></select>
+      <select id="ex-yr" aria-label="Year" data-i18n-aria="aria_year" style="margin-bottom:0;width:90px"></select>
     </div>
     <button class="bp" style="width:100%;justify-content:center" onclick="genPDF()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="btn_generate_pdf">Generate PDF</span></button>
     <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
@@ -927,7 +926,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step active" id="tut-1">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/home.png" alt="GainPath home screen">
+      <img loading="lazy" decoding="async" src="images/tutorial/home.png" alt="GainPath home screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="39.7" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
@@ -939,7 +938,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-2">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/day-editor.png" alt="GainPath day editor">
+      <img loading="lazy" decoding="async" src="images/tutorial/day-editor.png" alt="GainPath day editor">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="14.2" width="94.9" height="20.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask2)"/>
@@ -951,7 +950,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-3">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/program-builder.png" alt="GainPath custom program builder">
+      <img loading="lazy" decoding="async" src="images/tutorial/program-builder.png" alt="GainPath custom program builder">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask3"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="29.1" width="94.9" height="7.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask3)"/>
@@ -963,7 +962,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-4">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/workout.png" alt="GainPath workout logging screen">
+      <img loading="lazy" decoding="async" src="images/tutorial/workout.png" alt="GainPath workout logging screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="70.7" y="30.9" width="13.7" height="5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask4)"/>
@@ -975,7 +974,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-5">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/workout.png" alt="GainPath set list showing the add and remove set controls">
+      <img loading="lazy" decoding="async" src="images/tutorial/workout.png" alt="GainPath set list showing the add and remove set controls">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="69.5" width="86.2" height="10.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask5)"/>
@@ -987,7 +986,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-6">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/plate-calc.png" alt="GainPath plate calculator">
+      <img loading="lazy" decoding="async" src="images/tutorial/plate-calc.png" alt="GainPath plate calculator">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask6"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="41.9" width="86.2" height="29.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask6)"/>
@@ -999,7 +998,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-7">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/rest-timer.png" alt="GainPath rest timer">
+      <img loading="lazy" decoding="async" src="images/tutorial/rest-timer.png" alt="GainPath rest timer">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask7"><rect width="100" height="100" fill="#fff"/><ellipse cx="50.0" cy="20.6" rx="20.8" ry="9.6" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask7)"/>
@@ -1011,7 +1010,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-8">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/climb.png" alt="GainPath Climb tab">
+      <img loading="lazy" decoding="async" src="images/tutorial/climb.png" alt="GainPath Climb tab">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask8"><rect width="100" height="100" fill="#fff"/><rect x="48.5" y="91.2" width="27.6" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask8)"/>
@@ -1023,7 +1022,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-9">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/prs.png" alt="GainPath personal records list">
+      <img loading="lazy" decoding="async" src="images/tutorial/prs.png" alt="GainPath personal records list">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask9"><rect width="100" height="100" fill="#fff"/><rect x="72.9" y="91.2" width="27.1" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask9)"/>
@@ -1035,7 +1034,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-10">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/calendar.png" alt="GainPath training history">
+      <img loading="lazy" decoding="async" src="images/tutorial/calendar.png" alt="GainPath training history">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask10"><rect width="100" height="100" fill="#fff"/><rect x="24" y="91.2" width="27.6" height="8.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask10)"/>
@@ -1047,7 +1046,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-11">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/reports.png" alt="GainPath reports and backup screen">
+      <img loading="lazy" decoding="async" src="images/tutorial/reports.png" alt="GainPath reports and backup screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask11"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="24.5" width="94.9" height="6.5" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask11)"/>
@@ -1059,7 +1058,7 @@ textarea{resize:vertical;min-height:100px}
 
   <div class="ob-step" id="tut-12">
     <div class="tut-ss-wrap">
-      <img src="images/tutorial/settings.png" alt="GainPath settings screen">
+      <img loading="lazy" decoding="async" src="images/tutorial/settings.png" alt="GainPath settings screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
         <defs><mask id="tutmask12"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="36.6" width="94.9" height="9.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask12)"/>
@@ -1078,7 +1077,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- SESSION DETAIL / EDIT -->
 <div id="s-session" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-    <button class="bg" onclick="closeSession()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeSession()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="flex:1"><div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="se-tit"></div><div style="font-size:13px;color:var(--txt2)" id="se-sub"></div></div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="session_edit_hint">Fix a mis-logged weight or reps, or delete the session. PRs recalculate automatically.</div>
@@ -1090,7 +1089,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- FEEDBACK -->
 <div id="s-feedback" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-    <button class="bg" onclick="ss('settings')"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="ss('settings')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="btn_send_feedback">Send feedback</div>
   </div>
   <label data-i18n="feedback_type_label">Feedback type</label>
@@ -1113,12 +1112,12 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-wo" class="screen">
   <div id="prt-w"></div>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-    <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Manage exercises"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Manage exercises" data-i18n-aria="aria_manage_ex"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="flex:1">
       <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="wo-tit"></div>
       <div style="font-size:13px;color:var(--txt2)" id="wo-pl"></div>
     </div>
-    <div style="font-size:13px;color:var(--txt2);background:var(--bg2);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" style="background:none;border:none;padding:8px;margin:-8px;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
+    <div style="font-size:13px;color:var(--txt2);background:var(--bg2);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" data-i18n-aria="aria_pause_timer" style="background:none;border:none;padding:8px;margin:-8px;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
   </div>
   <div class="pbw"><div class="pb" id="wo-pb" style="width:0%"></div></div>
   <div id="ex-area"></div>
@@ -1129,7 +1128,7 @@ textarea{resize:vertical;min-height:100px}
   <div style="text-align:center;margin-bottom:16px">
     <div style="font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;font-weight:600" data-i18n="rest_label">Rest</div>
     <div style="font-size:17px;font-weight:700;color:var(--txt);margin-top:4px" id="r-en"></div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="r-sl"></div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="r-sl" aria-live="polite"></div>
   </div>
   <div class="tc" id="t-cir">
     <div class="tc-inner">
@@ -1161,7 +1160,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <label id="mw-label" data-i18n="mw_unit_label">Machine base weight (<span id="mw-unit">kg</span>)</label>
-    <input class="inp" id="mw-inp" type="number" placeholder="e.g. 50" min="0" onfocus="this.select()">
+    <input class="inp" id="mw-inp" type="number" placeholder="e.g. 50" data-i18n-ph="ph_eg_50" min="0" onfocus="this.select()">
     <div style="font-size:13px;color:var(--txt2);margin-top:-6px" data-i18n="mw_hint">Weight of the machine itself without any plates. Only asked once — saved permanently.</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center;margin-top:8px" onclick="saveMW()" data-i18n="btn_save_continue">Save &amp; continue</button>
@@ -1171,7 +1170,7 @@ textarea{resize:vertical;min-height:100px}
 <!-- PLATE CALCULATOR -->
 <div id="s-plate" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="bg" onclick="closePlateCalc()" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closePlateCalc()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="plate_calc_title">Plate calculator</div>
   </div>
   <div class="card" style="text-align:center">
@@ -1199,7 +1198,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <label data-i18n="starting_weight_label">Starting weight (<span id="fsw-unit">kg</span>)</label>
-    <input class="inp" id="fsw-inp" type="number" placeholder="e.g. 60" min="0" step="0.5" onfocus="this.select()">
+    <input class="inp" id="fsw-inp" type="number" placeholder="e.g. 60" data-i18n-ph="ph_eg_60" min="0" step="0.5" onfocus="this.select()">
     <div style="font-size:13px;color:var(--txt2);margin-top:-6px" data-i18n="fsw_hint">Enter the weight you want to start with. It defaults to your last logged weight from your next session onwards.</div>
   </div>
   <div class="fb" id="fsw-ai" style="display:none"></div>
@@ -1208,7 +1207,7 @@ textarea{resize:vertical;min-height:100px}
 
 <!-- EXERCISE INSTRUCTIONS OVERLAY -->
 <div id="exinfo-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeExInfo()"></div>
-<div id="exinfo-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+<div id="exinfo-sheet" role="dialog" aria-modal="true" aria-labelledby="exinfo-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
     <div style="font-size:17px;font-weight:700;color:var(--txt)" id="exinfo-name"></div>
     <button class="bg" onclick="closeExInfo()" aria-label="Close instructions" data-i18n-aria="aria_close_instructions" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -1217,8 +1216,8 @@ textarea{resize:vertical;min-height:100px}
 </div>
 
 <!-- WHAT'S NEW -->
-<div id="ph-view" class="ph-view" role="dialog" aria-modal="true" style="display:none">
-  <div class="ph-view-top"><div id="ph-view-date"></div><button type="button" class="bg" onclick="closePhoto()" aria-label="Close"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button></div>
+<div id="ph-view" class="ph-view" role="dialog" aria-modal="true" aria-labelledby="ph-view-date" style="display:none">
+  <div class="ph-view-top"><div id="ph-view-date"></div><button type="button" class="bg" onclick="closePhoto()" aria-label="Close" data-i18n-aria="aria_close"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button></div>
   <img id="ph-view-img" alt="">
   <div class="ph-view-btns">
     <button type="button" class="bp" onclick="savePhoto()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="ph_save">Save to Photos</span></button>
@@ -1226,19 +1225,33 @@ textarea{resize:vertical;min-height:100px}
   </div>
 </div>
 <div id="whatsnew-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeWhatsNew()"></div>
-<div id="whatsnew-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+<div id="whatsnew-sheet" role="dialog" aria-modal="true" aria-labelledby="whatsnew-version" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"><i class="ti ti-sparkles" style="color:var(--brand-forge);margin-right:6px" aria-hidden="true"></i><span id="whatsnew-version"></span></div>
-    <button class="bg" onclick="closeWhatsNew()" aria-label="Close" data-i18n-aria="aria_close_instructions" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
+    <button class="bg" onclick="closeWhatsNew()" aria-label="Close" data-i18n-aria="aria_close" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
   </div>
   <ul id="whatsnew-list" style="margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--txt);line-height:1.5"></ul>
   <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeWhatsNew()" data-i18n="btn_got_it">Got it</button>
 </div>
 
+<!-- UNREADABLE SAVED DATA (shown by showLoadRecovery() when load() could not read a stored key) -->
+<div id="load-recovery" role="alertdialog" aria-modal="true" aria-labelledby="lr-title" aria-describedby="lr-body" style="display:none;position:fixed;inset:0;z-index:9990;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 84px) 16px 32px">
+  <div style="max-width:520px;margin:0 auto">
+    <div id="lr-title" class="tt" style="font-size:20px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="lr_title">Some of your saved data can’t be read</div>
+    <p id="lr-body" style="font-size:14px;color:var(--txt2);line-height:1.55;margin:12px 0" data-i18n="lr_body"></p>
+    <ul id="lr-keys" style="font-size:14px;color:var(--txt);margin:0 0 16px;padding-left:20px;line-height:1.7"></ul>
+    <button id="lr-download" class="bp" style="width:100%;justify-content:center;margin-bottom:10px" onclick="downloadBadData()" data-i18n="lr_download">Download damaged data</button>
+    <button id="lr-mirror" class="bp" style="display:none;width:100%;justify-content:center;margin-bottom:10px" onclick="recoverFromMirror()" data-i18n="lr_mirror">Restore from the second copy on this device</button>
+    <button id="lr-restore" class="bs" style="width:100%;justify-content:center;margin-bottom:10px" onclick="gid('lr-import-file').click()" data-i18n="lr_restore">Restore from a backup file</button>
+    <input type="file" id="lr-import-file" accept=".json" style="display:none" onchange="importData(this)">
+    <button id="lr-fresh" class="bs" style="width:100%;justify-content:center" onclick="startFreshBad()" data-i18n="lr_fresh">Start these records fresh</button>
+  </div>
+</div>
+
 <!-- BADGE DETAIL -->
 <div id="bdg-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeBadge()"></div>
-<div id="bdg-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
-  <div style="display:flex;justify-content:flex-end"><button class="bg" onclick="closeBadge()" aria-label="Close" data-i18n-aria="aria_close_instructions"><i class="ti ti-x" aria-hidden="true"></i></button></div>
+<div id="bdg-sheet" role="dialog" aria-modal="true" aria-labelledby="bdg-sheet-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="display:flex;justify-content:flex-end"><button class="bg" onclick="closeBadge()" aria-label="Close" data-i18n-aria="aria_close"><i class="ti ti-x" aria-hidden="true"></i></button></div>
   <div style="text-align:center;padding:0 8px 4px">
     <div id="bdg-sheet-art" style="width:88px;margin:0 auto 14px"></div>
     <div id="bdg-sheet-name" class="tt" style="font-size:19px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"></div>

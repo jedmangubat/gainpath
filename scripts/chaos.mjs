@@ -20,7 +20,7 @@
 //
 // Usage: npm run chaos  [-- --count=2000] [SEED=12345 npm run chaos]
 
-import { chromium, webkit } from 'playwright';
+import { chromium, webkit } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import path from 'path';

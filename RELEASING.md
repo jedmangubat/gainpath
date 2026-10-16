@@ -66,7 +66,7 @@ startup or storage can't be rolled back for them.
 
 ## 6. Checks
 
-- [ ] `npm run precheck` passes. It runs lint → test:units → test:data →
+- [ ] `npm run precheck` passes. It runs lint → test:units → test:data → test:a11y → test:sw → test:worker →
       visual-check and stops loudly at the first failure.
 - [ ] Changed storage, Settings, or day editing? Also run `npm run simulate`.
 - [ ] Changed storage, backup or restore? Also run `ENGINE=webkit npm run test:data`
