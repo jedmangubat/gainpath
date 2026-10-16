@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-10-16
+
 ### Changed
 - **Visual consistency pass (audit A14).** The First Rep and First Flag badges
   have heavier, more recognisable glyphs (the flag now carries a rising-trend

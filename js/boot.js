@@ -11,7 +11,7 @@ const EMAILJS_PUBLIC_KEY='jtnxpkG1PAlGnF4LL';
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.10.0';
+const APP_VERSION='2.11.0';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');

@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/LIB_URLS or the caching logic below changes; activate() deletes
 // the app's own older caches (see ownsCache) and nothing else.
-const CACHE_NAME = 'gainpath-v46';
+const CACHE_NAME = 'gainpath-v47';
 // Exercise images that are not precached (the .webp ones added after v2.9)
 // are fetched the first time they are shown and kept here. This cache is not
 // tied to CACHE_NAME, so a release doesn't make phones download them again.
@@ -71,23 +71,23 @@ const SHELL_URLS = [
   './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2',
   // App code: plain scripts under js/, in index.html's load order. The ?v= is
   // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
-  './js/boot.js?v=2.10.0',
-  './js/exercises.js?v=2.10.0',
-  './js/exercise-text.js?v=2.10.0',
-  './js/state.js?v=2.10.0',
-  './js/i18n.js?v=2.10.0',
-  './js/storage.js?v=2.10.0',
-  './js/ui-core.js?v=2.10.0',
-  './js/onboarding.js?v=2.10.0',
-  './js/math.js?v=2.10.0',
-  './js/history.js?v=2.10.0',
-  './js/settings.js?v=2.10.0',
-  './js/day-edit.js?v=2.10.0',
-  './js/workout.js?v=2.10.0',
-  './js/climb.js?v=2.10.0',
-  './js/photos.js?v=2.10.0',
-  './js/data-safety.js?v=2.10.0',
-  './js/main.js?v=2.10.0'
+  './js/boot.js?v=2.11.0',
+  './js/exercises.js?v=2.11.0',
+  './js/exercise-text.js?v=2.11.0',
+  './js/state.js?v=2.11.0',
+  './js/i18n.js?v=2.11.0',
+  './js/storage.js?v=2.11.0',
+  './js/ui-core.js?v=2.11.0',
+  './js/onboarding.js?v=2.11.0',
+  './js/math.js?v=2.11.0',
+  './js/history.js?v=2.11.0',
+  './js/settings.js?v=2.11.0',
+  './js/day-edit.js?v=2.11.0',
+  './js/workout.js?v=2.11.0',
+  './js/climb.js?v=2.11.0',
+  './js/photos.js?v=2.11.0',
+  './js/data-safety.js?v=2.11.0',
+  './js/main.js?v=2.11.0'
 ];
 // All bundled exercise images — precached best-effort on install (see below) so
 // every built-in exercise shows its illustration offline, not just the ones the
